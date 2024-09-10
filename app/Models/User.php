@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Contracts\LaratrustUser;
 use Laravel\Sanctum\HasApiTokens;
 use Laratrust\Traits\HasRolesAndPermissions;
-
-
-use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements LaratrustUser
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRolesAndPermissions;
+    use HasApiTokens, HasFactory, Notifiable, HasRolesAndPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -50,11 +48,14 @@ class User extends Authenticatable implements LaratrustUser
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);
     }
-    
-}
 
+    public function role(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class); // Pastikan Role adalah model yang sesuai
+    }
+}

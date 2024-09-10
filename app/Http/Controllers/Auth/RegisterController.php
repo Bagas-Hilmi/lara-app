@@ -8,6 +8,8 @@ use App\Models\Role;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -51,8 +53,80 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        // Tetapkan role pada pengguna
-        $user->roles()->attach($data['role']);
+        event(new Registered($user));
+        Auth::login($user);
+
+        if ($data['type'] == 'super-admin') {
+            $user->addRole('super-admin');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            $user->givePermission('task-delete');
+            $user->givePermission('task-approve');
+            $user->givePermission('task-acknowledge');
+        }
+
+        if ($data['type'] == 'admin') {
+            $user->addRole('admin');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            $user->givePermission('task-approve');
+            $user->givePermission('task-acknowledge');
+            // return redirect('writer/articles');
+        }
+
+        if ($data['type'] == 'manager') {
+            $user->addRole('manager');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            $user->givePermission('task-delete');
+            $user->givePermission('task-approve');
+            $user->givePermission('task-acknowledge');
+            // return redirect('writer/articles');
+        }
+
+        if ($data['type'] == 'superintendent') {
+            $user->addRole('superintendent');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            $user->givePermission('task-delete');
+            $user->givePermission('task-approve');
+            // return redirect('articles');
+        }
+
+        if ($data['type'] == 'senior-supervisor') {
+            $user->addRole('senior-supervisor');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            $user->givePermission('task-delete');
+            // return redirect('articles');
+        }
+
+        if ($data['type'] == 'supervisor') {
+            $user->addRole('supervisor');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            $user->givePermission('task-delete');
+            // return redirect('articles');
+        }
+
+        if ($data['type'] == 'staff') {
+            $user->addRole('staff');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            // return redirect('articles');
+        }
+
+        if ($data['type'] == 'viewer') {
+            $user->addRole('viewer');
+            $user->givePermission('task-read');
+        }
 
         return $user;
     }

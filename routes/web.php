@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\EmployeeController;
 
 // Include routing roles
 require base_path('routes/web_role.php');
@@ -15,12 +16,19 @@ Route::get('/', function () {
     return redirect('sign-in');
 })->middleware('guest');
 
+
+
+
+Route::get('/employees', [EmployeeController::class, 'index'])->name('pages.tables');
 // Authentication routes
 Auth::routes();
 Route::get('sign-in', [SessionsController::class, 'create'])->middleware('guest')->name('login');
 Route::post('sign-in', [SessionsController::class, 'store'])->middleware('guest');
 Route::post('verify', [SessionsController::class, 'show'])->middleware('guest');
 Route::post('reset-password', [SessionsController::class, 'update'])->middleware('guest')->name('password.update');
+Route::get('sign-up', [RegisterController::class, 'create'])->middleware('guest')->name('register');
+Route::post('sign-up', [RegisterController::class, 'store'])->middleware('guest');
+
 Route::get('verify', function () {
     return view('sessions.password.verify');
 })->middleware('guest')->name('verify');
@@ -41,21 +49,27 @@ Route::middleware('auth')->group(function () {
     Route::get('billing', function () {
         return view('pages.billing');
     })->name('billing');
+    
     Route::get('tables', function () {
         return view('pages.tables');
     })->name('tables');
+    
     Route::get('notifications', function () {
         return view('pages.notifications');
     })->name('notifications');
+    
     Route::get('static-sign-in', function () {
         return view('pages.static-sign-in');
     })->name('static-sign-in');
+    
     Route::get('static-sign-up', function () {
         return view('pages.static-sign-up');
     })->name('static-sign-up');
+    
     Route::get('user-management', function () {
         return view('pages.laravel-examples.user-management');
     })->name('user-management');
+    
     Route::get('user-profile', function () {
         return view('pages.laravel-examples.user-profile');
     })->name('user-profile');
