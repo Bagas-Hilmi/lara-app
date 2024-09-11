@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class RoleUser extends Model
 {
-    protected $connection = 'oee_756';
     protected $table = 'role_user';
 
     protected $fillable = [

@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Auth;
 class RegisterController extends Controller
 {
     use RegistersUsers;
-
-    protected $redirectTo = '/home';
+    //setelah tekan tombol sign up user akan ke sini (dibawah) 
+    protected $redirectTo = '/dashboard';
 
     public function __construct()
     {
@@ -44,7 +44,7 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
+    protected function create($data)
     {
         // Buat pengguna baru
         $user = User::create([
@@ -56,17 +56,17 @@ class RegisterController extends Controller
         event(new Registered($user));
         Auth::login($user);
 
-        if ($data['type'] == 'super-admin') {
-            $user->addRole('super-admin');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            $user->givePermission('task-delete');
-            $user->givePermission('task-approve');
-            $user->givePermission('task-acknowledge');
+            if ($data['role'] == 'super-admin') {
+                $user->addRole('super-admin');
+                $user->givePermission('task-create');
+                $user->givePermission('task-read');
+                $user->givePermission('task-update');
+                $user->givePermission('task-delete');
+                $user->givePermission('task-approve');
+                $user->givePermission('task-acknowledge');
         }
 
-        if ($data['type'] == 'admin') {
+        if ($data['role'] == 'admin') {
             $user->addRole('admin');
             $user->givePermission('task-create');
             $user->givePermission('task-read');
@@ -76,7 +76,7 @@ class RegisterController extends Controller
             // return redirect('writer/articles');
         }
 
-        if ($data['type'] == 'manager') {
+        if ($data['role'] == 'manager') {
             $user->addRole('manager');
             $user->givePermission('task-create');
             $user->givePermission('task-read');
@@ -87,7 +87,7 @@ class RegisterController extends Controller
             // return redirect('writer/articles');
         }
 
-        if ($data['type'] == 'superintendent') {
+        if ($data['role'] == 'superintendent') {
             $user->addRole('superintendent');
             $user->givePermission('task-create');
             $user->givePermission('task-read');
@@ -97,7 +97,7 @@ class RegisterController extends Controller
             // return redirect('articles');
         }
 
-        if ($data['type'] == 'senior-supervisor') {
+        if ($data['role'] == 'senior-supervisor') {
             $user->addRole('senior-supervisor');
             $user->givePermission('task-create');
             $user->givePermission('task-read');
@@ -106,7 +106,7 @@ class RegisterController extends Controller
             // return redirect('articles');
         }
 
-        if ($data['type'] == 'supervisor') {
+        if ($data['role'] == 'supervisor') {
             $user->addRole('supervisor');
             $user->givePermission('task-create');
             $user->givePermission('task-read');
@@ -115,7 +115,15 @@ class RegisterController extends Controller
             // return redirect('articles');
         }
 
-        if ($data['type'] == 'staff') {
+        if ($data['role'] == 'senior-staff') {
+            $user->addRole('senior-staff');
+            $user->givePermission('task-create');
+            $user->givePermission('task-read');
+            $user->givePermission('task-update');
+            $user->givePermission('task-approve');
+            // return redirect('articles');
+        }
+        if ($data['role'] == 'staff') {
             $user->addRole('staff');
             $user->givePermission('task-create');
             $user->givePermission('task-read');
@@ -123,7 +131,7 @@ class RegisterController extends Controller
             // return redirect('articles');
         }
 
-        if ($data['type'] == 'viewer') {
+        if ($data['role'] == 'viewer') {
             $user->addRole('viewer');
             $user->givePermission('task-read');
         }

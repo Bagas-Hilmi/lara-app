@@ -4,38 +4,40 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EmployeeController;
-
+use App\Http\Controllers\Auth\LoginController;
 // Include routing roles
 require base_path('routes/web_role.php');
 
 // Default route
 Route::get('/', function () {
-    return redirect('sign-in');
-})->middleware('guest');
+    return view('welcome');
+});
 
 
-
+Route::get('login', [LoginController::class, 'create'])->name('login');
+Route::post('login', [LoginController::class, 'store']);
+Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+Route::post('password/email', [LoginController::class, 'show'])->name('password.email');
+Route::post('password/reset', [LoginController::class, 'update'])->name('password.update');
 
 Route::get('/employees', [EmployeeController::class, 'index'])->name('pages.tables');
 // Authentication routes
 Auth::routes();
-Route::get('sign-in', [SessionsController::class, 'create'])->middleware('guest')->name('login');
-Route::post('sign-in', [SessionsController::class, 'store'])->middleware('guest');
-Route::post('verify', [SessionsController::class, 'show'])->middleware('guest');
-Route::post('reset-password', [SessionsController::class, 'update'])->middleware('guest')->name('password.update');
-Route::get('sign-up', [RegisterController::class, 'create'])->middleware('guest')->name('register');
-Route::post('sign-up', [RegisterController::class, 'store'])->middleware('guest');
+
+
+Route::get('sign-up', [RegisterController::class, 'showRegistrationForm'])->middleware('guest')->name('register');
+Route::post('sign-up', [RegisterController::class, 'register'])->middleware('guest');
 
 Route::get('verify', function () {
-    return view('sessions.password.verify');
+    return view('auth.verify');
 })->middleware('guest')->name('verify');
+
 Route::get('reset-password/{token}', function ($token) {
-    return view('sessions.password.reset', ['token' => $token]);
+    return view('auth.password.reset', ['token' => $token]);
 })->middleware('guest')->name('password.reset');
-Route::post('sign-out', [SessionsController::class, 'destroy'])->middleware('auth')->name('logout');
+
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
