@@ -34,7 +34,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'exists:roles,id'], // Validasi role
+            'role' => 'required|string|exists:roles,id',
         ]);
     }
 
@@ -56,86 +56,25 @@ class RegisterController extends Controller
         event(new Registered($user));
         Auth::login($user);
 
-            if ($data['role'] == 'super-admin') {
-                $user->addRole('super-admin');
-                $user->givePermission('task-create');
-                $user->givePermission('task-read');
-                $user->givePermission('task-update');
-                $user->givePermission('task-delete');
-                $user->givePermission('task-approve');
-                $user->givePermission('task-acknowledge');
+        $rolesStructure = config('laratrust_seeder.roles_structure');
+        $permissionsMap = config('laratrust_seeder.permissions_map');
+
+        $role = $data['role'];
+        if (array_key_exists($role, $rolesStructure)) {
+            $user->addRole($role);
+
+            $permissions = $rolesStructure[$role];
+            foreach ($permissions as $resource => $actions) {
+                foreach (str_split($actions) as $action) {
+                    if (isset($permissionsMap[$action])) {
+                        $permission = $permissionsMap[$action];
+                        $user->givePermissionTo("{$resource}-{$permission}");
+                    }
+                }
+            }
         }
 
-        if ($data['role'] == 'admin') {
-            $user->addRole('admin');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            $user->givePermission('task-approve');
-            $user->givePermission('task-acknowledge');
-            // return redirect('writer/articles');
-        }
-
-        if ($data['role'] == 'manager') {
-            $user->addRole('manager');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            $user->givePermission('task-delete');
-            $user->givePermission('task-approve');
-            $user->givePermission('task-acknowledge');
-            // return redirect('writer/articles');
-        }
-
-        if ($data['role'] == 'superintendent') {
-            $user->addRole('superintendent');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            $user->givePermission('task-delete');
-            $user->givePermission('task-approve');
-            // return redirect('articles');
-        }
-
-        if ($data['role'] == 'senior-supervisor') {
-            $user->addRole('senior-supervisor');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            $user->givePermission('task-delete');
-            // return redirect('articles');
-        }
-
-        if ($data['role'] == 'supervisor') {
-            $user->addRole('supervisor');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            $user->givePermission('task-delete');
-            // return redirect('articles');
-        }
-
-        if ($data['role'] == 'senior-staff') {
-            $user->addRole('senior-staff');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            $user->givePermission('task-approve');
-            // return redirect('articles');
-        }
-        if ($data['role'] == 'staff') {
-            $user->addRole('staff');
-            $user->givePermission('task-create');
-            $user->givePermission('task-read');
-            $user->givePermission('task-update');
-            // return redirect('articles');
-        }
-
-        if ($data['role'] == 'viewer') {
-            $user->addRole('viewer');
-            $user->givePermission('task-read');
-        }
-
+        // Kembalikan pengguna yang baru dibuat
         return $user;
     }
 }

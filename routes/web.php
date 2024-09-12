@@ -19,13 +19,12 @@ Route::get('/', function () {
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
 Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
-Route::post('password/email', [LoginController::class, 'show'])->name('password.email');
+Route::post('verify', [LoginController::class, 'show'])->name('password.email');
 Route::post('password/reset', [LoginController::class, 'update'])->name('password.update');
 
 Route::get('/employees', [EmployeeController::class, 'index'])->name('pages.tables');
 // Authentication routes
 Auth::routes();
-
 
 Route::get('sign-up', [RegisterController::class, 'showRegistrationForm'])->middleware('guest')->name('register');
 Route::post('sign-up', [RegisterController::class, 'register'])->middleware('guest');
@@ -35,7 +34,7 @@ Route::get('verify', function () {
 })->middleware('guest')->name('verify');
 
 Route::get('reset-password/{token}', function ($token) {
-    return view('auth.password.reset', ['token' => $token]);
+    return view('auth.passwords.reset', ['token' => $token]);
 })->middleware('guest')->name('password.reset');
 
 

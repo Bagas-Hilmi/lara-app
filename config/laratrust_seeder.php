@@ -3,6 +3,7 @@ return [
     'create_users' => false,
     'truncate_tables' => true,
     'roles_structure' => [
+        
         'super-admin' => [
             'task' => 'c,r,u,d,apv,ack',
             'user' => 'c,r,u,d'

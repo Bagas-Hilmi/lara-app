@@ -20,7 +20,7 @@ class Role extends LaratrustRole
 
     public function getRoles()
     {
-        $getData = DB::table('roles')->get();
-        return $getData;
+    	$getData = DB::table('roles')->get();
+    	return $getData;
     }
 }

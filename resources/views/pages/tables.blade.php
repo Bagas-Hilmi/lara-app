@@ -175,7 +175,7 @@
             </div>
             <x-plugins></x-plugins>
             @push('css')
-            <link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.min.css">
+            <link href="https://cdn.jsdelivr.net/npm/simple-datatables@3.0.2/dist/style.css" rel="stylesheet" type="text/css">
             @endpush
         
             @push('js')
