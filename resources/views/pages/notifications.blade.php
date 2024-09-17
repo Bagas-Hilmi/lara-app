@@ -112,7 +112,7 @@
                                 </div>
                                 <div class="col-lg-3 col-sm-6 col-12 mt-lg-0 mt-2">
                                     <button class="btn bg-gradient-danger w-100 mb-0 toast-btn" type="button"
-                                        data-target="dangerToast">Danger</button>
+                                        data-target="dangerToast">Bahaya</button>
                                 </div>
                             </div>
                         </div>

@@ -15,12 +15,12 @@
                                         functional!</strong></h6>
                             </div>
                         </div>
-                        <div class=" me-3 my-3 text-end">
-                            <a class="btn bg-gradient-dark mb-0" href="#"  data-bs-toggle="modal" data-bs-target="#newUserModal">
-                                <i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New User
+                        <div class="me-3 my-3 text-end">
+                            <a class="btn bg-gradient-dark mb-0" href="#" data-bs-toggle="modal" data-bs-target="#modal-form">
+                                <i class="material-icons text-sm">add</i>&nbsp;&nbsp;Form
                             </a>
-                            
                         </div>
+                        
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0">
@@ -85,11 +85,11 @@
                                             </td>
                                             <td class="align-middle">
                                                 <a rel="tooltip" class="btn btn-success btn-link"
-                                                    href="" data-original-title=""
-                                                    title="">
-                                                    <i class="material-icons">edit</i>
-                                                    <div class="ripple-container"></div>
-                                                </a>
+                                                href="#" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                title="Edit">
+                                                 <i class="material-icons">edit</i>
+                                                 <div class="ripple-container"></div>
+                                             </a>
                                                 
                                                 <button type="button" class="btn btn-danger btn-link"
                                                 data-original-title="" title="">
@@ -203,5 +203,7 @@
         </div>
     </main>
     <x-plugins></x-plugins>
+    @include('modal.new-user-modal')
+    @include('modal.edit-modal')
 
 </x-layout>

@@ -65,11 +65,11 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'role' => \Laratrust\Middleware\Role::class,
+        'role' => \App\Http\Middleware\CheckRole::class,
         'permission' => \Laratrust\Middleware\Permission::class,
         'ability' => \Laratrust\Middleware\Ability::class,
-        'role' => \App\Http\Middleware\CheckRole::class,
-
     ];
     
 }
+
+

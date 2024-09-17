@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class CCB extends Model
+{
+    use HasFactory;
+    
+    protected $table = 't_cip_cum_bal';
+
+    protected $fillable = [
+        'period_cip', 'bal_usd', 'bal_rp', 'cumbal_usd', 'cumbal_rp', 'report_status', 'status', 'created_by', 'updated_by'
+    ];
+
+    public static function get_dtCipCumBal()
+    {
+        $query = DB::table('ccb')
+            ->select([
+                'id_ccb',
+                'period_cip',
+                'bal_usd',
+                'bal_rp',
+                'cumbal_usd',
+                'cumbal_rp',
+                'report_status'
+            ])
+            ->where('status', 1)
+            ->orderBy('period_cip', 'asc');
+
+        return $query->get();
+    }
+
+    public static function add(
+        $periodCip, $balUsd, $balRp, $cumbalUsd, $cumbalRp,
+        $reportStatus = 0, $status = 1, $createdBy = null, $updatedBy = null
+    ) {
+        // Menyusun raw SQL query untuk menyimpan data
+        $query = 'INSERT INTO t_cip_cum_bal (period_cip, bal_usd, bal_rp, cumbal_usd, cumbal_rp, report_status, status, created_by, updated_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+        // Eksekusi query
+        DB::insert($query, [
+            $periodCip, 
+            $balUsd, 
+            $balRp, 
+            $cumbalUsd, 
+            $cumbalRp, 
+            $reportStatus, 
+            $status, 
+            $createdBy, 
+            $updatedBy, 
+            now(), 
+            now()
+        ]);
+
+        return ['success' => true, 'message' => 'Data Cip Cumulative Balance berhasil ditambahkan!'];
+    }
+
+    public static function updateData($id, $period_cip, $bal_usd, $bal_rp, $cumbal_usd, $cumbal_rp, $report_status, $status)
+{
+    try {
+        // Query untuk memperbarui data
+        $query = 'UPDATE t_cip_cum_bal
+                  SET period_cip = ?,
+                      bal_usd = ?,
+                      bal_rp = ?,
+                      cumbal_usd = ?,
+                      cumbal_rp = ?,
+                      report_status = ?,
+                      status = ?,
+                      updated_by = ?,
+                      updated_at = ?
+                  WHERE id_ccb = ?';
+
+        // Parameter yang akan disisipkan ke dalam query
+        $params = [$period_cip, $bal_usd, $bal_rp, $cumbal_usd, $cumbal_rp, $report_status, $status, now(), $id];
+
+        // Melakukan update data di database
+        $result = DB::update($query, $params);
+
+        // Menambahkan log untuk keberhasilan update
+        Log::info('Update berhasil untuk ID: ' . $id);
+
+        // Mengembalikan respons sukses
+        return ['success' => true, 'message' => 'Data berhasil diperbarui!'];
+    } catch (\Exception $e) {
+        // Menambahkan log untuk kesalahan
+        Log::error('Terjadi kesalahan saat memperbarui data. Error: ' . $e->getMessage());
+
+        // Mengembalikan respons gagal
+        return ['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'];
+    }
+}
+}
