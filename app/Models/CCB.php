@@ -11,8 +11,16 @@ use Illuminate\Support\Facades\Log;
 class CCB extends Model
 {
     use HasFactory;
-    
+    use SoftDeletes;
+
+    // Pastikan properti ini adalah public jika Anda menambahkannya secara eksplisit
+    public $timestamps = true; // Defaultnya sudah true, jadi bisa dihapus jika tidak diubah
+
     protected $table = 't_cip_cum_bal';
+
+    protected $primaryKey = 'id_ccb';
+    
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'period_cip', 'bal_usd', 'bal_rp', 'cumbal_usd', 'cumbal_rp', 'report_status', 'status', 'created_by', 'updated_by'
@@ -20,7 +28,7 @@ class CCB extends Model
 
     public static function get_dtCipCumBal()
     {
-        $query = DB::table('ccb')
+        $query = DB::table('t_cip_cum_bal') // Ganti 'ccb' dengan 't_cip_cum_bal'
             ->select([
                 'id_ccb',
                 'period_cip',
@@ -61,39 +69,45 @@ class CCB extends Model
         return ['success' => true, 'message' => 'Data Cip Cumulative Balance berhasil ditambahkan!'];
     }
 
-    public static function updateData($id, $period_cip, $bal_usd, $bal_rp, $cumbal_usd, $cumbal_rp, $report_status, $status)
-{
-    try {
-        // Query untuk memperbarui data
-        $query = 'UPDATE t_cip_cum_bal
-                  SET period_cip = ?,
-                      bal_usd = ?,
-                      bal_rp = ?,
-                      cumbal_usd = ?,
-                      cumbal_rp = ?,
-                      report_status = ?,
-                      status = ?,
-                      updated_by = ?,
-                      updated_at = ?
-                  WHERE id_ccb = ?';
-
-        // Parameter yang akan disisipkan ke dalam query
-        $params = [$period_cip, $bal_usd, $bal_rp, $cumbal_usd, $cumbal_rp, $report_status, $status, now(), $id];
-
-        // Melakukan update data di database
-        $result = DB::update($query, $params);
-
-        // Menambahkan log untuk keberhasilan update
-        Log::info('Update berhasil untuk ID: ' . $id);
-
-        // Mengembalikan respons sukses
-        return ['success' => true, 'message' => 'Data berhasil diperbarui!'];
-    } catch (\Exception $e) {
-        // Menambahkan log untuk kesalahan
-        Log::error('Terjadi kesalahan saat memperbarui data. Error: ' . $e->getMessage());
-
-        // Mengembalikan respons gagal
-        return ['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'];
+    public static function updateData($id, $period_cip, $bal_usd, $bal_rp, $cumbal_usd, $cumbal_rp, $report_status, $status, $updated_by)
+    {
+        try {
+            // Query untuk memperbarui data
+            $query = 'UPDATE t_cip_cum_bal
+                      SET period_cip = ?,
+                          bal_usd = ?,
+                          bal_rp = ?,
+                          cumbal_usd = ?,
+                          cumbal_rp = ?,
+                          report_status = ?,
+                          status = ?,
+                          updated_by = ?,
+                          updated_at = ?
+                      WHERE id_ccb = ?';
+    
+            $params = [
+                $period_cip,
+                $bal_usd,
+                $bal_rp,
+                $cumbal_usd,
+                $cumbal_rp,
+                $report_status,
+                $status,
+                $updated_by,  // Harus sesuai dengan tipe data yang diharapkan
+                now(),        // Timestamp untuk updated_at
+                $id
+            ];
+    
+            $result = DB::update($query, $params);
+    
+            Log::info('Update berhasil untuk ID: ' . $id);
+    
+            return ['success' => true, 'message' => 'Data berhasil diperbarui!'];
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat memperbarui data. Error: ' . $e->getMessage());
+    
+            return ['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'];
+        }
     }
-}
+    
 }

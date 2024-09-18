@@ -81,5 +81,7 @@
             @yield('content')
         </main>
     </div>
+    <script src="{{ asset('js/new-entry.js') }}"></script>
+
 </body>
 </html>

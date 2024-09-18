@@ -4,21 +4,42 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CCB;
+use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Log;
 
 class CipCumBalController extends Controller
 {
+    use ValidatesRequests;
+
+    public function __construct()
+    {
+        $this->middleware('auth'); // Pastikan middleware auth diterapkan
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $status = $request->get('status', 1); 
+
+        // Mengambil data berdasarkan status
+        $query = CCB::query()->where('status', $status);
+
         if ($request->ajax()) {
             $query = CCB::query()->where('status', 1);
-    
+
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
-                    $updateBtn = '<button class="btn btn-secondary btn-sm update-btn" data-id="' . $row->id_ccb . '" data-year-month="' . $row->year_month . '" data-balance-usd="' . $row->balance_usd . '" data-balance-rp="' . $row->balance_rp . '" data-cumulative-balance-usd="' . $row->cumulative_balance_usd . '" data-cumulative-balance-rp="' . $row->cumulative_balance_rp . '">Update</button>';
+                    $updateBtn = '<button class="btn btn-secondary btn-sm update-btn" 
+                                data-id="' . $row->id_ccb . '"
+                                data-period="' . $row->period_cip . '"
+                                data-bal-usd="' . $row->bal_usd . '"
+                                data-bal-rp="' . $row->bal_rp . '"
+                                data-cumbal-usd="' . $row->cumbal_usd . '"
+                                data-cumbal-rp="' . $row->cumbal_rp . '">Update</button>';
                     $deleteBtn = '<button class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id_ccb . '">Delete</button>';
                     return $updateBtn . ' ' . $deleteBtn;
                 })
@@ -27,9 +48,9 @@ class CipCumBalController extends Controller
                 })
                 ->rawColumns(['action'])
                 ->make(true);
-    }
+        }
 
-        return view('cipcumbal.index'); // Pastikan path ini sesuai dengan file blade Anda
+        return view('cipcumbal.index');
     }
 
     /**
@@ -45,8 +66,47 @@ class CipCumBalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $validated = $request->validate([
+            'mode' => 'required|in:ADD,UPDATE',
+            'id' => 'required_if:mode,UPDATE|exists:t_cip_cum_bal,id_ccb',
+            'period_cip' => 'required|date_format:Y-m',
+            'bal_usd' => 'required|numeric',
+            'bal_rp' => 'required|numeric',
+            'cumbal_usd' => 'required|numeric',
+            'cumbal_rp' => 'required|numeric',
+        ]);
+
+        $mode = $request->input('mode');
+        $result = match ($mode) {
+            'ADD' => CCB::add(
+                $request->input('period_cip'),
+                $request->input('bal_usd'),
+                $request->input('bal_rp'),
+                $request->input('cumbal_usd'),
+                $request->input('cumbal_rp'),
+                $request->input('report_status', 0),
+                $request->input('status', 1),
+                Auth::id(),
+                Auth::id()
+            ),
+            'UPDATE' => CCB::updateData(
+                $request->input('id'),
+                $request->input('period_cip'),
+                $request->input('bal_usd'),
+                $request->input('bal_rp'),
+                $request->input('cumbal_usd'),
+                $request->input('cumbal_rp'),
+                $request->input('report_status', 0),
+                $request->input('status', 1),
+                Auth::id()
+            ),
+            default => throw new \Exception('Invalid mode specified.')
+        };
+
+        return response()->json($result);
     }
+
 
     /**
      * Display the specified resource.
@@ -80,7 +140,7 @@ class CipCumBalController extends Controller
         $cipCumBal = CCB::findOrFail($id);
         $cipCumBal->status = 0;
         $cipCumBal->save();
-        
+
         return response()->json(['success' => true]);
     }
 }

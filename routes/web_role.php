@@ -6,6 +6,7 @@ use App\Http\Controllers\UserTaskController;
 // Middleware untuk 'super-admin'
 Route::middleware(['role:super-admin'])->group(function () {
     Route::resource('tasks', UserTaskController::class);
+    
     Route::resource('users', UserTaskController::class)->only([
         'index',
         'create',

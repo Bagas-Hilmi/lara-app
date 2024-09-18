@@ -11,7 +11,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/employees', [EmployeeController::class, 'index'])->name('pages.tables');
-Route::resource('cipcumbal', CipCumBalController::class);
+
+Route::middleware('auth')->group(function () {
+    Route::resource('cipcumbal', CipCumBalController::class);
+});
+
 
 // Include template routes
 require base_path('routes/web_template.php');
