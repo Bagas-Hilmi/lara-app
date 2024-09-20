@@ -13,38 +13,45 @@
           <input type="hidden" id="updateId" name="id">
           <input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
 
-          <!-- Year / Month Input -->
-          <div class="mb-3">
-            <label for="yearMonthUpdate" class="form-label">Year / Month</label>
-            <div class="month-input-container">
-                <input type="month" class="form-control" id="yearMonthUpdate" name="period_cip" required>
+          <div class="container-fluid">
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label for="yearMonthUpdate" class="form-label">Year / Month</label>
+                <div class="month-input-container">
+                    <input type="month" class="form-control" id="yearMonthUpdate" name="period_cip" required>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Balance (USD / RP) -->
-          <div class="mb-3 balance-container">
-            <label for="balanceUSDUpdate" class="form-label">Balance (USD / RP)</label>
-            <div class="input-group">
+            <div class="row mb-3 balance-container">
+              <div class="col-md-6">
+                <label for="balanceUSDUpdate" class="form-label">Balance (USD)</label>
                 <div class="input-box">
                     <input type="number" step="any" class="form-control column-input" id="balanceUSDUpdate" name="bal_usd" placeholder="USD" style="text-align: center;" required>
                 </div>
+              </div>
+              <div class="col-md-6">
+                <label for="balanceRPUpdate" class="form-label">Balance (RP)</label>
                 <div class="input-box">
                     <input type="number" step="any" class="form-control column-input" id="balanceRPUpdate" name="bal_rp" placeholder="RP" style="text-align: center;" required>
                 </div>
-            </div>
-          </div>
-
-          <!-- Cumulative Balance (USD / RP) -->
-          <div class="mb-3 cumulative-container">
-              <label for="cumulativeBalanceUSDUpdate" class="form-label">Cumulative Balance (USD / RP)</label>
-              <div class="input-group">
-                  <div class="input-box">
-                      <input type="number" step="any" class="form-control column-input" id="cumulativeBalanceUSDUpdate" name="cumbal_usd" placeholder="USD" style="text-align: center;" required>
-                  </div>
-                  <div class="input-box">
-                      <input type="number" step="any" class="form-control column-input" id="cumulativeBalanceRPUpdate" name="cumbal_rp" placeholder="RP" style="text-align: center;" required>
-                  </div>
               </div>
+            </div>
+
+            <div class="row mb-3 cumulative-container">
+              <div class="col-md-6">
+                <label for="cumulativeBalanceUSDUpdate" class="form-label">Cumulative Balance (USD)</label>
+                <div class="input-box">
+                    <input type="number" step="any" class="form-control column-input" id="cumulativeBalanceUSDUpdate" name="cumbal_usd" placeholder="USD" style="text-align: center;" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="cumulativeBalanceRPUpdate" class="form-label">Cumulative Balance (RP)</label>
+                <div class="input-box">
+                    <input type="number" step="any" class="form-control column-input" id="cumulativeBalanceRPUpdate" name="cumbal_rp" placeholder="RP" style="text-align: center;" required>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>

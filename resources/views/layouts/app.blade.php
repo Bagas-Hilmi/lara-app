@@ -19,12 +19,16 @@
     
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://kit.fontawesome.com/8d131a8fb2.js" crossorigin="anonymous"></script>
 
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <button id="sidebarToggle" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
@@ -76,8 +80,7 @@
                 </div>
             </div>
         </nav>
-
-        <main class="py-4">
+        <main class="main-content py-4">
             @yield('content')
         </main>
     </div>

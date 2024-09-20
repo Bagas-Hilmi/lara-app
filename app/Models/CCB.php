@@ -43,7 +43,9 @@ class CCB extends Model
         FORMAT(bal_rp, 2) AS bal_rp, 
         FORMAT(cumbal_usd, 2) AS cumbal_usd, 
         FORMAT(cumbal_rp, 2) AS cumbal_rp, 
-        report_status
+        report_status,
+        DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at,
+        DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s') AS updated_at  
     FROM t_cip_cum_bal
     WHERE status = 1
     ORDER BY period_cip ASC";

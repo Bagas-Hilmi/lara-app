@@ -37,6 +37,8 @@
                                                 <th align="center">Cumbal USD</th>
                                                 <th align="center">Cumbal RP</th>
                                                 <th align="center">Report Status</th>
+                                                <th align="center">Created At</th>
+                                                <th align="center">Updated At</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -49,8 +51,8 @@
             </div>
             <x-plugins></x-plugins>
 
-            @include('modal.new-entry')
-            @include('modal.update-entry')
+            @include('cipcumbal.modal.new-entry')
+            @include('cipcumbal.modal.update-entry')
 
             @push('css')
             <link rel="stylesheet" href="https://cdn.datatables.net/2.1.6/css/dataTables.dataTables.css" />           
@@ -59,6 +61,8 @@
             @push('js')
             <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
             <script src="https://cdn.datatables.net/2.1.5/js/dataTables.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
             
             <script src="{{ asset('js/new-entry.js') }}"></script>
             <script src="{{ asset('js/update-entry.js') }}"></script>
@@ -76,6 +80,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
+                        order: [[8, 'desc']],
                         ajax: {
                             url: "{{ route('cipcumbal.index') }}",
                             type: 'GET',
@@ -86,17 +91,17 @@
                             }
                         },
                         columns: [
-                            {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
-                            {data: 'id_ccb', name: 'id_ccb', className: 'text-center'},
-                            {data: 'period_cip', name: 'period_cip', className: 'text-center'},
-
+                            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
+                            { data: 'id_ccb', name: 'id_ccb', className: 'text-center' },
+                            { data: 'period_cip', name: 'period_cip', className: 'text-center' },
+                            
                             {
                                 data: 'bal_usd', 
                                 name: 'bal_usd', 
-                                className: 'text-center',
-                                render: function(data, type, row) {
+                                className: 'text-right', 
+                                render: function(data, type) {
                                     if (type === 'display') {
-                                        return parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                     }
                                     return data;
                                 }
@@ -104,10 +109,10 @@
                             {
                                 data: 'bal_rp', 
                                 name: 'bal_rp', 
-                                className: 'text-center',
-                                render: function(data, type, row) {
+                                className: 'text-right', 
+                                render: function(data, type) {
                                     if (type === 'display') {
-                                        return parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                                     }
                                     return data;
                                 }
@@ -115,10 +120,10 @@
                             {
                                 data: 'cumbal_usd', 
                                 name: 'cumbal_usd', 
-                                className: 'text-center',
-                                render: function(data, type, row) {
+                                className: 'text-right', 
+                                render: function(data, type) {
                                     if (type === 'display') {
-                                        return parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                                     }
                                     return data;
                                 }
@@ -126,23 +131,41 @@
                             {
                                 data: 'cumbal_rp', 
                                 name: 'cumbal_rp', 
-                                className: 'text-center',
-                                render: function(data, type, row) {
+                                className: 'text-right', 
+                                render: function(data, type) {
                                     if (type === 'display') {
-                                        return parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                                     }
                                     return data;
                                 }
                             },
-
-                            {data: 'report_status', name: 'report_status', className: 'text-center'}
+                            
+                            { data: 'report_status', name: 'report_status', className: 'text-center' },
+                            {
+                                data: 'created_at', 
+                                name: 'created_at', 
+                                className: 'text-center', 
+                                render: function(data) {
+                                    return moment(data).format('YYYY-MM-DD HH:mm:ss'); // jika menggunakan moment.js
+                                }
+                            },
+                            {
+                                data: 'updated_at', 
+                                name: 'updated_at', 
+                                className: 'text-center', 
+                                render: function(data) {
+                                    return moment(data).format('YYYY-MM-DD HH:mm:ss'); // jika menggunakan moment.js
+                                }
+                            }
                         ]
+
                     });
 
                     // Event listener untuk filter tahun
                     $('#yearFilter').change(function() {
                         table.ajax.reload();
                     });
+                    
                                     
                     // Event klik tombol delete
                     $('#cipCumBalTable').on('click', '.delete-btn', function() {
@@ -160,6 +183,8 @@
                 });
             </script>
             @endpush
+            <script src="{{ asset('/js/tooltip.js') }}"></script>
+
         </div>
     </main>
 </x-layout>

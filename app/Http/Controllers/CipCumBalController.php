@@ -38,18 +38,10 @@ class CipCumBalController extends Controller
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
-                    $updateBtn = '<button class="btn btn-secondary btn-sm update-btn" 
-                            data-id="' . $row->id_ccb . '"
-                            data-period="' . $row->period_cip . '"
-                            data-bal-usd="' . $row->bal_usd . '"
-                            data-bal-rp="' . $row->bal_rp . '"
-                            data-cumbal-usd="' . $row->cumbal_usd . '"
-                            data-cumbal-rp="' . $row->cumbal_rp . '">Update</button>';
-                    $deleteBtn = '<button class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id_ccb . '">Delete</button>';
-                    return $updateBtn . ' ' . $deleteBtn;
+                    return view('cipcumbal/datatables.actionbtn', ['row' => $row]);
                 })
                 ->editColumn('report_status', function ($row) {
-                    return $row->report_status == 0 ? 'Belum Di Export' : 'Sudah Di Export';
+                    return $row->report_status == 0 ? 'Unreleased' : 'Release';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
