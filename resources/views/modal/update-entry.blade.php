@@ -1,6 +1,6 @@
 <!-- Modal Update -->
 <div class="modal fade" id="update-form" tabindex="-1" aria-labelledby="updateFormLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header" style="background-color: #42bd37;">
         <h5 class="modal-title" id="updateFormLabel" style="color: white;">Update Entry Cip Cumulative Balance</h5>
@@ -13,24 +13,38 @@
           <input type="hidden" id="updateId" name="id">
           <input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
 
-          <!-- Form fields as before -->
+          <!-- Year / Month Input -->
           <div class="mb-3">
-            <label for="yearMonth" class="form-label">Year / Month</label>
-            <input type="month" class="form-control" id="yearMonthUpdate" name="period_cip" required>
-          </div>
-          <div class="mb-3">
-            <label for="balanceUSD" class="form-label">Balance (USD / RP)</label>
-            <div class="input-group">
-              <input type="number" step="any" class="form-control" id="balanceUSDUpdate" name="bal_usd" placeholder="USD" style="text-align: center;" required>
-              <input type="number" step="any" class="form-control" id="balanceRPUpdate" name="bal_rp" placeholder="RP" style="text-align: center;" required>
+            <label for="yearMonthUpdate" class="form-label">Year / Month</label>
+            <div class="month-input-container">
+                <input type="month" class="form-control" id="yearMonthUpdate" name="period_cip" required>
             </div>
           </div>
-          <div class="mb-3">
-            <label for="cumulativeBalanceUSD" class="form-label">Cumulative Balance (USD / RP)</label>
+
+          <!-- Balance (USD / RP) -->
+          <div class="mb-3 balance-container">
+            <label for="balanceUSDUpdate" class="form-label">Balance (USD / RP)</label>
             <div class="input-group">
-              <input type="number" step="any" class="form-control" id="cumulativeBalanceUSDUpdate" name="cumbal_usd" placeholder="USD" style="text-align: center;" required>
-              <input type="number" step="any" class="form-control" id="cumulativeBalanceRPUpdate" name="cumbal_rp" placeholder="RP" style="text-align: center;" required>
+                <div class="input-box">
+                    <input type="number" step="any" class="form-control column-input" id="balanceUSDUpdate" name="bal_usd" placeholder="USD" style="text-align: center;" required>
+                </div>
+                <div class="input-box">
+                    <input type="number" step="any" class="form-control column-input" id="balanceRPUpdate" name="bal_rp" placeholder="RP" style="text-align: center;" required>
+                </div>
             </div>
+          </div>
+
+          <!-- Cumulative Balance (USD / RP) -->
+          <div class="mb-3 cumulative-container">
+              <label for="cumulativeBalanceUSDUpdate" class="form-label">Cumulative Balance (USD / RP)</label>
+              <div class="input-group">
+                  <div class="input-box">
+                      <input type="number" step="any" class="form-control column-input" id="cumulativeBalanceUSDUpdate" name="cumbal_usd" placeholder="USD" style="text-align: center;" required>
+                  </div>
+                  <div class="input-box">
+                      <input type="number" step="any" class="form-control column-input" id="cumulativeBalanceRPUpdate" name="cumbal_rp" placeholder="RP" style="text-align: center;" required>
+                  </div>
+              </div>
           </div>
         </form>
       </div>

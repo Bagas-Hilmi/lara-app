@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CCB;
-use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class CipCumBalController extends Controller
 {
@@ -23,35 +22,42 @@ class CipCumBalController extends Controller
      */
     public function index(Request $request)
     {
-        $status = $request->get('status', 1); 
-
-        // Mengambil data berdasarkan status
-        $query = CCB::query()->where('status', $status);
+        $availableYears = DB::table('t_cip_cum_bal')
+            ->selectRaw('DISTINCT LEFT(period_cip, 4) as year')
+            ->orderBy('year', 'desc')
+            ->pluck('year');
 
         if ($request->ajax()) {
-            $query = CCB::query()->where('status', 1);
+            $status = $request->get('status', 1);
+            $query = CCB::query()->where('status', $status);
+
+            // Filter berdasarkan tahun yang dipilih
+            if ($request->has('year') && !empty($request->year)) {
+                $query->where('period_cip', 'LIKE', $request->year . '-%');
+            }
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
                     $updateBtn = '<button class="btn btn-secondary btn-sm update-btn" 
-                                data-id="' . $row->id_ccb . '"
-                                data-period="' . $row->period_cip . '"
-                                data-bal-usd="' . $row->bal_usd . '"
-                                data-bal-rp="' . $row->bal_rp . '"
-                                data-cumbal-usd="' . $row->cumbal_usd . '"
-                                data-cumbal-rp="' . $row->cumbal_rp . '">Update</button>';
+                            data-id="' . $row->id_ccb . '"
+                            data-period="' . $row->period_cip . '"
+                            data-bal-usd="' . $row->bal_usd . '"
+                            data-bal-rp="' . $row->bal_rp . '"
+                            data-cumbal-usd="' . $row->cumbal_usd . '"
+                            data-cumbal-rp="' . $row->cumbal_rp . '">Update</button>';
                     $deleteBtn = '<button class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id_ccb . '">Delete</button>';
                     return $updateBtn . ' ' . $deleteBtn;
                 })
                 ->editColumn('report_status', function ($row) {
-                    return $row->report_status == 0 ? 'Belum DiRilis' : 'Sudah DiRilis';
+                    return $row->report_status == 0 ? 'Belum Di Export' : 'Sudah Di Export';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('cipcumbal.index');
+        return view('cipcumbal.index', compact('availableYears'));
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -51,12 +51,12 @@ Route::middleware('auth')->group(function () {
     })->name('static-sign-up');
 });
 
-Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
-    Route::get('user-management', function () {
-        return view('pages.laravel-examples.user-management');
-    })->name('user-management');
+    Route::middleware(['auth', 'role:super-admin,admin'])->group(function () {
+        Route::get('user-management', function () {
+            return view('pages.laravel-examples.user-management');
+        })->name('user-management');
 
-    Route::get('user-profile', function () {
-        return view('pages.laravel-examples.user-profile');
-    })->name('user-profile');
-});
+        Route::get('user-profile', function () {
+            return view('pages.laravel-examples.user-profile');
+        })->name('user-profile');
+    });
