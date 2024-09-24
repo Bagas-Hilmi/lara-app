@@ -55,29 +55,6 @@
   </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const numberInputs = document.querySelectorAll('input[type="text"]');
-
-        numberInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                // Menghapus semua karakter yang bukan angka dan koma
-                let value = this.value.replace(/[^0-9,]/g, '');
-
-                // Memformat value agar tetap terlihat baik
-                this.value = value;
-            });
-
-            input.addEventListener('blur', function() {
-                // Format saat fokus hilang (blur)
-                let value = this.value.replace(/,/g, ''); // Menghapus koma
-                if (value) {
-                    this.value = parseFloat(value).toFixed(2); // Format menjadi 2 desimal
-                }
-            });
-        });
-    });
-</script>
 
 <style>
   

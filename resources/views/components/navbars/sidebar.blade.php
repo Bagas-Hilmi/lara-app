@@ -23,7 +23,6 @@
 
             
 
-            @if($user && ($user->hasRole('super-admin') || $user->hasRole('admin')))
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'user-profile' ? 'active bg-gradient-primary' : '' }} "
                         href="{{ route('user-profile') }}">
@@ -42,7 +41,6 @@
                         <span class="nav-link-text ms-1">User Management</span>
                     </a>
                 </li>
-            @endif
 
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Pages</h6>
@@ -56,6 +54,16 @@
                     </div>
                     <span class="nav-link-text ms-1">Cip Cumulative Balance</span>
                 </a>
+            </li>  
+
+            <li class="nav-item">
+                <a class="nav-link text-white {{ $activePage == 'UP-Doc FGLB + ZLIS1' ? ' active bg-gradient-primary' : '' }} "
+                    href="{{ route('faglb.index') }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-heart"></i> 
+                    </div>
+                    <span class="nav-link-text ms-1">UP-Doc FGLB + ZLIS1</span>
+                </a>
             </li>   
             
             <li class="nav-item">
@@ -65,26 +73,6 @@
                         <i class="material-icons opacity-10">dashboard</i>
                     </div>
                     <span class="nav-link-text ms-1">Dashboard</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'tables' ? ' active bg-gradient-primary' : '' }} "
-                    href="{{ route('tables') }}">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">table_view</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Tables</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'notifications' ? ' active bg-gradient-primary' : '' }}  "
-                    href="{{ route('notifications') }}">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">notifications</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Notifications</span>
                 </a>
             </li>
         </ul>

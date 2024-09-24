@@ -123,6 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => [
+        'Role' => Laratrust\Models\Role::class,
+        'Auth' => Illuminate\Support\Facades\Auth::class,
+
+    ],
+
     
+
+
+
+
 
 ];

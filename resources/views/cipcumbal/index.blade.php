@@ -10,7 +10,7 @@
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                                <h6 class="text-white text-capitalize ps-3">Cip Cumulative Balance</h6>
+                                <h2 class="text-white text-capitalize ps-3">Cip Cumulative Balance</h2>
                             </div>
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between mb-2">
@@ -55,12 +55,12 @@
             @include('cipcumbal.modal.update-entry')
 
             @push('css')
-            <link rel="stylesheet" href="https://cdn.datatables.net/2.1.6/css/dataTables.dataTables.css" />           
+            <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
             @endpush
 
             @push('js')
-            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-            <script src="https://cdn.datatables.net/2.1.5/js/dataTables.min.js"></script>
+            <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+            <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
             
@@ -201,7 +201,7 @@
     }
     
     .btn-year-filter:hover {
-        background-color: #df3f3f;
+        background-color: #000000;
         color: #ffffff;
         border-color: #ffffff;
     }

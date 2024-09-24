@@ -142,62 +142,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-        <!-- End Navbar -->
-        <div class="container-fluid py-4">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card my-4">
-                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                                <h6 class="text-white text-capitalize ps-3">Employee table</h6>
-                            </div>
-                            <div class="card-body px-0 pb-2">
-                                <div class="table-responsive p-0">
-                                    <table id="employeesTable" class="table table-striped nowrap table-responsive p-0" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Birth Date</th>
-                                                <th>Hired On</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </div>                   
                 <x-footers.auth></x-footers.auth>
-            </div>
-            <x-plugins></x-plugins>
-            @push('css')
-            <link href="https://cdn.jsdelivr.net/npm/simple-datatables@3.0.2/dist/style.css" rel="stylesheet" type="text/css">
-            @endpush
-        
-            @push('js')
-            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-            <script src="https://cdn.datatables.net/2.1.5/js/dataTables.min.js"></script>
-            <script>
-                
-                $(document).ready(function() {
-                    $('#employeesTable').DataTable({
-                        processing: true,
-                        serverSide: true,
-                        ajax: '{{ route('pages.tables') }}',
-                        columns: [
-                            { data: 'id', name: 'id' },
-                            { data: 'name', name: 'name' },
-                            { data: 'position', name: 'position' },
-                            { data: 'birth_date', name: 'birth_date' },
-                            { data: 'hired_on', name: 'hired_on' }
-                        ],
-                        responsive: true
-                    });
-                });
-            </script>
-            @endpush
+            <x-plugins></x-plugins>     
         </x-layout>

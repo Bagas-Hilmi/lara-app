@@ -203,7 +203,6 @@
         </div>
     </main>
     <x-plugins></x-plugins>
-    @include('modal.new-user-modal')
-    @include('modal.edit-modal')
+
 
 </x-layout>

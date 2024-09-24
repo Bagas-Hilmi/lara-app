@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -27,7 +28,7 @@ class LoginController extends Controller
     // Fungsi login (dari SessionsController)
     public function create()
     {
-        return view('sessions.create');
+        return view('auth.login');
     }
 
     public function store(Request $request)

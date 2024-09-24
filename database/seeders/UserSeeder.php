@@ -18,12 +18,56 @@ class UserSeeder extends Seeder
         $password = Hash::make('Admin123++');
 
         $admin = new User ;
-        $admin->name = "bagazz";
-        $admin->email = "bagaz3@gmail.com";
+        $admin->name = "Santo Wijaya";
+        $admin->email = "santo.wijaya@ecogreenoleo.com";
         $admin->password = $password;
         $admin->save();
-        $admin->addRole('viewer');
+        $admin->addRole('super-admin');
+        $admin->givePermission('task-create');
         $admin->givePermission('task-read');
-        
+        $admin->givePermission('task-update');
+        $admin->givePermission('task-delete');
+        $admin->givePermission('task-approve');
+        $admin->givePermission('task-acknowledge');
+        $admin->givePermission('user-create');
+        $admin->givePermission('user-read');
+        $admin->givePermission('user-update');
+        $admin->givePermission('user-delete');
+
+        // Manager
+        $password = Hash::make('Jimmy_eo456++');
+
+        $admin = new User ;
+        $admin->name = "Jimmy";
+        $admin->email = "jimmy@ecogreenoleo.com";
+        $admin->password = $password;
+        $admin->save();
+        $admin->addRole('manager');
+        $admin->givePermission('task-create');
+        $admin->givePermission('task-read');
+        $admin->givePermission('task-update');
+        $admin->givePermission('task-approve');
+        $admin->givePermission('task-acknowledge');
+        $admin->givePermission('user-create');
+        $admin->givePermission('user-read');
+        $admin->givePermission('user-update');
+
+        // Admin
+        $password = Hash::make('Rofita_eo935++');
+
+        $admin = new User ;
+        $admin->name = "Rofita Sari";
+        $admin->email = "rofita.sari@ecogreenoleo.com";
+        $admin->password = $password;
+        $admin->save();
+        $admin->addRole('admin');
+        $admin->givePermission('task-create');
+        $admin->givePermission('task-read');
+        $admin->givePermission('task-update');
+        $admin->givePermission('task-approve');
+        $admin->givePermission('task-acknowledge');
+        $admin->givePermission('user-create');
+        $admin->givePermission('user-read');
+        $admin->givePermission('user-update');
     }
 }
