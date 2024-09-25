@@ -81,11 +81,12 @@
         </nav>
         <main class="main-content py-4">
             @yield('content')
-            @stack('js')   <!-- JS akan di-load di sini -->
+            @stack('js')  
+            @stack('css') <!-- JS akan di-load di sini -->
 
         </main>
     </div>
-    <script src="{{ asset('js/new-entry.js') }}"></script>
+    
 
 </body>
 </html>

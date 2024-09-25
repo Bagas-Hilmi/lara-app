@@ -12,7 +12,10 @@ class Faglb extends Model
 {
     use HasFactory;
 
-    protected $table = 't_faglb_head';
+    protected $table = 't_faglb_head'; // Nama tabel
+    protected $primaryKey = 'id_head'; // Atur primary key jika bukan 'id'
+    public $timestamps = true; // Jika Anda menggunakan timestamps
+
 
     protected $dates = ['deleted_at'];
 
@@ -55,5 +58,15 @@ class Faglb extends Model
             ]);
 
         return $query; // Mengembalikan hasil query (berhasil atau tidak)
+    }
+
+    public function faglbTails()
+    {
+        return $this->hasMany(FaglbTail::class, 'id_head');
+    }
+
+    public function zlis1Tails()
+    {
+        return $this->hasMany(Zlis1Tail::class, 'id_head');
     }
 }

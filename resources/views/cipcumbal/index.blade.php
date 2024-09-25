@@ -62,8 +62,8 @@
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+            <script src="{{ asset('/js/tooltip.js') }}"></script>
 
-            
             <script src="{{ asset('js/new-entry.js') }}"></script>
             <script src="{{ asset('js/update-entry.js') }}"></script>
 
@@ -183,7 +183,6 @@
                 });
             </script>
             @endpush
-            <script src="{{ asset('/js/tooltip.js') }}"></script>
 
         </div>
     </main>

@@ -8,6 +8,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CipCumBalController extends Controller
 {
@@ -22,6 +23,7 @@ class CipCumBalController extends Controller
      */
     public function index(Request $request)
     {
+
         $availableYears = DB::table('t_cip_cum_bal')
             ->selectRaw('DISTINCT LEFT(period_cip, 4) as year')
             ->orderBy('year', 'desc')
@@ -35,6 +37,8 @@ class CipCumBalController extends Controller
             if ($request->has('year') && !empty($request->year)) {
                 $query->where('period_cip', 'LIKE', $request->year . '-%');
             }
+            
+            Log::info($query->toSql(), $query->getBindings());
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
@@ -47,7 +51,7 @@ class CipCumBalController extends Controller
                 ->make(true);
         }
 
-        return view('cipcumbal.index', compact('availableYears'));
+        return view('cipcumbal.index')->with('availableYears', $availableYears);
     }
 
 
@@ -142,3 +146,4 @@ class CipCumBalController extends Controller
         return response()->json(['success' => true]);
     }
 }
+

@@ -7,41 +7,43 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 @if (session('success'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('success') }}
-                </div>
-            @endif
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
-            @if (session('error'))
-                <div class="alert alert-danger" role="alert">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-                <form id="addDocForm" action="{{ route('cipcumbal.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="addDocForm" action="{{ route('faglb.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <input type="hidden" name="period" id="selectedPeriod" value="">
                     <input type="hidden" name="id_ccb" id="selectedIdCcb" value="">
-                    @csrf
+                    
                     <div class="container-fluid">
-
-                        <div class="dropdown">
+                        <div class="dropdown mb-3">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 Pilih Period
                             </button>
                             <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown">
+                                <!-- Daftar periode akan diisi di sini -->
                             </ul>
                         </div>
                         
                         <div class="row mb-3">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12">
                                 <label class="form-label" for="faglb">FAGLB</label>
-                                <input type="file" class="form-control custom-file-input" id="faglb" name="faglb" required>
+                                <input type="file" class="form-control" id="faglb" name="faglb" required>
                             </div>
-                            <div class="col-md-6 mb-3">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
                                 <label class="form-label" for="zlis1">ZLIS1</label>
-                                <input type="file" class="form-control custom-file-input" id="zlis1" name="zlis1" required>
+                                <input type="file" class="form-control" id="zlis1" name="zlis1" required>
                             </div>
                         </div>
                     </div>
@@ -54,6 +56,7 @@
         </div>
     </div>
 </div>
+
 
 <style>
     /* Container for month input */

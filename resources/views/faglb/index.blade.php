@@ -1,5 +1,5 @@
 <x-layout bodyClass="g-sidenav-show  bg-gray-200">
-    <x-navbars.sidebar activePage="UP-Doc FGLB + ZLIS1"></x-navbars.sidebar>
+    <x-navbars.sidebar activePage="UPDOC"></x-navbars.sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <x-navbars.navs.auth titlePage="UP-Doc FGLB + ZLIS1"></x-navbars.navs.auth>
@@ -52,10 +52,9 @@
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
             
             <script src="{{ asset('js/add-doc.js') }}"></script>
-
-       
 
             <script>
                 $(document).ready(function() {
@@ -75,19 +74,50 @@
                         },
                         columns: [
                             {data: 'action', name: 'action', orderable: false, searchable: false},
-                            {data: 'id_head', name: 'id_head'},
-                            {data: 'id_ccb', name: 'id_ccb'},
-                            {data: 'period', name: 'period'},
-                            {data: 'report_status', name: 'report_status'},
-                            {data: 'created_at', name: 'created_at'},
-                            {data: 'updated_at', name: 'updated_at'}
+                            {data: 'id_head', name: 'id_head', className: 'text-center'},
+                            {data: 'id_ccb', name: 'id_ccb', className: 'text-center'},
+                            {data: 'period', name: 'period', className: 'text-center'},
+                            {data: 'report_status', name: 'report_status', className: 'text-center',                         },
+                            {
+                                data: 'created_at', 
+                                name: 'created_at', 
+                                className: 'text-center', 
+                                render: function(data) {
+                                    return moment(data).format('YYYY-MM-DD HH:mm:ss'); // jika menggunakan moment.js
+                                }
+                            },
+                            {
+                                data: 'updated_at', 
+                                name: 'updated_at', 
+                                className: 'text-center', 
+                                render: function(data) {
+                                    return moment(data).format('YYYY-MM-DD HH:mm:ss'); // jika menggunakan moment.js
+                                }
+                            }
                         ],
-                    });      
-                });
+                    });   
+                        // Event listener for delete button
+                        $('#faglb-table').on('click', '.delete-btn', function() {
+                            var id = $(this).data('id');  // Ambil ID dari data-id
+                            if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+                                $.ajax({
+                                    url: '/faglb/' + id,  // Ganti dengan URL yang sesuai untuk penghapusan
+                                    type: 'POST',  // Menggunakan POST
+                                    data: {
+                                        _method: 'DELETE'  // Mengindikasikan metode DELETE
+                                    },
+                                    success: function(result) {
+                                        table.ajax.reload();  // Reload tabel
+                                    },
+                                    error: function(xhr) {
+                                        alert('Terjadi kesalahan saat menghapus item: ' + xhr.responseText);
+                                    }
+                                });
+                            }
+                        });
+                    });
             </script>
-            
-
-        
+            @endpush     
         </div>
     </main>
 </x-layout>

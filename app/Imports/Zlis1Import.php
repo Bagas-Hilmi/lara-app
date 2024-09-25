@@ -10,34 +10,42 @@ class Zlis1Import implements ToModel
     public function model(array $row)
     {
         return new Zlis1Tail([
-            'WBS Element' => $row[0],  // WBS Element
-            'Network' => $row[1],  // Network
-            'Document Number' => $row[2],  // Document Number
-            'Company Code' => $row[3],  // Company Code
-            'Fiscal Year' => $row[4],  // Fiscal Year
-            'Item' => $row[5],  // Item
-            'Material Document' => $row[6],  // Material Document
-            'Material Doc. Year' => $row[7],  // Material Doc. Year
-            'Material' => $row[8],  // Material
-            'Description' => $row[9],  // Description
-            'Quantity' => $row[10],  // Quantity
-            'Base Unit of Measure' => $row[11],  // Base Unit of Measure
-            'Value TranCurr' => $row[12],  // Value TranCurr
-            'Currency' => $row[13],  // Currency
-            'Document Date' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[14]),  // Document Date
-            'Posting Date' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[15]),  // Posting Date
-            'Purchasing Document' => $row[16],  // Purchasing Document
-            'Supplier' => $row[17],  // Supplier
-            'Name 1' => $row[18],  // Name 1
-            'Asset' => $row[19],  // Asset
-            'Sub-number' => $row[20],  // Sub-number
-            'Cost Center' => $row[21],  // Cost Center
-            'G/L Account' => $row[22],  // G/L Account
-            'User Name' => $row[23],  // User Name
-            'Reversed with' => $row[24],  // Reversed with
-            'WBS level 2' => $row[25],  // WBS level 2
-            'WBS Element' => $row[26],  // WBS Element
-            'period' => $row[27],  // Period dari form input
+            'wbs_element' => $row[0],  
+            'network' => $row[1],  
+            'document_number' => $row[2],  
+            'company_code' => $row[3],
+            'fiscal_year' => $row[4],
+            'item' => $row[5], 
+            'material_document' => $row[6],
+            'material_doc_year' => $row[7],
+            'material' => $row[8],
+            'description' => $row[9],
+            'quantity' => $row[10], 
+            'base_unit_of_measure' => $row[11],
+            'value_tran_curr_1' => $row[12],
+            'currency' => $row[13],
+            'value_tran_curr_2' => $row[14],
+            'currency_2' => $row[15],
+            'value_tran_curr_3' => $row[16],
+            'currency_3' => $row[17],
+            'document_date' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[18])->format('Y-m-d'),
+            'posting_date' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[19])->format('Y-m-d'),
+            'purchasing_document' => $row[20],
+            'supplier' => $row[21],
+            'name_1' => $row[22],
+            'asset' => $row[23],
+            'sub_number' => $row[24],
+            'cost_center' => $row[25],
+            'gl_account' => $row[26],
+            'document_number_2' => $row[27],
+            'company_code_2' => $row[28],
+            'fiscal_year_2' => $row[29],
+            'document_date_2' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[30])->format('Y-m-d'),
+            'posting_date_2' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[31])->format('Y-m-d'),
+            'user_name' => $row[32],
+            'reversed_with' => $row[33],
+            'wbs_level_2' => $row[34],
+            'wbs_element_2' => $row[35],
         ]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\FaglbTail; // Ganti dengan model yang sesuai
+use App\Models\FaglbTail; 
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class FaglbImport implements ToModel

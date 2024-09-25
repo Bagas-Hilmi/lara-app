@@ -16,6 +16,9 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::resource('faglb', FaglbController::class);
+    Route::get('/faglb/{id}/show', [FaglbController::class, 'show'])->name('faglb.show');
+    Route::get('/faglb/zlis1/{id}', [FaglbController::class, 'showZlis1'])->name('faglb.zlis1');
+
 });
 
 

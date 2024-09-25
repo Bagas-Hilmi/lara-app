@@ -15,9 +15,15 @@ use Illuminate\Support\Facades\Log;
 
 class FaglbController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth'); // Pastikan middleware auth diterapkan
+    }
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -51,9 +57,6 @@ class FaglbController extends Controller
             ->where('report_status', 1)
             ->get();
 
-        // Tambahkan log untuk memeriksa hasil query
-        Log::info('Periods:', $periods->toArray());
-
         return response()->json(['periods' => $periods]);
     }
 
@@ -62,8 +65,6 @@ class FaglbController extends Controller
      */
     public function store(Request $request)
     {
-
-
         // Validasi data jika diperlukan
         $request->validate([
             'faglb' => 'required|file|mimes:xlsx,xls,csv',
@@ -72,44 +73,36 @@ class FaglbController extends Controller
             'id_ccb' => 'required',
         ]);
 
-
-        Log::info('Table structure', [
-            'faglb' => DB::getSchemaBuilder()->getColumnListing('t_faglb_tail'),
-            'zlis1' => DB::getSchemaBuilder()->getColumnListing('t_zlis1_tail')
-        ]);
-
-        if ($request->hasFile('faglb')) {
-            Log::info('FAGLB file uploaded.', ['file' => $request->file('faglb')->getClientOriginalName()]);
-        } else {
-            Log::error('No FAGLB file uploaded.');
-        }
-
-        // Cek apakah file ZLIS1 diupload
-        if ($request->hasFile('zlis1')) {
-            Log::info('ZLIS1 file uploaded.', ['file' => $request->file('zlis1')->getClientOriginalName()]);
-        } else {
-            Log::error('No ZLIS1 file uploaded.');
-        }
-
-
+        // Simpan metadata ke tabel t_faglb_head
         $faglbHead = new Faglb();
         $faglbHead->period = $request->input('period');
         $faglbHead->id_ccb = $request->input('id_ccb');
         $faglbHead->save();
 
-        $this->importFaglb($request->file('faglb'), $faglbHead->id_head);
+        // Simpan file yang diupload
+        $faglbFilePath = $request->file('faglb')->store('uploads/faglb');
 
-        // Panggil fungsi untuk memproses file ZLIS1
-        $this->importZlis1($request->file('zlis1'), $faglbHead->id_head);
+        // Mengimpor data dari file Excel
+        $faglbData = Excel::toArray(new FaglbImport(), $faglbFilePath);
 
-        return redirect()->back()->with('success', 'Documents uploaded successfully.');
+        // Mengimpor data dengan ID yang benar
+        $this->importFaglb($faglbFilePath, $faglbHead->id_head);
+
+        $zlis1FilePath = $request->file('zlis1')->store('uploads/zlis1'); // Pastikan nama input sesuai
+
+        $zlis1Data = Excel::toArray(new Zlis1Import(), $zlis1FilePath); // Anda perlu membuat class Zlis1Import
+
+        $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
+
+
+        // Mengembalikan response sukses
+        return redirect()->back()->with('success', 'Data FAGLB dan ZLIS1 berhasil diimpor!');
     }
 
-    private function importFaglb($file, $id_head)
+    public function importFaglb($file, $id_head)
     {
         if ($file) {
             $faglbData = Excel::toArray(new FaglbImport, $file);
-            Log::info('FAGLB data read from Excel', ['count' => count($faglbData[0])]);
 
             // Ambil data dari sheet pertama
             $faglbRows = $faglbData[0];
@@ -118,41 +111,38 @@ class FaglbController extends Controller
             array_shift($faglbRows);
 
             foreach ($faglbRows as $index => $row) {
-                try { // Asumsikan bahwa kolom pada array $row sudah sesuai dengan urutan header
-                    DB::table('t_faglb_tail')->insert([
-                        'Asset' => $row[0],
-                        'Sub-number' => $row[1],
-                        'Posting Date' => \Carbon\Carbon::parse($row[2])->format('Y-m-d'), // Mengubah format tanggal jika perlu
-                        'Document Number' => $row[3],
-                        'Reference Key' => $row[4],
-                        'Material' => $row[5],
-                        'Business Area' => $row[6],
-                        'Quantity' => $row[7],
-                        'Base Unit of Measure' => $row[8],
-                        'Document Type' => $row[9],
-                        'Posting Key' => $row[10],
-                        'Document currency' => $row[11],
-                        'Amount in doc. curr.' => $row[12],
-                        'Local Currency' => $row[13],
-                        'Amount in LC' => $row[14],
-                        'Local Currency 2' => $row[15],
-                        'Amount in loc.curr.2' => $row[16],
-                        'Text' => $row[17],
-                        'Assignment' => $row[18],
-                        'Profit Center' => $row[19],
-                        'WBS element' => $row[20],
-                        'id_head' => $id_head, // Tambahkan foreign key id_head
-                    ]);
-                    Log::info("Row $index inserted successfully");
-                } catch (\Exception $e) {
-                    Log::error("Error inserting row $index: " . $e->getMessage());
-                }
+                // Pastikan format tanggal dan nilai yang valid
+                $postingDate = \Carbon\Carbon::parse($row[2])->format('Y-m-d');
+
+                DB::table('t_faglb_tail')->insert([
+                    'id_head' => $id_head,
+                    'Asset' => $row[0],
+                    'sub_number' => $row['2'],
+                    'posting_date' => \Carbon\Carbon::parse($row[2])->format('Y-m-d'),
+                    'document_number' => $row[3],
+                    'reference_key' => $row[4],
+                    'material' => $row[5],
+                    'business_area' => $row[6],
+                    'quantity' => $row[7],
+                    'base_unit_of_measure' => $row[8],
+                    'document_type' => $row[9],
+                    'posting_key' => $row[10],
+                    'document_currency' => $row[11],
+                    'amount_in_doc_curr' => $row[12],
+                    'local_currency' => $row[13],
+                    'amount_in_lc' => $row[14],
+                    'local_currency_2' => $row[15],
+                    'amount_in_loc_curr_2' => $row[16],
+                    'text' => $row[17],
+                    'assignment' => $row[18],
+                    'profit_center' => $row[19],
+                    'wbs_element' => $row[20],
+                ]);
             }
         }
     }
 
-
-    private function importZlis1($file, $id_head)
+    public function importZlis1($file, $id_head)
     {
         if ($file) {
             // Import data ZLIS1
@@ -165,7 +155,12 @@ class FaglbController extends Controller
                     continue; // Skip the header row
                 }
 
+                Log::info($row);
+
+
+
                 DB::table('t_zlis1_tail')->insert([
+                    'id_head' => $id_head,
                     'wbs_element' => $row[0],
                     'network' => $row[1],
                     'document_number' => $row[2],
@@ -173,19 +168,19 @@ class FaglbController extends Controller
                     'fiscal_year' => $row[4],
                     'item' => $row[5],
                     'material_document' => $row[6],
-                    'material_doc_year' => $row[7],
+                    'material_doc_year' => !empty($row[7]) ? (int) $row[7] : null, // Pastikan menjadi int jika tipe data INT
                     'material' => $row[8],
                     'description' => $row[9],
                     'quantity' => $row[10],
                     'base_unit_of_measure' => $row[11],
-                    'value_tran_curr' => $row[12],
+                    'value_tran_curr_1' => $row[12],
                     'currency' => $row[13],
                     'value_tran_curr_2' => $row[14],
                     'currency_2' => $row[15],
                     'value_tran_curr_3' => $row[16],
                     'currency_3' => $row[17],
-                    'document_date' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[18])->format('Y-m-d'),
-                    'posting_date' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[19])->format('Y-m-d'),
+                    'document_date' => \Carbon\Carbon::parse($row[18])->format('Y-m-d'),
+                    'posting_date' => \Carbon\Carbon::parse($row[19])->format('Y-m-d'),
                     'purchasing_document' => $row[20],
                     'supplier' => $row[21],
                     'name_1' => $row[22],
@@ -196,13 +191,12 @@ class FaglbController extends Controller
                     'document_number_2' => $row[27],
                     'company_code_2' => $row[28],
                     'fiscal_year_2' => $row[29],
-                    'document_date_2' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[30])->format('Y-m-d'),
-                    'posting_date_2' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[31])->format('Y-m-d'),
+                    'document_date_2' => \Carbon\Carbon::parse($row[30])->format('Y-m-d'),
+                    'posting_date_2' => \Carbon\Carbon::parse($row[31])->format('Y-m-d'),
                     'user_name' => $row[32],
                     'reversed_with' => $row[33],
                     'wbs_level_2' => $row[34],
                     'wbs_element_2' => $row[35],
-                    'id_head' => $id_head, // Tambahkan foreign key id_head
                 ]);
             }
         }
@@ -215,8 +209,23 @@ class FaglbController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Ambil data dari t_faglb_tail berdasarkan id
+        $faglbData = FaglbTail::where('id_head', $id)->get();
+
+
+        // Kembalikan view dengan data yang diambil
+        return view('faglb.show', compact('faglbData'));
     }
+
+    public function showZlis1($id)
+    {
+        // Ambil data ZLIS1 berdasarkan id_head
+        $zlis1Data = DB::table('t_zlis1_tail')->where('id_head', $id)->get();
+
+        return view('faglb.zlis1', compact('zlis1Data'));
+    }
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -259,6 +268,10 @@ class FaglbController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $faglb = Faglb::findOrFail($id);
+        $faglb->status = 0;
+        $faglb->save();
+
+        return response()->json(['success' => true]);
     }
 }
