@@ -14,11 +14,12 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <script src="{{ asset('js/app.js') }}"></script>
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     @stack('css')  <!-- CSS akan di-load di sini -->
 
-    <script src="https://kit.fontawesome.com/8d131a8fb2.js" crossorigin="anonymous"></script>
+
+    
 
 </head>
 <body>

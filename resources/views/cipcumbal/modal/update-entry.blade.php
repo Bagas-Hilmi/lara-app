@@ -55,8 +55,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-success" id="updateEntry">Update</button>
+        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn bg-gradient-success" id="updateEntry">Update</button>
       </div>
     </div>
   </div>

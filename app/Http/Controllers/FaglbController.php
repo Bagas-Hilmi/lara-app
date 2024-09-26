@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FaglbImport;
 use App\Imports\Zlis1Import;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class FaglbController extends Controller
 {
@@ -65,7 +66,6 @@ class FaglbController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi data jika diperlukan
         $request->validate([
             'faglb' => 'required|file|mimes:xlsx,xls,csv',
             'zlis1' => 'required|file|mimes:xlsx,xls,csv',
@@ -73,29 +73,23 @@ class FaglbController extends Controller
             'id_ccb' => 'required',
         ]);
 
-        // Simpan metadata ke tabel t_faglb_head
         $faglbHead = new Faglb();
         $faglbHead->period = $request->input('period');
         $faglbHead->id_ccb = $request->input('id_ccb');
         $faglbHead->save();
 
-        // Simpan file yang diupload
         $faglbFilePath = $request->file('faglb')->store('uploads/faglb');
 
-        // Mengimpor data dari file Excel
         $faglbData = Excel::toArray(new FaglbImport(), $faglbFilePath);
 
-        // Mengimpor data dengan ID yang benar
         $this->importFaglb($faglbFilePath, $faglbHead->id_head);
 
-        $zlis1FilePath = $request->file('zlis1')->store('uploads/zlis1'); // Pastikan nama input sesuai
+        $zlis1FilePath = $request->file('zlis1')->store('uploads/zlis1');
 
-        $zlis1Data = Excel::toArray(new Zlis1Import(), $zlis1FilePath); // Anda perlu membuat class Zlis1Import
+        $zlis1Data = Excel::toArray(new Zlis1Import(), $zlis1FilePath);
 
         $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
 
-
-        // Mengembalikan response sukses
         return redirect()->back()->with('success', 'Data FAGLB dan ZLIS1 berhasil diimpor!');
     }
 
@@ -202,8 +196,6 @@ class FaglbController extends Controller
         }
     }
 
-
-
     /**
      * Display the specified resource.
      */
@@ -214,18 +206,16 @@ class FaglbController extends Controller
 
 
         // Kembalikan view dengan data yang diambil
-        return view('faglb.show', compact('faglbData'));
+        return view('faglb.show.faglb', compact('faglbData'));
     }
 
-    public function showZlis1($id)
+    public function showZlis1(string $id)
     {
         // Ambil data ZLIS1 berdasarkan id_head
-        $zlis1Data = DB::table('t_zlis1_tail')->where('id_head', $id)->get();
+        $zlis1Data = Zlis1Tail::where('id_head', $id)->get();
 
-        return view('faglb.zlis1', compact('zlis1Data'));
+        return view('faglb.show.zlis1', compact('zlis1Data'));
     }
-
-
 
     /**
      * Show the form for editing the specified resource.
@@ -238,30 +228,41 @@ class FaglbController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id_head)
+    public function update(Request $request, $id)
     {
-        // Validasi data jika diperlukan
         $request->validate([
-            'id_ccb' => 'required',
-            'period' => 'required',
-            'report_status' => 'required',
-            'updated_by' => 'required', // Pastikan ini divalidasi
-            // tambahkan validasi lain jika perlu
+            'faglb' => 'nullable|file|mimes:xlsx,xls,csv',
+            'zlis1' => 'nullable|file|mimes:xlsx,xls,csv',
         ]);
 
-        // Mengambil data dari request
-        $data = [
-            'id_ccb' => $request->input('id_ccb'),
-            'period' => $request->input('period'),
-            'report_status' => $request->input('report_status'),
-            'updated_by' => $request->input('updated_by'), // Ambil dari input
-        ];
+        // Temukan record berdasarkan ID
+        $faglbHead = Faglb::findOrFail($id);
 
-        // Memperbarui data di model
-        Faglb::updateDataFaglb($id_head, $data);
+        // Proses file FAGLB
+        if ($request->hasFile('faglb')) {
+            if ($faglbHead->faglb_file_path) {
+                Storage::delete($faglbHead->faglb_file_path);
+            }
+            $faglbFilePath = $request->file('faglb')->store('uploads/faglb');
+            $faglbHead->faglb_file_path = $faglbFilePath;
+        }
 
-        return redirect()->route('faglb.index')->with('success', 'Data updated successfully.');
+        // Proses file ZLIS1
+        if ($request->hasFile('zlis1')) {
+            if ($faglbHead->zlis1_file_path) {
+                Storage::delete($faglbHead->zlis1_file_path);
+            }
+            $zlis1FilePath = $request->file('zlis1')->store('uploads/zlis1');
+            $faglbHead->zlis1_file_path = $zlis1FilePath;
+        }
+
+        $faglbHead->status = 0; // Mengubah status
+        $faglbHead->save();
+
+        return response()->json(['success' => 'File berhasil diganti']);
     }
+
+
 
     /**
      * Remove the specified resource from storage.

@@ -43,6 +43,7 @@
             <x-plugins></x-plugins>
 
             @include('faglb.modal.add-doc-modal')
+            @include('faglb.modal.update-doc-modal')
 
             @push('css')
             <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
@@ -55,6 +56,7 @@
 
             
             <script src="{{ asset('js/add-doc.js') }}"></script>
+            <script src="{{ asset('js/update-doc.js') }}"></script>
 
             <script>
                 $(document).ready(function() {

@@ -1,7 +1,7 @@
 
 @if ($row->report_status == 0)
 <div style="display: flex; align-items: center;">
-    <a class="update-btn" 
+    <a class="bg-gradient-secondary btn-sm update-btn" 
        data-id="{{ $row->id_ccb }}"
        data-period="{{ $row->period_cip }}"
        data-bal-usd="{{ $row->bal_usd }}"
@@ -15,10 +15,11 @@
         <i class="fa fa-edit " style="font-size: 1.4rem;"></i>
     </a>
 
-    <a class="delete-btn" 
+    <a class="bg-gradient-danger delete-btn" 
        data-id="{{ $row->id_ccb }}"
        data-bs-toggle="tooltip" 
        data-bs-placement="right"
+       title="Delete This Entry"
        style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #dc3545; border-radius: 5px; color: white;">
         <i class="fas fa-trash" style="font-size: 1.4rem;"></i>
     </a>

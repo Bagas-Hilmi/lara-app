@@ -3,7 +3,7 @@ document.getElementById('saveEntry').addEventListener('click', function() {
     const formData = new FormData(form);
 
     // Pastikan `mode` sesuai
-    formData.append('mode', 'ADD'); // Atur mode untuk ADD
+    formData.append('mode', 'ADD'); 
 
     fetch(form.action, {
         method: 'POST',

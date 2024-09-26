@@ -9,11 +9,10 @@ class Zlis1Tail extends Model
 {
     use HasFactory;
 
-    // Tentukan nama tabel jika berbeda dari konvensi penamaan
     protected $table = 't_zlis1_tail';
 
-    // Tentukan kolom yang bisa diisi
     protected $fillable = [
+        'id_head', 
         'wbs_element',
         'network',
         'document_number',
@@ -26,8 +25,12 @@ class Zlis1Tail extends Model
         'description',
         'quantity',
         'base_unit_of_measure',
-        'value_tran_curr',
+        'value_tran_curr_1',
         'currency',
+        'value_tran_curr_2',
+        'currency_2',
+        'value_tran_curr_3',
+        'currency_3',
         'document_date',
         'posting_date',
         'purchasing_document',
@@ -37,15 +40,19 @@ class Zlis1Tail extends Model
         'sub_number',
         'cost_center',
         'gl_account',
+        'document_number_2',
+        'company_code_2',
+        'fiscal_year_2',
+        'document_date_2',
+        'posting_date_2',
         'user_name',
         'reversed_with',
         'wbs_level_2',
         'wbs_element_2',
-        'id_head',
     ];
 
     public function faglbHead()
     {
-        return $this->belongsTo(Faglb::class, 'id_head'); // Menghubungkan ke model FaglbHead
+        return $this->belongsTo(Faglb::class, 'id_head'); 
     }
 }

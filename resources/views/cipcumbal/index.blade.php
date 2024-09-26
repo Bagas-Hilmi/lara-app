@@ -15,7 +15,7 @@
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between mb-2">
                                     <!-- Tombol New Entry -->
-                                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#new-form">New Entry</a>
+                                    <a href="#" class="btn btn-sm btn bg-gradient-primary" data-bs-toggle="modal" data-bs-target="#new-form">New Entry</a>
                                     <select id="yearFilter" class="form-select btn-year-filter w-auto" aria-label="Filter by Year and Month">
                                         <option value="">Semua Tahun</option>
                                             <!-- Tahun-tahun yang diambil dari database -->

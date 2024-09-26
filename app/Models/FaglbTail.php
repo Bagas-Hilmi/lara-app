@@ -9,12 +9,10 @@ class FaglbTail extends Model
 {
     use HasFactory;
 
-    // Nama tabel yang digunakan oleh model ini
     protected $table = 't_faglb_tail';
 
-    // Kolom yang dapat diisi massal
     protected $fillable = [
-        'id_head', // Foreign key yang terhubung ke tabel t_faglb_head
+        'id_head', 
         'asset',
         'sub_number',
         'posting_date',
@@ -38,9 +36,8 @@ class FaglbTail extends Model
         'wbs_element',
     ];
 
-    // Relasi dengan model FaglbHead jika ada
     public function faglbHead()
     {
-        return $this->belongsTo(Faglb::class, 'id_head'); // Menghubungkan ke model FaglbHead
+        return $this->belongsTo(Faglb::class, 'id_head'); 
     }
 }
