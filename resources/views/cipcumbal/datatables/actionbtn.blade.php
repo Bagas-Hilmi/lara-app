@@ -1,7 +1,7 @@
 
 @if ($row->report_status == 0)
 <div style="display: flex; align-items: center;">
-    <a class="bg-gradient-secondary btn-sm update-btn" 
+    <a class="bg-gradient-secondary  update-btn" 
        data-id="{{ $row->id_ccb }}"
        data-period="{{ $row->period_cip }}"
        data-bal-usd="{{ $row->bal_usd }}"
@@ -11,8 +11,8 @@
        data-bs-toggle="tooltip" 
        data-bs-placement="top"
        title="Edit This Entry"
-       style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; margin-right: 5px; background-color: #778594; border-radius: 5px; color: white;">
-        <i class="fa fa-edit " style="font-size: 1.4rem;"></i>
+       style="width: 35px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center; margin-right: 5px; background-color: #778594; border-radius: 5px; color: white;">
+        <i class="fa fa-edit " style="font-size: 1.2rem;"></i>
     </a>
 
     <a class="bg-gradient-danger delete-btn" 
@@ -20,8 +20,8 @@
        data-bs-toggle="tooltip" 
        data-bs-placement="right"
        title="Delete This Entry"
-       style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #dc3545; border-radius: 5px; color: white;">
-        <i class="fas fa-trash" style="font-size: 1.4rem;"></i>
+       style="width: 35px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #dc3545; border-radius: 5px; color: white;">
+        <i class="fas fa-trash" style="font-size: 1.2rem;"></i>
     </a>
 </div>
 @endif

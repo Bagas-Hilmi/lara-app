@@ -56,14 +56,17 @@
 
             @push('css')
             <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
             @endpush
 
             @push('js')
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
 
+            <script src="{{ asset('js/delete-entry.js') }}"></script>
             <script src="{{ asset('js/new-entry.js') }}"></script>
             <script src="{{ asset('js/update-entry.js') }}"></script>
 
@@ -165,21 +168,6 @@
                     $('#yearFilter').change(function() {
                         table.ajax.reload();
                     });
-                    
-                                    
-                    // Event klik tombol delete
-                    $('#cipCumBalTable').on('click', '.delete-btn', function() {
-                        var id = $(this).data('id');
-                        if(confirm('Apakah Anda yakin ingin menghapus item ini?')) {
-                            $.ajax({
-                                url: '/cipcumbal/' + id,
-                                type: 'DELETE',
-                                success: function(result) {
-                                    table.ajax.reload();
-                                }
-                            });
-                        }
-                    });
                 });
             </script>
             @endpush
@@ -189,6 +177,8 @@
 </x-layout>
 
 <style>
+   
+
     .btn-year-filter {
         background-color: #f0f0f0;
         border: 1px solid #ccc;
@@ -228,6 +218,8 @@
         color: rgb(255, 255, 255);
         cursor: pointer;
     }
+    
+
     
 </style>
 

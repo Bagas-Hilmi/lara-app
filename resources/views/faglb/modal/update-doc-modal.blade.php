@@ -6,14 +6,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="updateForm" method="POST" enctype="multipart/form-data">
+                <form id="updateForm" action="{{ route('faglb.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT')
-                    <input type="hidden" name="id_head" id="edit-id">
+                    <input type="hidden" name="flag" value="update_file">
+                    <input type="hidden" name="id_head" id="modal-id-head">
+                    <input type="hidden" id="id_ccb" name="id_ccb" value="">
+                    <input type="hidden" id="period" name="period" value="">
                     
                     <div class="mb-3">
                         <label for="faglb" class="form-label">Upload FAGLB File</label>
-                        <input type="file" class="form-control" name="faglb" id="faglb" >
+                        <input type="file" class="form-control" name="faglb" id="faglb">
                     </div>
                     <div class="mb-3">
                         <label for="zlis1" class="form-label">Upload ZLIS1 File</label>
@@ -28,3 +30,9 @@
         </div>
     </div>
 </div>
+
+
+
+<script>
+    var updateUrl = "{{ route('faglb.store') }}"; // URL endpoint
+</script>

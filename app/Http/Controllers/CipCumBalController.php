@@ -37,7 +37,7 @@ class CipCumBalController extends Controller
             if ($request->has('year') && !empty($request->year)) {
                 $query->where('period_cip', 'LIKE', $request->year . '-%');
             }
-            
+
             Log::info($query->toSql(), $query->getBindings());
 
             return DataTables::of($query)
@@ -68,10 +68,10 @@ class CipCumBalController extends Controller
      */
     public function store(Request $request)
     {
-
+        // Validasi input
         $validated = $request->validate([
-            'mode' => 'required|in:ADD,UPDATE',
-            'id' => 'required_if:mode,UPDATE|exists:t_cip_cum_bal,id_ccb',
+            'flag' => 'required|in:add,update',
+            'id' => 'required_if:flag,update|exists:t_cip_cum_bal,id_ccb',
             'period_cip' => 'required|date_format:Y-m',
             'bal_usd' => 'required|numeric',
             'bal_rp' => 'required|numeric',
@@ -79,9 +79,11 @@ class CipCumBalController extends Controller
             'cumbal_rp' => 'required|numeric',
         ]);
 
-        $mode = $request->input('mode');
-        $result = match ($mode) {
-            'ADD' => CCB::add(
+        $flag = $request->input('flag'); // Mengambil nilai flag
+
+        // Menggunakan match expression untuk mengarahkan ke fungsi yang sesuai
+        $result = match ($flag) {
+            'add' => CCB::add(
                 $request->input('period_cip'),
                 $request->input('bal_usd'),
                 $request->input('bal_rp'),
@@ -92,7 +94,7 @@ class CipCumBalController extends Controller
                 Auth::id(),
                 Auth::id()
             ),
-            'UPDATE' => CCB::updateData(
+            'update' => CCB::updateData(
                 $request->input('id'),
                 $request->input('period_cip'),
                 $request->input('bal_usd'),
@@ -103,10 +105,10 @@ class CipCumBalController extends Controller
                 $request->input('status', 1),
                 Auth::id()
             ),
-            default => throw new \Exception('Invalid mode specified.')
+            default => throw new \Exception('Invalid flag specified.') // Menghadapi nilai yang tidak valid
         };
 
-        return response()->json($result);
+        return response()->json($result); // Mengembalikan response JSON
     }
 
 
@@ -146,4 +148,3 @@ class CipCumBalController extends Controller
         return response()->json(['success' => true]);
     }
 }
-

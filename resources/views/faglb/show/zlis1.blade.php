@@ -1,4 +1,4 @@
-@extends('layouts.app') <!-- Ganti dengan layout yang sesuai -->
+@extends('layouts.app') 
 
 @section('content')
 <div class="container" style="margin-top: 70px;">
@@ -110,8 +110,8 @@
             "ordering": true,
             "info": true,
             "autoWidth": false,
-            "responsive": true
-            // "scrollX": true // Menambahkan fitur scroll horizontal
+            "responsive": true,
+            "scrollX": true // Menambahkan fitur scroll horizontal
         });
     });
 </script>

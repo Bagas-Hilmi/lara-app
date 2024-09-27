@@ -2,9 +2,8 @@
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 5px;">
 
    <a class="view btn bg-gradient-secondary btn-sm"
-      data-id="{{ $row->id_head }}"
-      data-period="{{ $row->period }}"
-      data-id_ccb="{{ $row->id_ccb }}"
+      data-id-ccb="{{ $row->id_ccb }}"
+      data-period="{{ $row->period}}"   
       data-bs-toggle="modal"
       data-bs-target="#replaceDocFormModal"
       title="Edit This Entry"
@@ -16,7 +15,7 @@
     <a class="view btn bg-gradient-danger btn-sm delete-btn" 
        data-id="{{ $row->id_head }}"
        data-bs-toggle="tooltip" 
-       data-bs-placement="right"
+       data-bs-placement="right" 
        title="Delete This Entry"
        style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #dc3545; color: white;">
         <i class="fas fa-trash" style="font-size: 1.2rem;"></i>

@@ -47,12 +47,16 @@
 
             @push('css')
             <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
             @endpush
 
             @push('js')
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+            <script src="{{ asset('/js/tooltip.js') }}"></script>
 
             
             <script src="{{ asset('js/add-doc.js') }}"></script>
@@ -70,6 +74,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
+                        order: [[ 1, 'desc' ]],
                         ajax: {
                             url: "{{ route('faglb.index') }}",
                             type: "GET",
@@ -103,13 +108,13 @@
                             var id = $(this).data('id');  // Ambil ID dari data-id
                             if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
                                 $.ajax({
-                                    url: '/faglb/' + id,  // Ganti dengan URL yang sesuai untuk penghapusan
-                                    type: 'POST',  // Menggunakan POST
+                                    url: '/faglb/' + id, 
+                                    type: 'POST', 
                                     data: {
-                                        _method: 'DELETE'  // Mengindikasikan metode DELETE
+                                        _method: 'DELETE'  
                                     },
                                     success: function(result) {
-                                        table.ajax.reload();  // Reload tabel
+                                        table.ajax.reload();  
                                     },
                                     error: function(xhr) {
                                         alert('Terjadi kesalahan saat menghapus item: ' + xhr.responseText);

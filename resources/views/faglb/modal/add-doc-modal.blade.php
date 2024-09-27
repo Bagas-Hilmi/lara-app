@@ -23,14 +23,15 @@
                     @csrf
                     <input type="hidden" name="period" id="selectedPeriod" value="">
                     <input type="hidden" name="id_ccb" id="selectedIdCcb" value="">
-                    
+                    <input type="hidden" name="flag" value="upload_documents">
+
                     <div class="container-fluid">
                         <div class="dropdown mb-3">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 Pilih Period
                             </button>
                             <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown">
-                                <!-- Daftar periode akan diisi di sini -->
+                                <!-- pake AJAX -->
                             </ul>
                         </div>
                         

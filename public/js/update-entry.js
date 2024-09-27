@@ -57,39 +57,66 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('updateEntry').addEventListener('click', function(e) {
         e.preventDefault();
         console.log('Update button clicked');
+
+        // Tampilkan SweetAlert untuk konfirmasi
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin memperbarui entri ini?',
+            text: "Data ini akan diperbarui!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, perbarui!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById('updateEntryForm');
+                const formData = new FormData(form);
     
-        const form = document.getElementById('updateEntryForm');
-        const formData = new FormData(form);
+                // Pastikan `mode` diatur ke `UPDATE`
+                formData.append('mode', 'UPDATE');
+                // Menambahkan informasi pengguna untuk `updated_by`
+                const userIdMeta = document.querySelector('meta[name="user-id"]');
+                const userId = userIdMeta ? userIdMeta.getAttribute('content') : null;
+                formData.append('updated_by', userId);
     
-        // Pastikan `mode` diatur ke `UPDATE`
-        formData.append('mode', 'UPDATE');
-        // Menambahkan informasi pengguna untuk `updated_by`
-        const userIdMeta = document.querySelector('meta[name="user-id"]');
-        const userId = userIdMeta ? userIdMeta.getAttribute('content') : null;
-        formData.append('updated_by', userId);
-    
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Tampilkan pesan sukses menggunakan SweetAlert
+                        Swal.fire(
+                            'Sukses!',
+                            'Entry updated successfully!',
+                            'success'
+                        );
+                        bootstrap.Modal.getInstance(document.getElementById('update-form')).hide();
+                        if ($.fn.DataTable) {
+                            $('#cipCumBalTable').DataTable().ajax.reload();
+                        }
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            data.message || 'Error updating entry',
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while updating the entry',
+                        'error'
+                    );
+                });
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Entry updated successfully!');
-                bootstrap.Modal.getInstance(document.getElementById('update-form')).hide();
-                if ($.fn.DataTable) {
-                    $('#cipCumBalTable').DataTable().ajax.reload();
-                }
-            } else {
-                alert(data.message || 'Error updating entry');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating the entry');
         });
     });
 });

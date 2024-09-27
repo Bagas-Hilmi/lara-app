@@ -8,7 +8,7 @@
       <div class="modal-body">
         <form id="updateEntryForm" action="{{ route('cipcumbal.store') }}" method="POST">
           @csrf
-          <input type="hidden" name="mode" value="UPDATE">
+          <input type="hidden" name="flag" value="update">
           <input type="hidden" id="updateId" name="id">
           <input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
 

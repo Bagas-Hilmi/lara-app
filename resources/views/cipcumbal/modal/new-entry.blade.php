@@ -8,8 +8,8 @@
           </div>
           <div class="modal-body">
               <form id="entryForm" action="{{ route('cipcumbal.store') }}" method="POST">
-                  <input type="hidden" name="mode" value="ADD">
-                  @csrf
+                <input type="hidden" name="flag" value="add">
+                @csrf
 
                   <div class="container-fluid">
                       <!-- Year / Month Input -->

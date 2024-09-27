@@ -66,32 +66,73 @@ class FaglbController extends Controller
      */
     public function store(Request $request)
     {
+        
         $request->validate([
-            'faglb' => 'required|file|mimes:xlsx,xls,csv',
-            'zlis1' => 'required|file|mimes:xlsx,xls,csv',
+            'faglb' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+            'zlis1' => 'required|file|mimes:xlsx,xls,csv|max:10240',
             'period' => 'required',
             'id_ccb' => 'required',
+            'id_head' => 'sometimes|nullable|integer', // Validasi untuk id_head
+            'flag' => 'required|string|in:upload_documents,update_file',
         ]);
 
-        $faglbHead = new Faglb();
-        $faglbHead->period = $request->input('period');
-        $faglbHead->id_ccb = $request->input('id_ccb');
-        $faglbHead->save();
+        $flag = $request->input('flag');
 
-        $faglbFilePath = $request->file('faglb')->store('uploads/faglb');
+        if ($flag == 'upload_documents') {
+            // Logika untuk mengupload dokumen baru
+            $faglbHead = new Faglb();
+            $faglbHead->period = $request->input('period');
+            $faglbHead->id_ccb = $request->input('id_ccb');
+            $faglbHead->save();
 
-        $faglbData = Excel::toArray(new FaglbImport(), $faglbFilePath);
+            $faglbFilePath = $request->file('faglb')->store('uploads/faglb');
+            $this->importFaglb($faglbFilePath, $faglbHead->id_head);
 
-        $this->importFaglb($faglbFilePath, $faglbHead->id_head);
+            $zlis1FilePath = $request->file('zlis1')->store('uploads/zlis1');
+            $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
 
-        $zlis1FilePath = $request->file('zlis1')->store('uploads/zlis1');
+            return redirect()->back()->with('success', 'Data FAGLB dan ZLIS1 berhasil diimpor!');
+        } elseif ($flag == 'update_file') {
+            
+            // Cek apakah id_head, id_ccb, dan period dikirimkan
+            if (!$request->filled('id_head') || !$request->filled('id_ccb') || !$request->filled('period')) {
+                return response()->json(['error' => 'id_head, id_ccb, dan period tidak boleh kosong.'], 400);
+            }
 
-        $zlis1Data = Excel::toArray(new Zlis1Import(), $zlis1FilePath);
+            // Mendapatkan nilai dari input
+            $idHead = $request->input('id_head');
+            $idCcb = $request->input('id_ccb');
+            $period = $request->input('period');
 
-        $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
+            // Mendapatkan faglbHead berdasarkan id_head
+            $faglbHead = Faglb::findOrFail($idHead);
 
-        return redirect()->back()->with('success', 'Data FAGLB dan ZLIS1 berhasil diimpor!');
+            // Hapus file lama jika ada
+            if ($faglbHead->faglb_file) {
+                Storage::delete($faglbHead->faglb_file);
+            }
+            if ($faglbHead->zlis1_file) {
+                Storage::delete($faglbHead->zlis1_file);
+            }
+
+            // Upload file baru
+            $faglbFilePath = $request->file('faglb')->store('uploads/faglb');
+            $zlis1FilePath = $request->file('zlis1')->store('uploads/zlis1');
+
+            // Update informasi file di database
+            $faglbHead->faglb_file = $faglbFilePath;
+            $faglbHead->zlis1_file = $zlis1FilePath;
+            $faglbHead->save();
+
+            // Import data dari file baru
+            $this->importFaglb($faglbFilePath, $faglbHead->id_head);
+            $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
+
+            return response()->json(['message' => 'Data berhasil diperbarui!']);
+        }
     }
+
+
 
     public function importFaglb($file, $id_head)
     {
@@ -135,7 +176,6 @@ class FaglbController extends Controller
             }
         }
     }
-
     public function importZlis1($file, $id_head)
     {
         if ($file) {

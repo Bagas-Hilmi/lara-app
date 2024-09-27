@@ -15,11 +15,14 @@
 
     <!-- Scripts -->
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+   
     @stack('css')  <!-- CSS akan di-load di sini -->
 
-
-    
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
+    @stack('js')  
 
 </head>
 <body>
@@ -83,7 +86,7 @@
         <main class="main-content py-4">
             @yield('content')
             @stack('js')  
-            @stack('css') <!-- JS akan di-load di sini -->
+            @stack('css') 
 
         </main>
     </div>

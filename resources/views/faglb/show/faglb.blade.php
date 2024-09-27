@@ -79,8 +79,8 @@
             "ordering": true,
             "info": true,
             "autoWidth": false,
-            "responsive": true
-            // "scrollX": true // Menambahkan fitur scroll horizontal
+            "responsive": true,
+            "scrollX": true // Menambahkan fitur scroll horizontal
         });
     });
 </script>
