@@ -66,9 +66,9 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
 
-            <script src="{{ asset('js/delete-entry.js') }}"></script>
-            <script src="{{ asset('js/new-entry.js') }}"></script>
-            <script src="{{ asset('js/update-entry.js') }}"></script>
+            <script src="{{ asset('js/cipcumbal/delete-entry.js') }}"></script>
+            <script src="{{ asset('js/cipcumbal/new-entry.js') }}"></script>
+            <script src="{{ asset('js/cipcumbal/update-entry.js') }}"></script>
 
             <script>
                $(document).ready(function() {

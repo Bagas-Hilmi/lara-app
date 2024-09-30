@@ -15,24 +15,39 @@
                     
                     <div class="mb-3">
                         <label for="faglb" class="form-label">Upload FAGLB File</label>
-                        <input type="file" class="form-control" name="faglb" id="faglb">
+                        <input type="file" class="form-control" name="faglb" id="faglb" accept=".xlsx,.xls,.csv">
                     </div>
                     <div class="mb-3">
                         <label for="zlis1" class="form-label">Upload ZLIS1 File</label>
-                        <input type="file" class="form-control" name="zlis1" id="zlis1" >
+                        <input type="file" class="form-control" name="zlis1" id="zlis1" accept=".xlsx,.xls,.csv">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" id="updateButton" class="btn bg-gradient-success">Update</button>
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="updateForm" id="updateButton" class="btn bg-gradient-success">Update</button>
             </div>
         </div>
     </div>
 </div>
 
 
-
 <script>
-    var updateUrl = "{{ route('faglb.store') }}"; // URL endpoint
+    $(document).on('click', '.edit-button', function() {
+    // Ambil data dari DataTables (misalnya dari tombol edit)
+    const idHead = $(this).data('id-head'); // Sesuaikan dengan data yang ada di tombol
+    const idCcb = $(this).data('id-ccb'); // Ambil id_ccb dari data attribute
+    const period = $(this).data('period'); // Ambil period dari data attribute
+
+    // Set nilai input tersembunyi di modal
+    $('#modal-id-head').val(idHead);
+    $('#id_ccb').val(idCcb);
+    $('#period').val(period);
+
+    // Tampilkan modal
+    $('#replaceDocFormModal').modal('show');
+});
 </script>
+
+
+

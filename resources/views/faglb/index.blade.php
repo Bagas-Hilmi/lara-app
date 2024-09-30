@@ -53,14 +53,14 @@
 
             @push('js')
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+            <script src="{{ asset('js/faglb/add-doc.js') }}"></script>
+            {{-- <script src="{{ asset('js/faglb/update-doc.js') }}"></script> --}}
+            <script src="{{ asset('js/faglb/delete-doc.js') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
-
-            
-            <script src="{{ asset('js/add-doc.js') }}"></script>
-            <script src="{{ asset('js/update-doc.js') }}"></script>
+          
 
             <script>
                 $(document).ready(function() {
@@ -103,25 +103,7 @@
                             }
                         ],
                     });   
-                        // Event listener for delete button
-                        $('#faglb-table').on('click', '.delete-btn', function() {
-                            var id = $(this).data('id');  // Ambil ID dari data-id
-                            if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
-                                $.ajax({
-                                    url: '/faglb/' + id, 
-                                    type: 'POST', 
-                                    data: {
-                                        _method: 'DELETE'  
-                                    },
-                                    success: function(result) {
-                                        table.ajax.reload();  
-                                    },
-                                    error: function(xhr) {
-                                        alert('Terjadi kesalahan saat menghapus item: ' + xhr.responseText);
-                                    }
-                                });
-                            }
-                        });
+
                     });
             </script>
             @endpush     

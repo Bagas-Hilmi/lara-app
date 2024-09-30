@@ -18,7 +18,7 @@
    
     @stack('css')  <!-- CSS akan di-load di sini -->
 
-    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">

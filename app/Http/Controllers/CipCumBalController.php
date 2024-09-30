@@ -80,8 +80,6 @@ class CipCumBalController extends Controller
         ]);
 
         $flag = $request->input('flag'); // Mengambil nilai flag
-
-        // Menggunakan match expression untuk mengarahkan ke fungsi yang sesuai
         $result = match ($flag) {
             'add' => CCB::add(
                 $request->input('period_cip'),
