@@ -2,9 +2,7 @@
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 5px;">
 
    <a class="view btn bg-gradient-secondary btn-sm"
-      data-id="{{ $row->id }}" 
-      data-id-ccb="{{ $row->id_ccb }}" 
-      data-period="{{ $row->period }}" 
+      data-id="{{ $row->id_head }}" 
       data-bs-toggle="modal"
       data-bs-target="#replaceDocFormModal"
       title="Edit This Entry"

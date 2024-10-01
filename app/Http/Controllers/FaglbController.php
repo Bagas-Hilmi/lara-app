@@ -68,11 +68,9 @@ class FaglbController extends Controller
     {
 
         $request->validate([
-            'faglb' => 'required|file|mimes:xlsx,xls,csv|max:10240',
-            'zlis1' => 'required|file|mimes:xlsx,xls,csv|max:10240',
-            'period' => 'required',
-            'id_ccb' => 'required',
-            'id_head' => 'sometimes|nullable|integer', // Validasi untuk id_head
+            'faglb' => 'nullable|file|mimes:xlsx,xls,csv',
+            'zlis1' => 'nullable|file|mimes:xlsx,xls,csv',
+            'id_head' => 'required|integer',
             'flag' => 'required|string|in:upload_documents,update_file',
         ]);
 
@@ -106,49 +104,41 @@ class FaglbController extends Controller
 
             return redirect()->back()->with('success', 'Data FAGLB dan ZLIS1 berhasil diimpor!');
         } elseif ($flag == 'update_file') {
-            
+
             $id = $request->input('id_head');
-            // Validasi input
-            $this->validate($request, [
-                'period' => 'required',
-                'id_ccb' => 'required',
-                'faglb' => 'nullable|file',
-                'zlis1' => 'nullable|file',
-            ]);
-            // Mencari record yang akan diperbarui
+
             $faglbHead = Faglb::findOrFail($id);
-            // Memperbarui data periode dan id_ccb
-            $faglbHead->period = $request->input('period');
-            $faglbHead->id_ccb = $request->input('id_ccb');
-            // Mengupload FAGLB file dengan nama asli jika ada
+
             if ($request->hasFile('faglb')) {
-                // Menghapus file lama jika ada
-                if (!empty($faglbHead->faglb_filename)) {
-                    unlink('uploads/faglb/' . $faglbHead->faglb_filename);
+                if ($faglbHead->faglb_filename && Storage::exists('uploads/faglb/' . $faglbHead->faglb_filename)) {
+                    Storage::delete('uploads/faglb/' . $faglbHead->faglb_filename);
                 }
-                // Menyimpan file baru
+
                 $faglbFile = $request->file('faglb');
-                $faglbFileName = $faglbFile->getClientOriginalName(); // Ambil nama file asli
-                $faglbFile->storeAs('uploads/faglb', $faglbFileName);
-                $faglbHead->faglb_filename = $faglbFileName; // Simpan nama file baru ke dalam database
+                $faglbFileName = $faglbFile->getClientOriginalName();
+                $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
+                $faglbHead->faglb_filename = $faglbFileName;
+
+                $this->importFaglb($faglbFilePath, $faglbHead->id_head);
             }
-            // Mengupload ZLIS1 file dengan nama asli jika ada
+
             if ($request->hasFile('zlis1')) {
-                // Menghapus file lama jika ada
-                if (!empty($faglbHead->zlis1_filename)) {
-                    unlink('uploads/zlis1/' . $faglbHead->zlis1_filename);
+                if ($faglbHead->zlis1_filename && Storage::exists('uploads/zlis1/' . $faglbHead->zlis1_filename)) {
+                    Storage::delete('uploads/zlis1/' . $faglbHead->zlis1_filename);
                 }
-                // Menyimpan file baru
+
                 $zlis1File = $request->file('zlis1');
-                $zlis1FileName = $zlis1File->getClientOriginalName(); // Ambil nama file asli
-                $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
-                $faglbHead->zlis1_filename = $zlis1FileName; // Simpan nama file baru ke dalam database
+                $zlis1FileName = $zlis1File->getClientOriginalName();
+                $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
+                $faglbHead->zlis1_filename = $zlis1FileName;
+
+                $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
             }
-            // Simpan perubahan ke database
+
             $faglbHead->save();
-            return redirect()->route('file.index')->with('success', 'Data berhasil diperbarui!');
+
+            return response()->json(['success' => true]);
         }
-        return redirect()->back()->with('error', 'Flag tidak valid!');
     }
 
 

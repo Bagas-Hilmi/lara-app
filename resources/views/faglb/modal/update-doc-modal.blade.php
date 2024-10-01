@@ -10,9 +10,7 @@
                     @csrf
                     <input type="hidden" name="flag" value="update_file">
                     <input type="hidden" name="id_head" id="modal-id-head">
-                    <input type="hidden" id="id_ccb" name="id_ccb" value="">
-                    <input type="hidden" id="period" name="period" value="">
-                    
+                   
                     <div class="mb-3">
                         <label for="faglb" class="form-label">Upload FAGLB File</label>
                         <input type="file" class="form-control" name="faglb" id="faglb" accept=".xlsx,.xls,.csv">
@@ -32,22 +30,7 @@
 </div>
 
 
-<script>
-    $(document).on('click', '.edit-button', function() {
-    // Ambil data dari DataTables (misalnya dari tombol edit)
-    const idHead = $(this).data('id-head'); // Sesuaikan dengan data yang ada di tombol
-    const idCcb = $(this).data('id-ccb'); // Ambil id_ccb dari data attribute
-    const period = $(this).data('period'); // Ambil period dari data attribute
-
-    // Set nilai input tersembunyi di modal
-    $('#modal-id-head').val(idHead);
-    $('#id_ccb').val(idCcb);
-    $('#period').val(period);
-
-    // Tampilkan modal
-    $('#replaceDocFormModal').modal('show');
-});
-</script>
+    
 
 
 
