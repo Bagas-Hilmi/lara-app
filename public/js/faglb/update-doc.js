@@ -1,61 +1,63 @@
-$(document).ready(function() {
-    // Mengatur nilai input hidden saat memilih
-    $('#periodSelect').on('change', function() {
-        $('#period').val($(this).val());
-    });
+// Handle view button click
+$(document).on("click", ".view", function () {
+    var id = $(this).data("id");
+    $("#modal-id-head").val(id);
+});
 
-    $('#idCcbSelect').on('change', function() {
-        $('#id_ccb').val($(this).val());
-    });
+// Handle form submission for updating file
+$("#updateForm").on("submit", function (e) {
+    e.preventDefault();
+    var formData = new FormData(this);
 
-    // Event listener untuk tombol update
-    $('#updateButton').on('click', function(e) {
-        e.preventDefault(); // Mencegah pengiriman form
-
-        // Ambil file jika ada
-        var faglbFile = document.getElementById('faglb').files[0];
-        var zlis1File = document.getElementById('zlis1').files[0];
-        var idHead = $('#id_head').val(); // Ambil id_head dari input yang relevan
-        var idCcb = $('#id_ccb').val();
-        var period = $('#period').val();
-
-        // Buat objek FormData untuk mengirimkan file dan data
-        var formData = new FormData();
-        formData.append('flag', 'update_file');
-        formData.append('id_head', idHead);
-        formData.append('id_ccb', idCcb);
-        formData.append('period', period);
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // Tambahkan CSRF token
-
-        // Cek apakah file ada sebelum mengappend
-        if (faglbFile) {
-            formData.append('faglb', faglbFile);
+    Swal.fire({
+        title: 'Konfirmasi',
+        text: 'Apakah Anda ingin memperbarui file ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, perbarui!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Jika pengguna mengonfirmasi, lanjutkan dengan AJAX
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $("#replaceDocFormModal").modal("hide");
+                        $("#faglb-table").DataTable().ajax.reload();
+                        Swal.fire("Sukses", "File berhasil diperbarui", "success");
+                    } else {
+                        Swal.fire(
+                            "Error",
+                            response.message ||
+                                "Terjadi kesalahan saat memperbarui file",
+                            "error"
+                        );
+                    }
+                },
+                error: function (xhr) {
+                    var errorMessage = "Terjadi kesalahan saat memperbarui file";
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        errorMessage = Object.values(xhr.responseJSON.errors)
+                            .flat()
+                            .join("<br>");
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    Swal.fire("Error", errorMessage, "error");
+                },
+            });
         }
-        if (zlis1File) {
-            formData.append('zlis1', zlis1File);
-        }
-
-        // Menggunakan Fetch API untuk mengirim data
-        fetch($('#updateForm').attr('action'), {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message);
-            $('#updateModal').modal('hide');
-            // Refresh DataTables or do other UI updates if necessary
-        })
-        .catch(error => {
-            alert('Error: ' + error.message);
-        });
     });
+});
+
+// Reset form when modal is closed
+$("#replaceDocFormModal").on("hidden.bs.modal", function () {
+    $("#updateForm")[0].reset();
 });

@@ -13,11 +13,11 @@
                    
                     <div class="mb-3">
                         <label for="faglb" class="form-label">Upload FAGLB File</label>
-                        <input type="file" class="form-control" name="faglb" id="faglb" accept=".xlsx,.xls,.csv">
+                        <input type="file" class="form-control" name="faglb" id="faglb" accept=".xlsx,.xls,.csv" required>
                     </div>
                     <div class="mb-3">
                         <label for="zlis1" class="form-label">Upload ZLIS1 File</label>
-                        <input type="file" class="form-control" name="zlis1" id="zlis1" accept=".xlsx,.xls,.csv">
+                        <input type="file" class="form-control" name="zlis1" id="zlis1" accept=".xlsx,.xls,.csv" required>
                     </div>
                 </form>
             </div>

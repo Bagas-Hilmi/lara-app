@@ -7,18 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
                 
-                @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
                 <form id="addDocForm" action="{{ route('faglb.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="period" id="selectedPeriod" value="">
@@ -27,10 +16,10 @@
 
                     <div class="container-fluid">
                         <div class="dropdown mb-3">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false" required>
                                 Pilih Period
                             </button>
-                            <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown">
+                            <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown" >
                                 <!-- pake AJAX -->
                             </ul>
                         </div>
@@ -38,13 +27,13 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label" for="faglb">FAGLB</label>
-                                <input type="file" class="form-control" id="faglb" name="faglb" required>
+                                <input type="file" class="form-control" id="faglb" name="faglb" accept=".xlsx,.xls,.csv" required>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label" for="zlis1">ZLIS1</label>
-                                <input type="file" class="form-control" id="zlis1" name="zlis1" required>
+                                <input type="file" class="form-control" id="zlis1" name="zlis1" accept=".xlsx,.xls,.csv" required>
                             </div>
                         </div>
                     </div>
@@ -57,6 +46,79 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('addDocForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Mencegah pengiriman form default
+
+        // Cek apakah pengguna telah memilih periode
+        var selectedPeriod = document.getElementById('selectedPeriod').value;
+        if (!selectedPeriod) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan!',
+                text: 'Silakan pilih periode sebelum melanjutkan.',
+                confirmButtonText: 'OK'
+            });
+            return; // Hentikan pengiriman form jika periode tidak dipilih
+        }
+        
+        // Tampilkan konfirmasi SweetAlert
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah Anda ingin mengunggah dokumen ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, unggah!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Menggunakan Fetch API untuk mengirim data
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value // Tambahkan token CSRF
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Cek status respon
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses!',
+                            text: data.message, // Tampilkan pesan sukses
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Menyegarkan atau menutup modal jika diperlukan
+                            location.reload(); // Segarkan halaman untuk melihat perubahan
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: data.message, // Tampilkan pesan kesalahan
+                            confirmButtonText: 'Coba Lagi'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Terjadi kesalahan! Silakan coba lagi.', // Tampilkan pesan kesalahan umum
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }
+        });
+    });
+</script>
 
 
 <style>

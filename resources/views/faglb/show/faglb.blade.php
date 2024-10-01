@@ -2,9 +2,6 @@
 
 @section('content')
 
-
-
-
 <div class="container" style="margin-top: 70px;">
     @if($faglbData->isEmpty())
         <div class="alert alert-warning" role="alert">
@@ -16,14 +13,14 @@
             <div class="card my-4">
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                     <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                        <h1 class="text-capitalize ps-3">Data FAGLB </h1>
+                        <h1 class="text-capitalize ps-3">Data FAGLB</h1>
                     </div>
                     <div class="card-body p-3">
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered" id="faglbTable">
                                 <thead class="thead-dark">
                                     <tr class="text-center">
-                                        <th style="text-align: center; white-space: nowrap; vertical-align: middle;">ID</th>
+                                        <th style="text-align: center; white-space: nowrap; vertical-align: middle;">No</th>
                                         <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Asset</th>
                                         <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Sub-number</th>
                                         <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Posting Date</th>
@@ -50,7 +47,7 @@
                                 <tbody>
                                     @foreach($faglbData as $data)
                                         <tr>
-                                            <td>{{ $data->id_tail }}</td>
+                                            <td style="text-align: center;"></td>
                                             <td>{{ $data->asset }}</td>
                                             <td>{{ $data->sub_number }}</td>
                                             <td>{{ $data->posting_date }}</td>
@@ -85,15 +82,26 @@
     @endif
 </div>
 <script>
-    $(document).ready(function() {
+      $(document).ready(function() {
         $('#faglbTable').DataTable({
             "paging": true,
             "searching": true,
             "ordering": true,
             "info": true,
             "autoWidth": false,
-            "responsive": true,
-            "scrollX": true // Menambahkan fitur scroll horizontal
+            "responsive": false,
+            "scrollX": true, // Menambahkan fitur scroll horizontal
+            "columnDefs": [
+                { 
+                    "targets": 0, // Menargetkan kolom pertama untuk nomor urut
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function (data, type, row, meta) {
+                        return meta.row + 1; // Menghitung nomor urut
+                    }
+                }
+            ]
         });
     });
 </script>

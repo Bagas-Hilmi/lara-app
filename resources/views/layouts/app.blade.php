@@ -13,17 +13,18 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- Scripts -->
+    <!-- Styles -->
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-   
+    <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
+
     @stack('css')  <!-- CSS akan di-load di sini -->
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Scripts -->
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-    <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
+    
     @stack('js')  
-
 </head>
 <body>
     <div id="app">
@@ -85,12 +86,7 @@
         </nav>
         <main class="main-content py-4">
             @yield('content')
-            @stack('js')  
-            @stack('css') 
-
         </main>
     </div>
-    
-
 </body>
 </html>

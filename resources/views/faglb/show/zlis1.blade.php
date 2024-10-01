@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container" style="margin-top: 70px;">
-    <h1 class="mb-4">Data ZLIS1</h1>
 
     @if($zlis1Data->isEmpty())
         <div class="alert alert-warning" role="alert">
@@ -14,14 +13,14 @@
             <div class="card my-4">
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                     <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                        <h3 class=" text-capitalize ps-3">Upload Document FAGLB + ZLIS1</h3>
+                        <h1 class="text-capitalize ps-3">Data ZLIS1</h1>
                     </div>
                     <div class="card-body p-3">
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered" id="zlis1Table">
                                 <thead class="thead-dark">
                                     <tr class="text-center">
-                                        <th style="text-align: center; white-space: nowrap; vertical-align: middle;">ID</th>
+                                        <th style="text-align: center; white-space: nowrap; vertical-align: middle;">No</th>
                                         <th style="text-align: center; white-space: nowrap; vertical-align: middle;">WBS Element</th>
                                         <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Network</th>
                                         <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Document Number</th>
@@ -63,7 +62,7 @@
                                 <tbody>
                                     @foreach($zlis1Data as $data)
                                         <tr>
-                                            <td>{{ $data->id }}</td>
+                                            <td style="text-align: center;"></td>
                                             <td>{{ $data->wbs_element }}</td>
                                             <td>{{ $data->network }}</td>
                                             <td>{{ $data->document_number }}</td>
@@ -120,9 +119,20 @@
             "searching": true,
             "ordering": true,
             "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "scrollX": true // Menambahkan fitur scroll horizontal
+            "autoWidth": true,
+            "responsive": false,
+            "scrollX": true, // Menambahkan fitur scroll horizontal
+            "columnDefs": [
+                { 
+                    "targets": 0, // Menargetkan kolom pertama untuk nomor urut
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function (data, type, row, meta) {
+                        return meta.row + 1; // Menghitung nomor urut
+                    }
+                }
+            ]
         });
     });
 </script>

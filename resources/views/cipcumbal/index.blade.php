@@ -14,16 +14,20 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <!-- Tombol New Entry -->
-                                    <a href="#" class="btn btn-sm btn bg-gradient-primary" data-bs-toggle="modal" data-bs-target="#new-form">New Entry</a>
-                                    <select id="yearFilter" class="form-select btn-year-filter w-auto" aria-label="Filter by Year and Month">
-                                        <option value="">Semua Tahun</option>
-                                            <!-- Tahun-tahun yang diambil dari database -->
+                                    <button href="#" class="btn btn-sm btn bg-gradient-primary" data-bs-toggle="modal" data-bs-target="#new-form">New Entry</button>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Pilih Tahun
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="yearDropdown">
+                                            <li><a class="dropdown-item" href="#" data-value="">Semua Tahun</a></li>
                                             @foreach ($availableYears as $year)
-                                                <option value="{{ $year }}">{{ $year }}</option>
+                                                <li><a class="dropdown-item" href="#" data-value="{{ $year }}">{{ $year }}</a></li>
                                             @endforeach
-                                    </select>
+                                        </ul>
+                                    </div>
                                 </div>
+                                <input type="hidden" id="yearFilter" name="year" value="">
 
                                 <div class="table-responsive p-0">
                                     <table id="cipCumBalTable" class="table table-striped nowrap table-responsive p-0" style="width:100%">
@@ -165,8 +169,18 @@
                     });
 
                     // Event listener untuk filter tahun
-                    $('#yearFilter').change(function() {
-                        table.ajax.reload();
+                    $('.dropdown-item').click(function() {
+                        var year = $(this).data('value'); // Ambil nilai tahun
+                        $('#yearFilter').val(year); // Set nilai tahun ke input tersembunyi
+                        
+                        // Ubah teks tombol untuk menampilkan tahun yang dipilih
+                        if (year) {
+                            $('#yearDropdown').text(year); // Jika ada tahun yang dipilih
+                        } else {
+                            $('#yearDropdown').text('Pilih Tahun'); // Jika semua tahun dipilih
+                        }
+
+                        table.ajax.reload(); // Reload DataTable
                     });
                 });
             </script>
@@ -177,49 +191,31 @@
 </x-layout>
 
 <style>
-   
-
-    .btn-year-filter {
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        color: #333;
-        border-radius: 7px;
-        padding: 5px 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-year-filter:hover {
-        background-color: #000000;
-        color: #ffffff;
-        border-color: #ffffff;
-    }
-
     #cipCumBalTable {
         border-collapse: collapse;
         width: 100%;
     }
-
     #cipCumBalTable th, #cipCumBalTable td {
         padding: 8px;
         text-align: center;
     }
-
     #cipCumBalTable thead th {
-        background-color: #19da16;
+        background-color: #e93b76;
         color: #ffffff;
     }
-
     #cipCumBalTable tbody tr:nth-child(even) {
         background-color: #f9f9f9;
     }
-
     .delete-btn {
         color: rgb(255, 255, 255);
         cursor: pointer;
     }
+    #cipCumBalTable tbody tr {
+    transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
+    }
     
-
-    
+    #cipCumBalTable tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+    }
 </style>
 

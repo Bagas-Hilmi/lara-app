@@ -103,7 +103,7 @@ class FaglbController extends Controller
             }
             $faglbHead->save();
 
-            return redirect()->back()->with('success', 'Data FAGLB dan ZLIS1 berhasil diimpor!');
+            return response()->json(['success' => true, 'message' => 'Data FAGLB dan ZLIS1 berhasil diimpor!']);
         } elseif ($flag == 'update_file') {
             $request->validate([
                 'faglb' => 'nullable|file|mimes:xlsx,xls,csv',
@@ -148,10 +148,6 @@ class FaglbController extends Controller
 
             return response()->json(['success' => true, 'message' => 'File berhasil diperbarui']);
         }
-
-        // ... kode lainnya untuk upload_documents ...
-
-        return response()->json(['success' => false, 'message' => 'Operasi tidak valid'], 400);
     }
 
 
@@ -170,7 +166,7 @@ class FaglbController extends Controller
             // Hapus data lama dari t_faglb_tail berdasarkan id_head sebelum memasukkan data baru
             DB::table('t_faglb_tail')->where('id_head', $id_head)->delete();
 
-                foreach ($faglbRows as $index => $row) {
+            foreach ($faglbRows as $index => $row) {
                 // Pastikan format tanggal dan nilai yang valid
                 $postingDate = \Carbon\Carbon::parse($row[2])->format('Y-m-d');
 
@@ -262,15 +258,22 @@ class FaglbController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
-        // Ambil data dari t_faglb_tail berdasarkan id
-        $faglbData = FaglbTail::where('id_head', $id)->get();
+        $flag = $request->input('flag');
 
+        if ($flag == 'show_faglb') {
+            $faglbData = FaglbTail::where('id_head', $id)->get();
+            return view('faglb.show.faglb', compact('faglbData'));
+        } elseif ($flag == 'show_zlis1') {
+            $zlis1Data = Zlis1Tail::where('id_head', $id)->get();
+            return view('faglb.show.zlis1', compact('zlis1Data'));
+        }
 
-        // Kembalikan view dengan data yang diambil
-        return view('faglb.show.faglb', compact('faglbData'));
+        // Jika flag tidak dikenali, Anda bisa mengarahkan ke halaman 404 atau memberikan pesan kesalahan
+        return redirect()->route('faglb.index')->with('error', 'Data tidak ditemukan.');
     }
+
 
     public function showZlis1(string $id)
     {

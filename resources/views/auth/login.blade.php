@@ -46,13 +46,13 @@
                                 <form role="form" method="POST" action="{{ route('login') }}" class="text-start">
                                     @csrf
                                     @if (session('status'))
-    <div class="alert alert-success alert-dismissible text-white" role="alert">
-        <span class="text-sm">{{ session('status') }}</span>
-        <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif  
+                                    <div class="alert alert-success alert-dismissible text-white" role="alert">
+                                        <span class="text-sm">{{ session('status') }}</span>
+                                        <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                     @endif  
                                     <div class="input-group input-group-outline mt-3">
                                         <label class="form-label"></label>
                                         <input type="email" class="form-control" name="email" placeholder="your@email.com">

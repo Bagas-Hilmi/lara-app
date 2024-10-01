@@ -54,7 +54,7 @@
             @push('js')
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
             <script src="{{ asset('js/faglb/add-doc.js') }}"></script>
-            {{-- <script src="{{ asset('js/faglb/update-doc.js') }}"></script> --}}
+            <script src="{{ asset('js/faglb/update-doc.js') }}"></script>
             <script src="{{ asset('js/faglb/delete-doc.js') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
@@ -82,7 +82,7 @@
                             type: "GET",
                         },
                         columns: [
-                            {data: 'action', name: 'action', orderable: false, searchable: false},
+                            {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                             {data: 'id_head', name: 'id_head', className: 'text-center'},
                             {data: 'id_ccb', name: 'id_ccb', className: 'text-center'},
                             {data: 'period', name: 'period', className: 'text-center'},
@@ -105,49 +105,6 @@
                             }
                         ]
                     });
-            
-                    // Handle view button click
-                    $(document).on('click', '.view', function() {
-                        var id = $(this).data('id');
-                        $('#modal-id-head').val(id);
-                    });
-            
-                    // Handle form submission for updating file
-                    $('#updateForm').on('submit', function(e) {
-                        e.preventDefault();
-                        var formData = new FormData(this);
-
-                        $.ajax({
-                            url: $(this).attr('action'),
-                            type: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            success: function(response) {
-                                if(response.success) {
-                                    $('#replaceDocFormModal').modal('hide');
-                                    $('#faglb-table').DataTable().ajax.reload();
-                                    Swal.fire('Sukses', 'File berhasil diperbarui', 'success');
-                                } else {
-                                    Swal.fire('Error', response.message || 'Terjadi kesalahan saat memperbarui file', 'error');
-                                }
-                            },
-                            error: function(xhr) {
-                                var errorMessage = 'Terjadi kesalahan saat memperbarui file';
-                                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                                    errorMessage = Object.values(xhr.responseJSON.errors).flat().join('<br>');
-                                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    errorMessage = xhr.responseJSON.message;
-                                }
-                                Swal.fire('Error', errorMessage, 'error');
-                            }
-                        });
-                    });
-            
-                    // Reset form when modal is closed
-                    $('#replaceDocFormModal').on('hidden.bs.modal', function() {
-                        $('#updateForm')[0].reset();
-                    });
                 });
             </script>
             
@@ -155,3 +112,32 @@
         </div>
     </main>
 </x-layout>
+
+<style>
+
+
+#faglb-table thead th {
+background-color: #e93b76; /* Warna latar belakang header */
+color: #ffffff; /* Warna teks header */
+}
+
+/* Gaya untuk baris tabel */
+#faglb-table tbody tr {
+    transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
+}
+
+/* Gaya untuk sel tabel */
+#faglb-table tbody td {
+    padding: 10px; /* Padding untuk sel */
+    border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+}
+
+/* Hover effect untuk baris tabel */
+#faglb-table tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+}
+#faglb-table th, #faglb-table td {
+    padding: 8px;
+    text-align: center;
+}
+</style>
