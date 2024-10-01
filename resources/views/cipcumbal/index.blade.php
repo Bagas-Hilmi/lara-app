@@ -30,7 +30,7 @@
                                 <input type="hidden" id="yearFilter" name="year" value="">
 
                                 <div class="table-responsive p-0">
-                                    <table id="cipCumBalTable" class="table table-striped nowrap table-responsive p-0" style="width:100%">
+                                    <table id="cipCumBalTable" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th align="center">Action</th>
@@ -191,6 +191,15 @@
 </x-layout>
 
 <style>
+     .rounded-table {
+        border-radius: 12px; /* Adjust the radius as needed */
+        overflow: hidden; /* Ensures child elements respect the border radius */
+    }
+
+    .rounded-table th,
+    .rounded-table td {
+        border: none; /* Remove default borders to maintain rounded appearance */
+    }
     #cipCumBalTable {
         border-collapse: collapse;
         width: 100%;
