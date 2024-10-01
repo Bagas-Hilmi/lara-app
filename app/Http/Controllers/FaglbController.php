@@ -67,16 +67,17 @@ class FaglbController extends Controller
     public function store(Request $request)
     {
 
-        $request->validate([
-            'faglb' => 'nullable|file|mimes:xlsx,xls,csv',
-            'zlis1' => 'nullable|file|mimes:xlsx,xls,csv',
-            'id_head' => 'required|integer',
-            'flag' => 'required|string|in:upload_documents,update_file',
-        ]);
-
         $flag = $request->input('flag');
 
         if ($flag == 'upload_documents') {
+            $request->validate([
+                'faglb' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+                'zlis1' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+                'period' => 'required',
+                'id_ccb' => 'required',
+                'id_head' => 'sometimes|nullable|integer',
+                'flag' => 'required|string|in:upload_documents,update_file',
+            ]);
             // Logika untuk mengupload dokumen baru
             $faglbHead = new Faglb();
             $faglbHead->period = $request->input('period');
@@ -104,12 +105,18 @@ class FaglbController extends Controller
 
             return redirect()->back()->with('success', 'Data FAGLB dan ZLIS1 berhasil diimpor!');
         } elseif ($flag == 'update_file') {
+            $request->validate([
+                'faglb' => 'nullable|file|mimes:xlsx,xls,csv',
+                'zlis1' => 'nullable|file|mimes:xlsx,xls,csv',
+                'id_head' => 'required|integer',
+            ]);
 
             $id = $request->input('id_head');
-
             $faglbHead = Faglb::findOrFail($id);
 
+            // Update FAGLB file
             if ($request->hasFile('faglb')) {
+                // Hapus file lama jika ada
                 if ($faglbHead->faglb_filename && Storage::exists('uploads/faglb/' . $faglbHead->faglb_filename)) {
                     Storage::delete('uploads/faglb/' . $faglbHead->faglb_filename);
                 }
@@ -119,10 +126,12 @@ class FaglbController extends Controller
                 $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
                 $faglbHead->faglb_filename = $faglbFileName;
 
-                $this->importFaglb($faglbFilePath, $faglbHead->id_head);
+                $this->importFaglb($faglbFilePath, $id);
             }
 
+            // Update ZLIS1 file
             if ($request->hasFile('zlis1')) {
+                // Hapus file lama jika ada
                 if ($faglbHead->zlis1_filename && Storage::exists('uploads/zlis1/' . $faglbHead->zlis1_filename)) {
                     Storage::delete('uploads/zlis1/' . $faglbHead->zlis1_filename);
                 }
@@ -132,15 +141,18 @@ class FaglbController extends Controller
                 $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
                 $faglbHead->zlis1_filename = $zlis1FileName;
 
-                $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
+                $this->importZlis1($zlis1FilePath, $id);
             }
 
             $faglbHead->save();
 
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true, 'message' => 'File berhasil diperbarui']);
         }
-    }
 
+        // ... kode lainnya untuk upload_documents ...
+
+        return response()->json(['success' => false, 'message' => 'Operasi tidak valid'], 400);
+    }
 
 
     public function importFaglb($file, $id_head)
@@ -148,13 +160,17 @@ class FaglbController extends Controller
         if ($file) {
             $faglbData = Excel::toArray(new FaglbImport, $file);
 
+
             // Ambil data dari sheet pertama
             $faglbRows = $faglbData[0];
 
             // Mengabaikan baris pertama (header)
             array_shift($faglbRows);
 
-            foreach ($faglbRows as $index => $row) {
+            // Hapus data lama dari t_faglb_tail berdasarkan id_head sebelum memasukkan data baru
+            DB::table('t_faglb_tail')->where('id_head', $id_head)->delete();
+
+                foreach ($faglbRows as $index => $row) {
                 // Pastikan format tanggal dan nilai yang valid
                 $postingDate = \Carbon\Carbon::parse($row[2])->format('Y-m-d');
 
@@ -191,16 +207,14 @@ class FaglbController extends Controller
             // Import data ZLIS1
             $dataZlis1 = Excel::toArray(new Zlis1Import, $file);
 
+            DB::table('t_zlis1_tail')->where('id_head', $id_head)->delete();
+
             // Menyimpan data ke tabel t_zlis1_tail
             foreach ($dataZlis1[0] as $row) {
                 // Pastikan untuk mengabaikan baris pertama yang berisi judul
                 if ($row[0] == 'WBS Element') {
                     continue; // Skip the header row
                 }
-
-                Log::info($row);
-
-
 
                 DB::table('t_zlis1_tail')->insert([
                     'id_head' => $id_head,
