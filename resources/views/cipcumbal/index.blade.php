@@ -2,7 +2,7 @@
     <x-navbars.sidebar activePage="Cip Cumulative Balance"></x-navbars.sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <x-navbars.navs.auth titlePage="Cip Cumulative Balance"></x-navbars.navs.auth>
+        <x-navbars.navs.auth titlePage=""></x-navbars.navs.auth>
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
@@ -211,9 +211,6 @@
     #cipCumBalTable thead th {
         background-color: #e93b76;
         color: #ffffff;
-    }
-    #cipCumBalTable tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
     }
     .delete-btn {
         color: rgb(255, 255, 255);

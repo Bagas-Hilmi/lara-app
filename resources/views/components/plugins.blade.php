@@ -27,12 +27,9 @@
                         onclick="sidebarColor(this)"></span>
                     <span class="badge filter bg-gradient-dark" data-color="dark" onclick="sidebarColor(this)"></span>
                     <span class="badge filter bg-gradient-info" data-color="info" onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-success" data-color="success"
-                        onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-warning" data-color="warning"
-                        onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-danger" data-color="danger"
-                        onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-success" data-color="success"onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-warning" data-color="warning"onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-danger" data-color="danger"onclick="sidebarColor(this)"></span>
                 </div>
             </a>
             <!-- Sidenav Type -->
