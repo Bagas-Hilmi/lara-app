@@ -1,4 +1,4 @@
-<div class="modal fade" id="replaceDocFormModal" tabindex="-1" aria-labelledby="replaceDocFormModalLabel" aria-hidden="true">
+<div class="modal fade" id="replaceDocFormModal" tabindex="-1" aria-labelledby="replaceDocFormModalLabel" >
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
@@ -13,11 +13,11 @@
                    
                     <div class="mb-3">
                         <label for="faglb" class="form-label">Upload FAGLB File</label>
-                        <input type="file" class="form-control" name="faglb" id="faglb" accept=".xlsx,.xls,.csv" required>
+                        <input type="file" class="form-control custom-file-input" name="faglb" id="faglb" accept=".xlsx,.xls,.csv" required>
                     </div>
                     <div class="mb-3">
                         <label for="zlis1" class="form-label">Upload ZLIS1 File</label>
-                        <input type="file" class="form-control" name="zlis1" id="zlis1" accept=".xlsx,.xls,.csv" required>
+                        <input type="file" class="form-control custom-file-input" name="zlis1" id="zlis1" accept=".xlsx,.xls,.csv" required>
                     </div>
                 </form>
             </div>

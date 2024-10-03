@@ -71,6 +71,12 @@
     border: 1px solid #ccc; /* Customize the border */
     box-shadow: none; /* Remove shadow */
 }
+.form-control:focus {
+    border-color: #42bd37; /* Warna border saat fokus */
+    box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
+    border-radius: 4px; /* Tambahkan sudut melengkung */
+
+}
 
 .modal-body .form-label {
     font-weight: bold; /* Make labels bold */

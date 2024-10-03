@@ -21,3 +21,4 @@ Route::middleware('auth')->group(function () {
 
 // Include template routes
 require base_path('routes/web_template.php');
+

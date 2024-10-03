@@ -15,10 +15,8 @@
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between mb-2">
                                     <!-- Tombol Add Doc Upload -->
-                                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}">Add Doc Upload</a>
-                                   
+                                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}">Add Doc Upload</a>  
                                 </div>
-
                                 <div class="table-responsive p-0">
                                     <table id="faglb-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                                         <thead>
@@ -40,7 +38,6 @@
                 </div>
                 <x-footers.auth></x-footers.auth>
             </div>
-            <x-plugins></x-plugins>
 
             @include('faglb.modal.add-doc-modal')
             @include('faglb.modal.update-doc-modal')
@@ -61,7 +58,6 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
           
-
             <script>
                 $(document).ready(function() {
                     // Setup CSRF token for AJAX requests
@@ -107,14 +103,46 @@
                     });
                 });
             </script>
-            
             @endpush     
         </div>
     </main>
 </x-layout>
 
 <style>
-  .rounded-table {
+
+    .main-content {
+        margin-left: 250px; /* Memberikan ruang untuk sidebar */
+        transition: margin-left 0.3s ease; /* Transisi saat sidebar dibuka/tutup */
+    }
+
+    .sidenav.closed ~ .main-content {
+        margin-left: 0; /* Menghapus margin saat sidebar ditutup */
+    }
+
+    /* Responsif untuk tablet */
+    @media (max-width: 991px) {
+        .main-content {
+            margin-left: 200px; /* Mengurangi margin untuk tablet */
+        }
+    }
+
+    /* Responsif untuk mobile */
+    @media (max-width: 767px) {
+        .main-content {
+            margin-left: 0; /* Hapus margin di mobile */
+            padding: 10px; /* Mengurangi padding di mobile */
+        }
+
+        .sidenav.closed ~ .main-content {
+            margin-left: 0; /* Pastikan konten utama tidak overlap saat sidebar ditutup */
+        }
+
+        /* Mengatur lebar tabel agar responsif */
+        #faglb-table {
+            width: 100%; /* Memastikan tabel mengambil 100% lebar */
+        }
+    }
+    .rounded-table {
         border-radius: 12px; /* Adjust the radius as needed */
         overflow: hidden; /* Ensures child elements respect the border radius */
     }
@@ -123,28 +151,62 @@
         border: none; /* Remove default borders to maintain rounded appearance */
     }
 
-#faglb-table thead th {
-background-color: #e93b76; /* Warna latar belakang header */
-color: #ffffff; /* Warna teks header */
-}
+    #faglb-table thead th {
+    background-color: #e93b76; /* Warna latar belakang header */
+    color: #ffffff; /* Warna teks header */
+    }
 
-/* Gaya untuk baris tabel */
-#faglb-table tbody tr {
-    transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
-}
+    /* Gaya untuk baris tabel */
+    #faglb-table tbody tr {
+        transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
+    }
 
-/* Gaya untuk sel tabel */
-#faglb-table tbody td {
-    padding: 10px; /* Padding untuk sel */
-    border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
-}
+    /* Gaya untuk sel tabel */
+    #faglb-table tbody td {
+        padding: 10px; /* Padding untuk sel */
+        border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+    }
 
-/* Hover effect untuk baris tabel */
-#faglb-table tbody tr:hover {
-    background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
-}
-#faglb-table th, #faglb-table td {
-    padding: 8px;
-    text-align: center;
-}
+    /* Hover effect untuk baris tabel */
+    #faglb-table tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+    }
+    #faglb-table th, #faglb-table td {
+        padding: 8px;
+        text-align: center;
+    }
+    /* Styling khusus untuk dropdown "Entries per page" */
+    /* Target class .form-select untuk dropdown DataTables */
+    .form-select {
+        width: auto; /* Ubah sesuai kebutuhan */
+        border-radius: 4px; /* Tambahkan sudut melengkung */
+        border: 1px solid #ccc; /* Warna border */
+        box-shadow: none; /* Hilangkan shadow default */
+        background-color: #f9f9f9; /* Warna latar belakang */
+        font-size: 15px; /* Ukuran teks */
+    }
+    /* Fokus pada dropdown */
+    .form-select:focus {
+        border-color: #42bd37; /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Efek shadow saat fokus */
+    }
+
+
+
+    /* Indikator urutan di header DataTables */
+    th.sorting::after, th.sorting_asc::after, th.sorting_desc::after {
+        content: '▼'; /* Default panah ke bawah */
+        font-size: 0.8em;
+        margin-left: 0.5em;
+        color: #007bff; /* Warna panah */
+    }
+
+    th.sorting_asc::after {
+        content: '▲'; /* Panah ke atas untuk urutan naik */
+    }
+
+    th.sorting_desc::after {
+        content: '▼'; /* Panah ke bawah untuk urutan turun */
+    }
 </style>
+

@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="addDocFormModal" tabindex="-1" aria-labelledby="addDocFormLabel" aria-hidden="true">
+<div class="modal fade" id="addDocFormModal" tabindex="-1" aria-labelledby="addDocFormLabel">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
@@ -27,13 +27,13 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label" for="faglb">FAGLB</label>
-                                <input type="file" class="form-control" id="faglb" name="faglb" accept=".xlsx,.xls,.csv" required>
+                                <input type="file" class="form-control custom-file-input" id="faglb" name="faglb" accept=".xlsx,.xls,.csv" required>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label" for="zlis1">ZLIS1</label>
-                                <input type="file" class="form-control" id="zlis1" name="zlis1" accept=".xlsx,.xls,.csv" required>
+                                <input type="file" class="form-control custom-file-input" id="zlis1" name="zlis1" accept=".xlsx,.xls,.csv" required>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
         Swal.fire({
             title: 'Konfirmasi',
             text: 'Apakah Anda ingin mengunggah dokumen ini?',
-            icon: 'warning',
+            type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
@@ -131,14 +131,14 @@
         box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
     }
 
-    .form-control {
+    .custom-file-input {
         border: 1px solid #ccc; /* Customize the border */
         box-shadow: none; /* Remove shadow */
         border-radius: 4px; /* Tambahkan sudut melengkung */
         padding: 10px; /* Menambah padding untuk input */
     }
 
-    .form-control:focus {
+    .custom-file-input:focus {
         border-color: #42bd37; /* Warna border saat fokus */
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
     }
@@ -155,6 +155,15 @@
     /* Styling untuk input file */
     .custom-file-input {
         cursor: pointer; /* Mengubah pointer saat hover */
+    }
+    .form-control {
+        border: 1px solid #ccc; /* Customize the border */
+        box-shadow: none; /* Remove shadow */
+        border-radius: 4px; /* Tambahkan sudut melengkung */
+    }
+    .form-control:focus {
+        border-color: #42bd37; /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
     }
 </style>
 

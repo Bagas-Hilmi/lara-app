@@ -3,7 +3,7 @@
     <x-navbars.sidebar activePage="user-management"></x-navbars.sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
-        <x-navbars.navs.auth titlePage="User Management"></x-navbars.navs.auth>
+        <x-navbars.navs.auth titlePage=""></x-navbars.navs.auth>
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
@@ -199,7 +199,41 @@
             <x-footers.auth></x-footers.auth>
         </div>
     </main>
-    <x-plugins></x-plugins>
 
 
 </x-layout>
+
+<style>
+    .main-content {
+    margin-left: 250px; /* Memberikan ruang untuk sidebar */
+    transition: margin-left 0.3s ease; /* Transisi saat sidebar dibuka/tutup */
+}
+
+.sidenav.closed ~ .main-content {
+    margin-left: 0; /* Menghapus margin saat sidebar ditutup */
+}
+
+/* Responsif untuk tablet */
+@media (max-width: 991px) {
+    .main-content {
+        margin-left: 200px; /* Mengurangi margin untuk tablet */
+    }
+}
+
+/* Responsif untuk mobile */
+@media (max-width: 767px) {
+    .main-content {
+        margin-left: 0; /* Hapus margin di mobile */
+        padding: 10px; /* Mengurangi padding di mobile */
+    }
+
+    .sidenav.closed ~ .main-content {
+        margin-left: 0; /* Pastikan konten utama tidak overlap saat sidebar ditutup */
+    }
+
+    /* Mengatur lebar tabel agar responsif */
+    #faglb-table {
+        width: 100%; /* Memastikan tabel mengambil 100% lebar */
+    }
+}
+</style>

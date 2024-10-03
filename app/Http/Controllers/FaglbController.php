@@ -274,15 +274,6 @@ class FaglbController extends Controller
         return redirect()->route('faglb.index')->with('error', 'Data tidak ditemukan.');
     }
 
-
-    public function showZlis1(string $id)
-    {
-        // Ambil data ZLIS1 berdasarkan id_head
-        $zlis1Data = Zlis1Tail::where('id_head', $id)->get();
-
-        return view('faglb.show.zlis1', compact('zlis1Data'));
-    }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -290,14 +281,13 @@ class FaglbController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request) {}
-
-
-
+    public function update(Request $request) 
+    {
+        // 
+    }
     /**
      * Remove the specified resource from storage.
      */
