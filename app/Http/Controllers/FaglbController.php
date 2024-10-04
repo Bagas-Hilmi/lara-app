@@ -55,7 +55,8 @@ class FaglbController extends Controller
     {
         $periods = DB::table('t_cip_cum_bal')
             ->select('id_ccb', 'period_cip')
-            ->where('report_status', 1)
+            ->where('report_status', 0)
+            ->where('status', 1)
             ->get();
 
         return response()->json(['periods' => $periods]);

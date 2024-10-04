@@ -24,11 +24,11 @@
                       <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Balance (USD)</label>
-                            <input type="text" class="form-control" id="balanceUSD" name="bal_usd" placeholder="USD" style="text-align: center;" required>
+                            <input type="text" class="form-control column-input new-input" id="balanceUSD" name="bal_usd" placeholder="USD" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Balance (RP)</label>
-                            <input type="text" class="form-control" id="balanceRP" name="bal_rp" placeholder="RP" style="text-align: center;" required>
+                            <input type="text" class="form-control column-input new-input" id="balanceRP" name="bal_rp" placeholder="RP" style="text-align: center;" required>
                         </div>
                     </div>
                 
@@ -36,11 +36,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Cumulative Balance (USD)</label>
-                            <input type="text" class="form-control" id="cumulativeBalanceUSD" name="cumbal_usd" placeholder="USD" style="text-align: center;" required>
+                            <input type="text" class="form-control column-input new-input" id="cumulativeBalanceUSD" name="cumbal_usd" placeholder="USD" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Cumulative Balance (RP)</label>
-                            <input type="text" class="form-control" id="cumulativeBalanceRP" name="cumbal_rp" placeholder="RP" style="text-align: center;" required>
+                            <input type="text" class="form-control column-input new-input" id="cumulativeBalanceRP" name="cumbal_rp" placeholder="RP" style="text-align: center;" required>
                         </div>
                     </div>
 
@@ -55,34 +55,56 @@
   </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const numberInputs = document.querySelectorAll('input.new-input'); // Menggunakan kelas khusus untuk input update
+  
+        numberInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Menghapus semua karakter yang bukan angka dan koma
+                let value = this.value.replace(/[^0-9,]/g, '');
+  
+                // Memformat value agar tetap terlihat baik
+                this.value = value;
+            });
+  
+            input.addEventListener('blur', function() {
+                // Format saat fokus hilang (blur)
+                let value = this.value.replace(/,/g, ''); // Menghapus koma
+                if (value) {
+                    this.value = parseFloat(value).toFixed(2); // Format menjadi 2 desimal
+                }
+            });
+        });
+    });
+  </script>
 
 <style>
-  
-/* Container for month input */
-.month-input-container {
-    display: inline-block;
-    border-radius: 4px;
-    padding: 5px; /* Kurangi padding */
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
-}
+    /* Container for month input */
+    .month-input-container {
+        display: inline-block;
+        border-radius: 4px;
+        padding: 5px; /* Kurangi padding */
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
 
-.form-control {
-    border: 1px solid #ccc; /* Customize the border */
-    box-shadow: none; /* Remove shadow */
-}
-.form-control:focus {
-    border-color: #42bd37; /* Warna border saat fokus */
-    box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
-    border-radius: 4px; /* Tambahkan sudut melengkung */
+    .form-control {
+        border: 1px solid #ccc; /* Customize the border */
+        box-shadow: none; /* Remove shadow */
+    }
+    .form-control:focus {
+        border-color: #42bd37; /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
+        border-radius: 4px; /* Tambahkan sudut melengkung */
 
-}
+    }
 
-.modal-body .form-label {
-    font-weight: bold; /* Make labels bold */
-}
+    .modal-body .form-label {
+        font-weight: bold; /* Make labels bold */
+    }
 
-.modal-body .input-group {
-    margin-bottom: 1rem; /* Space between input groups */
-}
+    .modal-body .input-group {
+        margin-bottom: 1rem; /* Space between input groups */
+    }
 </style>

@@ -1,4 +1,6 @@
 @extends('layouts.app') 
+@section('title', 'DATA ZLIS1')
+
 @section('content')
     <div class="container" style="margin-top: 70px;">
         <div class="row">

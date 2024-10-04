@@ -24,6 +24,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
+
                                 @if (Session::has('status'))
                                 <div class="alert alert-success alert-dismissible text-white" role="alert">
                                     <span class="text-sm">{{ Session::get('status') }}</span>

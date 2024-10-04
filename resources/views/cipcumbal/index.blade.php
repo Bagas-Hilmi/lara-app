@@ -9,14 +9,14 @@
                 <div class="col-12">
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                            <div style="background-color: #31B005;" class="shadow-primary border-radius-lg pt-4 pb-3">
                                 <h2 class="text-white text-capitalize ps-3">Cip Cumulative Balance</h2>
                             </div>
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <button href="#" class="btn btn-sm btn bg-gradient-primary" data-bs-toggle="modal" data-bs-target="#new-form">New Entry</button>
+                                    <button href="#" class="btn btn-sm btn-primary" style="background-color: #09170a; border-color: #09170a;"  data-bs-toggle="modal" data-bs-target="#new-form">New Entry</button>
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                             Pilih Tahun
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="yearDropdown">
@@ -240,7 +240,7 @@
         text-align: center;
     }
     #cipCumBalTable thead th {
-        background-color: #e93b76;
+        background-color: #31B005;
         color: #ffffff;
     }
     .delete-btn {

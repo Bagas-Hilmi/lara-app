@@ -9,13 +9,14 @@
                 <div class="col-12">
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                            <div style="background-color: #3cb210;" class="shadow-primary border-radius-lg pt-4 pb-3"> 
                                 <h3 class="text-white text-capitalize ps-3">Upload Document FAGLB + ZLIS1</h3>
                             </div>
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between mb-2">
                                     <!-- Tombol Add Doc Upload -->
-                                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}">Add Doc Upload</a>  
+                                    <a href="#" class="btn btn-sm btn-primary" style="background-color: #09170a; border-color: #09170a;" 
+                                    data-bs-toggle="modal" data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}">Add Doc Upload</a>  
                                 </div>
                                 <div class="table-responsive p-0">
                                     <table id="faglb-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
@@ -152,7 +153,7 @@
     }
 
     #faglb-table thead th {
-    background-color: #e93b76; /* Warna latar belakang header */
+    background-color: #3cb210; /* Warna latar belakang header */
     color: #ffffff; /* Warna teks header */
     }
 

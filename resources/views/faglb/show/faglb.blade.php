@@ -1,4 +1,5 @@
 @extends('layouts.app') <!-- Ganti dengan layout yang sesuai -->
+@section('title', 'DATA FAGLB')
 @section('content')
     <div class="container" style="margin-top: 70px;">
         <div class="row">

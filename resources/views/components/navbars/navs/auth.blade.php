@@ -66,6 +66,9 @@
 </script>
 
 <style>
+    .navbar-main {
+        background-color: #D5D7D6; /* Ganti dengan warna yang diinginkan */
+    }
     .user-avatar {
         transition: background-color 0.3s ease;
     }
