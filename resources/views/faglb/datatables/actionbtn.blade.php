@@ -22,7 +22,7 @@
     <!-- Tombol View FAGLB -->
     <a href="{{ route('faglb.show', ['faglb' => $row, 'flag' => 'show_faglb']) }}"
       class="btn bg-gradient-info btn-sm"
-         data-bs-toggle="tooltip" 
+       data-bs-toggle="tooltip" 
        data-bs-placement="top"
        title="View FAGLB File"
        style="flex: 1; display: flex; align-items: center; justify-content: center;">

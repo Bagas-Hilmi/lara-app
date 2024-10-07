@@ -77,7 +77,7 @@
             });
         });
     });
-  </script>
+</script>
 
 <style>
     /* Container for month input */

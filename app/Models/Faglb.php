@@ -16,7 +16,6 @@ class Faglb extends Model
     protected $primaryKey = 'id_head'; // Atur primary key jika bukan 'id'
     public $timestamps = true; // Jika Anda menggunakan timestamps
 
-
     protected $dates = ['deleted_at'];
 
     protected $fillable = [

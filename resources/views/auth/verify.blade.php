@@ -25,7 +25,7 @@
                             </div>
                             <div class="card-body">
 
-                                @if (Session::has('status'))
+                                @if (session()->has('status'))
                                 <div class="alert alert-success alert-dismissible text-white" role="alert">
                                     <span class="text-sm">{{ Session::get('status') }}</span>
                                     <button type="button" class="btn-close text-lg py-3 opacity-10"
@@ -33,7 +33,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                @elseif (Session::has('email'))
+                                @elseif (session()->has('email'))
 
                                 <div class="alert alert-danger alert-dismissible text-white" role="alert">
                                     <span class="text-sm">{{ Session::get('email') }}</span>
@@ -43,7 +43,7 @@
                                     </button>
                                 </div>
                                 @endif
-                                @if (Session::has('demo'))
+                                @if (session()->has('demo'))
                                 <div class="row">
                                     <div class="alert alert-danger alert-dismissible text-white" role="alert">
                                         <span class="text-sm">{{ Session::get('demo') }}</span>
