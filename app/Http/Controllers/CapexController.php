@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Capex;
+use App\Models\CapexBudget;
+use Illuminate\Support\Facades\DB;
 
 class CapexController extends Controller
 {
@@ -46,26 +48,24 @@ class CapexController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
-        $validated = $request->validate([
-            'flag' => 'required|in:add,update',
-            'id_capex' => 'required_if:flag,update|exists:t_master_capex,id_capex', // Validasi jika update
-            'project_desc'   => 'required|string|max:255',
-            'wbs_capex'      => 'required|string',
-            'remark'         => 'required|string|max:255',
-            'request_number' => 'required|string|max:255',
-            'requester'      => 'required|string|max:255',
-            'capex_number'   => 'required|string|max:255',
-            'amount_budget'  => 'required|numeric',
-            'status_capex'   => 'required|string',
-            'budget_type'    => 'required|string',
-        ]);
-
+        
         // Mengambil nilai flag
         $flag = $request->input('flag');
-
         // Menjalankan logika berdasarkan nilai flag
         if ($flag === 'add') {
+            $validated = $request->validate([
+                'flag' => 'required|in:add,update',
+                'id_capex'       => 'required_if:flag,update|exists:t_master_capex,id_capex',
+                'project_desc'   => 'required|string|max:255',
+                'wbs_capex'      => 'required|string',
+                'remark'         => 'required|string|max:255',
+                'request_number' => 'required|string|max:255',
+                'requester'      => 'required|string|max:255',
+                'capex_number'   => 'required|string|max:255',
+                'amount_budget'  => 'required|numeric',
+                'status_capex'   => 'required|string',
+                'budget_type'    => 'required|string',
+            ]);
             // Simpan data baru ke database
             $capex = new Capex();
             $capex->project_desc = $validated['project_desc'];
@@ -82,6 +82,19 @@ class CapexController extends Controller
             // Kembalikan response sukses
             return response()->json(['success' => 'Data capex berhasil disimpan']);
         } else if ($flag === 'update') {
+            $validated = $request->validate([
+                'flag' => 'required|in:add,update',
+                'id_capex'       => 'required_if:flag,update|exists:t_master_capex,id_capex',
+                'project_desc'   => 'required|string|max:255',
+                'wbs_capex'      => 'required|string',
+                'remark'         => 'required|string|max:255',
+                'request_number' => 'required|string|max:255',
+                'requester'      => 'required|string|max:255',
+                'capex_number'   => 'required|string|max:255',
+                'amount_budget'  => 'required|numeric',
+                'status_capex'   => 'required|string',
+                'budget_type'    => 'required|string',
+            ]);
             // Perbarui data yang sudah ada
             $capex = Capex::find($validated['id_capex']); // Cari data berdasarkan id_capex
             if ($capex) {
@@ -101,6 +114,30 @@ class CapexController extends Controller
             } else {
                 return response()->json(['error' => 'Data capex tidak ditemukan'], 404);
             }
+        } else if($flag === 'add-budget'){
+            
+            $request->validate([
+                'flag' => 'required|in:add-budget',
+                'id_capex' => 'required|integer', // Validasi id_capex
+                'description' => 'required|string|max:255',
+                'amount-budget' => 'required|numeric|min:0',
+                'budget-cos' => 'required|numeric|min:0',
+            ]);
+    
+            // Buat entri baru di t_capex_budget
+            $budget = new CapexBudget();
+            $budget->description = $request->input('description');
+            $budget->amount_budget = $request->input('amount-budget');
+            $budget->budget_cos = $request->input('budget-cos');
+            $budget->id_capex = $request->input('id_capex'); // Menyimpan id_capex
+            $budget->save();
+    
+            // Respons sukses
+            return response()->json([
+                'success' => true,
+                'message' => 'Budget successfully added.',
+                'data' => $budget,
+            ]);
         }
 
         // Kembalikan response jika flag tidak valid
@@ -114,8 +151,18 @@ class CapexController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Mengambil data dari tabel t_capex_budget berdasarkan ID Capex
+        $query = CapexBudget::where('id_capex', $id);
+
+        // Membuat DataTable dengan kolom aksi
+        return DataTables::of($query)
+            ->addColumn('action', function ($row) {
+                return view('capex/datatables/actionbtnbudget', ['row' => $row]); // Ganti sesuai dengan view aksi Anda
+            })
+            ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+            ->make(true);
     }
+
 
     /**
      * Show the form for editing the specified resource.

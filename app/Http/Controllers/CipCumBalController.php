@@ -26,6 +26,7 @@ class CipCumBalController extends Controller
 
         $availableYears = DB::table('t_cip_cum_bal')
             ->selectRaw('DISTINCT LEFT(period_cip, 4) as year')
+            ->where('status', 1)
             ->orderBy('year', 'desc')
             ->pluck('year');
 

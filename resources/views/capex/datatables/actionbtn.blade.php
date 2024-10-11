@@ -5,7 +5,7 @@
     <ul class="dropdown-menu" aria-labelledby="actionDropdown_{{ $row->id }}">
         <li>
             <a class="dropdown-item" href="#" id="edit-button" 
-               data-id="{{ $row->id }}" 
+               data-id="{{ $row->id_capex }}" 
                data-project_desc="{{ $row->project_desc }}" 
                data-wbs_capex="{{ $row->wbs_capex }}" 
                data-remark="{{ $row->remark }}" 
@@ -15,17 +15,25 @@
                data-amount_budget="{{ $row->amount_budget }}" 
                data-status_capex="{{ $row->status_capex }}" 
                data-budget_type="{{ $row->budget_type }}" 
-               data-toggle="modal" 
-               data-target="#edit-form">
+               data-bs-toggle="modal" 
+               data-bs-target="#edit-form">
                 <i class="fas fa-edit"></i> Edit
             </a>
         </li>
         
         <li>
-            <button class="dropdown-item text-danger delete-capex" data-id="{{ $row->id }}">
+            <a class="dropdown-item text-danger delete-capex" data-id="{{ $row->id_capex }}">
                 <i class="fas fa-trash-alt"></i> Delete
-            </button>
-            
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="#" id="view-budget" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#budget-modal">
+                <i class="fas fa-eye"></i> View Budget
+            </a>
         </li>
     </ul>
 </div>
