@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Capex;
 use App\Models\CapexBudget;
+use App\Models\CapexProgress;
 use Illuminate\Support\Facades\DB;
 
 class CapexController extends Controller
@@ -48,7 +49,7 @@ class CapexController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         // Mengambil nilai flag
         $flag = $request->input('flag');
         // Menjalankan logika berdasarkan nilai flag
@@ -94,6 +95,8 @@ class CapexController extends Controller
                 'amount_budget'  => 'required|numeric',
                 'status_capex'   => 'required|string',
                 'budget_type'    => 'required|string',
+                'startup'    => 'required|string',
+                'expected_completed'    => 'required|string',
             ]);
             // Perbarui data yang sudah ada
             $capex = Capex::find($validated['id_capex']); // Cari data berdasarkan id_capex
@@ -107,6 +110,8 @@ class CapexController extends Controller
                 $capex->amount_budget = $validated['amount_budget'];
                 $capex->status_capex = $validated['status_capex'];
                 $capex->budget_type = $validated['budget_type'];
+                $capex->startup = $validated['startup'];
+                $capex->expected_completed = $validated['expected_completed'];
                 $capex->save();
 
                 // Kembalikan response sukses
@@ -114,24 +119,20 @@ class CapexController extends Controller
             } else {
                 return response()->json(['error' => 'Data capex tidak ditemukan'], 404);
             }
-        } else if($flag === 'add-budget'){
-            
+        } else if ($flag === 'add-budget') {
+
             $request->validate([
                 'flag' => 'required|in:add-budget',
-                'id_capex' => 'required|integer', // Validasi id_capex
                 'description' => 'required|string|max:255',
-                'amount-budget' => 'required|numeric|min:0',
-                'budget-cos' => 'required|numeric|min:0',
+                'budget_cos' => 'required|numeric|min:0',
             ]);
-    
+
             // Buat entri baru di t_capex_budget
             $budget = new CapexBudget();
             $budget->description = $request->input('description');
-            $budget->amount_budget = $request->input('amount-budget');
-            $budget->budget_cos = $request->input('budget-cos');
-            $budget->id_capex = $request->input('id_capex'); // Menyimpan id_capex
+            $budget->budget_cos = $request->input('budget_cos');
             $budget->save();
-    
+
             // Respons sukses
             return response()->json([
                 'success' => true,
@@ -149,19 +150,43 @@ class CapexController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        // Mengambil data dari tabel t_capex_budget berdasarkan ID Capex
-        $query = CapexBudget::where('id_capex', $id);
+        // Mengambil nilai flag dari permintaan
+        $flag = $request->input('flag');
 
-        // Membuat DataTable dengan kolom aksi
-        return DataTables::of($query)
-            ->addColumn('action', function ($row) {
-                return view('capex/datatables/actionbtnbudget', ['row' => $row]); // Ganti sesuai dengan view aksi Anda
-            })
-            ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
-            ->make(true);
+        // Jika flag adalah 'budget'
+        if ($flag === 'budget') {
+            
+            // Mengambil data dari tabel t_capex_budget berdasarkan ID Capex
+            $query = CapexBudget::where('id_capex', $id);
+
+            // Membuat DataTable dengan kolom aksi
+            return DataTables::of($query)
+                ->addColumn('action', function ($row) {
+                    return view('capex/datatables/actionbtnbudget', ['row' => $row]); // Ganti sesuai dengan view aksi Anda
+                })
+                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->make(true);
+
+            // Jika flag adalah 'progress'
+        } else if ($flag === 'progress') {
+            // Mengambil data dari tabel lain sesuai kebutuhan, misalnya t_capex_progress
+            $query = CapexProgress::where('id_capex', $id); // Pastikan untuk menggunakan model yang sesuai
+
+            // Membuat DataTable dengan kolom aksi untuk progress
+            return DataTables::of($query)
+                ->addColumn('action', function ($row) {
+                    return view('capex/datatables/actionbtnprogress', ['row' => $row]); // Ganti sesuai dengan view aksi untuk progress
+                })
+                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->make(true);
+        }
+
+        // Jika flag tidak valid, Anda dapat mengembalikan respons error atau data default
+        return response()->json(['error' => 'Flag tidak valid'], 400);
     }
+
 
 
     /**

@@ -35,5 +35,14 @@
                 <i class="fas fa-eye"></i> View Budget
             </a>
         </li>
+       
+        <li>
+            <a class="dropdown-item" href="#" id="view-progress" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#progress-modal">
+                <i class="fas fa-eye"></i> View Progress
+            </a>
+        </li>
     </ul>
 </div>

@@ -13,7 +13,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="project_desc" class="form-label">Project Desc</label>
+                            <label for="project_desc" class="form-label">PROJECT DESC</label>
                             <input type="text" class="form-control" id="project_desc" name="project_desc" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
@@ -32,31 +32,31 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="remark" class="form-label">Remark</label>
+                            <label for="remark" class="form-label">REMARK</label>
                             <input type="text" class="form-control" id="remark" name="remark" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="request_number" class="form-label">Request Number</label>
+                            <label for="request_number" class="form-label">REQUEST NUMBER</label>
                             <input type="text" class="form-control" id="request_number" name="request_number" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="requester" class="form-label">Requester</label>
+                            <label for="requester" class="form-label">REQUESTER</label>
                             <input type="text" class="form-control" id="requester" name="requester" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="capex_number" class="form-label">Capex Number</label>
+                            <label for="capex_number" class="form-label">CAPEX NUMBER</label>
                             <input type="text" class="form-control" id="capex_number" name="capex_number" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="amount_budget" class="form-label">Amount Budget (USD)</label>
+                            <label for="amount_budget" class="form-label">AMOUNT BUDGET (USD)</label>
                             <input type="text" class="form-control" id="amount_budget" name="amount_budget" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="status_capex" class="form-label">Status Capex</label>
+                            <label for="status_capex" class="form-label">STATUS CAPEX</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status
@@ -84,6 +84,17 @@
                                 </ul>
                                 <input type="hidden" id="budget_type" name="budget_type" style="text-align: center;" required>
                             </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="startup" class="form-label">STARTUP</label>
+                            <input type="month" class="form-control" id="startup" name="startup" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="expected_completed" class="form-label">EXPECTED COMPLETED</label>
+                            <input type="month" class="form-control" id="expected_completed" name="expected_completed" required>
                         </div>
                     </div>
                 </form>
@@ -114,6 +125,8 @@
                 amount_budget: $('#amount_budget').val(),
                 status_capex: $('#status_capex').val(),
                 budget_type: $('#budget_type').val(),
+                startup: $('#startup').val(),
+                expected_completed: $('#expected_completed').val(),
                 flag: $('input[name="flag"]').val() // Ambil flag dari input hidden
             };
 

@@ -6,28 +6,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class CapexBudget extends Model
+class CapexProgress extends Model
 {
     use HasFactory;
-    protected $table = 't_capex_budget';
-    protected $primaryKey ='id_capex_budget';
-    public $timestamps = true; // J
+    protected $table = 't_capex_progress';
+    protected $primaryKey ='id_capex_progress';
+    public $timestamps = true; // 
 
     protected $fillable = [
         'id_capex', 
         'description',
-        'budget',
         
     ];
 
-    public static function get_dtCapexBudget()
+    public static function get_dtCapexProgress()
     {
-        $query = DB::table('t_capex_budget')
+        $query = DB::table('t_capex_progress')
             ->select([
-                'id_capex_budget',
+                'id_capex_progress',
                 'id_capex',
                 'description',
-                'budget',
                 'created_at',
                 'updated_at'
             ])

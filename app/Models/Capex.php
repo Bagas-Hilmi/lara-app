@@ -24,6 +24,8 @@ class Capex extends Model
         'budget_cos',
         'status_capex',
         'budget_type',
+        'startup',
+        'expected_completed',
         'status',
         'created_by',
         'updated_by'
@@ -43,6 +45,8 @@ class Capex extends Model
                 'budget_cos',
                 'status_capex',
                 'budget_type',
+                'startup',
+                'expected_completed',        
                 'created_at',
                 'updated_at'
             ])
@@ -76,5 +80,9 @@ class Capex extends Model
     public function CapexBudget()
     {
         return $this->hasMany(CapexBudget::class, 'id_capex');
+    }
+    public function CapexProgress()
+    {
+        return $this->hasMany(CapexProgress::class, 'id_capex');
     }
 }
