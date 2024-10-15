@@ -87,13 +87,13 @@
                         </div>
                         <div class="col-md-6">
                             <label for="startup_edit" class="form-label">STARTUP</label>
-                            <input type="month" class="form-control" id="startup_edit" name="startup_edit" required>
+                            <input type="month" class="form-control" id="startup_edit" name="startup" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="expected_completed_edit" class="form-label">EXPECTED COMPLETED</label>
-                            <input type="month" class="form-control" id="expected_completed_edit" name="expected_completed_edit" required>
+                            <input type="month" class="form-control" id="expected_completed_edit" name="expected_completed" required>
                         </div>
                     </div>
                 </form>
@@ -134,8 +134,8 @@
             $('#amount_budget_edit').val(amount_budget);
             $('#status_capex_edit').val(status_capex).change(); // Pastikan dropdown menampilkan pilihan yang benar
             $('#budget_type_edit').val(budget_type).change(); // Pa// Anda mungkin perlu memformat dropdown
-            $('#startup_edit').val(remark);
-            $('#expected_completed_edit').val(remark);
+            $('#startup_edit').val(startup);
+            $('#expected_completed_edit').val(expected_completed);
 
             $('#id_capex_edit').val(id_capex); // Pastikan Anda memiliki input tersembunyi di modal Anda
 
