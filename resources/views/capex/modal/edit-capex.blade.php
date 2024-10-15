@@ -85,6 +85,16 @@
                                 <input type="hidden" id="budget_type_edit" name="budget_type" required>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <label for="startup_edit" class="form-label">STARTUP</label>
+                            <input type="month" class="form-control" id="startup_edit" name="startup_edit" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="expected_completed_edit" class="form-label">EXPECTED COMPLETED</label>
+                            <input type="month" class="form-control" id="expected_completed_edit" name="expected_completed_edit" required>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -111,6 +121,8 @@
             var amount_budget = $(this).data('amount_budget');
             var status_capex = $(this).data('status_capex');
             var budget_type = $(this).data('budget_type');
+            var startup = $(this).data('startup');
+            var expected_completed = $(this).data('expected_completed');
 
             // Isi data ke dalam modal
             $('#project_desc_edit').val(project_desc);
@@ -122,6 +134,8 @@
             $('#amount_budget_edit').val(amount_budget);
             $('#status_capex_edit').val(status_capex).change(); // Pastikan dropdown menampilkan pilihan yang benar
             $('#budget_type_edit').val(budget_type).change(); // Pa// Anda mungkin perlu memformat dropdown
+            $('#startup_edit').val(remark);
+            $('#expected_completed_edit').val(remark);
 
             $('#id_capex_edit').val(id_capex); // Pastikan Anda memiliki input tersembunyi di modal Anda
 
@@ -145,6 +159,8 @@
             amount_budget: $('#amount_budget_edit').val(),
             status_capex: $('#status_capex_edit').val(),
             budget_type: $('#budget_type_edit').val(),
+            startup: $('#startup_edit').val(),
+            expected_completed: $('#expected_completed_edit').val(),
             flag: 'update' // Menyertakan flag update
             }; // Mengambil semua data dalam form
             

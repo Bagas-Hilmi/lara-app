@@ -66,6 +66,8 @@ class CapexController extends Controller
                 'amount_budget'  => 'required|numeric',
                 'status_capex'   => 'required|string',
                 'budget_type'    => 'required|string',
+                'startup'        => 'required|string',
+                'expected_completed'    => 'required|string',
             ]);
             // Simpan data baru ke database
             $capex = new Capex();
@@ -78,6 +80,8 @@ class CapexController extends Controller
             $capex->amount_budget = $validated['amount_budget'];
             $capex->status_capex = $validated['status_capex'];
             $capex->budget_type = $validated['budget_type'];
+            $capex->startup = $validated['startup'];
+            $capex->expected_completed = $validated['expected_completed'];
             $capex->save();
 
             // Kembalikan response sukses
@@ -95,7 +99,7 @@ class CapexController extends Controller
                 'amount_budget'  => 'required|numeric',
                 'status_capex'   => 'required|string',
                 'budget_type'    => 'required|string',
-                'startup'    => 'required|string',
+                'startup'        => 'required|string',
                 'expected_completed'    => 'required|string',
             ]);
             // Perbarui data yang sudah ada

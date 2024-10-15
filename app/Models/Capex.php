@@ -71,6 +71,8 @@ class Capex extends Model
                 'budget_cos' => $data['budget_cos'],
                 'status_capex' => $data['status_capex'],
                 'budget_type' => $data['budget_type'],
+                'startup' => $data['startup'],
+                'expected_completed' => $data['expected_completed'],
                 'updated_at' => now(), // Perbarui timestamp
             ]);
 
