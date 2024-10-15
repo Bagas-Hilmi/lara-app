@@ -19,7 +19,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="budget-cos" class="form-label">Budget Cos (USD)</label>
-                            <input type="number" class="form-control" id="budget_cos" name="budget_cos" style="text-align: center;" required>
+                            <input type="number" class="form-control column-input new-budget" id="budget_cos" name="budget_cos" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -31,3 +31,27 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const numberInputs = document.querySelectorAll('input.new-budget'); // Menggunakan kelas khusus untuk input update
+  
+        numberInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Menghapus semua karakter yang bukan angka dan koma
+                let value = this.value.replace(/[^0-9,]/g, '');
+  
+                // Memformat value agar tetap terlihat baik
+                this.value = value;
+            });
+  
+            input.addEventListener('blur', function() {
+                // Format saat fokus hilang (blur)
+                let value = this.value.replace(/,/g, ''); // Menghapus koma
+                if (value) {
+                    this.value = parseFloat(value).toFixed(2); // Format menjadi 2 desimal
+                }
+            });
+        });
+    });
+</script>
