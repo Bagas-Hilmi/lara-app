@@ -191,6 +191,47 @@ class CapexController extends Controller
                 'message' => 'Budget berhasil diperbarui!',
                 'data' => $budget,
             ]);
+        } else if ($flag === 'add-progress'){
+            $request->validate([
+                'flag' => 'required|in:add-progress',
+                'id_capex' => 'required',
+                'tanggal' => 'required',
+                'description' => 'required|string|max:255',
+            ]);
+
+            $progress = new CapexProgress();
+            $progress->id_capex = $request->input('id_capex'); // Pastikan mengganti ini
+            $progress->tanggal = $request->input('tanggal');
+            $progress->description = $request->input('description');
+            $progress->save();
+
+            // Respons sukses
+            return response()->json([
+                'success' => true,
+                'message' => 'Description successfully added.',
+                'data' => $progress,
+            ]);
+        } else if ($flag === 'edit-progress'){
+            $request->validate([
+                'flag' => 'required|in:edit-progress',
+                'id' => 'required|exists:t_capex_progress,id_capex_progress', // Pastikan ID ada di database
+                'id_capex' => 'required',
+                'tanggal' => 'required',
+                'description' => 'required|string|max:255',
+            ]);
+            $progress = CapexProgress::findOrFail($request->input('id')); // Mencari progress berdasarkan ID
+
+            $progress->description = $request->input('description');
+            $progress->tanggal = $request->input('tanggal');
+            $progress->id_capex = $request->input('id_capex');
+            $progress->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Progress berhasil diperbarui!',
+                'data' => $progress,
+            ]);
+
         }
         // Kembalikan response jika flag tidak valid
         return response()->json(['error' => 'Invalid flag specified.'], 400);
@@ -207,7 +248,6 @@ class CapexController extends Controller
         $flag = $request->input('flag');
 
         if ($flag === 'budget') {
-
             // Jika permintaan AJAX untuk DataTables
             $query = CapexBudget::where('id_capex', $id); // Ambil budget berdasarkan id_capex
             return DataTables::of($query)
@@ -274,7 +314,13 @@ class CapexController extends Controller
             $budget->delete(); // Hapus record budget secara permanen
 
             return response()->json(['success' => true, 'message' => 'Budget berhasil dihapus!']);
-        }
+        } elseif ($flag === 'progress'){
+            // Logika untuk menghapus Budget
+            $progress = CapexProgress::findOrFail($id); // Temukan progress berdasarkan ID
+            $progress->delete(); // Hapus record progress secara permanen
+
+            return response()->json(['success' => true, 'message' => 'Budget berhasil dihapus!']);
+        } 
         return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);
     }
 }

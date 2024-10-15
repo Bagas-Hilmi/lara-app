@@ -1,0 +1,104 @@
+<div class="modal fade" id="edit-progress-modal" tabindex="-1" aria-labelledby="editProgressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #42bd37;">
+                <h4 class="modal-title" id="editProgressModalLabel" style="color: white;">Add New Progress</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-progress-form" action="{{ route('capex.store') }}" method="POST">
+                    <input type="hidden" id="edit_progress_id" name="id" value="">
+                    <input type="hidden" name="flag" value="edit-progress">
+                    <input type="hidden" id="edit_progress_capex_id" name="id_capex" value="">
+                    @csrf
+                    <div class="mb-3 row">
+                        <label for="edit_tanggal" class="form-label">Description</label>
+                        <div class="col">
+                            <input type="date" class="form-control" id="edit_tanggal" name="tanggal" style="text-align: center;" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="edit_description" class="form-label">Description</label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="edit_description" name="description" style="text-align: center;" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn bg-gradient-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editProgress(id) {
+        // Ambil data budget berdasarkan id
+        $.ajax({
+            url: '/capex/' + id + '/edit', // Sesuaikan dengan route edit Anda
+            method: 'GET',
+            success: function(data) {
+                // Set nilai ke input dalam modal
+                $('#edit_progress_id').val(data.id_capex_progress); // ID progress
+                $('#edit_progress_capex_id').val(data.id_capex); // ID capex
+                $('#edit_tanggal').val(data.tanggal);
+                $('#edit_description').val(data.description);
+                
+                // Tampilkan modal
+                $('#edit-progress-modal').modal('show');
+            },
+            error: function(xhr) {
+                console.log("Error: ", xhr.responseText); // Log kesalahan
+                alert('Terjadi kesalahan saat mengambil data.');
+            }
+        });
+    }
+
+        $('#edit-progress-form').on('submit', function(e) {
+        e.preventDefault(); // Mencegah reload halaman
+        var formData = $(this).serialize(); // Mengambil data dari form
+
+        $.ajax({
+            url: $(this).attr('action'), // URL untuk mengirim request
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                $('#edit-progress-modal').modal('hide'); // Menyembunyikan modal
+                $('#progress-table').DataTable().ajax.reload(); // Reload DataTable
+                alert(response.message); // Menampilkan pesan sukses
+            },
+            error: function(xhr) {
+                console.log("Error: ", xhr.responseText); // Log kesalahan
+                alert('Terjadi kesalahan: ' + xhr.responseText); // Menampilkan pesan error
+            }
+        });
+    });
+
+</script>
+
+<script>
+    // Ketika modal ditampilkan, ambil data dari tombol
+    const editProgressModal = document.getElementById('edit-progress-modal');
+    editProgressModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Tombol yang mengaktifkan modal
+
+        // Ambil data dari tombol
+        const id = button.getAttribute('data-id');
+        const capexId = button.getAttribute('data-capex-id');
+        const tanggal = button.getAttribute('data-tanggal');
+        const description = button.getAttribute('data-description');
+
+        // Isi data ke dalam modal
+        const editProgressIdInput = document.getElementById('edit_progress_id');
+        const editProgressCapexIdInput = document.getElementById('edit_progress_capex_id');
+        const editTanggalInput = document.getElementById('edit_tanggal');
+        const editDescriptionInput = document.getElementById('edit_description');
+
+        editProgressIdInput.value = id; // ID budget
+        editProgressCapexIdInput.value = capexId; // ID capex
+        editTanggalInput.value = tanggal; // Deskripsi
+        editDescriptionInput.value = description; // Budget Cos
+    });
+</script>

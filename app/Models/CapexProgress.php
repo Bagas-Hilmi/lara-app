@@ -15,6 +15,7 @@ class CapexProgress extends Model
 
     protected $fillable = [
         'id_capex', 
+        'tanggal', 
         'description',
         
     ];
@@ -25,6 +26,7 @@ class CapexProgress extends Model
             ->select([
                 'id_capex_progress',
                 'id_capex',
+                'tanggal',
                 'description',
                 'created_at',
                 'updated_at'

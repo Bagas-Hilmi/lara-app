@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
+        
                 <div class="mb-3">
                    <!-- Tombol NEW BUDGET -->
                     <button type="button" class="btn btn-primary view-budget-btn"
@@ -14,7 +14,7 @@
                         id="new-budget-btn"
                         data-bs-toggle="modal"
                         data-bs-target="#new-budget-modal">
-                            <i class="fas fa-plus"></i> NEW BUDGET
+                        <i class="fas fa-plus"></i> NEW BUDGET
                     </button>
                 </div>
                 <div class="table-responsive p-0">
@@ -90,7 +90,6 @@
             console.log("ID Capex: ", idCapex); // Log ID capex
             $('#new_budget_capex_id').val(idCapex); // Set nilai ke input tersembunyi
         });
-
         // Tangani pengiriman form untuk menambahkan budget
         $('#new-budget-form').on('submit', function (e) {
             e.preventDefault();
