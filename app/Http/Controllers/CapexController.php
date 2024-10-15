@@ -127,12 +127,14 @@ class CapexController extends Controller
 
             $request->validate([
                 'flag' => 'required|in:add-budget',
+                'id_capex' => 'required',
                 'description' => 'required|string|max:255',
                 'budget_cos' => 'required|numeric|min:0',
             ]);
 
             // Buat entri baru di t_capex_budget
             $budget = new CapexBudget();
+            $budget->id_capex = $request->input('id_capex'); // Pastikan mengganti ini
             $budget->description = $request->input('description');
             $budget->budget_cos = $request->input('budget_cos');
             $budget->save();
@@ -143,8 +145,32 @@ class CapexController extends Controller
                 'message' => 'Budget successfully added.',
                 'data' => $budget,
             ]);
-        }
+        } else if ($flag === 'edit-budget') {
+            // Validasi input untuk edit
+            $request->validate([
+                'flag' => 'required|in:edit-budget',
+                'id' => 'required|exists:t_capex_budget,id_capex_budget', // Pastikan ID ada di database
+                'capex_id' => 'required',
+                'description' => 'required|string|max:255',
+                'budget_cos' => 'required|numeric|min:0',
+            ]);
 
+            // Logika untuk mengedit budget yang ada
+            $budget = CapexBudget::findOrFail($request->input('id')); // Mencari budget berdasarkan ID
+
+            // Memperbarui data budget
+            $budget->description = $request->input('description');
+            $budget->budget_cos = $request->input('budget_cos');
+            $budget->id_capex = $request->input('capex_id');
+            $budget->save();
+
+            // Respons sukses
+            return response()->json([
+                'success' => true,
+                'message' => 'Budget berhasil diperbarui!',
+                'data' => $budget,
+            ]);
+        }
         // Kembalikan response jika flag tidak valid
         return response()->json(['error' => 'Invalid flag specified.'], 400);
     }
@@ -159,19 +185,17 @@ class CapexController extends Controller
         // Mengambil nilai flag dari permintaan
         $flag = $request->input('flag');
 
-        // Jika flag adalah 'budget'
         if ($flag === 'budget') {
-            
-            // Mengambil data dari tabel t_capex_budget berdasarkan ID Capex
-            $query = CapexBudget::where('id_capex', $id);
 
-            // Membuat DataTable dengan kolom aksi
+            // Jika permintaan AJAX untuk DataTables
+            $query = CapexBudget::where('id_capex', $id); // Ambil budget berdasarkan id_capex
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtnbudget', ['row' => $row]); // Ganti sesuai dengan view aksi Anda
+                    return view('capex/datatables/actionbtnbudget', ['row' => $row]);
                 })
-                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->rawColumns(['action'])
                 ->make(true);
+
 
             // Jika flag adalah 'progress'
         } else if ($flag === 'progress') {
@@ -212,12 +236,25 @@ class CapexController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        $capex = Capex::findOrFail($id);
-        $capex->status = 0; // Mengubah status menjadi 0
-        $capex->save(); // Menyimpan perubahan ke database
+        $flag = $request->input('flag'); // Ambil nilai flag dari request
 
-        return response()->json(['success' => true]); // Mengembalikan respons JSON
+        if ($flag === 'capex') {
+            // Logika untuk menghapus Capex
+            $capex = Capex::findOrFail($id);
+            $capex->status = 0; // Mengubah status menjadi 0 (soft delete)
+            $capex->save(); // Menyimpan perubahan ke database
+
+            return response()->json(['success' => true, 'message' => 'Capex berhasil dinonaktifkan!']);
+        } elseif ($flag === 'budget') {
+            // Logika untuk menghapus Budget
+            $budget = CapexBudget::findOrFail($id); // Temukan budget berdasarkan ID
+            $budget->delete(); // Hapus record budget secara permanen
+
+            return response()->json(['success' => true, 'message' => 'Budget berhasil dihapus!']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);
+        }
     }
 }

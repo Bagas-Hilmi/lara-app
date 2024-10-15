@@ -70,7 +70,10 @@
                 
                             // Initialize DataTable
                             var table = $('#capex-table').DataTable({
-                                responsive: true,
+                                responsive: false,
+                                paging: true,
+                                searching: true,
+                                ordering: true,
                                 processing: true,
                                 serverSide: true,
                                 order: [[1, 'desc']],
@@ -132,7 +135,8 @@
                                             url: '/capex/' + capexId,
                                             type: 'DELETE',
                                             data: {
-                                                _token: '{{ csrf_token() }}'
+                                                _token: '{{ csrf_token() }}',
+                                                flag: 'capex'
                                             },
                                             success: function(response) {
                                                 if (response.success) {

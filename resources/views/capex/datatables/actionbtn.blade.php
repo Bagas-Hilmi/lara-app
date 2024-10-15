@@ -19,13 +19,13 @@
                data-expected_completed="{{ $row->expected_completed}}" 
                data-bs-toggle="modal" 
                data-bs-target="#edit-form">
-                <i class="fas fa-edit"></i> Edit
+                <i class="fas fa-edit"></i> Edit Capex
             </a>
         </li>
         
         <li>
             <a class="dropdown-item text-danger delete-capex" data-id="{{ $row->id_capex }}">
-                <i class="fas fa-trash-alt"></i> Delete
+                <i class="fas fa-trash-alt"></i> Delete Capex
             </a>
         </li>
 
