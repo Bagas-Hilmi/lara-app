@@ -91,8 +91,20 @@
                                     {data: 'request_number', name: 'request_number', className: 'text-center'},
                                     {data: 'requester', name: 'requester', className: 'text-center'},
                                     {data: 'capex_number', name: 'capex_number', className: 'text-center'},
-                                    {data: 'amount_budget', name: 'amount_budget', className: 'text-center'},
-                                    {data: 'budget_cos', name: 'budget_cos', className: 'text-center'},
+                                    {data: 'amount_budget', name: 'amount_budget', className: 'text-right', 
+                                    render: function(data, type) {
+                                        if (type === 'display') {
+                                            return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        }
+                                        return data;
+                                    }},
+                                    {data: 'budget_cos', name: 'budget_cos', className: 'text-right', 
+                                    render: function(data, type) {
+                                        if (type === 'display') {
+                                            return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        }
+                                        return data;
+                                    }},
                                     {data: 'status_capex', name: 'status_capex', className: 'text-center'},
                                     {data: 'budget_type', name: 'budget_type', className: 'text-center'},
                                     {data: 'startup', name: 'startup', className: 'text-center'},

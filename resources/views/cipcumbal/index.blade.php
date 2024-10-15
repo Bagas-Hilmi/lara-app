@@ -191,37 +191,37 @@
 
 <style>
     .main-content {
-    margin-left: 250px; /* Memberikan ruang untuk sidebar */
-    transition: margin-left 0.3s ease; /* Transisi saat sidebar dibuka/tutup */
-}
-
-.sidenav.closed ~ .main-content {
-    margin-left: 0; /* Menghapus margin saat sidebar ditutup */
-}
-
-/* Responsif untuk tablet */
-@media (max-width: 991px) {
-    .main-content {
-        margin-left: 200px; /* Mengurangi margin untuk tablet */
-    }
-}
-
-/* Responsif untuk mobile */
-@media (max-width: 767px) {
-    .main-content {
-        margin-left: 0; /* Hapus margin di mobile */
-        padding: 10px; /* Mengurangi padding di mobile */
+        margin-left: 250px; /* Memberikan ruang untuk sidebar */
+        transition: margin-left 0.3s ease; /* Transisi saat sidebar dibuka/tutup */
     }
 
     .sidenav.closed ~ .main-content {
-        margin-left: 0; /* Pastikan konten utama tidak overlap saat sidebar ditutup */
+        margin-left: 0; /* Menghapus margin saat sidebar ditutup */
     }
 
-    /* Mengatur lebar tabel agar responsif */
-    #faglb-table {
-        width: 100%; /* Memastikan tabel mengambil 100% lebar */
+    /* Responsif untuk tablet */
+    @media (max-width: 991px) {
+        .main-content {
+            margin-left: 200px; /* Mengurangi margin untuk tablet */
+        }
     }
-}
+
+    /* Responsif untuk mobile */
+    @media (max-width: 767px) {
+        .main-content {
+            margin-left: 0; /* Hapus margin di mobile */
+            padding: 10px; /* Mengurangi padding di mobile */
+        }
+
+        .sidenav.closed ~ .main-content {
+            margin-left: 0; /* Pastikan konten utama tidak overlap saat sidebar ditutup */
+        }
+
+        /* Mengatur lebar tabel agar responsif */
+        #faglb-table {
+            width: 100%; /* Memastikan tabel mengambil 100% lebar */
+        }
+    }
     .rounded-table {
         border-radius: 12px; /* Adjust the radius as needed */
         overflow: hidden; /* Ensures child elements respect the border radius */

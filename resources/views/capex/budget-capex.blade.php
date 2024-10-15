@@ -52,6 +52,7 @@
                 processing: true,
                 serverSide: true,
                 destroy: true, // Agar inisialisasi ulang setiap kali modal dibuka
+                order: [[1, 'desc']],
                 ajax: {
                     url: '/capex/' + idCapex, // Mengarah ke function show dengan id_capex
                     type: 'GET',
@@ -104,6 +105,8 @@
                     $('#new-budget-modal').modal('hide');
                     $('#budget-table').DataTable().ajax.reload();
                     alert('Budget berhasil ditambahkan!');
+                     // Refresh halaman
+                    location.reload(); // Melakukan refresh halaman
                 },
                 error: function (xhr) {
                     console.log("Error: ", xhr.responseText); // Log kesalahan

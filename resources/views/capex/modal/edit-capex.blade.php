@@ -53,7 +53,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="amount_budget_edit" class="form-label">Amount Budget (USD)</label>
-                            <input type="text" class="form-control" id="amount_budget_edit" name="amount_budget" style="text-align: center;" required>
+                            <input type="text" class="form-control column-input edit-capex" id="amount_budget_edit" name="amount_budget" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
                             <label for="status_capex_edit" class="form-label">Status Capex</label>
@@ -73,10 +73,10 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="budget_type_edit" class="form-label">Budget Type</label>
+                            <label for="budget_type_edit" class="form-label">STATUS BUDGET</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Select Budget Type
+                                    Select Status Budget
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="budgetTypeDropdownEdit">
                                     <li><a class="dropdown-item" href="#" data-value="budgeted">Budgeted</a></li>
@@ -187,5 +187,28 @@
             });
         });
     });
+</script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const numberInputs = document.querySelectorAll('input.edit-capex'); // Menggunakan kelas khusus untuk input update
+  
+        numberInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Menghapus semua karakter yang bukan angka dan koma
+                let value = this.value.replace(/[^0-9,]/g, '');
+  
+                // Memformat value agar tetap terlihat baik
+                this.value = value;
+            });
+  
+            input.addEventListener('blur', function() {
+                // Format saat fokus hilang (blur)
+                let value = this.value.replace(/,/g, ''); // Menghapus koma
+                if (value) {
+                    this.value = parseFloat(value).toFixed(2); // Format menjadi 2 desimal
+                }
+            });
+        });
+    });
 </script>

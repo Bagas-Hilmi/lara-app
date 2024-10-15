@@ -139,6 +139,15 @@ class CapexController extends Controller
             $budget->budget_cos = $request->input('budget_cos');
             $budget->save();
 
+            // Hitung total budget_cos yang terkait dengan id_capex
+            $totalBudgetCos = CapexBudget::where('id_capex', $request->input('id_capex'))
+                                ->sum('budget_cos'); // Menjumlahkan semua budget_cos yang ada
+
+            // Update budget_cos di t_master_capex
+            $masterCapex = Capex::findOrFail($request->input('id_capex'));
+            $masterCapex->budget_cos = $totalBudgetCos; // Simpan hasil jumlah
+            $masterCapex->save(); // Simpan perubahan ke tabel t_master_capex
+
             // Respons sukses
             return response()->json([
                 'success' => true,
@@ -158,11 +167,23 @@ class CapexController extends Controller
             // Logika untuk mengedit budget yang ada
             $budget = CapexBudget::findOrFail($request->input('id')); // Mencari budget berdasarkan ID
 
+            // Ambil nilai lama budget_cos
+            $oldBudgetCos = $budget->budget_cos;
+
             // Memperbarui data budget
             $budget->description = $request->input('description');
             $budget->budget_cos = $request->input('budget_cos');
             $budget->id_capex = $request->input('capex_id');
             $budget->save();
+
+             // Hitung total budget_cos yang terkait dengan id_capex
+                $totalBudgetCos = CapexBudget::where('id_capex', $budget->id_capex)
+                ->sum('budget_cos'); // Menjumlahkan semua budget_cos yang ada
+
+            // Update budget_cos di t_master_capex
+            $masterCapex = Capex::findOrFail($budget->id_capex);
+            $masterCapex->budget_cos = $totalBudgetCos; // Simpan hasil jumlah
+            $masterCapex->save(); // Simpan perubahan ke tabel t_master_capex
 
             // Respons sukses
             return response()->json([
@@ -253,8 +274,7 @@ class CapexController extends Controller
             $budget->delete(); // Hapus record budget secara permanen
 
             return response()->json(['success' => true, 'message' => 'Budget berhasil dihapus!']);
-        } else {
-            return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);
         }
+        return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);
     }
 }
