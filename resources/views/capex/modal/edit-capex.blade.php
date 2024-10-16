@@ -13,11 +13,11 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="project_desc_edit" class="form-label">Project Desc</label>
+                            <label for="project_desc_edit" class="form-label font-weight-bold">Project Desc</label>
                             <input type="text" class="form-control" id="project_desc_edit" name="project_desc" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="wbs_capex_edit" class="form-label">WBS Capex</label>
+                            <label for="wbs_capex_edit" class="form-label font-weight-bold">WBS Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="wbsCapexDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select WBS Type
@@ -32,31 +32,31 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="remark_edit" class="form-label">Remark</label>
+                            <label for="remark_edit" class="form-label font-weight-bold">Remark</label>
                             <input type="text" class="form-control" id="remark_edit" name="remark" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="request_number_edit" class="form-label">Request Number</label>
+                            <label for="request_number_edit" class="form-label font-weight-bold">Request Number</label>
                             <input type="text" class="form-control" id="request_number_edit" name="request_number" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="requester_edit" class="form-label">Requester</label>
+                            <label for="requester_edit" class="form-label font-weight-bold">Requester</label>
                             <input type="text" class="form-control" id="requester_edit" name="requester" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="capex_number_edit" class="form-label">Capex Number</label>
+                            <label for="capex_number_edit" class="form-label font-weight-bold">Capex Number</label>
                             <input type="text" class="form-control" id="capex_number_edit" name="capex_number" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="amount_budget_edit" class="form-label">Amount Budget (USD)</label>
+                            <label for="amount_budget_edit" class="form-label font-weight-bold">Amount Budget (USD)</label>
                             <input type="text" class="form-control column-input edit-capex" id="amount_budget_edit" name="amount_budget" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="status_capex_edit" class="form-label">Status Capex</label>
+                            <label for="status_capex_edit" class="form-label font-weight-bold">Status Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status
@@ -73,7 +73,7 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="budget_type_edit" class="form-label">STATUS BUDGET</label>
+                            <label for="budget_type_edit" class="form-label font-weight-bold">STATUS BUDGET</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status Budget
@@ -86,13 +86,13 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="startup_edit" class="form-label">STARTUP</label>
+                            <label for="startup_edit" class="form-label font-weight-bold">STARTUP</label>
                             <input type="month" class="form-control" id="startup_edit" name="startup" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="expected_completed_edit" class="form-label">EXPECTED COMPLETED</label>
+                            <label for="expected_completed_edit" class="form-label font-weight-bold">EXPECTED COMPLETED</label>
                             <input type="month" class="form-control" id="expected_completed_edit" name="expected_completed" required>
                         </div>
                     </div>

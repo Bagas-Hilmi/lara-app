@@ -13,11 +13,11 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="project_desc" class="form-label">PROJECT DESC</label>
+                            <label for="project_desc" class="form-label font-weight-bold">Project Desc</label>
                             <input type="text" class="form-control" id="project_desc" name="project_desc" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="wbs_capex" class="form-label">WBS Capex</label>
+                            <label for="wbs_capex" class="form-label font-weight-bold">WBS Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="wbsCapexDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select WBS Type
@@ -32,31 +32,31 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="remark" class="form-label">REMARK</label>
+                            <label for="remark" class="form-label font-weight-bold">Remark</label>
                             <input type="text" class="form-control" id="remark" name="remark" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="request_number" class="form-label">REQUEST NUMBER</label>
+                            <label for="request_number" class="form-label font-weight-bold">Request Number</label>
                             <input type="text" class="form-control" id="request_number" name="request_number" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="requester" class="form-label">REQUESTER</label>
+                            <label for="requester" class="form-label font-weight-bold">Requester</label>
                             <input type="text" class="form-control" id="requester" name="requester" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="capex_number" class="form-label">CAPEX NUMBER</label>
+                            <label for="capex_number" class="form-label font-weight-bold">Capex Number</label>
                             <input type="text" class="form-control" id="capex_number" name="capex_number" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="amount_budget" class="form-label">AMOUNT BUDGET (USD)</label>
+                            <label for="amount_budget" class="form-label font-weight-bold">Amount Budget (USD)</label>
                             <input type="text" class="form-control column-input new-capex" id="amount_budget" name="amount_budget" style="text-align: center;" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="status_capex" class="form-label">STATUS CAPEX</label>
+                            <label for="status_capex" class="form-label font-weight-bold">Status Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status
@@ -73,7 +73,7 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="budget_type" class="form-label">STATUS BUDGET</label>
+                            <label for="budget_type" class="form-label font-weight-bold">Status Budget</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status Budget
@@ -86,14 +86,14 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="startup" class="form-label">STARTUP</label>
+                            <label for="startup" class="form-label font-weight-bold">Startup</label>
                             <input type="month" class="form-control" id="startup" name="startup" required>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="expected_completed" class="form-label">EXPECTED COMPLETED</label>
+                            <label for="expected_completed" class="form-label font-weight-bold">Expected Completed</label>
                             <input type="month" class="form-control" id="expected_completed" name="expected_completed" required>
                         </div>
                     </div>

@@ -10,7 +10,6 @@ use App\Http\Controllers\CapexController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/employees', [EmployeeController::class, 'index'])->name('pages.tables');
 
 Route::middleware('auth')->group(function () {
     Route::resource('cipcumbal', CipCumBalController::class);
