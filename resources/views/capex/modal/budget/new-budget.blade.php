@@ -11,14 +11,14 @@
                     <input type="hidden" id="new_budget_capex_id" name="id_capex" value="">
                     @csrf
                     <div class="mb-3 row">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
                             <input type="text" class="form-control" id="description" name="description" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="budget-cos" class="form-label">Budget Cos (USD)</label>
+                            <label for="budget-cos" class="form-label font-weight-bold">Budget Cos (USD)</label>
                             <input type="number" class="form-control column-input new-budget" id="budget_cos" name="budget_cos" style="text-align: center;" required>
                         </div>
                     </div>

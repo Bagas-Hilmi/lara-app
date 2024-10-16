@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
-                <h4 class="modal-title" id="editProgressModalLabel" style="color: white;">Add New Progress</h4>
+                <h4 class="modal-title" id="editProgressModalLabel" style="color: white;">Edit Progress</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -12,13 +12,13 @@
                     <input type="hidden" id="edit_progress_capex_id" name="id_capex" value="">
                     @csrf
                     <div class="mb-3 row">
-                        <label for="edit_tanggal" class="form-label">Description</label>
+                        <label for="edit_tanggal" class="form-label font-weight-bold">Date</label>
                         <div class="col">
                             <input type="date" class="form-control" id="edit_tanggal" name="tanggal" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="edit_description" class="form-label">Description</label>
+                        <label for="edit_description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
                             <input type="text" class="form-control" id="edit_description" name="description" style="text-align: center;" required>
                         </div>
@@ -35,7 +35,6 @@
 
 <script>
     function editProgress(id) {
-        // Ambil data budget berdasarkan id
         $.ajax({
             url: '/capex/' + id + '/edit', // Sesuaikan dengan route edit Anda
             method: 'GET',
@@ -96,9 +95,9 @@
         const editTanggalInput = document.getElementById('edit_tanggal');
         const editDescriptionInput = document.getElementById('edit_description');
 
-        editProgressIdInput.value = id; // ID budget
-        editProgressCapexIdInput.value = capexId; // ID capex
-        editTanggalInput.value = tanggal; // Deskripsi
-        editDescriptionInput.value = description; // Budget Cos
+        editProgressIdInput.value = id; 
+        editProgressCapexIdInput.value = capexId; 
+        editTanggalInput.value = tanggal;
+        editDescriptionInput.value = description; 
     });
 </script>

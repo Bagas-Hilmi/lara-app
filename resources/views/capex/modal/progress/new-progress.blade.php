@@ -11,13 +11,13 @@
                     <input type="hidden" id="new_progress_capex_id" name="id_capex" value="">
                     @csrf
                     <div class="mb-3 row">
-                        <label for="tanggal" class="form-label">Description</label>
+                        <label for="tanggal" class="form-label font-weight-bold">Date</label>
                         <div class="col">
                             <input type="date" class="form-control" id="tanggal" name="tanggal" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
                             <input type="text" class="form-control" id="description" name="description" style="text-align: center;" required>
                         </div>

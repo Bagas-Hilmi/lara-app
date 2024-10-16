@@ -13,14 +13,14 @@
                     <input type="hidden" name="flag" value="edit-budget">
                     <input type="hidden" id="edit_budget_capex_id" name="capex_id" value="">
                     <div class="mb-3 row">
-                        <label for="edit-description" class="form-label">Description</label>
+                        <label for="edit-description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
                             <input type="text" class="form-control" id="edit-description" name="description" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="edit-budget-cos" class="form-label">Budget Cos</label>
+                            <label for="edit-budget-cos" class="form-label font-weight-bold">Budget Cos</label>
                             <input type="number" class="form-control column-input edit-budget" id="edit_budget_cos" name="budget_cos" style="text-align: center;" required>
                         </div>
                     </div>
