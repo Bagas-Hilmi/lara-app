@@ -7,10 +7,10 @@
         </div>
     </div>
     <div class="page-header justify-content-center min-vh-100"
-        style="background-image: url('/assets/img/background.jpg');">
+        style="background-image: url('/assets/img/eco4.jpg');">
         <span class="mask bg-gradient-dark opacity-6"></span>
         <div class="container">
-            <h1 class="text-light text-center">Welcome to The Website</h1>
+            <h1 class="text-light text-center">Welcome to Capex Information System</h1>
         </div>
     </div>
 </x-layout>
