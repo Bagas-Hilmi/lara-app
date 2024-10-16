@@ -36,8 +36,8 @@
         </div>
     </div>
 </div>
-        @include('capex.modal.new-progress')
-        @include('capex.modal.edit-progress')
+        @include('capex.modal.progress.new-progress')
+        @include('capex.modal.progress.edit-progress')
 
 <script>
     $(document).ready(function() {
@@ -90,6 +90,7 @@
             console.log("ID Capex: ", idCapex); // Log ID capex
             $('#new_progress_capex_id').val(idCapex); // Set nilai ke input tersembunyi
         });
+        
         $('#new-progress-form').on('submit', function (e) {
             e.preventDefault();
             var formData = $(this).serialize();
@@ -102,7 +103,7 @@
                 success: function (response) {
                     $('#new-progress-modal').modal('hide');
                     $('#progress-table').DataTable().ajax.reload();
-                    alert('Budget berhasil ditambahkan!');
+                    alert('Progress berhasil ditambahkan!');
                      // Refresh halaman
                     location.reload(); // Melakukan refresh halaman
                 },
@@ -112,6 +113,7 @@
                 }
             });
         });
+
         $(document).on('click', '.delete-progress-btn', function() {
             // Ambil nilai id dari atribut data-id
             var progressId = $(this).data('id');

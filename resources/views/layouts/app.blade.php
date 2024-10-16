@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'Laravel'))</title>
+    <title>@yield('title', config('app.name', 'Capex Information System'))</title>
     <link rel="icon" type="image/png" href="{{ asset('assets') }}/img/eco2.jpg">
 
     <!-- Fonts -->

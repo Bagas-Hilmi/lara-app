@@ -1,3 +1,6 @@
+@section('title', 'UP-Doc FAGLB + ZLIS1')
+
+
 <x-layout bodyClass="g-sidenav-show  bg-gray-200">
     <x-navbars.sidebar activePage="UPDOC"></x-navbars.sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">

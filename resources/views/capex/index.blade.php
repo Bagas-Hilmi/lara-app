@@ -1,3 +1,5 @@
+@section('title', 'Master Capex')
+
 <x-layout bodyClass="g-sidenav-show  bg-gray-200">
     <x-navbars.sidebar activePage='dashboard'></x-navbars.sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
@@ -51,6 +53,7 @@
             @include('capex.modal.edit-capex')
             @include('capex.budget-capex')
             @include('capex.progress-capex')
+            @include('capex.porelease-capex')
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>

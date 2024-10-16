@@ -37,8 +37,8 @@
     </div>
 </div>
 
-        @include('capex.modal.new-budget')
-        @include('capex.modal.edit-budget')
+        @include('capex.modal.budget.new-budget')
+        @include('capex.modal.budget.edit-budget')
 
 <script>
     $(document).ready(function() {

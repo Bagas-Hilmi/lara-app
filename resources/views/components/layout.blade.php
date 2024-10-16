@@ -12,8 +12,8 @@
 
     <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets') }}/img/eco2.jpg">
     <link rel="icon" type="image/png" href="{{ asset('assets') }}/img/eco2.jpg">
-    <title> Capex Information System </title>
-    
+    <title>@yield('title', config('app.name', 'Capex Information System'))</title>
+
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css"href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
         <!-- Nucleo Icons -->
