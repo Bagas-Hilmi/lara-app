@@ -55,3 +55,28 @@
         });
     });
 </script>
+
+<script>
+    $('#new-porelease-form').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            console.log("Form Data: ", formData); // Log form data sebelum dikirim
+            
+            $.ajax({
+                url: $(this).attr('action'), // Sesuaikan dengan route Anda
+                method: 'POST',
+                data: formData,
+                success: function (response) {
+                    $('#new-porelease-modal').modal('hide');
+                    $('#porelease-table').DataTable().ajax.reload();
+                    alert('PO Release berhasil ditambahkan!');
+                     // Refresh halaman
+                    location.reload(); // Melakukan refresh halaman
+                },
+                error: function (xhr) {
+                    console.log("Error: ", xhr.responseText); // Log kesalahan
+                    alert('Terjadi kesalahan: ' + xhr.responseText);
+                }
+            });
+        });
+</script>

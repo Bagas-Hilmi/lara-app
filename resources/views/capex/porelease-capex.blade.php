@@ -91,29 +91,6 @@
             $('#new_porelease_capex_id').val(idCapex); // Set nilai ke input tersembunyi
         });
 
-        $('#new-porelease-form').on('submit', function (e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            console.log("Form Data: ", formData); // Log form data sebelum dikirim
-            
-            $.ajax({
-                url: $(this).attr('action'), // Sesuaikan dengan route Anda
-                method: 'POST',
-                data: formData,
-                success: function (response) {
-                    $('#new-porelease-modal').modal('hide');
-                    $('#porelease-table').DataTable().ajax.reload();
-                    alert('PO Release berhasil ditambahkan!');
-                     // Refresh halaman
-                    location.reload(); // Melakukan refresh halaman
-                },
-                error: function (xhr) {
-                    console.log("Error: ", xhr.responseText); // Log kesalahan
-                    alert('Terjadi kesalahan: ' + xhr.responseText);
-                }
-            });
-        });
-
         $(document).on('click', '.delete-porelease-btn', function() {
             // Ambil nilai id dari atribut data-id
             var poreleaseId = $(this).data('id');

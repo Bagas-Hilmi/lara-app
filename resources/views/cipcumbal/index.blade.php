@@ -72,10 +72,6 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
 
-            <script src="{{ asset('js/cipcumbal/delete-entry.js') }}"></script>
-            <script src="{{ asset('js/cipcumbal/new-entry.js') }}"></script>
-            <script src="{{ asset('js/cipcumbal/update-entry.js') }}"></script>
-
             <script>
                $(document).ready(function() {
                     $.ajaxSetup({
@@ -184,6 +180,49 @@
 
                         table.ajax.reload(); // Reload DataTable
                     });
+
+                    $('#cipCumBalTable').on('click', '.delete-btn', function() {
+                        var id = $(this).data('id');
+
+                        // Menampilkan SweetAlert untuk konfirmasi
+                        Swal.fire({
+                            title: 'Konfirmasi Hapus',
+                            text: 'Apakah Anda yakin ingin menghapus item ini?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Ya, hapus!',
+                            // Menambahkan properti ini untuk memastikan posisi di tengah
+                            position: 'center'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Jika pengguna mengkonfirmasi penghapusan
+                                $.ajax({
+                                    url: '/cipcumbal/' + id,
+                                    type: 'DELETE',
+                                    success: function(result) {
+                                        // Menampilkan notifikasi sukses
+                                        Swal.fire(
+                                            'Terhapus!',
+                                            'Item telah berhasil dihapus.',
+                                            'success'
+                                        );
+                                            location.reload(); // Reload halaman
+                                    },
+                                    error: function(xhr, status, error) {
+                                        // Menampilkan notifikasi error jika penghapusan gagal
+                                        Swal.fire(
+                                            'Gagal!',
+                                            'Terjadi kesalahan saat menghapus item.',
+                                            'error'
+                                        );
+                                    }
+                                });
+                            }
+                        });
+                    });
+
                 });
             </script>
             @endpush

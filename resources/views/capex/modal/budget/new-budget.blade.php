@@ -55,3 +55,30 @@
         });
     });
 </script>
+
+
+// Tangani pengiriman form untuk menambahkan budget
+<script>
+    $('#new-budget-form').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            console.log("Form Data: ", formData); // Log form data sebelum dikirim
+            
+            $.ajax({
+                url: $(this).attr('action'), // Sesuaikan dengan route Anda
+                method: 'POST',
+                data: formData,
+                success: function (response) {
+                    $('#new-budget-modal').modal('hide');
+                    $('#budget-table').DataTable().ajax.reload();
+                    alert('Budget berhasil ditambahkan!');
+                     // Refresh halaman
+                    location.reload(); // Melakukan refresh halaman
+                },
+                error: function (xhr) {
+                    console.log("Error: ", xhr.responseText); // Log kesalahan
+                    alert('Terjadi kesalahan: ' + xhr.responseText);
+                }
+            });
+        });
+</script>

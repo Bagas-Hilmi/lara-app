@@ -90,29 +90,7 @@
             console.log("ID Capex: ", idCapex); // Log ID capex
             $('#new_budget_capex_id').val(idCapex); // Set nilai ke input tersembunyi
         });
-        // Tangani pengiriman form untuk menambahkan budget
-        $('#new-budget-form').on('submit', function (e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            console.log("Form Data: ", formData); // Log form data sebelum dikirim
-            
-            $.ajax({
-                url: $(this).attr('action'), // Sesuaikan dengan route Anda
-                method: 'POST',
-                data: formData,
-                success: function (response) {
-                    $('#new-budget-modal').modal('hide');
-                    $('#budget-table').DataTable().ajax.reload();
-                    alert('Budget berhasil ditambahkan!');
-                     // Refresh halaman
-                    location.reload(); // Melakukan refresh halaman
-                },
-                error: function (xhr) {
-                    console.log("Error: ", xhr.responseText); // Log kesalahan
-                    alert('Terjadi kesalahan: ' + xhr.responseText);
-                }
-            });
-        });
+
         $(document).on('click', '.delete-budget-btn', function() {
             // Ambil nilai id dari atribut data-id
             var budgetId = $(this).data('id');
