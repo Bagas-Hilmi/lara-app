@@ -8,6 +8,8 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Capex;
 use App\Models\CapexBudget;
 use App\Models\CapexProgress;
+use App\Models\CapexPOrelease;
+use App\Models\CapexCompletion;
 use Illuminate\Support\Facades\DB;
 
 class CapexController extends Controller
@@ -141,7 +143,7 @@ class CapexController extends Controller
 
             // Hitung total budget_cos yang terkait dengan id_capex
             $totalBudgetCos = CapexBudget::where('id_capex', $request->input('id_capex'))
-                                ->sum('budget_cos'); // Menjumlahkan semua budget_cos yang ada
+                ->sum('budget_cos'); // Menjumlahkan semua budget_cos yang ada
 
             // Update budget_cos di t_master_capex
             $masterCapex = Capex::findOrFail($request->input('id_capex'));
@@ -176,8 +178,8 @@ class CapexController extends Controller
             $budget->id_capex = $request->input('capex_id');
             $budget->save();
 
-             // Hitung total budget_cos yang terkait dengan id_capex
-                $totalBudgetCos = CapexBudget::where('id_capex', $budget->id_capex)
+            // Hitung total budget_cos yang terkait dengan id_capex
+            $totalBudgetCos = CapexBudget::where('id_capex', $budget->id_capex)
                 ->sum('budget_cos'); // Menjumlahkan semua budget_cos yang ada
 
             // Update budget_cos di t_master_capex
@@ -191,7 +193,7 @@ class CapexController extends Controller
                 'message' => 'Budget berhasil diperbarui!',
                 'data' => $budget,
             ]);
-        } else if ($flag === 'add-progress'){
+        } else if ($flag === 'add-progress') {
             $request->validate([
                 'flag' => 'required|in:add-progress',
                 'id_capex' => 'required',
@@ -211,7 +213,9 @@ class CapexController extends Controller
                 'message' => 'Description successfully added.',
                 'data' => $progress,
             ]);
-        } else if ($flag === 'edit-progress'){
+
+        } else if ($flag === 'edit-progress') {
+            
             $request->validate([
                 'flag' => 'required|in:edit-progress',
                 'id' => 'required|exists:t_capex_progress,id_capex_progress', // Pastikan ID ada di database
@@ -219,6 +223,7 @@ class CapexController extends Controller
                 'tanggal' => 'required',
                 'description' => 'required|string|max:255',
             ]);
+
             $progress = CapexProgress::findOrFail($request->input('id')); // Mencari progress berdasarkan ID
 
             $progress->description = $request->input('description');
@@ -232,6 +237,49 @@ class CapexController extends Controller
                 'data' => $progress,
             ]);
 
+        } else if ($flag === 'add-porelease'){
+            
+            $request->validate([
+                'flag' => 'required|in:add-porelease',
+                'id_capex' => 'required',
+                'description' => 'required|string|max:255',
+                'po_release' => 'required|numeric|min:0',
+            ]);
+
+            $porelease = new CapexPOrelease();
+            $porelease->id_capex = $request->input('id_capex'); // Pastikan mengganti ini
+            $porelease->description = $request->input('description');
+            $porelease->po_release = $request->input('po_release');
+            $porelease->save();
+
+            // Respons sukses
+            return response()->json([
+                'success' => true,
+                'message' => 'Description successfully added.',
+                'data' => $porelease,
+            ]);
+        } else if ($flag === 'edit-porelease'){
+            
+            $request->validate([
+                'flag' => 'required|in:edit-porelease',
+                'id' => 'required|exists:t_capex_porelease,id_capex_porelease', // Pastikan ID ada di database
+                'id_capex' => 'required',
+                'po_release' => 'required',
+                'description_porelease' => 'required|string|max:255',
+            ]);
+
+            $porelease = CapexPOrelease::findOrFail($request->input('id')); // Mencari porelease berdasarkan ID
+
+            $porelease->description = $request->input('description_porelease');
+            $porelease->po_release = $request->input('po_release');
+            $porelease->id_capex = $request->input('id_capex');
+            $porelease->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'PO Release berhasil diperbarui!',
+                'data' => $porelease,
+            ]);
         }
         // Kembalikan response jika flag tidak valid
         return response()->json(['error' => 'Invalid flag specified.'], 400);
@@ -249,24 +297,54 @@ class CapexController extends Controller
 
         if ($flag === 'budget') {
             // Jika permintaan AJAX untuk DataTables
-            $query = CapexBudget::where('id_capex', $id); // Ambil budget berdasarkan id_capex
-            return DataTables::of($query)
-                ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtnbudget', ['row' => $row]);
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            if ($request->ajax()) {
 
+                // Ambil status dari request, jika tidak ada default ke 1
+                $status = $request->get('status', 1);
+
+                // Buat query untuk mengambil data berdasarkan id_capex dan status
+                $query = CapexBudget::query()
+                    ->where('id_capex', $id) // Ambil data berdasarkan id_capex
+                    ->where('status', $status); // Ambil data berdasarkan status
+
+                return DataTables::of($query)
+                    ->addColumn('action', function ($row) {
+                        return view('capex/datatables/actionbtnbudget', ['row' => $row]);
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
 
             // Jika flag adalah 'progress'
         } else if ($flag === 'progress') {
-            // Mengambil data dari tabel lain sesuai kebutuhan, misalnya t_capex_progress
-            $query = CapexProgress::where('id_capex', $id); // Pastikan untuk menggunakan model yang sesuai
+            // Ambil status dari request, jika tidak ada default ke 1
+            $status = $request->get('status', 1);
+
+            // Buat query untuk mengambil data berdasarkan id_capex dan status
+            $query = CapexProgress::query()
+                ->where('id_capex', $id) // Ambil data berdasarkan id_capex
+                ->where('status', $status); // Ambil data berdasarkan status
 
             // Membuat DataTable dengan kolom aksi untuk progress
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
                     return view('capex/datatables/actionbtnprogress', ['row' => $row]); // Ganti sesuai dengan view aksi untuk progress
+                })
+                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->make(true);
+        } else if ($flag === 'porelease') {
+            // Ambil status dari request, jika tidak ada default ke 1
+            $status = $request->get('status', 1);
+
+            // Buat query untuk mengambil data berdasarkan id_capex dan status
+            $query = CapexPOrelease::query()
+                ->where('id_capex', $id) // Ambil data berdasarkan id_capex
+                ->where('status', $status); // Ambil data berdasarkan status
+
+            // Membuat DataTable dengan kolom aksi untuk progress
+            return DataTables::of($query)
+                ->addColumn('action', function ($row) {
+                    return view('capex/datatables/actionbtnporelease', ['row' => $row]); // Ganti sesuai dengan view aksi untuk progress
                 })
                 ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
                 ->make(true);
@@ -304,23 +382,34 @@ class CapexController extends Controller
         if ($flag === 'capex') {
             // Logika untuk menghapus Capex
             $capex = Capex::findOrFail($id);
-            $capex->status = 0; // Mengubah status menjadi 0 (soft delete)
-            $capex->save(); // Menyimpan perubahan ke database
+            $capex->status = 0;
+            $capex->save();
 
             return response()->json(['success' => true, 'message' => 'Capex berhasil dinonaktifkan!']);
+
         } elseif ($flag === 'budget') {
-            // Logika untuk menghapus Budget
-            $budget = CapexBudget::findOrFail($id); // Temukan budget berdasarkan ID
-            $budget->delete(); // Hapus record budget secara permanen
+            // Logika  menghapus Budget
+            $budget = CapexBudget::findOrFail($id);
+            $budget->status = 0;
+            $budget->save(); // Hapus record budget secara permanen
 
-            return response()->json(['success' => true, 'message' => 'Budget berhasil dihapus!']);
-        } elseif ($flag === 'progress'){
-            // Logika untuk menghapus Budget
-            $progress = CapexProgress::findOrFail($id); // Temukan progress berdasarkan ID
-            $progress->delete(); // Hapus record progress secara permanen
+            return response()->json(['success' => true, 'message' => 'Budget berhasil dinonaktifkan!']);
 
-            return response()->json(['success' => true, 'message' => 'Budget berhasil dihapus!']);
-        } 
+        } elseif ($flag === 'progress') {
+            $progress = CapexProgress::findOrFail($id);
+            $progress->status = 0;
+            $progress->save();
+
+            return response()->json(['success' => true, 'message' => 'Progress berhasil dinonaktifkan!']);
+
+        } elseif ($flag === 'porelease') {
+            $progress = CapexPOrelease::findOrFail($id);
+            $progress->status = 0;
+            $progress->save();
+
+            return response()->json(['success' => true, 'message' => 'PO Release berhasil dinonaktifkan!']);
+        }
+
         return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);
     }
 }

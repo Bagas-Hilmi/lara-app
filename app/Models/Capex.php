@@ -83,7 +83,18 @@ class Capex extends Model
     {
         return $this->hasMany(CapexBudget::class, 'id_capex');
     }
+
     public function CapexProgress()
+    {
+        return $this->hasMany(CapexProgress::class, 'id_capex');
+    }
+
+    public function CapexCompletion()
+    {
+        return $this->hasMany(CapexProgress::class, 'id_capex');
+    }
+
+    public function CapexPOrelease()
     {
         return $this->hasMany(CapexProgress::class, 'id_capex');
     }

@@ -46,5 +46,14 @@
                 <i class="fas fa-eye"></i> View Progress
             </a>
         </li>
+
+        <li>
+            <a class="dropdown-item" href="#" id="view-porelease" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#porelease-modal">
+                <i class="fas fa-eye"></i> View PO Release
+            </a>
+        </li>
     </ul>
 </div>

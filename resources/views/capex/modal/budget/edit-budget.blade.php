@@ -70,6 +70,7 @@
                 $('#edit-budget-modal').modal('hide'); // Menyembunyikan modal
                 $('#budget-table').DataTable().ajax.reload(); // Reload DataTable
                 alert(response.message); // Menampilkan pesan sukses
+                location.reload();
             },
             error: function(xhr) {
                 console.log("Error: ", xhr.responseText); // Log kesalahan
