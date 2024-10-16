@@ -156,6 +156,7 @@ class CapexController extends Controller
                 'message' => 'Budget successfully added.',
                 'data' => $budget,
             ]);
+
         } else if ($flag === 'edit-budget') {
             // Validasi input untuk edit
             $request->validate([
@@ -213,9 +214,8 @@ class CapexController extends Controller
                 'message' => 'Description successfully added.',
                 'data' => $progress,
             ]);
-
         } else if ($flag === 'edit-progress') {
-            
+
             $request->validate([
                 'flag' => 'required|in:edit-progress',
                 'id' => 'required|exists:t_capex_progress,id_capex_progress', // Pastikan ID ada di database
@@ -236,9 +236,8 @@ class CapexController extends Controller
                 'message' => 'Progress berhasil diperbarui!',
                 'data' => $progress,
             ]);
+        } else if ($flag === 'add-porelease') {
 
-        } else if ($flag === 'add-porelease'){
-            
             $request->validate([
                 'flag' => 'required|in:add-porelease',
                 'id_capex' => 'required',
@@ -258,8 +257,8 @@ class CapexController extends Controller
                 'message' => 'Description successfully added.',
                 'data' => $porelease,
             ]);
-        } else if ($flag === 'edit-porelease'){
-            
+        } else if ($flag === 'edit-porelease') {
+
             $request->validate([
                 'flag' => 'required|in:edit-porelease',
                 'id' => 'required|exists:t_capex_porelease,id_capex_porelease', // Pastikan ID ada di database
@@ -279,6 +278,29 @@ class CapexController extends Controller
                 'success' => true,
                 'message' => 'PO Release berhasil diperbarui!',
                 'data' => $porelease,
+            ]);
+        } else if ($flag === 'add-completion') {
+
+            $request->validate([
+                'flag' => 'required|in:add-completion',
+                'id_capex' => 'required',
+                'date' => 'required|string|max:255',
+            ]);
+
+            $completion = new CapexCompletion();
+            $completion->id_capex = $request->input('id_capex');
+            $completion->date = $request->input('date');
+            $completion->save();
+
+            $completion = Capex::findOrFail($request->input('id_capex'));
+            $completion->revise_completion_date = $request->input('date'); // Mengupdate kolom revise_completion_date
+            $completion->save(); // Simpan perubahan ke tabel t_master_capex
+
+            // Respons sukses
+            return response()->json([
+                'success' => true,
+                'message' => 'Description successfully added.',
+                'data' => $completion,
             ]);
         }
         // Kembalikan response jika flag tidak valid
@@ -348,6 +370,22 @@ class CapexController extends Controller
                 })
                 ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
                 ->make(true);
+        } else if ($flag === 'completion') {
+            // Ambil status dari request, jika tidak ada default ke 1
+            $status = $request->get('status', 1);
+
+            // Buat query untuk mengambil data berdasarkan id_capex dan status
+            $query = CapexCompletion::query()
+                ->where('id_capex', $id) // Ambil data berdasarkan id_capex
+                ->where('status', $status); // Ambil data berdasarkan status
+
+            // Membuat DataTable dengan kolom aksi untuk progress
+            return DataTables::of($query)
+                ->addColumn('action', function ($row) {
+                    return view('capex/datatables/actionbtncompletion', ['row' => $row]); // Ganti sesuai dengan view aksi untuk progress
+                })
+                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->make(true);
         }
 
         // Jika flag tidak valid, Anda dapat mengembalikan respons error atau data default
@@ -386,28 +424,49 @@ class CapexController extends Controller
             $capex->save();
 
             return response()->json(['success' => true, 'message' => 'Capex berhasil dinonaktifkan!']);
-
         } elseif ($flag === 'budget') {
             // Logika  menghapus Budget
             $budget = CapexBudget::findOrFail($id);
+
             $budget->status = 0;
             $budget->save(); // Hapus record budget secara permanen
 
-            return response()->json(['success' => true, 'message' => 'Budget berhasil dinonaktifkan!']);
+            $budget = Capex::findOrFail($budget->id_capex);
 
+            $budget->budget_cos = null; 
+            $budget->save(); // Simpan perubahan ke tabel t_master_capex
+
+            return response()->json(['success' => true, 'message' => 'Budget berhasil dinonaktifkan!']);
         } elseif ($flag === 'progress') {
             $progress = CapexProgress::findOrFail($id);
             $progress->status = 0;
             $progress->save();
 
             return response()->json(['success' => true, 'message' => 'Progress berhasil dinonaktifkan!']);
-
         } elseif ($flag === 'porelease') {
             $progress = CapexPOrelease::findOrFail($id);
             $progress->status = 0;
             $progress->save();
 
             return response()->json(['success' => true, 'message' => 'PO Release berhasil dinonaktifkan!']);
+        } elseif ($flag === 'completion') {
+
+            // Temukan entri di t_capex_completion
+            $completion = CapexCompletion::findOrFail($id);
+
+            // Set status menjadi 0 (nonaktif)
+            $completion->status = 0;
+            $completion->save();
+
+            // Temukan entri terkait di t_master_capex
+            $completion = Capex::findOrFail($completion->id_capex);
+
+            // Update revise_completion_date di t_master_capex
+            $completion->revise_completion_date = null; // atau set ke nilai lain sesuai kebutuhan
+            $completion->save(); // Simpan perubahan ke tabel t_master_capex
+
+
+            return response()->json(['success' => true, 'message' => 'Completion Date berhasil dinonaktifkan!']);
         }
 
         return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);

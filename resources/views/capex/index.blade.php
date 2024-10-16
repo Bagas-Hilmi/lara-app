@@ -37,6 +37,7 @@
                                                 <th align="center">Budget Type</th>
                                                 <th align="center">Start Up</th>
                                                 <th align="center">Expected Completed</th>
+                                                <th align="center">Revise Completion Date</th>
                                                 <th align="center">Created_at</th>
                                                 <th align="center">Updated_at</th>
                                             </tr>
@@ -54,6 +55,7 @@
             @include('capex.budget-capex')
             @include('capex.progress-capex')
             @include('capex.porelease-capex')
+            @include('capex.completion-capex')
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -73,7 +75,7 @@
                 
                             // Initialize DataTable
                             var table = $('#capex-table').DataTable({
-                                responsive: false,
+                                responsive: false, // Menambahkan opsi responsif
                                 paging: true,
                                 searching: true,
                                 ordering: true,
@@ -112,6 +114,7 @@
                                     {data: 'budget_type', name: 'budget_type', className: 'text-center'},
                                     {data: 'startup', name: 'startup', className: 'text-center'},
                                     {data: 'expected_completed', name: 'expected_completed', className: 'text-center'},
+                                    {data: 'revise_completion_date', name: 'revise_completion_date', className: 'text-center'},
                                     {
                                         data: 'created_at',
                                         name: 'created_at',

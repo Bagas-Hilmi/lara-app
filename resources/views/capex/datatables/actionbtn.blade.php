@@ -55,5 +55,14 @@
                 <i class="fas fa-eye"></i> View PO Release
             </a>
         </li>
+        
+        <li>
+            <a class="dropdown-item" href="#" id="view-completion" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#completion-modal">
+                <i class="fas fa-eye"></i> View Completion Date
+            </a>
+        </li>
     </ul>
 </div>
