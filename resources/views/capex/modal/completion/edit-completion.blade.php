@@ -39,6 +39,7 @@
                 $('#edit_date').val(data.date); // Ubah ke description_porelease
                 // Tampilkan modal
                 $('#edit-completion-modal').modal('show');
+                location.reload(); // Melakukan refresh halaman
             },
             error: function(xhr) {
                 console.log("Error: ", xhr.responseText); // Log kesalahan

@@ -67,6 +67,7 @@
                 $('#edit-porelease-modal').modal('hide'); // Menyembunyikan modal
                 $('#porelease-table').DataTable().ajax.reload(); // Reload DataTable
                 alert(response.message); // Menampilkan pesan sukses
+                location.reload(); // Melakukan refresh halaman
             },
             error: function(xhr) {
                 console.log("Error: ", xhr.responseText); // Log kesalahan
