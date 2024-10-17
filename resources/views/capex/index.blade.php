@@ -23,23 +23,24 @@
                                     <table id="capex-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th align="center">Action</th>
-                                                <th align="center">ID Capex</th>
-                                                <th align="center">Project Desc</th>
-                                                <th align="center">WBS Capex </th>
-                                                <th align="center">Remark</th>
-                                                <th align="center">Request Number</th>
-                                                <th align="center">Requester</th>
-                                                <th align="center">Capex Number</th>
-                                                <th align="center">Amount Budget</th>
-                                                <th align="center">Budget Cos</th>
-                                                <th align="center">Status Capex</th>
-                                                <th align="center">Budget Type</th>
-                                                <th align="center">Start Up</th>
-                                                <th align="center">Expected Completed</th>
-                                                <th align="center">Revise Completion Date</th>
-                                                <th align="center">Created_at</th>
-                                                <th align="center">Updated_at</th>
+                                                <th class="text-center">Action</th>
+                                                <th class="text-center">ID Capex</th>
+                                                <th class="text-center">Project Desc</th>
+                                                <th class="text-center">WBS Capex </th>
+                                                <th class="text-center">Remark</th>
+                                                <th class="text-center">Request Number</th>
+                                                <th class="text-center">Requester</th>
+                                                <th class="text-center">Capex Number</th>
+                                                <th class="text-center">Amount Budget (USD)</th>
+                                                <th class="text-center">Budget Cos (USD)</th>
+                                                <th class="text-center">PO Release</th>
+                                                <th class="text-center">Status Capex</th>
+                                                <th class="text-center">Budget Type</th>
+                                                <th class="text-center">Start Up</th>
+                                                <th class="text-center">Expected Completed</th>
+                                                <th class="text-center">Revise Completion Date</th>
+                                                <th class="text-center">Created_at</th>
+                                                <th class="text-center">Updated_at</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -56,6 +57,7 @@
             @include('capex.progress-capex')
             @include('capex.porelease-capex')
             @include('capex.completion-capex')
+            @include('capex.status-capex')
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -90,12 +92,12 @@
                                 columns: [
                                     {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                                     {data: 'id_capex', name: 'id_capex', className: 'text-center'},
-                                    {data: 'project_desc', name: 'project_desc', className: 'text-center'},
-                                    {data: 'wbs_capex', name: 'wbs_capex', className: 'text-center'},
-                                    {data: 'remark', name: 'remark', className: 'text-center'},
-                                    {data: 'request_number', name: 'request_number', className: 'text-center'},
-                                    {data: 'requester', name: 'requester', className: 'text-center'},
-                                    {data: 'capex_number', name: 'capex_number', className: 'text-center'},
+                                    {data: 'project_desc', name: 'project_desc', className: 'text-start'},
+                                    {data: 'wbs_capex', name: 'wbs_capex', className: 'text-start'},
+                                    {data: 'remark', name: 'remark', className: 'text-start'},
+                                    {data: 'request_number', name: 'request_number', className: 'text-right'},
+                                    {data: 'requester', name: 'requester', className: 'text-start'},
+                                    {data: 'capex_number', name: 'capex_number', className: 'text-right'},
                                     {data: 'amount_budget', name: 'amount_budget', className: 'text-right', 
                                     render: function(data, type) {
                                         if (type === 'display') {
@@ -110,7 +112,13 @@
                                         }
                                         return data;
                                     }},
-                                    {data: 'status_capex', name: 'status_capex', className: 'text-center'},
+                                    {data: 'PO_release', name: 'PO_release', className: 'text-right',   render: function(data, type) {
+                                        if (type === 'display') {
+                                            return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        }
+                                        return data;
+                                    }},
+                                    {data: 'status_capex', name: 'status_capex', className: 'text-start'},
                                     {data: 'budget_type', name: 'budget_type', className: 'text-center'},
                                     {data: 'startup', name: 'startup', className: 'text-center'},
                                     {data: 'expected_completed', name: 'expected_completed', className: 'text-center'},
@@ -120,7 +128,7 @@
                                         name: 'created_at',
                                         className: 'text-center',
                                         render: function(data) {
-                                            return moment(data).format('YYYY-MM-DD HH:mm:ss'); 
+                                            return moment(data).format('YYYY-MM-DD'); 
                                         }
                                     },
                                     {
@@ -128,7 +136,7 @@
                                         name: 'updated_at',
                                         className: 'text-center',
                                         render: function(data) {
-                                            return moment(data).format('YYYY-MM-DD HH:mm:ss'); 
+                                            return moment(data).format('YYYY-MM-DD'); 
                                         }
                                     }
                                 ]

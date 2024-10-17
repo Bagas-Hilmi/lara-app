@@ -10,6 +10,7 @@ use App\Models\CapexBudget;
 use App\Models\CapexProgress;
 use App\Models\CapexPOrelease;
 use App\Models\CapexCompletion;
+use App\Models\CapexStatus;
 use Illuminate\Support\Facades\DB;
 
 class CapexController extends Controller
@@ -86,6 +87,11 @@ class CapexController extends Controller
             $capex->expected_completed = $validated['expected_completed'];
             $capex->save();
 
+            $capexStatus = new CapexStatus();
+            $capexStatus->id_capex = $capex->id_capex; // Asumsikan bahwa kolom primary key di tabel Capex adalah 'id_capex'
+            $capexStatus->status = $validated['status_capex'];
+            $capexStatus->save();
+
             // Kembalikan response sukses
             return response()->json(['success' => 'Data capex berhasil disimpan']);
         } else if ($flag === 'update') {
@@ -120,6 +126,11 @@ class CapexController extends Controller
                 $capex->expected_completed = $validated['expected_completed'];
                 $capex->save();
 
+                $capexStatus = new CapexStatus();
+                $capexStatus->id_capex = $capex->id_capex; // Asumsikan bahwa kolom primary key di tabel Capex adalah 'id_capex'
+                $capexStatus->status = $validated['status_capex'];
+                $capexStatus->save();
+
                 // Kembalikan response sukses
                 return response()->json(['success' => 'Data capex berhasil diperbarui']);
             } else {
@@ -141,14 +152,7 @@ class CapexController extends Controller
             $budget->budget_cos = $request->input('budget_cos');
             $budget->save();
 
-            // Hitung total budget_cos yang terkait dengan id_capex
-            $totalBudgetCos = CapexBudget::where('id_capex', $request->input('id_capex'))
-                ->sum('budget_cos'); // Menjumlahkan semua budget_cos yang ada
-
-            // Update budget_cos di t_master_capex
-            $masterCapex = Capex::findOrFail($request->input('id_capex'));
-            $masterCapex->budget_cos = $totalBudgetCos; // Simpan hasil jumlah
-            $masterCapex->save(); // Simpan perubahan ke tabel t_master_capex
+            CapexBudget::get_dtCapexBudget();
 
             // Respons sukses
             return response()->json([
@@ -156,7 +160,6 @@ class CapexController extends Controller
                 'message' => 'Budget successfully added.',
                 'data' => $budget,
             ]);
-
         } else if ($flag === 'edit-budget') {
             // Validasi input untuk edit
             $request->validate([
@@ -170,23 +173,13 @@ class CapexController extends Controller
             // Logika untuk mengedit budget yang ada
             $budget = CapexBudget::findOrFail($request->input('id')); // Mencari budget berdasarkan ID
 
-            // Ambil nilai lama budget_cos
-            $oldBudgetCos = $budget->budget_cos;
-
             // Memperbarui data budget
             $budget->description = $request->input('description');
             $budget->budget_cos = $request->input('budget_cos');
             $budget->id_capex = $request->input('capex_id');
             $budget->save();
 
-            // Hitung total budget_cos yang terkait dengan id_capex
-            $totalBudgetCos = CapexBudget::where('id_capex', $budget->id_capex)
-                ->sum('budget_cos'); // Menjumlahkan semua budget_cos yang ada
-
-            // Update budget_cos di t_master_capex
-            $masterCapex = Capex::findOrFail($budget->id_capex);
-            $masterCapex->budget_cos = $totalBudgetCos; // Simpan hasil jumlah
-            $masterCapex->save(); // Simpan perubahan ke tabel t_master_capex
+            CapexBudget::get_dtCapexBudget();
 
             // Respons sukses
             return response()->json([
@@ -251,6 +244,8 @@ class CapexController extends Controller
             $porelease->po_release = $request->input('po_release');
             $porelease->save();
 
+            CapexPOrelease::get_dtCapexPOrelease();
+
             // Respons sukses
             return response()->json([
                 'success' => true,
@@ -273,6 +268,8 @@ class CapexController extends Controller
             $porelease->po_release = $request->input('po_release');
             $porelease->id_capex = $request->input('id_capex');
             $porelease->save();
+
+            CapexPOrelease::get_dtCapexPOrelease();
 
             return response()->json([
                 'success' => true,
@@ -301,6 +298,30 @@ class CapexController extends Controller
                 'success' => true,
                 'message' => 'Description successfully added.',
                 'data' => $completion,
+            ]);
+        } else if ($flag === 'edit-completion') {
+
+            $request->validate([
+                'flag' => 'required|in:edit-completion',
+                'id' => 'required|exists:t_capex_completion_date,id_capex_completion', // Pastikan ID ada di database
+                'id_capex' => 'required',
+                'date' => 'required|string|max:255',
+            ]);
+
+            $completion = CapexCompletion::findOrFail($request->input('id')); // Mencari completion berdasarkan ID
+
+            $completion->date = $request->input('date');
+            $completion->id_capex = $request->input('id_capex');
+            $completion->save();
+
+            $completion = Capex::findOrFail($request->input('id_capex'));
+            $completion->revise_completion_date = $request->input('date'); // Mengupdate kolom revise_completion_date
+            $completion->save(); // Simpan perubahan ke tabel t_master_capex
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Completion Date berhasil diperbarui!',
+                'data' => $completion
             ]);
         }
         // Kembalikan response jika flag tidak valid
@@ -386,6 +407,12 @@ class CapexController extends Controller
                 })
                 ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
                 ->make(true);
+        } else if ($flag === 'status') {
+
+            $query = CapexStatus::query()->where('id_capex', $id); // Ambil data berdasarkan id_capex
+
+            return DataTables::of($query)
+                ->make(true);
         }
 
         // Jika flag tidak valid, Anda dapat mengembalikan respons error atau data default
@@ -425,17 +452,21 @@ class CapexController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Capex berhasil dinonaktifkan!']);
         } elseif ($flag === 'budget') {
-            // Logika  menghapus Budget
+
             $budget = CapexBudget::findOrFail($id);
 
+            $budgetCosToRemove = $budget->budget_cos;
+
             $budget->status = 0;
-            $budget->save(); // Hapus record budget secara permanen
+            $budget->save();
 
-            $budget = Capex::findOrFail($budget->id_capex);
+            $totalBudgetCos = CapexBudget::where('id_capex', $budget->id_capex)
+                ->where('status', 1)
+                ->sum('budget_cos');
 
-            $budget->budget_cos = null; 
-            $budget->save(); // Simpan perubahan ke tabel t_master_capex
-
+            $masterCapex = Capex::findOrFail($budget->id_capex);
+            $masterCapex->budget_cos = $totalBudgetCos;
+            $masterCapex->save();
             return response()->json(['success' => true, 'message' => 'Budget berhasil dinonaktifkan!']);
         } elseif ($flag === 'progress') {
             $progress = CapexProgress::findOrFail($id);
@@ -444,6 +475,7 @@ class CapexController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Progress berhasil dinonaktifkan!']);
         } elseif ($flag === 'porelease') {
+
             $progress = CapexPOrelease::findOrFail($id);
             $progress->status = 0;
             $progress->save();
