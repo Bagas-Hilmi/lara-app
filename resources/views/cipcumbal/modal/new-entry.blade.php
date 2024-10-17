@@ -118,7 +118,7 @@
                             'success'
                         );
                         // Reload DataTable tanpa refresh halaman
-                        location.reload(); // Reload halaman
+                        $('#cipCumBalTable').DataTable().ajax.reload();
 
                         // Tutup modal setelah sukses
                         $('#new-form').modal('hide');
