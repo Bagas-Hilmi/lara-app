@@ -60,25 +60,77 @@
 // Tangani pengiriman form untuk menambahkan budget
 <script>
     $('#new-budget-form').on('submit', function (e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            console.log("Form Data: ", formData); // Log form data sebelum dikirim
-            
-            $.ajax({
-                url: $(this).attr('action'), // Sesuaikan dengan route Anda
-                method: 'POST',
-                data: formData,
-                success: function (response) {
-                    $('#new-budget-modal').modal('hide');
-                    $('#budget-table').DataTable().ajax.reload();
-                    alert('Budget berhasil ditambahkan!');
-                     // Refresh halaman
-                    location.reload(); // Melakukan refresh halaman
-                },
-                error: function (xhr) {
-                    console.log("Error: ", xhr.responseText); // Log kesalahan
-                    alert('Terjadi kesalahan: ' + xhr.responseText);
-                }
-            });
+        e.preventDefault(); // Mencegah tindakan default dari formulir
+
+        // Ambil data dari form
+        var formData = $(this).serialize();
+        console.log("Form Data: ", formData); // Log form data sebelum dikirim
+
+        // Cek apakah semua field yang required terisi
+        var isValid = true;
+        $(this).find('input[required], select[required]').each(function() {
+            if ($(this).val() === '') {
+                isValid = false;
+                $(this).addClass('is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
+            } else {
+                $(this).removeClass('is-invalid'); // Hapus kelas invalid jika terisi
+            }
         });
+
+        if (!isValid) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Silakan lengkapi semua input yang diperlukan.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return; // Hentikan eksekusi jika ada field yang kosong
+        }
+
+        // Tampilkan konfirmasi sebelum mengirim data
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah Anda yakin ingin menambahkan budget ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, tambahkan!',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Kirim data melalui AJAX jika pengguna menekan "Ya"
+                $.ajax({
+                    url: $(this).attr('action'), // Sesuaikan dengan route Anda
+                    method: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        $('#new-budget-modal').modal('hide');
+                        $('#budget-table').DataTable().ajax.reload();
+
+                        // Tampilkan pesan sukses dengan SweetAlert
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Budget berhasil ditambahkan!',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Refresh halaman setelah menutup pesan sukses
+                            $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                        });
+                    },
+                    error: function (xhr) {
+                        console.log("Error: ", xhr.responseText); // Log kesalahan
+                        Swal.fire({
+                            title: 'Terjadi kesalahan!',
+                            text: 'Error: ' + xhr.responseText,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    });
 </script>
+

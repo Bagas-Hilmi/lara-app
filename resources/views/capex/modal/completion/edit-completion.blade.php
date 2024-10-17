@@ -48,22 +48,47 @@
         });
     }
 
-        $('#edit-completion-form').on('submit', function(e) {
+    $('#edit-completion-form').on('submit', function(e) {
         e.preventDefault(); // Mencegah reload halaman
         var formData = $(this).serialize(); // Mengambil data dari form
 
-        $.ajax({
-            url: $(this).attr('action'), // URL untuk mengirim request
-            method: 'POST',
-            data: formData,
-            success: function(response) {
-                $('#edit-completion-modal').modal('hide'); // Menyembunyikan modal
-                $('#completion-table').DataTable().ajax.reload(); // Reload DataTable
-                alert(response.message); // Menampilkan pesan sukses
-            },
-            error: function(xhr) {
-                console.log("Error: ", xhr.responseText); // Log kesalahan
-                alert('Terjadi kesalahan: ' + xhr.responseText); // Menampilkan pesan error
+        // Tampilkan konfirmasi sebelum mengirim data
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah Anda yakin ingin menyimpan perubahan ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, simpan!',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: $(this).attr('action'), // URL untuk mengirim request
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('#edit-completion-modal').modal('hide'); // Menyembunyikan modal
+                        $('#completion-table').DataTable().ajax.reload(); // Reload DataTable
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: response.message, // Menampilkan pesan sukses
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                    },
+                    error: function(xhr) {
+                        console.log("Error: ", xhr.responseText); // Log kesalahan
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan: ' + xhr.responseText, // Menampilkan pesan error
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
             }
         });
     });

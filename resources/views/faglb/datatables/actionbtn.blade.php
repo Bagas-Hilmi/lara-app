@@ -34,11 +34,8 @@
        align-items: center;
        justify-content: center;
        padding: 6px 12px;
-       font-size: 0.875rem;
-       white-space: nowrap;
    }
    .action-btn i {
-       font-size: 1rem;
        margin-right: 5px;
    }
    .btn-group {

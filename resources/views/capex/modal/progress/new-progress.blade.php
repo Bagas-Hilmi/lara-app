@@ -34,25 +34,62 @@
 
 <script>
     $('#new-progress-form').on('submit', function (e) {
-            e.preventDefault();
+        e.preventDefault(); // Mencegah pengiriman otomatis form
+        const form = this; // Simpan referensi form
+        // Cek apakah form valid sebelum lanjut
+        if (form.checkValidity()) {
             var formData = $(this).serialize();
             console.log("Form Data: ", formData); // Log form data sebelum dikirim
             
-            $.ajax({
-                url: $(this).attr('action'), // Sesuaikan dengan route Anda
-                method: 'POST',
-                data: formData,
-                success: function (response) {
-                    $('#new-progress-modal').modal('hide');
-                    $('#progress-table').DataTable().ajax.reload();
-                    alert('Progress berhasil ditambahkan!');
-                     // Refresh halaman
-                    location.reload(); // Melakukan refresh halaman
-                },
-                error: function (xhr) {
-                    console.log("Error: ", xhr.responseText); // Log kesalahan
-                    alert('Terjadi kesalahan: ' + xhr.responseText);
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Progress ini akan ditambahkan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, tambahkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika pengguna menekan "Ya, tambahkan!", maka lakukan AJAX request
+                    $.ajax({
+                        url: $(this).attr('action'), // Sesuaikan dengan route Anda
+                        method: 'POST',
+                        data: formData,
+                        success: function (response) {
+                            $('#new-progress-modal').modal('hide');
+                            $('#progress-table').DataTable().ajax.reload();
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Progress berhasil ditambahkan!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Refresh halaman setelah menutup pesan sukses
+                                $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                            });
+                        },
+                        error: function (xhr) {
+                            console.log("Error: ", xhr.responseText); // Log kesalahan
+                            Swal.fire({
+                                title: 'Terjadi kesalahan!',
+                                text: 'Error: ' + xhr.responseText,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
                 }
             });
-        });
+        } else {
+            // Jika form tidak valid, tampilkan pesan kesalahan
+            Swal.fire({
+                title: 'Error!',
+                text: 'Silakan lengkapi semua input yang diperlukan.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
 </script>
