@@ -69,7 +69,7 @@
                         name: 'created_at',
                         className: 'text-center',
                         render: function(data) {
-                            return moment(data).format('YYYY-MM-DD HH:mm:ss'); 
+                            return moment(data).format('YYYY-MM-DD'); 
                         }
                     },
                     {
@@ -77,7 +77,7 @@
                         name: 'updated_at',
                         className: 'text-center',
                         render: function(data) {
-                            return moment(data).format('YYYY-MM-DD HH:mm:ss'); 
+                            return moment(data).format('YYYY-MM-DD'); 
                         }
                     }
                 ]

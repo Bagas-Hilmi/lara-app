@@ -34,7 +34,7 @@
                 data-id="{{ $row->id_capex }}" 
                 data-bs-toggle="modal" 
                 data-bs-target="#budget-modal">
-                <i class="fas fa-eye"></i> View Budget
+                <i class="fas fa-eye"></i> View Budget COS
             </a>
         </li>
        
@@ -62,6 +62,15 @@
                 data-bs-toggle="modal" 
                 data-bs-target="#completion-modal">
                 <i class="fas fa-eye"></i> View Completion Date
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="#" id="view-status" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#status-modal">
+                <i class="fas fa-eye"></i> View Status Log
             </a>
         </li>
     </ul>
