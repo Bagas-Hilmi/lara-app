@@ -1,5 +1,5 @@
 <div class="modal fade" id="new-completion-modal" tabindex="-1" aria-labelledby="newCompletionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h4 class="modal-title" id="newCompletionModalLabel" style="color: white;">Add New Completion</h4>

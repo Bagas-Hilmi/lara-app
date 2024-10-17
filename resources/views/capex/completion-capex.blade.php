@@ -1,5 +1,5 @@
 <div class="modal fade" id="completion-modal" tabindex="-1" aria-labelledby="completionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="completionModalLabel" style="color: white;">Revise Completion Date</h5>
@@ -22,7 +22,7 @@
                         <thead>
                             <tr>
                                 <th align="center">Action</th>
-                                <th align="center">ID Capex Progress</th>
+                                <th align="center">ID Capex Completion</th>
                                 <th align="center">ID Capex</th>
                                 <th align="center">Date</th>
                                 <th align="center">Created_at</th>
@@ -36,6 +36,7 @@
     </div>
 </div>
     @include('capex.modal.completion.new-completion')
+    @include('capex.modal.completion.edit-completion')
 
 <script>
      $(document).ready(function() {
@@ -67,7 +68,7 @@
                         name: 'created_at',
                         className: 'text-center',
                         render: function(data) {
-                            return moment(data).format('YYYY-MM-DD HH:mm:ss'); // Format tanggal
+                            return moment(data).format('YYYY-MM-DD'); // Format tanggal
                         }
                     },
                     {
@@ -75,7 +76,7 @@
                         name: 'updated_at',
                         className: 'text-center',
                         render: function(data) {
-                            return moment(data).format('YYYY-MM-DD HH:mm:ss'); // Format tanggal
+                            return moment(data).format('YYYY-MM-DD'); // Format tanggal
                         }
                     }
                 ]

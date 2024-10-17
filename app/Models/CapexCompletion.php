@@ -11,7 +11,6 @@ class CapexCompletion extends Model
     use HasFactory;
     protected $table = 't_capex_completion_date';
     protected $primaryKey ='id_capex_completion';
-    public $timestamps = true; 
 
     protected $fillable = [
         'id_capex_budget', 
