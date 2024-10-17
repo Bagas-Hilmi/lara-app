@@ -96,7 +96,7 @@
                             confirmButtonText: 'OK'
                         }).then(() => {
                             // Menyegarkan atau menutup modal jika diperlukan
-                            location.reload(); // Segarkan halaman untuk melihat perubahan
+                            $(#'faglb-table').DataTable().ajax.reload(); // Reload halaman
                         });
                     } else {
                         Swal.fire({

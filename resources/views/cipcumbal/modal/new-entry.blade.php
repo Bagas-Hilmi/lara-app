@@ -81,9 +81,11 @@
 
 <script>
     document.getElementById('saveEntry').addEventListener('click', function() {
-        const form = document.getElementById('entryForm');
+    const form = document.getElementById('entryForm');
+    
+    // Cek apakah form valid sebelum lanjut
+    if (form.checkValidity()) {
         const formData = new FormData(form);
-
         // Pastikan `mode` sesuai
         formData.append('mode', 'ADD'); 
 
@@ -115,12 +117,9 @@
                             'Entry saved successfully!',
                             'success'
                         );
-
                         // Reload DataTable tanpa refresh halaman
-                        location.reload(); // Reload halaman
-
-                        // Tutup modal setelah sukses
                         $('#new-form').modal('hide');
+                        $(#'cipCumBalTable').DataTable().ajax.reload(); // Reload halaman
                     } else {
                         Swal.fire(
                             'Gagal!',
@@ -132,7 +131,17 @@
                 .catch(error => console.error('Error:', error));
             }
         });
-    });
+    } else {
+        // Jika form tidak valid, tampilkan pesan kesalahan
+        Swal.fire({
+            title: 'Error!',
+            text: 'Silakan lengkapi semua input yang diperlukan.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+});
+
 </script>
 
 

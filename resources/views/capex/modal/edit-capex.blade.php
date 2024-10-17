@@ -147,45 +147,69 @@
 
             // Event handler untuk menyimpan perubahan pada modal
             $('#save-edit-capex').click(function() {
-            // Ambil data dari form
-            var formData = {
-            id_capex: $('#id_capex_edit').val(), // Mengambil id_capex dari input hidden
-            project_desc: $('#project_desc_edit').val(),
-            wbs_capex: $('#wbs_capex_edit').val(),
-            remark: $('#remark_edit').val(),
-            request_number: $('#request_number_edit').val(),
-            requester: $('#requester_edit').val(),
-            capex_number: $('#capex_number_edit').val(),
-            amount_budget: $('#amount_budget_edit').val(),
-            status_capex: $('#status_capex_edit').val(),
-            budget_type: $('#budget_type_edit').val(),
-            startup: $('#startup_edit').val(),
-            expected_completed: $('#expected_completed_edit').val(),
-            flag: 'update' // Menyertakan flag update
-            }; // Mengambil semua data dalam form
-            
-            // Kirim data ke server menggunakan AJAX
-            $.ajax({
-                url: "{{ route('capex.store') }}", // Ganti dengan route yang sesuai
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    // Tindakan setelah berhasil menyimpan data
-                    $('#edit-form').modal('hide'); // Sembunyikan modal
-                    location.reload(); // Reload halaman
-                    // Atau Anda bisa menambahkan logika untuk menampilkan pesan sukses
-                    alert('Data berhasil disimpan!');
-                },
-                error: function(xhr) {
-                    // Tindakan jika terjadi kesalahan
-                    var errors = xhr.responseJSON.errors;
-                    // Menampilkan kesalahan ke pengguna
-                    $.each(errors, function(key, value) {
-                        alert(value[0]); // Tampilkan pesan kesalahan pertama
-                    });
-                }
+                // Ambil data dari form
+                var formData = {
+                    id_capex: $('#id_capex_edit').val(), // Mengambil id_capex dari input hidden
+                    project_desc: $('#project_desc_edit').val(),
+                    wbs_capex: $('#wbs_capex_edit').val(),
+                    remark: $('#remark_edit').val(),
+                    request_number: $('#request_number_edit').val(),
+                    requester: $('#requester_edit').val(),
+                    capex_number: $('#capex_number_edit').val(),
+                    amount_budget: $('#amount_budget_edit').val(),
+                    status_capex: $('#status_capex_edit').val(),
+                    budget_type: $('#budget_type_edit').val(),
+                    startup: $('#startup_edit').val(),
+                    expected_completed: $('#expected_completed_edit').val(),
+                    flag: 'update' // Menyertakan flag update
+                }; // Mengambil semua data dalam form
+                
+                // Tampilkan konfirmasi sebelum mengirim data
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: 'Apakah Anda yakin ingin menyimpan perubahan ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, simpan!',
+                    cancelButtonText: 'Tidak'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Kirim data ke server menggunakan AJAX jika pengguna menekan "Ya"
+                        $.ajax({
+                            url: "{{ route('capex.store') }}", // Ganti dengan route yang sesuai
+                            type: 'POST',
+                            data: formData,
+                            success: function(response) {
+                                // Tindakan setelah berhasil menyimpan data
+                                $('#edit-form').modal('hide'); // Sembunyikan modal
+                                $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                                // Menampilkan pesan sukses
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: 'Data berhasil disimpan!',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                            },
+                            error: function(xhr) {
+                                // Tindakan jika terjadi kesalahan
+                                var errors = xhr.responseJSON.errors;
+                                // Menampilkan kesalahan ke pengguna
+                                $.each(errors, function(key, value) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: value[0], // Tampilkan pesan kesalahan pertama
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                });
+                            }
+                        });
+                    }
+                });
             });
-        });
     });
 </script>
 

@@ -1,0 +1,97 @@
+<div class="dropdown">
+    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="actionDropdown_{{ $row->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-cog me-1"></i> Actions
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="actionDropdown_{{ $row->id }}">
+        <li>
+            <h6 class="dropdown-header">Capex Management</h6>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#" id="edit-button" 
+               data-id="{{ $row->id_capex }}" 
+               data-project_desc="{{ $row->project_desc }}" 
+               data-wbs_capex="{{ $row->wbs_capex }}" 
+               data-remark="{{ $row->remark }}" 
+               data-request_number="{{ $row->request_number }}" 
+               data-requester="{{ $row->requester }}" 
+               data-capex_number="{{ $row->capex_number }}" 
+               data-amount_budget="{{ $row->amount_budget }}" 
+               data-status_capex="{{ $row->status_capex }}" 
+               data-budget_type="{{ $row->budget_type }}" 
+               data-startup="{{ $row->startup }}" 
+               data-expected_completed="{{ $row->expected_completed}}" 
+               data-bs-toggle="modal" 
+               data-bs-target="#edit-form">
+                <i class="fas fa-edit text-primary me-2"></i> Edit Capex
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center text-danger delete-capex" data-id="{{ $row->id_capex }}">
+                <i class="fas fa-trash-alt me-2"></i> Delete Capex
+            </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <h6 class="dropdown-header">View Information</h6>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#" id="view-budget" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#budget-modal">
+                <i class="fas fa-dollar-sign text-success me-2"></i> Budget COS
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#" id="view-progress" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#progress-modal">
+                <i class="fas fa-tasks text-info me-2"></i> Progress
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#" id="view-porelease" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#porelease-modal">
+                <i class="fas fa-file-invoice text-warning me-2"></i> PO Release
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#" id="view-completion" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#completion-modal">
+                <i class="fas fa-calendar-check text-success me-2"></i> Completion Date
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#" id="view-status" 
+                data-id="{{ $row->id_capex }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#status-modal">
+                <i class="fas fa-info-circle text-primary me-2"></i> Status Log
+            </a>
+        </li>
+    </ul>
+</div>
+
+<style>
+    .dropdown-menu {
+        min-width: 150px;
+        font-size: 0.875rem;
+    }
+    .dropdown-item {
+        padding-left: 2rem; /* Menggeser konten ke kanan */
+        padding-right: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .dropdown {
+        position: relative; /* Ubah ke relative agar dropdown muncul relatif terhadap button */
+    }
+    body {
+        overflow-x: hidden; /* Tambahkan ini jika perlu */
+    }
+</style>

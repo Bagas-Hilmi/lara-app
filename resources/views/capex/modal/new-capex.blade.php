@@ -112,7 +112,7 @@
     $(document).ready(function () {
         // Mengatur event listener untuk tombol simpan
         $('#save-capex').on('click', function (e) {
-            e.preventDefault();
+            e.preventDefault(); // Mencegah tindakan default dari tombol
 
             // Ambil data dari form
             var formData = {
@@ -130,37 +130,79 @@
                 flag: $('input[name="flag"]').val() // Ambil flag dari input hidden
             };
 
-            // Kirim data melalui AJAX
-            $.ajax({
-                url: "{{ route('capex.store') }}",  // Route store capex
-                method: 'POST',
-                data: formData,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Tambahkan token CSRF
-                },
-                success: function (response) {
-                    // Tampilkan pesan sukses
-                    alert(response.success);
-                    $('#new-form').modal('hide'); // Menutup modal setelah berhasil
-                    location.reload(); // Reload halaman setelah menutup modal
-                },
-                error: function (xhr) {
-                    // Tampilkan error jika ada
-                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-                        for (var key in errors) {
-                            if (errors.hasOwnProperty(key)) {
-                                errorMessage += errors[key].join(', ') + '\n'; // Menggabungkan pesan error
+            // Cek apakah semua field yang required terisi
+            if (!formData.project_desc || !formData.wbs_capex || !formData.request_number || !formData.requester || !formData.capex_number || !formData.amount_budget || !formData.status_capex || !formData.budget_type || !formData.startup || !formData.expected_completed) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Silakan lengkapi semua input yang diperlukan.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return; // Hentikan eksekusi jika ada field yang kosong
+            }
+
+            // Tampilkan konfirmasi sebelum mengirim data
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah Anda yakin ingin menambahkan CAPEX ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, tambahkan!',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Kirim data melalui AJAX jika pengguna menekan "Ya"
+                    $.ajax({
+                        url: "{{ route('capex.store') }}",  // Route store capex
+                        method: 'POST',
+                        data: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Tambahkan token CSRF
+                        },
+                        success: function (response) {
+                            // Tampilkan pesan sukses dengan SweetAlert
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: response.success,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                $('#new-form').modal('hide'); // Menutup modal setelah berhasil
+                                $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                            });
+                        },
+                        error: function (xhr) {
+                            // Tampilkan error jika ada
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                var errors = xhr.responseJSON.errors;
+                                var errorMessage = '';
+                                for (var key in errors) {
+                                    if (errors.hasOwnProperty(key)) {
+                                        errorMessage += errors[key].join(', ') + '\n'; // Menggabungkan pesan error
+                                    }
+                                }
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Error: \n' + errorMessage,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Error: ' + xhr.responseText,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
                             }
                         }
-                        alert('Error: \n' + errorMessage);
-                    } else {
-                        alert('Error: ' + xhr.responseText);
-                    }
+                    });
                 }
             });
         });
+
 
         // Mengatur nilai dropdown ke input tersembunyi
         $('.dropdown-item').on('click', function () {
