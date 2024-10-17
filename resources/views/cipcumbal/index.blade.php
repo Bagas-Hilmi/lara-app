@@ -208,7 +208,8 @@
                                             'Item telah berhasil dihapus.',
                                             'success'
                                         );
-                                    $(#'cipCumBalTable').DataTable().ajax.reload(); // Reload halaman
+                                        $('#cipCumBalTable').DataTable().ajax.reload();
+
                                     },
                                     error: function(xhr, status, error) {
                                         // Menampilkan notifikasi error jika penghapusan gagal

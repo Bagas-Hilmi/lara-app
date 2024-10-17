@@ -39,8 +39,6 @@ class CipCumBalController extends Controller
                 $query->where('period_cip', 'LIKE', $request->year . '-%');
             }
 
-            Log::info($query->toSql(), $query->getBindings());
-
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
                     return view('cipcumbal/datatables.actionbtn', ['row' => $row]);

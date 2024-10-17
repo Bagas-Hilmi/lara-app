@@ -18,7 +18,20 @@
                                 <div class="d-flex justify-content-between mb-2">
                                     <!-- Tombol New Capex -->
                                     <button href="#" class="btn btn-sm btn-primary" style="background-color: #09170a; border-color: #09170a;"  data-bs-toggle="modal" data-bs-target="#new-form">New capex</button>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Pilih Tahun
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="yearDropdown">
+                                            <li><a class="dropdown-item" href="#" data-value="">Semua Tahun</a></li>
+                                            @foreach ($availableYears as $year)
+                                                <li><a class="dropdown-item" href="#" data-value="{{ $year }}">{{ $year }}</a></li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
+                                <input type="hidden" id="yearFilter" name="year" value="">
+
                                 <div class="table-responsive p-0">
                                     <table id="capex-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                                         <thead>
@@ -87,6 +100,11 @@
                                 ajax: {
                                     url: "{{ route('capex.index') }}",
                                     type: "GET",
+                                    data: function (d) {
+                                        console.log('Selected Year:', $('#yearFilter').val()); // Log untuk memeriksa nilai tahun
+                                        d.status = 1; // Filter status tetap
+                                        d.year = $('#yearFilter').val(); // Tambahkan filter tahun dari dropdown
+                                    }
                                 },
                 
                                 columns: [
@@ -140,6 +158,20 @@
                                         }
                                     }
                                 ]
+                            });
+
+                            $('.dropdown-item').click(function() {
+                                var year = $(this).data('value'); // Ambil nilai tahun
+                                $('#yearFilter').val(year); // Set nilai tahun ke input tersembunyi
+                                
+                                // Ubah teks tombol untuk menampilkan tahun yang dipilih
+                                if (year) {
+                                    $('#yearDropdown').text(year); // Jika ada tahun yang dipilih
+                                } else {
+                                    $('#yearDropdown').text('Pilih Tahun'); // Jika semua tahun dipilih
+                                }
+
+                                table.ajax.reload(); // Reload DataTable
                             });
                 
                             $(document).on('click', '.delete-capex', function() {

@@ -29,10 +29,10 @@
        // Event saat modal status-modal dibuka
        $('#status-modal').on('shown.bs.modal', function (e) {
            var idCapex = $(e.relatedTarget).data('id'); // Ambil ID Capex dari data-id
-           $('#new-status-btn').data('id', idCapex); // Set data-id untuk tombol NEW BUDGET
 
 
            $('#status-table').DataTable({
+               destroy: true, // Menghancurkan instance DataTable sebelumnya
                processing: true,
                serverSide: true,
                order: [[0, 'desc']],
@@ -63,9 +63,7 @@
                    }
                ]
            });
-       });
-
-      
+       });    
    });
    
 </script>

@@ -20,12 +20,21 @@ class CapexController extends Controller
      */
     public function index(Request $request)
     {
+        $availableYears = DB::table('t_master_capex')
+            ->selectRaw('DISTINCT LEFT(created_at, 4) as year')
+            ->where('status', 1)
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+
         if ($request->ajax()) {
-
             $status = $request->get('status', 1);
-
             // Buat query untuk mengambil semua data dari model Capex
             $query = Capex::query()->where('status', $status);
+
+            // Filter berdasarkan tahun yang dipilih
+            if ($request->has('year') && !empty($request->year)) {
+                $query->where('created_at', 'LIKE', $request->year . '-%');
+            }
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
@@ -35,7 +44,7 @@ class CapexController extends Controller
                 ->make(true);
         }
 
-        return view('capex.index');
+        return view('capex.index')->with('availableYears', $availableYears);
     }
 
 
