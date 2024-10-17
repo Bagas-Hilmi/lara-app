@@ -118,8 +118,10 @@
                             'success'
                         );
                         // Reload DataTable tanpa refresh halaman
+                        location.reload(); // Reload halaman
+
+                        // Tutup modal setelah sukses
                         $('#new-form').modal('hide');
-                        $(#'cipCumBalTable').DataTable().ajax.reload(); // Reload halaman
                     } else {
                         Swal.fire(
                             'Gagal!',
