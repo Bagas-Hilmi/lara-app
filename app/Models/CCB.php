@@ -89,9 +89,8 @@ class CCB extends Model
 
     public static function updateData($id, $period_cip, $bal_usd, $bal_rp, $cumbal_usd, $cumbal_rp, $report_status, $status, $updated_by)
     {
-        try {
-            // Query untuk memperbarui data
-            $query = 'UPDATE t_cip_cum_bal
+        // Query untuk memperbarui data
+        $query = 'UPDATE t_cip_cum_bal
                       SET period_cip = ?,
                           bal_usd = ?,
                           bal_rp = ?,
@@ -103,28 +102,23 @@ class CCB extends Model
                           updated_at = ?
                       WHERE id_ccb = ?';
 
-            $params = [
-                $period_cip,
-                $bal_usd,
-                $bal_rp,
-                $cumbal_usd,
-                $cumbal_rp,
-                $report_status,
-                $status,
-                $updated_by,  // Harus sesuai dengan tipe data yang diharapkan
-                now(),        // Timestamp untuk updated_at
-                $id
-            ];
+        $params = [
+            $period_cip,
+            $bal_usd,
+            $bal_rp,
+            $cumbal_usd,
+            $cumbal_rp,
+            $report_status,
+            $status,
+            $updated_by,  // Harus sesuai dengan tipe data yang diharapkan
+            now(),        // Timestamp untuk updated_at
+            $id
+        ];
 
-            $result = DB::update($query, $params);
+        $result = DB::update($query, $params);
 
-            Log::info('Update berhasil untuk ID: ' . $id);
+        Log::info('Update berhasil untuk ID: ' . $id);
 
-            return ['success' => true, 'message' => 'Data berhasil diperbarui!'];
-        } catch (\Exception $e) {
-            Log::error('Terjadi kesalahan saat memperbarui data. Error: ' . $e->getMessage());
-
-            return ['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'];
-        }
+        return ['success' => true, 'message' => 'Data berhasil diperbarui!'];
     }
 }

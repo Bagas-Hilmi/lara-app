@@ -95,8 +95,9 @@
                             text: data.message, // Tampilkan pesan sukses
                             confirmButtonText: 'OK'
                         }).then(() => {
+                            $('#addDocFormModal').modal('hide'); // Ganti #modal-id dengan ID modal Anda
                             // Menyegarkan atau menutup modal jika diperlukan
-                            $(#'faglb-table').DataTable().ajax.reload(); // Reload halaman
+                            $('#faglb-table').DataTable().ajax.reload();
                         });
                     } else {
                         Swal.fire({

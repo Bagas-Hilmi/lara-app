@@ -9,7 +9,6 @@ use Laratrust\Contracts\LaratrustUser;
 use Laravel\Sanctum\HasApiTokens;
 use Laratrust\Traits\HasRolesAndPermissions;
 use Laratrust\Traits\DynamicUserRelationshipCalls;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
 class User extends Authenticatable implements LaratrustUser
