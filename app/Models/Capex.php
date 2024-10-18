@@ -46,7 +46,7 @@ class Capex extends Model
                 'status_capex',
                 'budget_type',
                 'startup',
-                'expected_completed',        
+                'expected_completed',
                 'created_at',
                 'updated_at'
             ])
@@ -54,29 +54,108 @@ class Capex extends Model
 
         return $query->get(); // Mengambil semua data
     }
+    public static function add(
+        $projectDesc,
+        $wbsCapex,
+        $remark,
+        $requestNumber,
+        $requester,
+        $capexNumber,
+        $amountBudget,
+        $statusCapex,
+        $budgetType,
+        $startup,
+        $expectedCompleted
+    ) {
+        // Simpan data baru ke database dengan raw SQL
+        $query = 'INSERT INTO t_master_capex (project_desc, wbs_capex, remark, request_number, requester, capex_number, amount_budget, status_capex, budget_type, startup, expected_completed, created_at, updated_at) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-    public static function updateDataCapex($id_capex, $data)
+        DB::insert($query, [
+            $projectDesc,
+            $wbsCapex,
+            $remark,
+            $requestNumber,
+            $requester,
+            $capexNumber,
+            $amountBudget,
+            $statusCapex,
+            $budgetType,
+            $startup,
+            $expectedCompleted,
+            now(),
+            now()
+        ]);
+
+        // Mendapatkan ID capex terakhir yang dimasukkan
+        $lastInsertedId = DB::getPdo()->lastInsertId();
+
+        // Simpan data ke tabel CapexStatus (asumsi id_capex adalah foreign key)
+        DB::insert('INSERT INTO t_capex_status (id_capex, status, created_at, updated_at) VALUES (?, ?, ?, ?)', [
+            $lastInsertedId,
+            $statusCapex,
+            now(),
+            now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Capex berhasil ditambahkan!'
+        ]);
+    }
+
+    public static function updateCapexData($id_capex, $project_desc, $wbs_capex, $remark, $request_number, $requester, $capex_number, $amount_budget, $status_capex, $budget_type, $startup, $expected_completed)
     {
-        // Siapkan query untuk memperbarui data
-        $query = DB::table('t_master_capex')
-            ->where('id_capex', $id_capex)
-            ->update([
-                'project_desc' => $data['project_desc'],
-                'wbs_capex' => $data['wbs_capex'],
-                'remark' => $data['remark'],
-                'request_number' => $data['request_number'],
-                'requester' => $data['requester'],
-                'capex_number' => $data['capex_number'],
-                'amount_budget' => $data['amount_budget'],
-                'budget_cos' => $data['budget_cos'],
-                'status_capex' => $data['status_capex'],
-                'budget_type' => $data['budget_type'],
-                'startup' => $data['startup'],
-                'expected_completed' => $data['expected_completed'],
-                'updated_at' => now(), // Perbarui timestamp
-            ]);
+        // Buat query untuk memperbarui data Capex
+        $query = 'UPDATE t_master_capex 
+                  SET project_desc = ?, 
+                      wbs_capex = ?, 
+                      remark = ?, 
+                      request_number = ?, 
+                      requester = ?, 
+                      capex_number = ?, 
+                      amount_budget = ?, 
+                      status_capex = ?, 
+                      budget_type = ?, 
+                      startup = ?, 
+                      expected_completed = ?, 
+                      updated_at = ?
+                  WHERE id_capex = ?';
 
-        return $query; // Mengembalikan hasil query (berhasil atau tidak)
+        // Buat parameter untuk query
+        $params = [
+            $project_desc,
+            $wbs_capex,
+            $remark,
+            $request_number,
+            $requester,
+            $capex_number,
+            $amount_budget,
+            $status_capex,
+            $budget_type,
+            $startup,
+            $expected_completed,
+            now(), // Timestamp untuk updated_at
+            $id_capex
+        ];
+
+        // Eksekusi query
+        $result = DB::update($query, $params);
+
+        // Tambahkan status capex ke tabel CapexStatus
+        $statusQuery = 'INSERT INTO capex_status (id_capex, status, created_at, updated_at) 
+                        VALUES (?, ?, ?, ?)';
+        $statusParams = [
+            $id_capex,
+            $status_capex,
+            now(), // Timestamp untuk created_at
+            now()  // Timestamp untuk updated_at
+        ];
+
+        DB::insert($statusQuery, $statusParams);
+
+
+        return ['success' => true, 'message' => 'Data capex berhasil diperbarui!'];
     }
 
     public function CapexBudget()

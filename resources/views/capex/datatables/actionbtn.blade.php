@@ -4,9 +4,6 @@
     </button>
     <ul class="dropdown-menu" aria-labelledby="actionDropdown_{{ $row->id }}">
         <li>
-            <h6 class="dropdown-header">Capex Management</h6>
-        </li>
-        <li>
             <a class="dropdown-item d-flex align-items-center" href="#" id="edit-button" 
                data-id="{{ $row->id_capex }}" 
                data-project_desc="{{ $row->project_desc }}" 
@@ -29,10 +26,6 @@
             <a class="dropdown-item d-flex align-items-center text-danger delete-capex" data-id="{{ $row->id_capex }}">
                 <i class="fas fa-trash-alt me-2 icon-large"></i> Delete Capex
             </a>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li>
-            <h6 class="dropdown-header">View Information</h6>
         </li>
         <li>
             <a class="dropdown-item d-flex align-items-center" href="#" id="view-budget" 

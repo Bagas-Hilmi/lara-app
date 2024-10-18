@@ -108,6 +108,7 @@
                     success: function(response) {
                         alert(response.message); // Menampilkan pesan sukses
                         $('#budget-table').DataTable().ajax.reload(); // Reload DataTable
+                        $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
                     },
                     error: function(xhr) {
                         console.log("Error: ", xhr.responseText);

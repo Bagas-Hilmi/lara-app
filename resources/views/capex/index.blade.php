@@ -20,7 +20,7 @@
                                     <button href="#" class="btn btn-sm btn-primary" style="background-color: #09170a; border-color: #09170a;"  data-bs-toggle="modal" data-bs-target="#new-form">New capex</button>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Pilih Tahun
+                                            <span id="yearText">Pilih Tahun</span> <!-- Placeholder -->
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="yearDropdown">
                                             <li><a class="dropdown-item" href="#" data-value="">Semua Tahun</a></li>
@@ -29,6 +29,7 @@
                                             @endforeach
                                         </ul>
                                     </div>
+                                    
                                 </div>
                                 <input type="hidden" id="yearFilter" name="year" value="">
 
@@ -81,6 +82,9 @@
                     
                     <script>
                         $(document).ready(function() {
+                            const currentYear = new Date().getFullYear();
+                            $('#yearFilter').val(currentYear);
+                            $('#yearText').val(currentYear);
                             // Setup CSRF token for AJAX requests
                             $.ajaxSetup({
                                 headers: {
@@ -160,19 +164,21 @@
                                 ]
                             });
 
-                            $('.dropdown-item').click(function() {
+                            $('#yearDropdown').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
                                 var year = $(this).data('value'); // Ambil nilai tahun
                                 $('#yearFilter').val(year); // Set nilai tahun ke input tersembunyi
                                 
                                 // Ubah teks tombol untuk menampilkan tahun yang dipilih
                                 if (year) {
-                                    $('#yearDropdown').text(year); // Jika ada tahun yang dipilih
+                                    $('#yearText').text(year); // Jika ada tahun yang dipilih
                                 } else {
-                                    $('#yearDropdown').text('Pilih Tahun'); // Jika semua tahun dipilih
+                                    $('#yearText').text('Pilih Tahun'); // Jika semua tahun dipilih
                                 }
 
                                 table.ajax.reload(); // Reload DataTable
                             });
+
+
                 
                             $(document).on('click', '.delete-capex', function() {
                                 var capexId = $(this).data('id');

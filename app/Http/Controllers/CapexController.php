@@ -12,6 +12,7 @@ use App\Models\CapexPOrelease;
 use App\Models\CapexCompletion;
 use App\Models\CapexStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CapexController extends Controller
 {
@@ -82,27 +83,22 @@ class CapexController extends Controller
                 'expected_completed'    => 'required|string',
             ]);
             // Simpan data baru ke database
-            $capex = new Capex();
-            $capex->project_desc = $validated['project_desc'];
-            $capex->wbs_capex = $validated['wbs_capex'];
-            $capex->remark = $validated['remark'];
-            $capex->request_number = $validated['request_number'];
-            $capex->requester = $validated['requester'];
-            $capex->capex_number = $validated['capex_number'];
-            $capex->amount_budget = $validated['amount_budget'];
-            $capex->status_capex = $validated['status_capex'];
-            $capex->budget_type = $validated['budget_type'];
-            $capex->startup = $validated['startup'];
-            $capex->expected_completed = $validated['expected_completed'];
-            $capex->save();
-
-            $capexStatus = new CapexStatus();
-            $capexStatus->id_capex = $capex->id_capex; // Asumsikan bahwa kolom primary key di tabel Capex adalah 'id_capex'
-            $capexStatus->status = $validated['status_capex'];
-            $capexStatus->save();
+            $result = Capex::add(
+                $validated['project_desc'],
+                $validated['wbs_capex'],
+                $validated['remark'],
+                $validated['request_number'],
+                $validated['requester'],
+                $validated['capex_number'],
+                $validated['amount_budget'],
+                $validated['status_capex'],
+                $validated['budget_type'],
+                $validated['startup'],
+                $validated['expected_completed']
+            );
 
             // Kembalikan response sukses
-            return response()->json(['success' => 'Data capex berhasil disimpan']);
+            return response()->json( $result);
         } else if ($flag === 'update') {
             $validated = $request->validate([
                 'flag' => 'required|in:add,update',
@@ -333,7 +329,7 @@ class CapexController extends Controller
                 'data' => $completion
             ]);
         }
-        // Kembalikan response jika flag tidak valid
+
         return response()->json(['error' => 'Invalid flag specified.'], 400);
     }
 
@@ -424,7 +420,6 @@ class CapexController extends Controller
                 ->make(true);
         }
 
-        // Jika flag tidak valid, Anda dapat mengembalikan respons error atau data default
         return response()->json(['error' => 'Flag tidak valid'], 400);
     }
 
