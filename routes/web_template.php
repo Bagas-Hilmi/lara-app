@@ -33,19 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');
     Route::post('user-profile', [ProfileController::class, 'update']);
 
-    // Static Pages
-    Route::get('billing', function () {
-        return view('pages.billing');
-    })->name('billing');
-
-    Route::get('tables', function () {
-        return view('pages.tables');
-    })->name('tables');
-
-    Route::get('notifications', function () {
-        return view('pages.notifications');
-    })->name('notifications');
-
     Route::get('static-sign-in', function () {
         return view('pages.static-sign-in');
     })->name('static-sign-in');
@@ -55,11 +42,10 @@ Route::middleware('auth')->group(function () {
     })->name('static-sign-up');
 });
 
-        Route::get('user-management', function () {
-            return view('pages.laravel-examples.user-management');
-        })->name('user-management');
+Route::get('user-management', function () {
+    return view('pages.laravel-examples.user-management');
+})->name('user-management');
 
-        Route::get('user-profile', function () {
-            return view('pages.laravel-examples.user-profile');
-        })->name('user-profile');
-    
+Route::get('user-profile', function () {
+    return view('pages.laravel-examples.user-profile');
+})->name('user-profile');

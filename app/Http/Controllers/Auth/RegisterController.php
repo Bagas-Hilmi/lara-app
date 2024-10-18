@@ -15,7 +15,7 @@ class RegisterController extends Controller
 {
     use RegistersUsers;
     //setelah tekan tombol sign up user akan ke sini (dibawah) 
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/capex';
 
     public function __construct()
     {
@@ -44,7 +44,7 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create($data)
+    protected function create(array $data)
     {
         // Buat pengguna baru
         $user = User::create([
@@ -53,26 +53,33 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        event(new Registered($user));
-        Auth::login($user);
+        // Tambahkan role ke pengguna
+        $role = $data['role'];
+        $user->addRole($role);
 
+        // Ambil struktur roles dan permissions
         $rolesStructure = config('laratrust_seeder.roles_structure');
         $permissionsMap = config('laratrust_seeder.permissions_map');
 
-        $role = $data['role'];
+        // Pastikan role ada dalam struktur
         if (array_key_exists($role, $rolesStructure)) {
-            $user->addRole($role);
-
+            // Ambil permissions berdasarkan role
             $permissions = $rolesStructure[$role];
             foreach ($permissions as $resource => $actions) {
                 foreach (str_split($actions) as $action) {
                     if (isset($permissionsMap[$action])) {
+                        // Set permission sesuai mapping ke role, bukan ke user
                         $permission = $permissionsMap[$action];
-                        $user->givePermissionTo("{$resource}-{$permission}");
+                        // Memberikan permission ke role
+                        $user->roles()->first()->givePermissionTo("{$resource}-{$permission}");
                     }
                 }
             }
         }
+
+        // Event dan login setelah membuat pengguna
+        event(new Registered($user));
+        Auth::login($user);
 
         // Kembalikan pengguna yang baru dibuat
         return $user;

@@ -46,7 +46,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect('/dashboard');
+        return redirect('/capex');
     }
 
     // Fungsi untuk mengirim link reset password
