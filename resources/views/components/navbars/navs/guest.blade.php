@@ -11,12 +11,12 @@
         <div class="position-absolute top-50 start-50 translate-middle">
             <ul class="navbar-nav d-flex flex-row justify-content-center">
                 <li class="nav-item">
-                    <a class="nav-link me-2" href="{{ route($signup) }}" style="font-size: 16px; font-weight: bold; color: #000000;">
+                    <a class="nav-link me-2" href="{{ route('register') }}" style="font-size: 16px; font-weight: bold; color: #000000;">
                         <i class="fas fa-user-circle"></i> Sign Up
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link me-2" href="{{ route($signin) }}" style="font-size: 16px; font-weight: bold; color: #000000;">
+                    <a class="nav-link me-2" href="{{ route('login') }}" style="font-size: 16px; font-weight: bold; color: #000000;">
                         <i class="fas fa-key"></i> Sign In
                     </a>
                 </li>

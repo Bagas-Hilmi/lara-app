@@ -45,7 +45,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'dashboard' ? ' active bg-gradient-success' : '' }} "
+                <a class="nav-link text-white {{ $activePage == 'capex' ? ' active bg-gradient-success' : '' }} "
                     href="{{ route('capex.index') }}">
                     <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">dashboard</i>
@@ -72,8 +72,30 @@
                     </div>
                     <span class="nav-link-text ms-1 font-weight-bold custom-text-color">UP-Doc FGLB + ZLIS1</span>
                 </a>
-            </li>  
-            
+            </li>          
+
+            <li class="nav-item">
+                <a class="nav-link text-white {{ $activePage == '' ? 'active bg-gradient-success' : '' }}" 
+                   href="#submenu1" 
+                   data-bs-toggle="collapse" 
+                   aria-expanded="false" 
+                   class="dropdown-toggle">
+                    <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Capex</span>
+                </a>
+                <ul class="collapse list-unstyled" id="submenu1">
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ $activePage == 'report' ? 'active bg-gradient-success' : '' }}" href="{{ route('report.index') }}" style="padding-left: 40px;">
+                            <div class="custom-icon-color text-center me-1">
+                                <i class="fas fa-heart"></i> 
+                            </div>
+                            <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report CIP</span>
+                        </a>                        
+                    </li>
+                </ul>
+            </li>            
         </ul>
     </div>
 </aside>    
