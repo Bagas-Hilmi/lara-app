@@ -34,7 +34,7 @@
                             <input type="text" class="form-control" id="wbs_number_edit" name="wbs_number" style="text-align: center;" required>
                         </div>
                         <div class="col-md-3">
-                            <label for="cip_number_edit" class="form-label font-weight-bold">WBS Number</label>
+                            <label for="cip_number_edit" class="form-label font-weight-bold">CIP Number</label>
                             <input type="text" class="form-control" id="cip_number_edit" name="cip_number" style="text-align: center;" required>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                             <input type="text" class="form-control column-input edit-capex" id="amount_budget_edit" name="amount_budget" style="text-align: center;" required>
                         </div>
                         <div class="col-md-4 d-flex flex-column align-items-center">
-                            <label for="status_capex_edit" class="form-label font-weight-bold">Status Capex</label>
+                            <label for="status_capex_edit" class="form-label font-weight-bold">Type Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status
@@ -77,7 +77,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 d-flex flex-column align-items-center">
-                            <label for="budget_type_edit" class="form-label font-weight-bold">STATUS BUDGET</label>
+                            <label for="budget_type_edit" class="form-label font-weight-bold">Status Budget</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status Budget

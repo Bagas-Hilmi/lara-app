@@ -117,14 +117,13 @@ class FaglbController extends Controller
 
             // Update FAGLB file
             if ($request->hasFile('faglb')) {
-                // Hapus file lama jika ada
-                if ($faglbHead->faglb_filename && Storage::exists('uploads/faglb/' . $faglbHead->faglb_filename)) {
-                    Storage::delete('uploads/faglb/' . $faglbHead->faglb_filename);
-                }
-
+                
+                // Proses upload file baru
                 $faglbFile = $request->file('faglb');
                 $faglbFileName = $faglbFile->getClientOriginalName();
                 $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
+                
+                // Update hanya dengan nama file baru
                 $faglbHead->faglb_filename = $faglbFileName;
 
                 $this->importFaglb($faglbFilePath, $id);
@@ -132,16 +131,17 @@ class FaglbController extends Controller
 
             // Update ZLIS1 file
             if ($request->hasFile('zlis1')) {
-                // Hapus file lama jika ada
-                if ($faglbHead->zlis1_filename && Storage::exists('uploads/zlis1/' . $faglbHead->zlis1_filename)) {
-                    Storage::delete('uploads/zlis1/' . $faglbHead->zlis1_filename);
-                }
-
+                // Tidak perlu menghapus file lama, biarkan tersimpan.
+            
+                // Proses upload file baru
                 $zlis1File = $request->file('zlis1');
                 $zlis1FileName = $zlis1File->getClientOriginalName();
                 $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
+            
+                // Update hanya dengan nama file baru
                 $faglbHead->zlis1_filename = $zlis1FileName;
-
+            
+                // Import file baru jika diperlukan
                 $this->importZlis1($zlis1FilePath, $id);
             }
 

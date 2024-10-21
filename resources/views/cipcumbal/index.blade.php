@@ -176,7 +176,7 @@
                             $('#yearDropdown').text(year); // Jika ada tahun yang dipilih
                         } else {
                             $('#yearDropdown').text('Pilih Tahun'); // Jika semua tahun dipilih
-                        }
+                        } 
 
                         table.ajax.reload(); // Reload DataTable
                     });

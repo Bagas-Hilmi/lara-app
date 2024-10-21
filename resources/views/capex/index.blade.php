@@ -1,7 +1,7 @@
 @section('title', 'Master Capex')
 
 <x-layout bodyClass="g-sidenav-show  bg-gray-200">
-    <x-navbars.sidebar activePage='dashboard'></x-navbars.sidebar>
+    <x-navbars.sidebar activePage='capex'></x-navbars.sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <x-navbars.navs.auth titlePage=""></x-navbars.navs.auth>
@@ -17,7 +17,12 @@
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between mb-2">
                                     <!-- Tombol New Capex -->
-                                    <button href="#" class="btn btn-sm btn-primary" style="background-color: #09170a; border-color: #09170a;"  data-bs-toggle="modal" data-bs-target="#new-form">New capex</button>
+                                    <button href="#" class="btn btn-sm btn-primary" 
+                                        style="background-color: #09170a; border-color: #09170a;"  
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#new-form">
+                                        New capex
+                                    </button>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span id="yearText">Pilih Tahun</span> <!-- Placeholder -->

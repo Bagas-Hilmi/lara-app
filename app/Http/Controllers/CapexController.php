@@ -21,6 +21,9 @@ class CapexController extends Controller
      */
     public function index(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login'); // Arahkan ke halaman login
+        }
         $availableYears = DB::table('t_master_capex')
             ->selectRaw('DISTINCT LEFT(created_at, 4) as year')
             ->where('status', 1)
@@ -136,7 +139,7 @@ class CapexController extends Controller
                 $capex->startup = $validated['startup'];
                 $capex->expected_completed = $validated['expected_completed'];
                 $capex->wbs_number = $validated['wbs_number'];
-                $capex->cip_number = $validated['wbs_number'];
+                $capex->cip_number = $validated['cip_number'];
                 $capex->save();
 
                 $capexStatus = new CapexStatus();

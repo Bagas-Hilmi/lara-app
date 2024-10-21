@@ -32,14 +32,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');
     Route::post('user-profile', [ProfileController::class, 'update']);
-
-    Route::get('static-sign-in', function () {
-        return view('pages.static-sign-in');
-    })->name('static-sign-in');
-
-    Route::get('static-sign-up', function () {
-        return view('pages.static-sign-up');
-    })->name('static-sign-up');
 });
 
 Route::get('user-management', function () {

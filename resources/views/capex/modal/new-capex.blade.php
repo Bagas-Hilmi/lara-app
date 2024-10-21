@@ -63,7 +63,7 @@
                             <input type="text" class="form-control column-input new-capex" id="amount_budget" name="amount_budget" style="text-align: center;" required>
                         </div>
                         <div class="col-md-4 d-flex flex-column align-items-center">
-                            <label for="status_capex" class="form-label font-weight-bold">Status Capex</label>
+                            <label for="status_capex" class="form-label font-weight-bold">Type Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status
