@@ -26,6 +26,8 @@ class Capex extends Model
         'budget_type',
         'startup',
         'expected_completed',
+        'wbs_number',
+        'cip_number',
         'status',
         'created_by',
         'updated_by'
@@ -47,6 +49,8 @@ class Capex extends Model
                 'budget_type',
                 'startup',
                 'expected_completed',
+                'wbs_number',
+                'cip_number',
                 'created_at',
                 'updated_at'
             ])
@@ -65,11 +69,13 @@ class Capex extends Model
         $statusCapex,
         $budgetType,
         $startup,
-        $expectedCompleted
+        $expectedCompleted,
+        $wbsNumber,
+        $cipNumber
     ) {
         // Simpan data baru ke database dengan raw SQL
-        $query = 'INSERT INTO t_master_capex (project_desc, wbs_capex, remark, request_number, requester, capex_number, amount_budget, status_capex, budget_type, startup, expected_completed, created_at, updated_at) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $query = 'INSERT INTO t_master_capex (project_desc, wbs_capex, remark, request_number, requester, capex_number, amount_budget, status_capex, budget_type, startup, expected_completed, wbs_number, cip_number, created_at, updated_at) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
         DB::insert($query, [
             $projectDesc,
@@ -83,6 +89,8 @@ class Capex extends Model
             $budgetType,
             $startup,
             $expectedCompleted,
+            $wbsNumber,
+            $cipNumber,
             now(),
             now()
         ]);
@@ -104,7 +112,7 @@ class Capex extends Model
         ]);
     }
 
-    public static function updateCapexData($id_capex, $project_desc, $wbs_capex, $remark, $request_number, $requester, $capex_number, $amount_budget, $status_capex, $budget_type, $startup, $expected_completed)
+    public static function updateCapexData($id_capex, $project_desc, $wbs_capex, $remark, $request_number, $requester, $capex_number, $amount_budget, $status_capex, $budget_type, $startup, $expected_completed, $wbs_number, $cip_number)
     {
         // Buat query untuk memperbarui data Capex
         $query = 'UPDATE t_master_capex 
@@ -119,6 +127,8 @@ class Capex extends Model
                       budget_type = ?, 
                       startup = ?, 
                       expected_completed = ?, 
+                      wbs_number = ?, 
+                      cip_number = ?, 
                       updated_at = ?
                   WHERE id_capex = ?';
 
@@ -135,6 +145,8 @@ class Capex extends Model
             $budget_type,
             $startup,
             $expected_completed,
+            $wbs_number,
+            $cip_number,
             now(), // Timestamp untuk updated_at
             $id_capex
         ];

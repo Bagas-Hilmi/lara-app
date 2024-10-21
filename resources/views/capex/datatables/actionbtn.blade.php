@@ -17,6 +17,8 @@
                data-budget_type="{{ $row->budget_type }}" 
                data-startup="{{ $row->startup }}" 
                data-expected_completed="{{ $row->expected_completed}}" 
+               data-wbs_number="{{ $row->wbs_number}}" 
+               data-cip_number="{{ $row->cip_number}}" 
                data-bs-toggle="modal" 
                data-bs-target="#edit-form">
                 <i class="fas fa-edit text-primary me-2 icon-large"></i> Edit Capex

@@ -12,11 +12,11 @@
                     @csrf 
 
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="project_desc_edit" class="form-label font-weight-bold">Project Desc</label>
                             <input type="text" class="form-control" id="project_desc_edit" name="project_desc" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="wbs_capex_edit" class="form-label font-weight-bold">WBS Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="wbsCapexDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
@@ -29,33 +29,39 @@
                                 <input type="hidden" id="wbs_capex_edit" name="wbs_capex" required>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <label for="wbs_number_edit" class="form-label font-weight-bold">WBS Number</label>
+                            <input type="text" class="form-control" id="wbs_number_edit" name="wbs_number" style="text-align: center;" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cip_number_edit" class="form-label font-weight-bold">WBS Number</label>
+                            <input type="text" class="form-control" id="cip_number_edit" name="cip_number" style="text-align: center;" required>
+                        </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="remark_edit" class="form-label font-weight-bold">Remark</label>
                             <input type="text" class="form-control" id="remark_edit" name="remark" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="request_number_edit" class="form-label font-weight-bold">Request Number</label>
                             <input type="text" class="form-control" id="request_number_edit" name="request_number" style="text-align: center;" required>
                         </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="requester_edit" class="form-label font-weight-bold">Requester</label>
                             <input type="text" class="form-control" id="requester_edit" name="requester" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="capex_number_edit" class="form-label font-weight-bold">Capex Number</label>
                             <input type="text" class="form-control" id="capex_number_edit" name="capex_number" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="amount_budget_edit" class="form-label font-weight-bold">Amount Budget (USD)</label>
                             <input type="text" class="form-control column-input edit-capex" id="amount_budget_edit" name="amount_budget" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4 d-flex flex-column align-items-center">
                             <label for="status_capex_edit" class="form-label font-weight-bold">Status Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
@@ -70,9 +76,7 @@
                                 <input type="hidden" id="status_capex_edit" name="status_capex" style="text-align: center;" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4 d-flex flex-column align-items-center">
                             <label for="budget_type_edit" class="form-label font-weight-bold">STATUS BUDGET</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,12 +89,12 @@
                                 <input type="hidden" id="budget_type_edit" name="budget_type" required>
                             </div>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="startup_edit" class="form-label font-weight-bold">STARTUP</label>
                             <input type="month" class="form-control" id="startup_edit" name="startup" required>
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="expected_completed_edit" class="form-label font-weight-bold">EXPECTED COMPLETED</label>
                             <input type="month" class="form-control" id="expected_completed_edit" name="expected_completed" required>
@@ -123,6 +127,8 @@
             var budget_type = $(this).data('budget_type');
             var startup = $(this).data('startup');
             var expected_completed = $(this).data('expected_completed');
+            var wbs_number = $(this).data('wbs_number');
+            var cip_number = $(this).data('cip_number');
 
             // Isi data ke dalam modal
             $('#project_desc_edit').val(project_desc);
@@ -136,6 +142,8 @@
             $('#budget_type_edit').val(budget_type).change(); // Pa// Anda mungkin perlu memformat dropdown
             $('#startup_edit').val(startup);
             $('#expected_completed_edit').val(expected_completed);
+            $('#wbs_number_edit').val(wbs_number);
+            $('#cip_number_edit').val(cip_number);
 
             $('#id_capex_edit').val(id_capex); // Pastikan Anda memiliki input tersembunyi di modal Anda
 
@@ -161,6 +169,8 @@
                     budget_type: $('#budget_type_edit').val(),
                     startup: $('#startup_edit').val(),
                     expected_completed: $('#expected_completed_edit').val(),
+                    wbs_number: $('#wbs_number_edit').val(),
+                    cip_number: $('#cip_number_edit').val(),
                     flag: 'update' // Menyertakan flag update
                 }; // Mengambil semua data dalam form
                 

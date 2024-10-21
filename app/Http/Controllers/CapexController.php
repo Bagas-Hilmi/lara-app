@@ -81,6 +81,8 @@ class CapexController extends Controller
                 'budget_type'    => 'required|string',
                 'startup'        => 'required|string',
                 'expected_completed'    => 'required|string',
+                'wbs_number'    => 'required|string',
+                'cip_number'    => 'required|string',
             ]);
             // Simpan data baru ke database
             $result = Capex::add(
@@ -94,7 +96,9 @@ class CapexController extends Controller
                 $validated['status_capex'],
                 $validated['budget_type'],
                 $validated['startup'],
-                $validated['expected_completed']
+                $validated['expected_completed'],
+                $validated['wbs_number'],
+                $validated['cip_number'],
             );
 
             // Kembalikan response sukses
@@ -114,6 +118,8 @@ class CapexController extends Controller
                 'budget_type'    => 'required|string',
                 'startup'        => 'required|string',
                 'expected_completed'    => 'required|string',
+                'wbs_number'    => 'required|string',
+                'cip_number'    => 'required|string',
             ]);
             // Perbarui data yang sudah ada
             $capex = Capex::find($validated['id_capex']); // Cari data berdasarkan id_capex
@@ -129,6 +135,8 @@ class CapexController extends Controller
                 $capex->budget_type = $validated['budget_type'];
                 $capex->startup = $validated['startup'];
                 $capex->expected_completed = $validated['expected_completed'];
+                $capex->wbs_number = $validated['wbs_number'];
+                $capex->cip_number = $validated['wbs_number'];
                 $capex->save();
 
                 $capexStatus = new CapexStatus();

@@ -53,6 +53,8 @@
                                                 <th class="text-center">Start Up</th>
                                                 <th class="text-center">Expected Completed</th>
                                                 <th class="text-center">Revise Completion Date</th>
+                                                <th class="text-center">WBS Number</th>
+                                                <th class="text-center">CIP Number</th>
                                                 <th class="text-center">Created_at</th>
                                                 <th class="text-center">Updated_at</th>
                                             </tr>
@@ -145,6 +147,8 @@
                                     {data: 'startup', name: 'startup', className: 'text-center'},
                                     {data: 'expected_completed', name: 'expected_completed', className: 'text-center'},
                                     {data: 'revise_completion_date', name: 'revise_completion_date', className: 'text-center'},
+                                    {data: 'wbs_number', name: 'wbs_number', className: 'text-center'},
+                                    {data: 'cip_number', name: 'cip_number', className: 'text-center'},
                                     {
                                         data: 'created_at',
                                         name: 'created_at',

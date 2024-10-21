@@ -12,11 +12,12 @@
                     @csrf 
 
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="project_desc" class="form-label font-weight-bold">Project Desc</label>
                             <input type="text" class="form-control" id="project_desc" name="project_desc" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                    
+                        <div class="col-md-3">
                             <label for="wbs_capex" class="form-label font-weight-bold">WBS Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="wbsCapexDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -29,33 +30,39 @@
                                 <input type="hidden" id="wbs_capex" name="wbs_capex" required>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <label for="wbs_number" class="form-label font-weight-bold">WBS Number</label>
+                            <input type="text" class="form-control" id="wbs_number" name="wbs_number" style="text-align: center;" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cip_number" class="form-label font-weight-bold">CIP Number</label>
+                            <input type="text" class="form-control" id="cip_number" name="cip_number" style="text-align: center;" required>
+                        </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="remark" class="form-label font-weight-bold">Remark</label>
                             <input type="text" class="form-control" id="remark" name="remark" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="request_number" class="form-label font-weight-bold">Request Number</label>
                             <input type="text" class="form-control" id="request_number" name="request_number" style="text-align: center;" required>
                         </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="requester" class="form-label font-weight-bold">Requester</label>
                             <input type="text" class="form-control" id="requester" name="requester" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="capex_number" class="form-label font-weight-bold">Capex Number</label>
                             <input type="text" class="form-control" id="capex_number" name="capex_number" style="text-align: center;" required>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
                             <label for="amount_budget" class="form-label font-weight-bold">Amount Budget (USD)</label>
                             <input type="text" class="form-control column-input new-capex" id="amount_budget" name="amount_budget" style="text-align: center;" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4 d-flex flex-column align-items-center">
                             <label for="status_capex" class="form-label font-weight-bold">Status Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -70,9 +77,7 @@
                                 <input type="hidden" id="status_capex" name="status_capex" style="text-align: center;" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4 d-flex flex-column align-items-center">
                             <label for="budget_type" class="form-label font-weight-bold">Status Budget</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,13 +90,13 @@
                                 <input type="hidden" id="budget_type" name="budget_type" style="text-align: center;" required>
                             </div>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="startup" class="form-label font-weight-bold">Startup</label>
                             <input type="month" class="form-control" id="startup" name="startup" required>
                         </div>
-                    </div>
                     
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="expected_completed" class="form-label font-weight-bold">Expected Completed</label>
                             <input type="month" class="form-control" id="expected_completed" name="expected_completed" required>
@@ -127,11 +132,13 @@
                 budget_type: $('#budget_type').val(),
                 startup: $('#startup').val(),
                 expected_completed: $('#expected_completed').val(),
+                wbs_number: $('#wbs_number').val(),
+                cip_number: $('#cip_number').val(),
                 flag: $('input[name="flag"]').val() // Ambil flag dari input hidden
             };
 
             // Cek apakah semua field yang required terisi
-            if (!formData.project_desc || !formData.wbs_capex || !formData.request_number || !formData.requester || !formData.capex_number || !formData.amount_budget || !formData.status_capex || !formData.budget_type || !formData.startup || !formData.expected_completed) {
+            if (!formData.project_desc || !formData.wbs_capex || !formData.request_number || !formData.requester || !formData.capex_number || !formData.amount_budget || !formData.status_capex || !formData.budget_type || !formData.startup || !formData.expected_completed || !formData.wbs_number || !formData.cip_number ) {
                 Swal.fire({
                     title: 'Error!',
                     text: 'Silakan lengkapi semua input yang diperlukan.',
