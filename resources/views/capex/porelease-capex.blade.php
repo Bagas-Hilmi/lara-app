@@ -96,25 +96,56 @@
             var poreleaseId = $(this).data('id');
             
             // Tampilkan konfirmasi sebelum menghapus
-            if (confirm('Are you sure you want to delete this progress?')) {
-                // Kirim permintaan AJAX untuk menghapus data
-                $.ajax({
-                    url: '/capex/' + poreleaseId, // Sesuaikan URL endpoint dengan id
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}', // Ambil token CSRF dari meta tag
-                        flag: 'porelease' // Kirim flag untuk menentukan apakah yang dihapus porelease
-                    },
-                    success: function(response) {
-                        alert(response.message); // Menampilkan pesan sukses
-                        $('#porelease-table').DataTable().ajax.reload(); // Reload DataTable
-                    },
-                    error: function(xhr) {
-                        console.log("Error: ", xhr.responseText);
-                        alert('Terjadi kesalahan saat menghapus data.');
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'Konfirmasi Hapus?',
+                text: "Apakah Anda yakin ingin menghapus item ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/capex/' + poreleaseId, // Sesuaikan URL endpoint dengan id
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            flag: 'porelease' // Kirim flag untuk menentukan apakah yang dihapus porelease
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                // SweetAlert success notification
+                                Swal.fire(
+                                    'Deleted!',
+                                    'PO Release has been deleted.',
+                                    'success'
+                                );
+
+                                // Reload the DataTable
+                                $('#capex-table').DataTable().ajax.reload();
+                                $('#porelease-table').DataTable().ajax.reload(); // Reload DataTable
+
+                            } else {
+                                Swal.fire(
+                                    'Failed!',
+                                    'Failed to delete PO Release!',
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Error!',
+                                'Something went wrong! Please try again.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+
         });
     });
     

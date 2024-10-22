@@ -57,7 +57,6 @@
 </script>
 
 
-// Tangani pengiriman form untuk menambahkan budget
 <script>
     $('#new-budget-form').on('submit', function (e) {
         e.preventDefault(); // Mencegah tindakan default dari formulir

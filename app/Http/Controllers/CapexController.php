@@ -105,7 +105,7 @@ class CapexController extends Controller
             );
 
             // Kembalikan response sukses
-            return response()->json( $result);
+            return response()->json($result);
         } else if ($flag === 'update') {
             $validated = $request->validate([
                 'flag' => 'required|in:add,update',
@@ -161,14 +161,12 @@ class CapexController extends Controller
                 'budget_cos' => 'required|numeric|min:0',
             ]);
 
-            // Buat entri baru di t_capex_budget
-            $budget = new CapexBudget();
-            $budget->id_capex = $request->input('id_capex'); // Pastikan mengganti ini
-            $budget->description = $request->input('description');
-            $budget->budget_cos = $request->input('budget_cos');
-            $budget->save();
-
-            CapexBudget::get_dtCapexBudget();
+            // Panggil metode di model untuk menyimpan anggaran
+            $budget = CapexBudget::addBudget(
+                $request->input('id_capex'),
+                $request->input('description'),
+                $request->input('budget_cos')
+            );
 
             // Respons sukses
             return response()->json([
@@ -177,7 +175,6 @@ class CapexController extends Controller
                 'data' => $budget,
             ]);
         } else if ($flag === 'edit-budget') {
-            // Validasi input untuk edit
             $request->validate([
                 'flag' => 'required|in:edit-budget',
                 'id' => 'required|exists:t_capex_budget,id_capex_budget', // Pastikan ID ada di database
@@ -187,15 +184,13 @@ class CapexController extends Controller
             ]);
 
             // Logika untuk mengedit budget yang ada
-            $budget = CapexBudget::findOrFail($request->input('id')); // Mencari budget berdasarkan ID
-
-            // Memperbarui data budget
-            $budget->description = $request->input('description');
-            $budget->budget_cos = $request->input('budget_cos');
-            $budget->id_capex = $request->input('capex_id');
-            $budget->save();
-
-            CapexBudget::get_dtCapexBudget();
+            // Jika Anda telah menambahkan metode updateBudget di model:
+            $budget = CapexBudget::updateBudget(
+                $request->input('id'),
+                $request->input('description'),
+                $request->input('budget_cos'),
+                $request->input('capex_id')
+            );
 
             // Respons sukses
             return response()->json([

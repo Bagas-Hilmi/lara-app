@@ -48,6 +48,41 @@ class CapexBudget extends Model
         return $query; // Mengambil semua data
     }
 
+    public static function addBudget($capex_id, $description, $budget_cos)
+    {
+        // Simpan data baru ke tabel t_capex_budget menggunakan Query Builder
+        $budgetId = DB::table('t_capex_budget')->insertGetId([
+            'id_capex' => $capex_id,
+            'description' => $description,
+            'budget_cos' => $budget_cos,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Memperbarui total budget di t_master_capex
+        self::get_dtCapexBudget();
+
+        return $budgetId; // Mengembalikan ID budget yang baru ditambahkan
+    }
+
+    public static function updateBudget($id, $description, $budget_cos, $capex_id)
+    {
+        // Perbarui data budget berdasarkan ID menggunakan Query Builder
+        $result = DB::table('t_capex_budget')
+            ->where('id_capex_budget', $id) // Gantilah 'id_capex_budget' sesuai dengan nama kolom ID di tabel Anda
+            ->update([
+                'description' => $description,
+                'budget_cos' => $budget_cos,
+                'id_capex' => $capex_id,
+                'updated_at' => now(), // Timestamp untuk updated_at
+            ]);
+
+        // Memperbarui total budget di t_master_capex
+        self::get_dtCapexBudget();
+
+        return $result; // Mengembalikan hasil update
+    }
+
     public function Capex()
     {
         return $this->belongsTo(Capex::class, 'id_capex');

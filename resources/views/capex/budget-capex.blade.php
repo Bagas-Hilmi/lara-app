@@ -92,12 +92,19 @@
         });
 
         $(document).on('click', '.delete-budget-btn', function() {
-            // Ambil nilai id dari atribut data-id
             var budgetId = $(this).data('id');
             
-            // Tampilkan konfirmasi sebelum menghapus
-            if (confirm('Are you sure you want to delete this budget?')) {
-                // Kirim permintaan AJAX untuk menghapus data
+            Swal.fire({
+            title: 'Konfirmasi Hapus?',
+            text: "Apakah Anda yakin ingin menghapus item ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+            }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
                     url: '/capex/' + budgetId, // Sesuaikan URL endpoint dengan id
                     type: 'DELETE',
@@ -106,16 +113,35 @@
                         flag: 'budget' // Kirim flag untuk menentukan apakah yang dihapus budget
                     },
                     success: function(response) {
-                        alert(response.message); // Menampilkan pesan sukses
-                        $('#budget-table').DataTable().ajax.reload(); // Reload DataTable
-                        $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                     if (response.success) {
+                             // SweetAlert success notification
+                                Swal.fire(
+                                'Deleted!',
+                                'Budget has been deleted.',
+                                'success'
+                             );
+
+                            // Reload the DataTable
+                            $('#capex-table').DataTable().ajax.reload();
+                            $('#budget-table').DataTable().ajax.reload();
+                        } else {
+                                Swal.fire(
+                                'Failed!',
+                                'Failed to delete budget!',
+                                'error'
+                            );
+                        }
                     },
                     error: function(xhr) {
-                        console.log("Error: ", xhr.responseText);
-                        alert('Terjadi kesalahan saat menghapus data.');
+                    Swal.fire(
+                        'Error!',
+                        'Something went wrong! Please try again.',
+                        'error'
+                        );
                     }
-                });
-            }
+                    });
+                }
+            });
         });
     });
 </script>
