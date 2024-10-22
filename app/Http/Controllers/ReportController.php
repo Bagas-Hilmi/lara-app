@@ -16,10 +16,9 @@ class ReportController extends Controller
     public function index(Request $request)
     {
 
-        $descriptions = Capex::select('id_capex', 'project_desc','cip_number', 'wbs_number')
-        ->where('status', 1) // Tambahkan kondisi untuk status 1
-        ->get();
+        $descriptions = Report::getActiveCapexDescriptions(); // Memanggil metode 
 
+        
         if ($request->ajax()) {
             // Ambil status dari permintaan, dengan nilai default 1 jika tidak ada
             $status = $request->get('status', 1);

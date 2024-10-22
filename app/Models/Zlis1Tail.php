@@ -49,6 +49,7 @@ class Zlis1Tail extends Model
         'reversed_with',
         'wbs_level_2',
         'wbs_element_2',
+        'status',
     ];
 
     public function faglbHead()

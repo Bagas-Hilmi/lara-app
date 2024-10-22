@@ -170,6 +170,15 @@ class Capex extends Model
         return ['success' => true, 'message' => 'Data capex berhasil diperbarui!'];
     }
 
+    public static function getAvailableYears()
+    {
+        return DB::table('t_master_capex')
+            ->selectRaw('DISTINCT LEFT(created_at, 4) as year')
+            ->where('status', 1)
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+    }
+
     public function CapexBudget()
     {
         return $this->hasMany(CapexBudget::class, 'id_capex');

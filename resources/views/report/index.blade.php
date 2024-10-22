@@ -19,38 +19,52 @@
                                 <div class="mb-2">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="descriptionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span id="descriptionText">Pilih Project</span> <!-- Placeholder -->
+                                            <span id="descriptionText">Pilih Capex </span> <!-- Placeholder -->
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="descriptionDropdown">
-                                            <li><a class="dropdown-item" href="#" data-value="">Pilih Project</a></li>
+                                            <li><a class="dropdown-item" href="#" data-value="">Pilih Capex </a></li>
                                             @foreach($descriptions as $desc)
                                                 <li>
                                                     <a class="dropdown-item" href="#" 
                                                        data-value="{{ $desc->id_capex }}" 
                                                        data-cip="{{ $desc->cip_number }}" 
-                                                       data-wbs="{{ $desc->wbs_number }}">
-                                                       {{ $desc->project_desc }}
+                                                       data-wbs="{{ $desc->wbs_number }}"
+                                                       data-project_desc="{{ $desc->project_desc }}"
+                                                       data-budget_type="{{ $desc->budget_type }}"
+                                                       data-amount_budget="{{ $desc->amount_budget }}">
+                                                       {{ $desc->capex_number }} <!-- Kolom capex_number yang ditampilkan -->
                                                     </a>
                                                 </li>
                                             @endforeach
                                         </ul>
+                                    
+                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                        <span id="cipText">CIP Number</span> 
+                                    </button>
+                                    
+                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                        <span id="wbsText">WBS Number</span> 
+                                    </button>
+
+                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;"disabled >
+                                        <span id="projectText">project desc</span> 
+                                    </button>
+
+                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                        <span id="budgetText">budget type</span> 
+                                    </button>
+
+                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                        <span id="amountText">Amount Budget</span>
+                                    </button>
+                                    
+                                    
                                     </div>
-                                    
-                                    <!-- Button untuk menampilkan cip_number -->
-                                    <button class="btn btn-secondary" id="cipButton" style="background-color: #09170a; border-color: #09170a;">
-                                        <span id="cipText">CIP Number</span> <!-- Placeholder untuk CIP Number -->
-                                    </button>
-                                    
-                                    <!-- Button untuk menampilkan wbs_number -->
-                                    <button class="btn btn-secondary" id="wbsButton" style="background-color: #09170a; border-color: #09170a;">
-                                        <span id="wbsText">WBS Number</span> <!-- Placeholder untuk WBS Number -->
-                                    </button>
                                 </div>
                                 <div class="table-responsive p-0">
                                     <table id="report-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th align="center">Action</th>
                                                 <th align="center">ID Report CIP</th>
                                                 <th align="center">ID Capex</th>
                                                 <th align="center">FA Doc </th>
@@ -75,8 +89,6 @@
                 <x-footers.auth></x-footers.auth>
             </div>
 
-            @include('report.modal.new-report')
-
 
             @push('js')
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -96,7 +108,7 @@
             
                     // Initialize DataTable
                     var table = $('#report-table').DataTable({
-                        responsive: true,
+                        responsive: false,
                         processing: true,
                         serverSide: true,
                         order: [[1, 'desc']],
@@ -105,7 +117,6 @@
                             type: "GET",
                         },
                         columns: [
-                            {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                             {data: 'id_report_cip', name: 'id_report_cip', className: 'text-center'},
                             {data: 'id_capex', name: 'id_capex', className: 'text-center'},
                             {data: 'fa_doc', name: 'fa_doc', className: 'text-center'},
@@ -136,6 +147,10 @@
                         ]
                     });
                     
+                      // Fungsi untuk memformat angka dengan tanda pemisah ribuan
+                        function formatNumber(num) {
+                            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Memformat angka dengan titik
+                        }
                     // Ambil semua item dropdown
                     const dropdownItems = document.querySelectorAll('.dropdown-item');
                     dropdownItems.forEach(item => {
@@ -147,6 +162,9 @@
                             const text = this.textContent; // Ambil teks dari item dropdown
                             const cipNumber = this.getAttribute('data-cip');
                             const wbsNumber = this.getAttribute('data-wbs');
+                            const project = this.getAttribute('data-project_desc');
+                            const budget = this.getAttribute('data-budget_type');
+                            const amount = this.getAttribute('data-amount_budget');
                             
                             // Perbarui teks pada tombol dropdown
                             document.getElementById('descriptionText').textContent = text;
@@ -154,8 +172,12 @@
                             // Mengubah teks pada tombol cip dan wbs
                             document.getElementById('cipText').innerText = cipNumber ? cipNumber : 'CIP Number';
                             document.getElementById('wbsText').innerText = wbsNumber ? wbsNumber : 'WBS Number';
+                            document.getElementById('projectText').innerText = project ? project : 'Project';
+                            document.getElementById('budgetText').innerText = budget ? budget : 'Budget';
+                            document.getElementById('amountText').innerText = amount ? formatNumber(amount) : 'Amount'; // Format amount budget
                         });
                     });
+
 
                     $("#report-table").on("click", ".delete-btn", function () {
                         var id = $(this).data("id"); // Ambil ID dari data-id
@@ -306,6 +328,14 @@
     .form-control:focus {
         border-color: #42bd37; /* Warna border saat fokus */
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
+    }
+
+    #aButton[disabled] {
+        background-color: #09170a; /* Warna latar belakang yang sama */
+        border-color: #09170a; /* Warna border yang sama */
+        color: rgb(255, 255, 255); /* Warna teks yang sama */
+        opacity: 1; /* Opasitas penuh */
+        cursor: not-allowed; /* Kursor tidak diperbolehkan */
     }
 
 </style>

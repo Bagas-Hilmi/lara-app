@@ -24,11 +24,8 @@ class CapexController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login'); // Arahkan ke halaman login
         }
-        $availableYears = DB::table('t_master_capex')
-            ->selectRaw('DISTINCT LEFT(created_at, 4) as year')
-            ->where('status', 1)
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        
+        $availableYears = Capex::getAvailableYears(); // Memanggil metode untuk mendapatkan tahun yang tersedia
 
         if ($request->ajax()) {
             $status = $request->get('status', 1);

@@ -34,6 +34,7 @@ class FaglbTail extends Model
         'assignment',
         'profit_center',
         'wbs_element',
+        'status',
     ];
 
     public function faglbHead()

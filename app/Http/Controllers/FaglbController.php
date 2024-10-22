@@ -71,83 +71,114 @@ class FaglbController extends Controller
         $flag = $request->input('flag');
 
         if ($flag == 'upload_documents') {
-            $request->validate([
-                'faglb' => 'required|file|mimes:xlsx,xls,csv|max:10240',
-                'zlis1' => 'required|file|mimes:xlsx,xls,csv|max:10240',
-                'period' => 'required',
-                'id_ccb' => 'required',
-                'id_head' => 'sometimes|nullable|integer',
-                'flag' => 'required|string|in:upload_documents,update_file',
-            ]);
-            // Logika untuk mengupload dokumen baru
-            $faglbHead = new Faglb();
-            $faglbHead->period = $request->input('period');
-            $faglbHead->id_ccb = $request->input('id_ccb');
-            $faglbHead->save();
+            // Mulai transaksi database
+            DB::beginTransaction();
+            try {
+                $request->validate([
+                    'faglb' => 'required|file|mimes:xlsx,xls,csv|max:2048',
+                    'zlis1' => 'required|file|mimes:xlsx,xls,csv|max:2048',
+                    'period' => 'required',
+                    'id_ccb' => 'required',
+                    'flag' => 'required|string|in:upload_documents,update_file',
+                ]);
 
-            // Mengupload FAGLB file dengan nama asli
-            if ($request->hasFile('faglb')) {
-                $faglbFile = $request->file('faglb');
-                $faglbFileName = $faglbFile->getClientOriginalName(); // Ambil nama file asli
-                $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
-                $faglbHead->faglb_filename = $faglbFileName; // Simpan nama file ke dalam database
-                $this->importFaglb($faglbFilePath, $faglbHead->id_head);
+                // Logika untuk mengupload dokumen baru
+                $faglbHead = new Faglb();
+                $faglbHead->period = $request->input('period');
+                $faglbHead->id_ccb = $request->input('id_ccb');
+                $faglbHead->save();
+
+                // Proses unggah dan import FAGLB file
+                if ($request->hasFile('faglb')) {
+                    $faglbFile = $request->file('faglb');
+                    $faglbFileName = $faglbFile->getClientOriginalName();
+                    $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
+                    $faglbHead->faglb_filename = $faglbFileName;
+
+                    try {
+                        $this->importFaglb($faglbFilePath, $faglbHead->id_head); // Import ke database
+                    } catch (\Exception $e) {
+                        Storage::delete($faglbFilePath); // Hapus file jika ada error
+                        throw new \Exception('Gagal mengimpor file FAGLB: ' . $e->getMessage());
+                    }
+                }
+
+                // Proses unggah dan import ZLIS1 file
+                if ($request->hasFile('zlis1')) {
+                    $zlis1File = $request->file('zlis1');
+                    $zlis1FileName = $zlis1File->getClientOriginalName();
+                    $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
+                    $faglbHead->zlis1_filename = $zlis1FileName;
+
+                    try {
+                        $this->importZlis1($zlis1FilePath, $faglbHead->id_head); // Import ke database
+                    } catch (\Exception $e) {
+                        Storage::delete($zlis1FilePath); // Hapus file jika ada error
+                        throw new \Exception('Gagal mengimpor file ZLIS1: ' . $e->getMessage());
+                    }
+                }
+
+                // Simpan data ke database
+                $faglbHead->save();
+
+                // Commit transaksi jika semua berhasil
+                DB::commit();
+                return response()->json(['success' => true, 'message' => 'Data FAGLB dan ZLIS1 berhasil diimpor!']);
+            } catch (\Exception $e) {
+                // Rollback jika terjadi kesalahan
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }
-
-            // Mengupload ZLIS1 file dengan nama asli
-            if ($request->hasFile('zlis1')) {
-                $zlis1File = $request->file('zlis1');
-                $zlis1FileName = $zlis1File->getClientOriginalName(); // Ambil nama file asli
-                $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
-                $faglbHead->zlis1_filename = $zlis1FileName; // Simpan nama file ke dalam database
-                $this->importZlis1($zlis1FilePath, $faglbHead->id_head);
-            }
-            $faglbHead->save();
-
-            return response()->json(['success' => true, 'message' => 'Data FAGLB dan ZLIS1 berhasil diimpor!']);
         } elseif ($flag == 'update_file') {
-            $request->validate([
-                'faglb' => 'nullable|file|mimes:xlsx,xls,csv',
-                'zlis1' => 'nullable|file|mimes:xlsx,xls,csv',
-                'id_head' => 'required|integer',
-            ]);
+            DB::beginTransaction();
+            try {
+                $request->validate([
+                    'faglb' => 'sometimes|file|mimes:xlsx,xls,csv|max:2048', // Optional jika hanya ingin update salah satu
+                    'zlis1' => 'sometimes|file|mimes:xlsx,xls,csv|max:2048',
+                    'id_head' => 'required|integer',
+                ]);
 
-            $id = $request->input('id_head');
-            $faglbHead = Faglb::findOrFail($id);
+                $id = $request->input('id_head');
+                $faglbHead = Faglb::findOrFail($id);
 
-            // Update FAGLB file
-            if ($request->hasFile('faglb')) {
-                
-                // Proses upload file baru
-                $faglbFile = $request->file('faglb');
-                $faglbFileName = $faglbFile->getClientOriginalName();
-                $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
-                
-                // Update hanya dengan nama file baru
-                $faglbHead->faglb_filename = $faglbFileName;
+                // Update FAGLB file jika ada
+                if ($request->hasFile('faglb')) {
+                    $faglbFile = $request->file('faglb');
+                    $faglbFileName = $faglbFile->getClientOriginalName();
+                    $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
+                    $faglbHead->faglb_filename = $faglbFileName;
 
-                $this->importFaglb($faglbFilePath, $id);
+                    try {
+                        $this->importFaglb($faglbFilePath, $id); // Import file
+                    } catch (\Exception $e) {
+                        Storage::delete($faglbFilePath); // Hapus file jika ada error
+                        throw new \Exception('Gagal mengimpor file FAGLB: ' . $e->getMessage());
+                    }
+                }
+
+                // Update ZLIS1 file jika ada
+                if ($request->hasFile('zlis1')) {
+                    $zlis1File = $request->file('zlis1');
+                    $zlis1FileName = $zlis1File->getClientOriginalName();
+                    $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
+                    $faglbHead->zlis1_filename = $zlis1FileName;
+
+                    try {
+                        $this->importZlis1($zlis1FilePath, $id); // Import file
+                    } catch (\Exception $e) {
+                        Storage::delete($zlis1FilePath); // Hapus file jika ada error
+                        throw new \Exception('Gagal mengimpor file ZLIS1: ' . $e->getMessage());
+                    }
+                }
+
+                $faglbHead->save();
+                DB::commit();
+
+                return response()->json(['success' => true, 'message' => 'File berhasil diperbarui']);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }
-
-            // Update ZLIS1 file
-            if ($request->hasFile('zlis1')) {
-                // Tidak perlu menghapus file lama, biarkan tersimpan.
-            
-                // Proses upload file baru
-                $zlis1File = $request->file('zlis1');
-                $zlis1FileName = $zlis1File->getClientOriginalName();
-                $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
-            
-                // Update hanya dengan nama file baru
-                $faglbHead->zlis1_filename = $zlis1FileName;
-            
-                // Import file baru jika diperlukan
-                $this->importZlis1($zlis1FilePath, $id);
-            }
-
-            $faglbHead->save();
-
-            return response()->json(['success' => true, 'message' => 'File berhasil diperbarui']);
         }
     }
 
@@ -285,7 +316,7 @@ class FaglbController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request) 
+    public function update(Request $request)
     {
         // 
     }
@@ -294,10 +325,27 @@ class FaglbController extends Controller
      */
     public function destroy(string $id)
     {
-        $faglb = Faglb::findOrFail($id);
-        $faglb->status = 0;
-        $faglb->save();
-
+        // Temukan record di t_faglb_head
+        $faglbHead = Faglb::findOrFail($id);
+        
+        // Ubah status di t_faglb_head menjadi 0
+        $faglbHead->status = 0;
+        $faglbHead->save();
+    
+        // Temukan semua record terkait di t_faglb_tail dan t_zlis1_tail
+        $idHead = $faglbHead->id_head; // Asumsikan id_head adalah atribut dari model Faglb
+    
+        // Ubah status di t_faglb_tail
+        DB::table('t_faglb_tail')
+            ->where('id_head', $idHead)
+            ->update(['status' => 0]);
+    
+        // Ubah status di t_zlis1_tail
+        DB::table('t_zlis1_tail')
+            ->where('id_head', $idHead)
+            ->update(['status' => 0]);
+    
         return response()->json(['success' => true]);
     }
+    
 }

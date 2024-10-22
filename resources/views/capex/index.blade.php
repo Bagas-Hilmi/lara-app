@@ -8,7 +8,7 @@
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-19">
+                <div class="col-12">
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             <div style="background-color: #3cb210;" class="shadow-primary border-radius-lg pt-4 pb-3"> 
@@ -69,6 +69,7 @@
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
             <x-footers.auth></x-footers.auth>
             
