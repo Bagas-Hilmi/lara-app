@@ -15,6 +15,7 @@ class Report extends Model
 
     protected $fillable = [
         'id_capex',
+        'id_head', // Menambahkan id_head
         'fa_doc',
         'date',
         'settle_doc',
@@ -31,8 +32,6 @@ class Report extends Model
     {
         return Capex::select('id_capex', 'project_desc', 'cip_number', 'wbs_number', 'capex_number', 'budget_type', 'amount_budget')
             ->where('status', 1)
-            ->whereNotNull('cip_number') // Hanya mengambil data yang tidak null pada cip_number
-            ->whereNotNull('wbs_number')
             ->get();
     }
 
@@ -42,6 +41,7 @@ class Report extends Model
             ->select([
                 'id_report_cip',
                 'id_capex',
+                'id_head', // Menambahkan id_head
                 'fa_doc',
                 'date',
                 'settle_doc',
@@ -58,41 +58,74 @@ class Report extends Model
             ->get();
     }
 
-    public static function populateReportFromFaglbTail()
+    public static function insertReportCip()
     {
-        return DB::table('t_faglb_tail')
-            ->join('t_zlis1_tail', function ($join) {
-                $join->on('t_faglb_tail.asset', '=', 't_zlis1_tail.asset') // Syarat 1: Kolom asset harus sama
-                     ->whereColumn('t_faglb_tail.document_number', 't_zlis1_tail.document_number_2'); // Syarat 2: Kolom document_number harus sama
+        // Ambil id_capex terbaru dari t_master_capex
+        $latestCapexId = DB::table('t_master_capex')
+            ->where('status', 1)
+            ->orderBy('created_at', 'desc')
+            ->value('id_capex');
+
+        // Ambil data yang akan dimasukkan
+        $dataToInsert = DB::table('t_faglb_tail AS f')
+            ->join('t_zlis1_tail AS z', function ($join) {
+                $join->on('f.asset', '=', 'z.asset')
+                    ->on('f.document_number', '=', 'z.document_number_2');
             })
+            ->join('t_faglb_head AS h', 'f.id_head', '=', 'h.id_head')
+            ->where('f.status', 1)
+            ->where('z.status', 1)
             ->select([
-                't_zlis1_tail.document_number as fa_doc', // Mengambil fa_doc dari t_zlis1_tail
-                't_faglb_tail.posting_date as date',
-                't_faglb_tail.document_number as settle_doc',
-                't_faglb_tail.material',
-                't_faglb_tail.text as description',
-                't_faglb_tail.quantity as qty',
-                't_faglb_tail.base_unit_of_measure as uom',
-                't_faglb_tail.amount_in_loc_curr_2 as amount_rp',
-                't_faglb_tail.amount_in_lc as amount_us'
+                'h.id_head', // Ambil id_head
+                'z.document_number AS fa_doc',
+                'f.posting_date AS date',
+                'f.document_number AS settle_doc',
+                'f.material',
+                'f.text AS description',
+                'f.quantity AS qty',
+                'f.base_unit_of_measure AS uom',
+                'f.amount_in_loc_curr_2 AS amount_rp',
+                'f.amount_in_lc AS amount_us',
+                DB::raw('NOW() AS created_at'),
+                DB::raw('NOW() AS updated_at')
             ])
-            ->get()
-            ->each(function ($item) {
-                // Menyimpan setiap item ke dalam tabel t_report_cip
+            ->get(); // Ambil data
+
+        // Insert data hanya jika belum ada
+        foreach ($dataToInsert as $data) {
+            $exists = DB::table('t_report_cip')
+                ->where('fa_doc', $data->fa_doc)
+                ->where('date', $data->date)
+                ->where('settle_doc', $data->settle_doc)
+                ->exists();
+
+            // Jika data tidak ada, maka lakukan insert
+            if (!$exists) {
                 DB::table('t_report_cip')->insert([
-                    'fa_doc' => $item->fa_doc,
-                    'date' => $item->date,
-                    'settle_doc' => $item->settle_doc,
-                    'material' => $item->material,
-                    'description' => $item->description,
-                    'qty' => $item->qty,
-                    'uom' => $item->uom,
-                    'amount_rp' => $item->amount_rp,
-                    'amount_us' => $item->amount_us,
-                    'created_at' => now(), // Menambahkan timestamp
-                    'updated_at' => now(),
+                    'id_head' => $data->id_head,
+                    'id_capex' => $latestCapexId ? $latestCapexId : null, // Jika latestCapexId ada, masukkan, jika tidak, masukkan null
+                    'fa_doc' => $data->fa_doc,
+                    'date' => $data->date,
+                    'settle_doc' => $data->settle_doc,
+                    'material' => $data->material,
+                    'description' => $data->description,
+                    'qty' => $data->qty,
+                    'uom' => $data->uom,
+                    'amount_rp' => $data->amount_rp,
+                    'amount_us' => $data->amount_us,
+                    'created_at' => $data->created_at,
+                    'updated_at' => $data->updated_at,
                 ]);
-            });
+            }
+        }
+    }
+
+    public static function getAvailableCapexIds()
+    {
+        return DB::table('t_master_capex')
+            ->select('id_capex', 'project_desc') // Ambil id_capex dan deskripsi jika perlu
+            ->where('status', 1)
+            ->pluck('id_capex', 'project_desc'); // Menggunakan description sebagai key jika ingin menampilkan deskripsi
     }
 
     public function Capex()

@@ -25,13 +25,14 @@
                                     <table id="faglb-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th align="center">Action</th>
-                                                <th align="center">ID Head</th>
-                                                <th align="center">ID CipCumBal</th>
-                                                <th align="center">Period </th>
-                                                <th align="center">Report Status</th>
-                                                <th align="center">Created At</th>
-                                                <th align="center">Updated At</th>
+                                                <th class="text-center">Action</th>
+                                                <th class="text-center">ID Head</th>
+                                                <th class="text-center">ID CipCumBal</th>
+                                                <th class="text-center">ID Capex</th>
+                                                <th class="text-center">Period </th>
+                                                <th class="text-center">Report Status</th>
+                                                <th class="text-center">Created At</th>
+                                                <th class="text-center">Updated At</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -82,6 +83,7 @@
                             {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                             {data: 'id_head', name: 'id_head', className: 'text-center'},
                             {data: 'id_ccb', name: 'id_ccb', className: 'text-center'},
+                            {data: 'id_capex', name: 'id_capex', className: 'text-center'},
                             {data: 'period', name: 'period', className: 'text-center'},
                             {data: 'report_status', name: 'report_status', className: 'text-center'},
                             {

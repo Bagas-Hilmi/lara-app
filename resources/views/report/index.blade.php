@@ -38,27 +38,26 @@
                                             @endforeach
                                         </ul>
                                     
-                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                        <span id="cipText">CIP Number</span> 
-                                    </button>
-                                    
-                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                        <span id="wbsText">WBS Number</span> 
-                                    </button>
+                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                            <span id="cipText">CIP Number</span> 
+                                        </button>
+                                        
+                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                            <span id="wbsText">WBS Number</span> 
+                                        </button>
 
-                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;"disabled >
-                                        <span id="projectText">project desc</span> 
-                                    </button>
+                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;"disabled >
+                                            <span id="projectText">project desc</span> 
+                                        </button>
 
-                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                        <span id="budgetText">budget type</span> 
-                                    </button>
+                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                            <span id="budgetText">budget type</span> 
+                                        </button>
 
-                                    <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                        <span id="amountText">Amount Budget</span>
-                                    </button>
-                                    
-                                    
+                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
+                                            <span id="amountText">Amount Budget</span>
+                                        </button>
+
                                     </div>
                                 </div>
                                 <div class="table-responsive p-0">
@@ -67,6 +66,7 @@
                                             <tr>
                                                 <th align="center">ID Report CIP</th>
                                                 <th align="center">ID Capex</th>
+                                                <th align="center">ID Head</th>
                                                 <th align="center">FA Doc </th>
                                                 <th align="center">Date </th>
                                                 <th align="center">Settle Doc</th>
@@ -119,15 +119,16 @@
                         columns: [
                             {data: 'id_report_cip', name: 'id_report_cip', className: 'text-center'},
                             {data: 'id_capex', name: 'id_capex', className: 'text-center'},
+                            {data: 'id_head', name: 'id_head', className: 'text-center'},
                             {data: 'fa_doc', name: 'fa_doc', className: 'text-center'},
-                            {data: 'date', name: 'date', className: 'text-center'},
-                            {data: 'settle_doc', name: 'settle_doc', className: 'text-center'},
-                            {data: 'material', name: 'material', className: 'text-center'},
+                            {data: 'date', name: 'date', className: 'text-right'},
+                            {data: 'settle_doc', name: 'settle_doc', className: 'text-right'},
+                            {data: 'material', name: 'material', className: 'text-right'},
                             {data: 'description', name: 'description', className: 'text-center'},
-                            {data: 'qty', name: 'qty', className: 'text-center'},
+                            {data: 'qty', name: 'qty', className: 'text-right'},
                             {data: 'uom', name: 'uom', className: 'text-center'},
-                            {data: 'amount_rp', name: 'amount_rp', className: 'text-center'},
-                            {data: 'amount_us', name: 'amount_us', className: 'text-center'},
+                            {data: 'amount_rp', name: 'amount_rp', className: 'text-right'},
+                            {data: 'amount_us', name: 'amount_us', className: 'text-right'},
                             {
                                 data: 'created_at', 
                                 name: 'created_at', 
@@ -178,6 +179,7 @@
                         });
                     });
 
+                    
 
                     $("#report-table").on("click", ".delete-btn", function () {
                         var id = $(this).data("id"); // Ambil ID dari data-id

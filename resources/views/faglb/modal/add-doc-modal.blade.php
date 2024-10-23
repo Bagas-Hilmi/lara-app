@@ -6,43 +6,42 @@
                 <h5 class="modal-title" id="addDocFormLabel" style="color: white;">Upload Document</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                
-                <form id="addDocForm" action="{{ route('faglb.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="period" id="selectedPeriod" value="">
-                    <input type="hidden" name="id_ccb" id="selectedIdCcb" value="">
-                    <input type="hidden" name="flag" value="upload_documents">
+                <div class="modal-body">               
+                    <form id="addDocForm" action="{{ route('faglb.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="period" id="selectedPeriod" value="">
+                        <input type="hidden" name="id_ccb" id="selectedIdCcb" value="">
+                        <input type="hidden" name="flag" value="upload_documents">
 
-                    <div class="container-fluid">
-                        <div class="dropdown mb-3">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false" required>
-                                Pilih Period
-                            </button>
-                            <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown" >
-                                <!-- pake AJAX -->
-                            </ul>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label class="form-label" for="faglb">FAGLB</label>
-                                <input type="file" class="form-control custom-file-input" id="faglb" name="faglb" accept=".xlsx,.xls,.csv" required>
+                        <div class="container-fluid">
+                            <div class="dropdown mb-3">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false" required>
+                                    Pilih Period
+                                </button>
+                                <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown" >
+                                    <!-- pake AJAX -->
+                                </ul>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label" for="faglb">FAGLB</label>
+                                    <input type="file" class="form-control custom-file-input" id="faglb" name="faglb" accept=".xlsx,.xls,.csv" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label" for="zlis1">ZLIS1</label>
+                                    <input type="file" class="form-control custom-file-input" id="zlis1" name="zlis1" accept=".xlsx,.xls,.csv" required>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label class="form-label" for="zlis1">ZLIS1</label>
-                                <input type="file" class="form-control custom-file-input" id="zlis1" name="zlis1" accept=".xlsx,.xls,.csv" required>
-                            </div>
-                        </div>
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn bg-gradient-success" id="uploadDoc">Upload</button>
                     </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn bg-gradient-success" id="uploadDoc">Upload</button>
-            </div>
-                </form>
+                    </form>
         </div>
     </div>
 </div>

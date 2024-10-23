@@ -344,6 +344,10 @@ class FaglbController extends Controller
         DB::table('t_zlis1_tail')
             ->where('id_head', $idHead)
             ->update(['status' => 0]);
+        
+         DB::table('t_report_cip')
+        ->where('id_head', $idHead) 
+        ->update(['status' => 0]);
     
         return response()->json(['success' => true]);
     }
