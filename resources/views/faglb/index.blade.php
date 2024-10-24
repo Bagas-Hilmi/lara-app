@@ -28,7 +28,6 @@
                                                 <th class="text-center">Action</th>
                                                 <th class="text-center">ID Head</th>
                                                 <th class="text-center">ID CipCumBal</th>
-                                                <th class="text-center">ID Capex</th>
                                                 <th class="text-center">Period </th>
                                                 <th class="text-center">Report Status</th>
                                                 <th class="text-center">Created At</th>
@@ -83,7 +82,6 @@
                             {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                             {data: 'id_head', name: 'id_head', className: 'text-center'},
                             {data: 'id_ccb', name: 'id_ccb', className: 'text-center'},
-                            {data: 'id_capex', name: 'id_capex', className: 'text-center'},
                             {data: 'period', name: 'period', className: 'text-center'},
                             {data: 'report_status', name: 'report_status', className: 'text-center'},
                             {
@@ -91,7 +89,7 @@
                                 name: 'created_at', 
                                 className: 'text-center', 
                                 render: function(data) {
-                                    return moment(data).format('YYYY-MM-DD HH:mm:ss');
+                                    return moment(data).format('YYYY-MM-DD ');
                                 }
                             },
                             {
@@ -99,7 +97,7 @@
                                 name: 'updated_at', 
                                 className: 'text-center', 
                                 render: function(data) {
-                                    return moment(data).format('YYYY-MM-DD HH:mm:ss');
+                                    return moment(data).format('YYYY-MM-DD ');
                                 }
                             }
                         ]

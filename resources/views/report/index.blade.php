@@ -115,12 +115,16 @@
                         ajax: {
                             url: "{{ route('report.index') }}",
                             type: "GET",
+                            data: function (d) {
+                            // Mengatur parameter pencarian berdasarkan dropdown yang dipilih
+                            d.searchValue = document.getElementById('descriptionText').textContent; // Ganti dengan ID yang sesuai
+                        }
                         },
                         columns: [
                             {data: 'id_report_cip', name: 'id_report_cip', className: 'text-center'},
                             {data: 'id_capex', name: 'id_capex', className: 'text-center'},
                             {data: 'id_head', name: 'id_head', className: 'text-center'},
-                            {data: 'fa_doc', name: 'fa_doc', className: 'text-center'},
+                            {data: 'fa_doc', name: 'fa_doc', className: 'text-right'},
                             {data: 'date', name: 'date', className: 'text-right'},
                             {data: 'settle_doc', name: 'settle_doc', className: 'text-right'},
                             {data: 'material', name: 'material', className: 'text-right'},
@@ -134,7 +138,7 @@
                                 name: 'created_at', 
                                 className: 'text-center', 
                                 render: function(data) {
-                                    return moment(data).format('YYYY-MM-DD HH:mm:ss');
+                                    return moment(data).format('YYYY-MM-DD');
                                 }
                             },
                             {
@@ -142,7 +146,7 @@
                                 name: 'updated_at', 
                                 className: 'text-center', 
                                 render: function(data) {
-                                    return moment(data).format('YYYY-MM-DD HH:mm:ss');
+                                    return moment(data).format('YYYY-MM-DD');
                                 }
                             }
                         ]
@@ -176,6 +180,12 @@
                             document.getElementById('projectText').innerText = project ? project : 'Project';
                             document.getElementById('budgetText').innerText = budget ? budget : 'Budget';
                             document.getElementById('amountText').innerText = amount ? formatNumber(amount) : 'Amount'; // Format amount budget
+
+                             // Mengatur filter DataTable berdasarkan value
+                            table.column(1).search(value).draw(); // Ganti 0 dengan indeks kolom yang sesuai
+
+                            // Reload DataTable
+                            table.ajax.reload(); // Memanggil reload untuk mendapatkan data terbaru
                         });
                     });
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Report extends Model
 {
@@ -30,10 +31,26 @@ class Report extends Model
 
     public static function getActiveCapexDescriptions()
     {
-        return Capex::select('id_capex', 'project_desc', 'cip_number', 'wbs_number', 'capex_number', 'budget_type', 'amount_budget')
-            ->where('status', 1)
+        return DB::table('t_report_cip')
+            ->join('t_master_capex', 't_report_cip.id_capex', '=', 't_master_capex.id_capex')
+            ->select(
+                't_report_cip.id_capex as report_id_capex',
+                't_master_capex.id_capex as master_id_capex',
+                't_report_cip.id_capex',
+                't_master_capex.capex_number',
+                't_master_capex.cip_number',
+                't_master_capex.wbs_number',
+                't_master_capex.project_desc',
+                't_master_capex.budget_type',
+                't_master_capex.amount_budget'
+            )
+            ->distinct('id_capex')
+            ->where('t_report_cip.status', 1) // Anda bisa tambahkan kondisi di sini sesuai kebutuhan
             ->get();
     }
+
+
+
 
     public static function get_dtReportCip()
     {
@@ -60,12 +77,6 @@ class Report extends Model
 
     public static function insertReportCip()
     {
-        // Ambil id_capex terbaru dari t_master_capex
-        $latestCapexId = DB::table('t_master_capex')
-            ->where('status', 1)
-            ->orderBy('created_at', 'desc')
-            ->value('id_capex');
-
         // Ambil data yang akan dimasukkan
         $dataToInsert = DB::table('t_faglb_tail AS f')
             ->join('t_zlis1_tail AS z', function ($join) {
@@ -76,7 +87,7 @@ class Report extends Model
             ->where('f.status', 1)
             ->where('z.status', 1)
             ->select([
-                'h.id_head', // Ambil id_head
+                'h.id_head',
                 'z.document_number AS fa_doc',
                 'f.posting_date AS date',
                 'f.document_number AS settle_doc',
@@ -86,24 +97,51 @@ class Report extends Model
                 'f.base_unit_of_measure AS uom',
                 'f.amount_in_loc_curr_2 AS amount_rp',
                 'f.amount_in_lc AS amount_us',
+                'f.asset', // Tambahkan kolom asset
                 DB::raw('NOW() AS created_at'),
                 DB::raw('NOW() AS updated_at')
             ])
-            ->get(); // Ambil data
+            ->get();
 
-        // Insert data hanya jika belum ada
+        // Insert data
         foreach ($dataToInsert as $data) {
+            // Log nilai asset original
+            Log::info('Original Asset Value: ' . $data->asset);
+
+            // Cari dengan menambahkan '-0' ke asset
+            $assetWithSuffix = $data->asset . '-0';
+
+            Log::info('Looking for CIP number: ' . $assetWithSuffix);
+
+            // Cari data dengan format yang sudah disesuaikan
+            $matchingCapex = DB::table('t_master_capex')
+                ->where('status', 1)
+                ->where('cip_number', $assetWithSuffix)
+                ->first();
+
+            if ($matchingCapex) {
+                Log::info('Found matching CIP:', [
+                    'asset' => $data->asset,
+                    'formatted_asset' => $assetWithSuffix,
+                    'cip_number' => $matchingCapex->cip_number,
+                    'id_capex' => $matchingCapex->id_capex
+                ]);
+            } else {
+                Log::info('No match found for asset: ' . $data->asset . ' (tried: ' . $assetWithSuffix . ')');
+            }
+
+            // Cek apakah data sudah ada
             $exists = DB::table('t_report_cip')
                 ->where('fa_doc', $data->fa_doc)
                 ->where('date', $data->date)
                 ->where('settle_doc', $data->settle_doc)
                 ->exists();
 
-            // Jika data tidak ada, maka lakukan insert
+            // Insert jika data belum ada
             if (!$exists) {
                 DB::table('t_report_cip')->insert([
                     'id_head' => $data->id_head,
-                    'id_capex' => $latestCapexId ? $latestCapexId : null, // Jika latestCapexId ada, masukkan, jika tidak, masukkan null
+                    'id_capex' => $matchingCapex ? $matchingCapex->id_capex : null,
                     'fa_doc' => $data->fa_doc,
                     'date' => $data->date,
                     'settle_doc' => $data->settle_doc,
@@ -119,6 +157,8 @@ class Report extends Model
             }
         }
     }
+
+
 
     public static function getAvailableCapexIds()
     {
