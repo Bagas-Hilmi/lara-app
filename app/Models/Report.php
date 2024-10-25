@@ -132,7 +132,6 @@ class Report extends Model
 
             // Cek apakah data sudah ada
             $exists = DB::table('t_report_cip')
-                ->where('fa_doc', $data->fa_doc)
                 ->where('date', $data->date)
                 ->where('settle_doc', $data->settle_doc)
                 ->exists();

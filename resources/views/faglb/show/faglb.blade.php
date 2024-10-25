@@ -55,11 +55,11 @@
                                                 <td>{{ $data->document_type }}</td>
                                                 <td>{{ $data->posting_key }}</td>
                                                 <td>{{ $data->document_currency }}</td>
-                                                <td>{{ $data->amount_in_doc_curr }}</td>
+                                                <td>{{ number_format($data->amount_in_doc_curr, 2 ,',', '.') }}</td>
                                                 <td>{{ $data->local_currency }}</td>
-                                                <td>{{ $data->amount_in_lc }}</td>
+                                                <td>{{ number_format($data->amount_in_lc, 2, ',', '.') }}</td>
                                                 <td>{{ $data->local_currency_2 }}</td>
-                                                <td>{{ $data->amount_in_loc_curr_2 }}</td>
+                                                <td>{{ number_format($data->amount_in_loc_curr_2, 0,',', '.') }}</td>  
                                                 <td>{{ $data->text }}</td>
                                                 <td>{{ $data->assignment }}</td>
                                                 <td>{{ $data->profit_center }}</td>

@@ -32,6 +32,7 @@
 
 
            $('#status-table').DataTable({
+               responsive: true, // Menambahkan opsi responsif
                destroy: true, // Menghancurkan instance DataTable sebelumnya
                processing: true,
                serverSide: true,

@@ -182,9 +182,35 @@ class FaglbController extends Controller
         }
     }
 
+    function formatAmount($amount) 
+    {
+        // Hapus spasi jika ada
+        $amount = trim($amount);
+        
+        // Hapus pemisah ribuan (titik)
+        $amount = str_replace('.', '', $amount);
+        
+        // Ganti koma desimal dengan titik
+        $amount = str_replace(',', '.', $amount);
+        
+        // Convert ke float
+        return (float) $amount;
+    }
 
     public function importFaglb($file, $id_head)
     {
+        function formatAmount($amount) {
+            if(empty($amount)) return 0;
+            
+            $amount = trim($amount);
+            // Hapus pemisah ribuan (titik)
+            $amount = str_replace('.', '', $amount);
+            // Ganti koma desimal dengan titik
+            $amount = str_replace(',', '.', $amount);
+            
+            return (float) $amount;
+        }
+        
         if ($file) {
             $faglbData = Excel::toArray(new FaglbImport, $file);
 
@@ -199,8 +225,6 @@ class FaglbController extends Controller
             DB::table('t_faglb_tail')->where('id_head', $id_head)->delete();
 
             foreach ($faglbRows as $index => $row) {
-                // Pastikan format tanggal dan nilai yang valid
-                $postingDate = \Carbon\Carbon::parse($row[2])->format('Y-m-d');
 
                 DB::table('t_faglb_tail')->insert([
                     'id_head' => $id_head,

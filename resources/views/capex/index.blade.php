@@ -125,7 +125,9 @@
                                     {data: 'project_desc', name: 'project_desc', className: 'text-start'},
                                     {data: 'wbs_capex', name: 'wbs_capex', className: 'text-start'},
                                     {data: 'remark', name: 'remark', className: 'text-start'},
-                                    {data: 'request_number', name: 'request_number', className: 'text-right'},
+                                    {data: 'request_number', name: 'request_number', className: 'text-right', render: function(data, type, row) {
+                                        return '<div style="text-align: right;">' + data + '</div>';
+                                    }},
                                     {data: 'requester', name: 'requester', className: 'text-start'},
                                     {data: 'capex_number', name: 'capex_number', className: 'text-right'},
                                     {data: 'amount_budget', name: 'amount_budget', className: 'text-right', 

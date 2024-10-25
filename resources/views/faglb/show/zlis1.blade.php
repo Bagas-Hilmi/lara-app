@@ -73,7 +73,7 @@
                                                 <td>{{ $data->base_unit_of_measure }}</td>
                                                 <td>{{ $data->value_tran_curr_1 }}</td>
                                                 <td>{{ $data->currency }}</td>
-                                                <td>{{ $data->value_tran_curr_2 }}</td>
+                                                <td>{{ number_format($data->value_tran_curr_2, 2, ',', '.') }}</td>
                                                 <td>{{ $data->currency_2 }}</td>
                                                 <td>{{ $data->value_tran_curr_3 }}</td>
                                                 <td>{{ $data->currency_3 }}</td>

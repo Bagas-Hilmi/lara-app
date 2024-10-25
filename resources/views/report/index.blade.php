@@ -80,6 +80,14 @@
                                                 <th align="center">Updated At</th>
                                             </tr>
                                         </thead>
+                                        <tfoot>
+                                            <tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
+                                                <td colspan="10"></td>
+                                                <td align="center" id="total-amount-rp">Total (RP)</td>
+                                                <td align="center" id="total-amount-us">Total (US$)</td>
+                                                <td colspan="2"></td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -129,10 +137,21 @@
                             {data: 'settle_doc', name: 'settle_doc', className: 'text-right'},
                             {data: 'material', name: 'material', className: 'text-right'},
                             {data: 'description', name: 'description', className: 'text-center'},
-                            {data: 'qty', name: 'qty', className: 'text-right'},
+                            {data: 'qty', name: 'qty', className: 'text-right', render: function(data, type, row) {
+                                return '<div style="text-align: right;">' + data + '</div>';
+                            }},
                             {data: 'uom', name: 'uom', className: 'text-center'},
-                            {data: 'amount_rp', name: 'amount_rp', className: 'text-right'},
-                            {data: 'amount_us', name: 'amount_us', className: 'text-right'},
+                            {data: 'amount_rp', name: 'amount_rp', className: 'text-right',
+                                render: function (data, type, row) {
+                                    return '<div style="text-align: right;">' + (data ? number_format(data, 0, ',', '.') : '-') + '</div>';
+                                }
+                            },
+
+                            {data: 'amount_us', name: 'amount_us', className: 'text-right',
+                                render: function (data, type, row) {
+                                    return data ? number_format(data, 2, ',', '.') : '-';
+                                }
+                            },
                             {
                                 data: 'created_at', 
                                 name: 'created_at', 
@@ -140,7 +159,7 @@
                                 render: function(data) {
                                     return moment(data).format('YYYY-MM-DD');
                                 }
-                            },
+                            },  
                             {
                                 data: 'updated_at', 
                                 name: 'updated_at', 
@@ -149,7 +168,60 @@
                                     return moment(data).format('YYYY-MM-DD');
                                 }
                             }
-                        ]
+                        ],
+                         // Tambahkan drawCallback untuk menghitung total
+                         drawCallback: function(settings) {
+                            var api = this.api();
+                            
+                            // Dapatkan nilai filter aktif dari dropdown
+                            var activeCapex = document.querySelector('#descriptionText').textContent.trim();
+                            
+                            // Kosongkan footer terlebih dahulu
+                            $('#report-table tfoot').empty();
+                            
+                            // Jika masih 'Pilih Capex' atau kosong, return tanpa melakukan perhitungan
+                            if (activeCapex === 'Pilih Capex' || !activeCapex) {
+                                return;
+                            }
+                            // Objek untuk menyimpan total per id_head
+                            var totalsByHead = {};
+                            // Ambil data yang ditampilkan saat ini
+                            var data = api.rows({ page: 'current' }).data();
+                            // Iterasi melalui data untuk menghitung total
+                            data.each(function(row) {
+                                var idHead = row.id_head;
+                                // Konversi string ke number dan handle format angka
+                                var amountRp = typeof row.amount_rp === 'string' ? 
+                                    parseFloat(row.amount_rp.replace(/\./g, '').replace(',', '.')) : 
+                                    row.amount_rp || 0;
+                                var amountUs = typeof row.amount_us === 'string' ? 
+                                    parseFloat(row.amount_us.replace(/\./g, '').replace(',', '.')) : 
+                                    row.amount_us || 0;
+                                // Inisialisasi atau update total untuk id_head ini
+                                if (!totalsByHead[idHead]) {
+                                    totalsByHead[idHead] = {
+                                        rp: 0,
+                                        us: 0
+                                    };
+                                }
+                                totalsByHead[idHead].rp += amountRp;
+                                totalsByHead[idHead].us += amountUs;
+                            });
+
+                            // Jika ada data yang dihitung, tampilkan subtotal
+                            if (Object.keys(totalsByHead).length > 0) {
+                                // Tambahkan baris subtotal untuk setiap id_head
+                                Object.entries(totalsByHead).forEach(function([idHead, totals]) {
+                                    var subtotalRow = `<tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
+                                        <td colspan="10"></td>
+                                        <td align="center" style="font-weight: bold;">${number_format(totals.rp, 0, ',')}</td>
+                                        <td align="center" style="font-weight: bold;">${number_format(totals.us, 2, ',')}</td>
+                                        <td colspan="2"></td>
+                                    </tr>`;
+                                    $('#report-table tfoot').append(subtotalRow);
+                                });
+                            }
+                        }                
                     });
                     
                       // Fungsi untuk memformat angka dengan tanda pemisah ribuan
@@ -188,6 +260,29 @@
                             table.ajax.reload(); // Memanggil reload untuk mendapatkan data terbaru
                         });
                     });
+
+                    function number_format(number, decimals, decPoint, thousandsSep) {
+                        number = (number + '').replace(',', '').replace(' ', '');
+                        var n = !isFinite(+number) ? 0 : +number,
+                            prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                            sep = (typeof thousandsSep === 'undefined') ? '.' : thousandsSep,
+                            dec = (typeof decPoint === 'undefined') ? ',' : decPoint,
+                            toFixedFix = function (n, prec) {
+                                var k = Math.pow(10, prec);
+                                return '' + Math.round(n * k) / k;
+                            };
+
+                        // Format number
+                        var result = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+                        if (result[0].length > 3) {
+                            result[0] = result[0].replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+                        }
+                        if ((result[1] || '').length < prec) {
+                            result[1] = result[1] || '';
+                            result[1] += new Array(prec - result[1].length + 1).join('0');
+                        }
+                        return result.join(dec);
+                    }
 
                     
 

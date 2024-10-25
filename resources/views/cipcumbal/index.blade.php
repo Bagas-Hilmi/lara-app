@@ -36,16 +36,16 @@
                                     <table id="cipCumBalTable" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th align="center">Action</th>
-                                                <th align="center">ID</th>
-                                                <th align="center">Period CIP</th>
-                                                <th align="center">Bal USD</th>
-                                                <th align="center">Bal RP</th>
-                                                <th align="center">Cumbal USD</th>
-                                                <th align="center">Cumbal RP</th>
-                                                <th align="center">Report Status</th>
-                                                <th align="center">Created At</th>
-                                                <th align="center">Updated At</th>
+                                                <th class="text-center">Action</th>
+                                                <th class="text-center">ID</th>
+                                                <th class="text-center">Period CIP</th>
+                                                <th class="text-center">Bal USD</th>
+                                                <th class="text-center">Bal RP</th>
+                                                <th class="text-center">Cumbal USD</th>
+                                                <th class="text-center">Cumbal RP</th>
+                                                <th class="text-center">Report Status</th>
+                                                <th class="text-center">Created At</th>
+                                                <th class="text-center">Updated At</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -224,6 +224,7 @@
                         });
                     });
 
+                    
                 });
             </script>
             @endpush
