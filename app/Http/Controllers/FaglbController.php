@@ -206,7 +206,7 @@ class FaglbController extends Controller
                     'id_head' => $id_head,
                     'Asset' => $row[0],
                     'sub_number' => $row['2'],
-                    'posting_date' => \Carbon\Carbon::parse($row[2])->format('Y-m-d'),
+                    'posting_date' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[2])->format('Y-m-d'),
                     'document_number' => $row[3],
                     'reference_key' => $row[4],
                     'material' => $row[5],
@@ -264,8 +264,8 @@ class FaglbController extends Controller
                     'currency_2' => $row[15],
                     'value_tran_curr_3' => $row[16],
                     'currency_3' => $row[17],
-                    'document_date' => \Carbon\Carbon::parse($row[18])->format('Y-m-d'),
-                    'posting_date' => \Carbon\Carbon::parse($row[19])->format('Y-m-d'),
+                    'document_date' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[18])->format('Y-m-d'),
+                    'posting_date' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[19])->format('Y-m-d'),
                     'purchasing_document' => $row[20],
                     'supplier' => $row[21],
                     'name_1' => $row[22],
@@ -276,8 +276,8 @@ class FaglbController extends Controller
                     'document_number_2' => $row[27],
                     'company_code_2' => $row[28],
                     'fiscal_year_2' => $row[29],
-                    'document_date_2' => \Carbon\Carbon::parse($row[30])->format('Y-m-d'),
-                    'posting_date_2' => \Carbon\Carbon::parse($row[31])->format('Y-m-d'),
+                    'document_date_2' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[30])->format('Y-m-d'),
+                    'posting_date_2' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[31])->format('Y-m-d'),
                     'user_name' => $row[32],
                     'reversed_with' => $row[33],
                     'wbs_level_2' => $row[34],
@@ -327,29 +327,28 @@ class FaglbController extends Controller
     {
         // Temukan record di t_faglb_head
         $faglbHead = Faglb::findOrFail($id);
-        
+
         // Ubah status di t_faglb_head menjadi 0
         $faglbHead->status = 0;
         $faglbHead->save();
-    
+
         // Temukan semua record terkait di t_faglb_tail dan t_zlis1_tail
         $idHead = $faglbHead->id_head; // Asumsikan id_head adalah atribut dari model Faglb
-    
+
         // Ubah status di t_faglb_tail
         DB::table('t_faglb_tail')
             ->where('id_head', $idHead)
             ->update(['status' => 0]);
-    
+
         // Ubah status di t_zlis1_tail
         DB::table('t_zlis1_tail')
             ->where('id_head', $idHead)
             ->update(['status' => 0]);
-        
-         DB::table('t_report_cip')
-        ->where('id_head', $idHead) 
-        ->update(['status' => 0]);
-    
+
+        DB::table('t_report_cip')
+            ->where('id_head', $idHead)
+            ->update(['status' => 0]);
+
         return response()->json(['success' => true]);
     }
-    
 }
