@@ -133,20 +133,20 @@
                                     {data: 'amount_budget', name: 'amount_budget', className: 'text-right', 
                                     render: function(data, type) {
                                         if (type === 'display') {
-                                            return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                         }
                                         return data;
                                     }},
                                     {data: 'budget_cos', name: 'budget_cos', className: 'text-right', 
                                     render: function(data, type) {
                                         if (type === 'display') {
-                                            return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                         }
                                         return data;
                                     }},
                                     {data: 'PO_release', name: 'PO_release', className: 'text-right',   render: function(data, type) {
                                         if (type === 'display') {
-                                            return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                         }
                                         return data;
                                     }},

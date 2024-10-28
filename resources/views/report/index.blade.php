@@ -83,6 +83,7 @@
                                         <tfoot>
                                             <tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
                                                 <td colspan="10"></td>
+                                                <td align="center">Total :</td>
                                                 <td align="center" id="total-amount-rp">Total (RP)</td>
                                                 <td align="center" id="total-amount-us">Total (US$)</td>
                                                 <td colspan="2"></td>
@@ -172,24 +173,28 @@
                          // Tambahkan drawCallback untuk menghitung total
                          drawCallback: function(settings) {
                             var api = this.api();
-                            
+
                             // Dapatkan nilai filter aktif dari dropdown
                             var activeCapex = document.querySelector('#descriptionText').textContent.trim();
-                            
-                            // Kosongkan footer terlebih dahulu
-                            $('#report-table tfoot').empty();
-                            
+
+                            // Reset total di footer
+                            $('#total-amount-rp').text('Total (RP)');
+                            $('#total-amount-us').text('Total (US$)');
+
                             // Jika masih 'Pilih Capex' atau kosong, return tanpa melakukan perhitungan
                             if (activeCapex === 'Pilih Capex' || !activeCapex) {
                                 return;
                             }
+
                             // Objek untuk menyimpan total per id_head
                             var totalsByHead = {};
                             // Ambil data yang ditampilkan saat ini
                             var data = api.rows({ page: 'current' }).data();
+
                             // Iterasi melalui data untuk menghitung total
                             data.each(function(row) {
                                 var idHead = row.id_head;
+
                                 // Konversi string ke number dan handle format angka
                                 var amountRp = parseFloat(row.amount_rp) || 0;
                                 var amountUs = parseFloat(row.amount_us) || 0;
@@ -205,20 +210,22 @@
                                 totalsByHead[idHead].us += amountUs;
                             });
 
-                            // Jika ada data yang dihitung, tampilkan subtotal
+                            // Variabel untuk total keseluruhan
+                            var totalRp = 0;
+                            var totalUs = 0;
+
+                            // Jika ada data yang dihitung, akumulasi total
                             if (Object.keys(totalsByHead).length > 0) {
-                                // Tambahkan baris subtotal untuk setiap id_head
                                 Object.entries(totalsByHead).forEach(function([idHead, totals]) {
-                                    var subtotalRow = `<tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
-                                        <td colspan="10"></td>
-                                        <td align="center" style="font-weight: bold;">${number_format(totals.rp, 0, ',')}</td>
-                                        <td align="center" style="font-weight: bold;">${number_format(totals.us, 2, ',')}</td>
-                                        <td colspan="2"></td>
-                                    </tr>`;
-                                    $('#report-table tfoot').append(subtotalRow);
+                                    totalRp += totals.rp; // Akumulasi total RP
+                                    totalUs += totals.us; // Akumulasi total US$
                                 });
+
+                                // Update total di footer
+                                $('#total-amount-rp').text(number_format(totalRp, 0, ',', '.')); // Format untuk RP
+                                $('#total-amount-us').text(number_format(totalUs, 2, ',', '.')); // Format untuk US$
                             }
-                        }                
+                        }
                     });
                     
                       // Fungsi untuk memformat angka dengan tanda pemisah ribuan

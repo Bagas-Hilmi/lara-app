@@ -106,7 +106,7 @@
                                 className: 'text-right', 
                                 render: function(data, type) {
                                     if (type === 'display') {
-                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                     }
                                     return data;
                                 }
@@ -117,7 +117,7 @@
                                 className: 'text-right', 
                                 render: function(data, type) {
                                     if (type === 'display') {
-                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                     }
                                     return data;
                                 }
@@ -128,7 +128,7 @@
                                 className: 'text-right', 
                                 render: function(data, type) {
                                     if (type === 'display') {
-                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                     }
                                     return data;
                                 }
@@ -139,7 +139,7 @@
                                 className: 'text-right', 
                                 render: function(data, type) {
                                     if (type === 'display') {
-                                        return '<div style="text-align: right;">' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                     }
                                     return data;
                                 }

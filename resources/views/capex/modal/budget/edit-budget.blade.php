@@ -147,7 +147,7 @@
                 // Format saat fokus hilang (blur)
                 let value = this.value.replace(/,/g, ''); // Menghapus koma
                 if (value) {
-                    this.value = parseFloat(value).toFixed(2); // Format menjadi 2 desimal
+                    this.value = parseFloat(value).toString(); // Format menjadi 2 desimal
                 }
             });
         });
