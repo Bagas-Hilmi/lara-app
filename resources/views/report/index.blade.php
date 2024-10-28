@@ -191,12 +191,9 @@
                             data.each(function(row) {
                                 var idHead = row.id_head;
                                 // Konversi string ke number dan handle format angka
-                                var amountRp = typeof row.amount_rp === 'string' ? 
-                                    parseFloat(row.amount_rp.replace(/\./g, '').replace(',', '.')) : 
-                                    row.amount_rp || 0;
-                                var amountUs = typeof row.amount_us === 'string' ? 
-                                    parseFloat(row.amount_us.replace(/\./g, '').replace(',', '.')) : 
-                                    row.amount_us || 0;
+                                var amountRp = parseFloat(row.amount_rp) || 0;
+                                var amountUs = parseFloat(row.amount_us) || 0;
+
                                 // Inisialisasi atau update total untuk id_head ini
                                 if (!totalsByHead[idHead]) {
                                     totalsByHead[idHead] = {
