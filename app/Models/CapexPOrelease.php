@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+use function PHPUnit\Framework\returnSelf;
+
 class CapexPOrelease extends Model
 {
     use HasFactory;
@@ -49,6 +51,37 @@ class CapexPOrelease extends Model
         }
 
         return $query; // Mengembalikan semua data
+    }
+
+    public static function addPORelease($data)
+    {
+        // Masukkan data baru ke dalam tabel menggunakan query builder
+        $poreleaseId = DB::table('t_capex_porelease')->insertGetId([
+            'id_capex' => $data['id_capex'],
+            'description' => $data['description'],
+            'po_release' => $data['po_release'],
+            'created_at' => now(), // Jika Anda ingin mencatat waktu pembuatan
+            'updated_at' => now(), // Jika Anda ingin mencatat waktu pembaruan
+        ]);
+
+        // Mengembalikan data yang baru ditambahkan
+        return DB::table('t_capex_porelease')->where('id_capex_porelease', $poreleaseId)->first();
+    }
+
+    public static function editPORelease($id, $data)
+    {
+        // Temukan PO Release berdasarkan ID dan perbarui data menggunakan query builder
+        DB::table('t_capex_porelease')
+            ->where('id_capex_porelease', $id)
+            ->update([
+                'id_capex' => $data['id_capex'],
+                'description' => $data['description_porelease'],
+                'po_release' => $data['po_release'],
+                'updated_at' => now(), // Jika Anda ingin mencatat waktu pembaruan
+            ]);
+
+        // Mengembalikan data yang diperbarui
+        return DB::table('t_capex_porelease')->where('id_capex_porelease', $id)->first();
     }
 
     public function Capex()

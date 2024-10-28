@@ -18,7 +18,7 @@
                             <div class="card-body p-3">
                                 <div class="mb-2">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="descriptionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #040404; border-color: #09170a;" type="button" id="descriptionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span id="descriptionText">Pilih Capex </span> <!-- Placeholder -->
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="descriptionDropdown">
@@ -38,25 +38,32 @@
                                             @endforeach
                                         </ul>
                                     
-                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                            <span id="cipText">CIP Number</span> 
-                                        </button>
+                                        <div class="info-box-container">
+                                            <div class="info-box">
+                                                <div class="info-box-label">CIP Number</div>
+                                                <div class="info-box-value" id="cipText">-</div>
+                                            </div>
                                         
-                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                            <span id="wbsText">WBS Number</span> 
-                                        </button>
-
-                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;"disabled >
-                                            <span id="projectText">project desc</span> 
-                                        </button>
-
-                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                            <span id="budgetText">budget type</span> 
-                                        </button>
-
-                                        <button class="btn btn-secondary" id="aButton" style="background-color: #09170a; border-color: #09170a;" disabled>
-                                            <span id="amountText">Amount Budget</span>
-                                        </button>
+                                            <div class="info-box">
+                                                <div class="info-box-label">WBS Number</div>
+                                                <div class="info-box-value" id="wbsText">-</div>
+                                            </div>
+                                        
+                                            <div class="info-box">
+                                                <div class="info-box-label">Project Desc</div>
+                                                <div class="info-box-value" id="projectText">-</div>
+                                            </div>
+                                        
+                                            <div class="info-box">
+                                                <div class="info-box-label">Budget Type</div>
+                                                <div class="info-box-value" id="budgetText">-</div>
+                                            </div>
+                                        
+                                            <div class="info-box">
+                                                <div class="info-box-label">Amount Budget</div>
+                                                <div class="info-box-value" id="amountText">-</div>
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>
@@ -82,7 +89,7 @@
                                         </thead>
                                         <tfoot>
                                             <tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
-                                                <td colspan="10"></td>
+                                                <td colspan="9"></td>
                                                 <td align="center">Total :</td>
                                                 <td align="center" id="total-amount-rp">Total (RP)</td>
                                                 <td align="center" id="total-amount-us">Total (US$)</td>
@@ -126,7 +133,7 @@
                             type: "GET",
                             data: function (d) {
                             // Mengatur parameter pencarian berdasarkan dropdown yang dipilih
-                            d.searchValue = document.getElementById('descriptionText').textContent; // Ganti dengan ID yang sesuai
+                            d.searchValue = document.getElementById('descriptionText').textContent; 
                         }
                         },
                         columns: [
@@ -186,9 +193,7 @@
                                 return;
                             }
 
-                            // Objek untuk menyimpan total per id_head
                             var totalsByHead = {};
-                            // Ambil data yang ditampilkan saat ini
                             var data = api.rows({ page: 'current' }).data();
 
                             // Iterasi melalui data untuk menghitung total
@@ -441,12 +446,41 @@
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
     }
 
-    #aButton[disabled] {
-        background-color: #09170a; /* Warna latar belakang yang sama */
-        border-color: #09170a; /* Warna border yang sama */
-        color: rgb(255, 255, 255); /* Warna teks yang sama */
-        opacity: 1; /* Opasitas penuh */
-        cursor: not-allowed; /* Kursor tidak diperbolehkan */
+    .info-box-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .info-box {
+        background: #040404;
+        border-radius: 8px;
+        padding: 15px 20px;
+        min-width: 200px;
+        flex: 1;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+
+    .info-box:hover {
+        transform: translateY(-2px);
+    }
+
+    .info-box-label {
+        color: #f1f5f0;
+        font-size: 0.875rem;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: bold;
+    }
+
+    .info-box-value {
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
     }
 
 </style>

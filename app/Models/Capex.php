@@ -73,8 +73,7 @@ class Capex extends Model
         $expectedCompleted,
         $wbsNumber,
         $cipNumber
-    ) 
-    {
+    ) {
         // Simpan data baru ke database dengan raw SQL
         $query = 'INSERT INTO t_master_capex (project_desc, wbs_capex, remark, request_number, requester, capex_number, amount_budget, status_capex, budget_type, startup, expected_completed, wbs_number, cip_number, created_at, updated_at) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';

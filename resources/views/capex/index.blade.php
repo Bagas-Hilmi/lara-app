@@ -93,7 +93,7 @@
                             const currentYear = new Date().getFullYear();
                             $('#yearFilter').val(currentYear);
                             $('#yearText').val(currentYear);
-                            // Setup CSRF token for AJAX requests
+                            
                             $.ajaxSetup({
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -102,7 +102,7 @@
                 
                             // Initialize DataTable
                             var table = $('#capex-table').DataTable({
-                                responsive: false, // Menambahkan opsi responsif
+                                info: true,
                                 paging: true,
                                 searching: true,
                                 ordering: true,
@@ -113,11 +113,16 @@
                                     url: "{{ route('capex.index') }}",
                                     type: "GET",
                                     data: function (d) {
-                                        console.log('Selected Year:', $('#yearFilter').val()); // Log untuk memeriksa nilai tahun
-                                        d.status = 1; // Filter status tetap
-                                        d.year = $('#yearFilter').val(); // Tambahkan filter tahun dari dropdown
+                                        d.status = 1; 
+                                        d.year = $('#yearFilter').val(); 
                                     }
                                 },
+                                columnDefs: [
+                                    {
+                                        targets: '_all',
+                                        className: 'text-nowrap'
+                                    }
+                                ],
                 
                                 columns: [
                                     {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
@@ -345,6 +350,10 @@
     .form-control:focus {
         border-color: #42bd37; /* Warna border saat fokus */
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
+    }
+
+    .dropdown {
+        position: relative;
     }
 
 </style>
