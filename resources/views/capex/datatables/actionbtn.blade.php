@@ -72,26 +72,3 @@
     </ul>
 </div>
 
-<style>
-    .icon-large {
-    font-size: 1.25rem; /* Ukuran ikon diperbesar */
-    }
-
-    .dropdown-menu {
-        min-width: 150px;
-        font-size: 0.875rem;
-    }
-    .dropdown-item {
-        padding-left: 2rem; /* Menggeser konten ke kanan */
-        padding-right: 0.5rem;
-        white-space: nowrap;
-    }
-
-    .dropdown {
-        position: relative; /* Ubah ke relative agar dropdown muncul relatif terhadap button */
-    }
-    body {
-        overflow-x: hidden; /* Tambahkan ini jika perlu */
-    }
-
-</style>

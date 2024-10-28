@@ -88,11 +88,9 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM fully loaded');
 
     // Fungsi untuk menangani klik tombol update
     function handleUpdateClick(event) {
-        console.log('Update button clicked');
 
         // Ambil data dari tombol
         const button = event.currentTarget;
@@ -124,7 +122,6 @@
 
     // Fungsi untuk menambahkan event listeners
     function addUpdateButtonListeners() {
-        console.log('Adding update button listeners');
         document.querySelectorAll('.update-btn').forEach(button => {
             button.removeEventListener('click', handleUpdateClick);
             button.addEventListener('click', handleUpdateClick);
@@ -137,7 +134,6 @@
     // Jika menggunakan DataTables, tambahkan ini:
     if ($.fn.dataTable) {
         $('#cipCumBalTable').on('draw.dt', function () {
-            console.log('DataTable redrawn, re-adding listeners');
             addUpdateButtonListeners();
         });
     }

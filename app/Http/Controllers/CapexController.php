@@ -24,7 +24,7 @@ class CapexController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login'); // Arahkan ke halaman login
         }
-        
+
         $availableYears = Capex::getAvailableYears(); // Memanggil metode untuk mendapatkan tahun yang tersedia
 
         if ($request->ajax()) {
@@ -140,7 +140,7 @@ class CapexController extends Controller
                 $capex->save();
 
                 $capexStatus = new CapexStatus();
-                $capexStatus->id_capex = $capex->id_capex; // Asumsikan bahwa kolom primary key di tabel Capex adalah 'id_capex'
+                $capexStatus->id_capex = $capex->id_capex;
                 $capexStatus->status = $validated['status_capex'];
                 $capexStatus->save();
 
@@ -203,11 +203,8 @@ class CapexController extends Controller
                 'description' => 'required|string|max:255',
             ]);
 
-            $progress = new CapexProgress();
-            $progress->id_capex = $request->input('id_capex'); // Pastikan mengganti ini
-            $progress->tanggal = $request->input('tanggal');
-            $progress->description = $request->input('description');
-            $progress->save();
+            $progress = CapexProgress::addProgress($request->all());
+
 
             // Respons sukses
             return response()->json([
@@ -225,12 +222,8 @@ class CapexController extends Controller
                 'description' => 'required|string|max:255',
             ]);
 
-            $progress = CapexProgress::findOrFail($request->input('id')); // Mencari progress berdasarkan ID
+            $progress = CapexProgress::editProgress($request->input('id'), $request->all());
 
-            $progress->description = $request->input('description');
-            $progress->tanggal = $request->input('tanggal');
-            $progress->id_capex = $request->input('id_capex');
-            $progress->save();
 
             return response()->json([
                 'success' => true,
@@ -246,11 +239,7 @@ class CapexController extends Controller
                 'po_release' => 'required|numeric|min:0',
             ]);
 
-            $porelease = new CapexPOrelease();
-            $porelease->id_capex = $request->input('id_capex'); // Pastikan mengganti ini
-            $porelease->description = $request->input('description');
-            $porelease->po_release = $request->input('po_release');
-            $porelease->save();
+            $porelease = CapexPOrelease::addPORelease($request->all());
 
             CapexPOrelease::get_dtCapexPOrelease();
 
@@ -270,12 +259,8 @@ class CapexController extends Controller
                 'description_porelease' => 'required|string|max:255',
             ]);
 
-            $porelease = CapexPOrelease::findOrFail($request->input('id')); // Mencari porelease berdasarkan ID
+            $porelease = CapexPOrelease::editPORelease($request->input('id'), $request->all());
 
-            $porelease->description = $request->input('description_porelease');
-            $porelease->po_release = $request->input('po_release');
-            $porelease->id_capex = $request->input('id_capex');
-            $porelease->save();
 
             CapexPOrelease::get_dtCapexPOrelease();
 
@@ -292,14 +277,7 @@ class CapexController extends Controller
                 'date' => 'required|string|max:255',
             ]);
 
-            $completion = new CapexCompletion();
-            $completion->id_capex = $request->input('id_capex');
-            $completion->date = $request->input('date');
-            $completion->save();
-
-            $completion = Capex::findOrFail($request->input('id_capex'));
-            $completion->revise_completion_date = $request->input('date'); // Mengupdate kolom revise_completion_date
-            $completion->save(); // Simpan perubahan ke tabel t_master_capex
+            $completion = CapexCompletion::addCompletion($request->all());
 
             // Respons sukses
             return response()->json([
@@ -316,15 +294,7 @@ class CapexController extends Controller
                 'date' => 'required|string|max:255',
             ]);
 
-            $completion = CapexCompletion::findOrFail($request->input('id')); // Mencari completion berdasarkan ID
-
-            $completion->date = $request->input('date');
-            $completion->id_capex = $request->input('id_capex');
-            $completion->save();
-
-            $completion = Capex::findOrFail($request->input('id_capex'));
-            $completion->revise_completion_date = $request->input('date'); // Mengupdate kolom revise_completion_date
-            $completion->save(); // Simpan perubahan ke tabel t_master_capex
+            $completion = CapexCompletion::editCompletion($request->input('id'), $request->all());
 
             return response()->json([
                 'success' => true,
@@ -368,56 +338,53 @@ class CapexController extends Controller
 
             // Jika flag adalah 'progress'
         } else if ($flag === 'progress') {
-            // Ambil status dari request, jika tidak ada default ke 1
             $status = $request->get('status', 1);
 
-            // Buat query untuk mengambil data berdasarkan id_capex dan status
             $query = CapexProgress::query()
-                ->where('id_capex', $id) // Ambil data berdasarkan id_capex
-                ->where('status', $status); // Ambil data berdasarkan status
+                ->where('id_capex', $id)
+                ->where('status', $status);
 
-            // Membuat DataTable dengan kolom aksi untuk progress
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtnprogress', ['row' => $row]); // Ganti sesuai dengan view aksi untuk progress
+                    return view('capex/datatables/actionbtnprogress', ['row' => $row]);
                 })
-                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->rawColumns(['action'])
                 ->make(true);
         } else if ($flag === 'porelease') {
-            // Ambil status dari request, jika tidak ada default ke 1
+
             $status = $request->get('status', 1);
 
-            // Buat query untuk mengambil data berdasarkan id_capex dan status
-            $query = CapexPOrelease::query()
-                ->where('id_capex', $id) // Ambil data berdasarkan id_capex
-                ->where('status', $status); // Ambil data berdasarkan status
 
-            // Membuat DataTable dengan kolom aksi untuk progress
+            $query = CapexPOrelease::query()
+                ->where('id_capex', $id)
+                ->where('status', $status);
+
+
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtnporelease', ['row' => $row]); // Ganti sesuai dengan view aksi untuk progress
+                    return view('capex/datatables/actionbtnporelease', ['row' => $row]);
                 })
-                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->rawColumns(['action'])
                 ->make(true);
         } else if ($flag === 'completion') {
-            // Ambil status dari request, jika tidak ada default ke 1
+
             $status = $request->get('status', 1);
 
-            // Buat query untuk mengambil data berdasarkan id_capex dan status
-            $query = CapexCompletion::query()
-                ->where('id_capex', $id) // Ambil data berdasarkan id_capex
-                ->where('status', $status); // Ambil data berdasarkan status
 
-            // Membuat DataTable dengan kolom aksi untuk progress
+            $query = CapexCompletion::query()
+                ->where('id_capex', $id)
+                ->where('status', $status);
+
+
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtncompletion', ['row' => $row]); // Ganti sesuai dengan view aksi untuk progress
+                    return view('capex/datatables/actionbtncompletion', ['row' => $row]);
                 })
-                ->rawColumns(['action']) // Membuat kolom aksi dapat berisi HTML
+                ->rawColumns(['action'])
                 ->make(true);
         } else if ($flag === 'status') {
 
-            $query = CapexStatus::query()->where('id_capex', $id); // Ambil data berdasarkan id_capex
+            $query = CapexStatus::query()->where('id_capex', $id);
 
             return DataTables::of($query)
                 ->make(true);

@@ -90,9 +90,8 @@
                             url: "{{ route('cipcumbal.index') }}",
                             type: 'GET',
                             data: function (d) {
-                                console.log('Selected Year:', $('#yearFilter').val()); // Log untuk memeriksa nilai tahun
-                                d.status = 1; // Filter status tetap
-                                d.year = $('#yearFilter').val(); // Tambahkan filter tahun dari dropdown
+                                d.status = 1; 
+                                d.year = $('#yearFilter').val(); 
                             }
                         },
                         columns: [
@@ -192,12 +191,11 @@
                             showCancelButton: true,
                             confirmButtonColor: '#3085d6',
                             cancelButtonColor: '#d33',
-                            confirmButtonText: 'Ya, hapus!',
-                            // Menambahkan properti ini untuk memastikan posisi di tengah
+                            confirmButtonText: 'Ya, hapus!',                            
                             position: 'center'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                // Jika pengguna mengkonfirmasi penghapusan
+                                
                                 $.ajax({
                                     url: '/cipcumbal/' + id,
                                     type: 'DELETE',
@@ -223,8 +221,7 @@
                             }
                         });
                     });
-
-                    
+                   
                 });
             </script>
             @endpush

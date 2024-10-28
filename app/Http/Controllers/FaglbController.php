@@ -19,7 +19,7 @@ class FaglbController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth'); // Pastikan middleware auth diterapkan
+        $this->middleware('auth');
     }
     /**
      * Display a listing of the resource.
@@ -28,10 +28,10 @@ class FaglbController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            // Ambil status dari permintaan, dengan nilai default 1 jika tidak ada
+            
             $status = $request->get('status', 1);
 
-            // Buat query berdasarkan model Faglb
+            
             $query = Faglb::query()->where('status', $status);
 
             return DataTables::of($query)
@@ -357,14 +357,13 @@ class FaglbController extends Controller
         $faglbHead->save();
 
         // Temukan semua record terkait di t_faglb_tail dan t_zlis1_tail
-        $idHead = $faglbHead->id_head; // Asumsikan id_head adalah atribut dari model Faglb
+        $idHead = $faglbHead->id_head; 
 
         // Ubah status di t_faglb_tail
         DB::table('t_faglb_tail')
             ->where('id_head', $idHead)
             ->update(['status' => 0]);
 
-        // Ubah status di t_zlis1_tail
         DB::table('t_zlis1_tail')
             ->where('id_head', $idHead)
             ->update(['status' => 0]);
