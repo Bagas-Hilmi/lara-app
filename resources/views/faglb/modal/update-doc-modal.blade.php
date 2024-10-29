@@ -1,4 +1,4 @@
-<div class="modal fade" id="replaceDocFormModal" tabindex="-1" aria-labelledby="replaceDocFormModalLabel" >
+<div class="modal fade" id="replaceDocFormModal" tabindex="-1" aria-labelledby="replaceDocFormModalLabel">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
@@ -10,20 +10,23 @@
                     @csrf
                     <input type="hidden" name="flag" value="update_file">
                     <input type="hidden" name="id_head" id="modal-id-head">
-                   
+
                     <div class="mb-3">
                         <label for="faglb" class="form-label">Upload FAGLB File</label>
-                        <input type="file" class="form-control custom-file-input" name="faglb" id="faglb" accept=".xlsx,.xls,.csv" required>
+                        <input type="file" class="form-control custom-file-input" name="faglb" id="faglb"
+                            accept=".xlsx,.xls,.csv" required>
                     </div>
                     <div class="mb-3">
                         <label for="zlis1" class="form-label">Upload ZLIS1 File</label>
-                        <input type="file" class="form-control custom-file-input" name="zlis1" id="zlis1" accept=".xlsx,.xls,.csv" required>
+                        <input type="file" class="form-control custom-file-input" name="zlis1" id="zlis1"
+                            accept=".xlsx,.xls,.csv" required>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" form="updateForm" id="updateButton" class="btn bg-gradient-success">Update</button>
+                <button type="submit" form="updateForm" id="updateButton"
+                    class="btn bg-gradient-success">Update</button>
             </div>
         </div>
     </div>
@@ -31,13 +34,13 @@
 
 <script>
     // Handle view button click
-    $(document).on("click", ".view", function () {
+    $(document).on("click", ".view", function() {
         var id = $(this).data("id");
         $("#modal-id-head").val(id);
     });
 
     // Handle form submission for updating file
-    $("#updateForm").on("submit", function (e) {
+    $("#updateForm").on("submit", function(e) {
         e.preventDefault();
         var formData = new FormData(this);
 
@@ -59,7 +62,7 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             $("#replaceDocFormModal").modal("hide");
                             $("#faglb-table").DataTable().ajax.reload();
@@ -68,12 +71,12 @@
                             Swal.fire(
                                 "Error",
                                 response.message ||
-                                    "Terjadi kesalahan saat memperbarui file",
+                                "Terjadi kesalahan saat memperbarui file",
                                 "error"
                             );
                         }
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         var errorMessage = "Terjadi kesalahan saat memperbarui file";
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             errorMessage = Object.values(xhr.responseJSON.errors)
@@ -90,14 +93,7 @@
     });
 
     // Reset form when modal is closed
-    $("#replaceDocFormModal").on("hidden.bs.modal", function () {
+    $("#replaceDocFormModal").on("hidden.bs.modal", function() {
         $("#updateForm")[0].reset();
     });
-
 </script>
-
-
-    
-
-
-

@@ -1,4 +1,5 @@
-<div class="modal fade" id="new-completion-modal" tabindex="-1" aria-labelledby="newCompletionModalLabel" aria-hidden="true">
+<div class="modal fade" id="new-completion-modal" tabindex="-1" aria-labelledby="newCompletionModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
@@ -13,7 +14,8 @@
                     <div class="mb-3 row">
                         <label for="date" class="form-label font-weight-bold">Date</label>
                         <div class="col">
-                            <input type="month" class="form-control" id="date" name="date" style="text-align: center;" required>
+                            <input type="month" class="form-control" id="date" name="date"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -27,7 +29,7 @@
 </div>
 
 <script>
-    $('#new-completion-form').on('submit', function (e) {
+    $('#new-completion-form').on('submit', function(e) {
         e.preventDefault(); // Mencegah tindakan default dari formulir
 
         // Ambil data dari form
@@ -39,7 +41,8 @@
         $(this).find('input[required], select[required]').each(function() {
             if ($(this).val() === '') {
                 isValid = false;
-                $(this).addClass('is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
+                $(this).addClass(
+                'is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
             } else {
                 $(this).removeClass('is-invalid'); // Hapus kelas invalid jika terisi
             }
@@ -72,7 +75,7 @@
                     url: $(this).attr('action'), // Sesuaikan dengan route Anda
                     method: 'POST',
                     data: formData,
-                    success: function (response) {
+                    success: function(response) {
                         $('#new-completion-modal').modal('hide');
                         $('#completion-table').DataTable().ajax.reload();
 
@@ -84,10 +87,11 @@
                             confirmButtonText: 'OK'
                         }).then(() => {
                             // Refresh halaman setelah menutup pesan sukses
-                            $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                            $('#capex-table').DataTable().ajax
+                        .reload(); // Reload DataTable
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.log("Error: ", xhr.responseText); // Log kesalahan
                         Swal.fire({
                             title: 'Terjadi kesalahan!',
@@ -101,5 +105,3 @@
         });
     });
 </script>
-
-

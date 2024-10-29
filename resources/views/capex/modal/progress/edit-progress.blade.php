@@ -14,13 +14,15 @@
                     <div class="mb-3 row">
                         <label for="edit_tanggal" class="form-label font-weight-bold">Date</label>
                         <div class="col">
-                            <input type="date" class="form-control" id="edit_tanggal" name="tanggal" style="text-align: center;" required>
+                            <input type="date" class="form-control" id="edit_tanggal" name="tanggal"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="edit_description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="edit_description" name="description" style="text-align: center;" required>
+                            <input type="text" class="form-control" id="edit_description" name="description"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -44,7 +46,7 @@
                 $('#edit_progress_capex_id').val(data.id_capex); // ID capex
                 $('#edit_tanggal').val(data.tanggal);
                 $('#edit_description').val(data.description);
-                
+
                 // Tampilkan modal
                 $('#edit-progress-modal').modal('show');
             },
@@ -90,7 +92,8 @@
                         console.log("Error: ", xhr.responseText); // Log kesalahan
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Terjadi kesalahan: ' + xhr.responseText, // Menampilkan pesan error
+                            text: 'Terjadi kesalahan: ' + xhr
+                            .responseText, // Menampilkan pesan error
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
@@ -99,14 +102,13 @@
             }
         });
     });
-
 </script>
 
 
 <script>
     // Ketika modal ditampilkan, ambil data dari tombol
     const editProgressModal = document.getElementById('edit-progress-modal');
-    editProgressModal.addEventListener('show.bs.modal', function (event) {
+    editProgressModal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget; // Tombol yang mengaktifkan modal
 
         // Ambil data dari tombol
@@ -121,9 +123,9 @@
         const editTanggalInput = document.getElementById('edit_tanggal');
         const editDescriptionInput = document.getElementById('edit_description');
 
-        editProgressIdInput.value = id; 
-        editProgressCapexIdInput.value = capexId; 
+        editProgressIdInput.value = id;
+        editProgressCapexIdInput.value = capexId;
         editTanggalInput.value = tanggal;
-        editDescriptionInput.value = description; 
+        editDescriptionInput.value = description;
     });
 </script>

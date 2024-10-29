@@ -12,7 +12,7 @@ class Zlis1Tail extends Model
     protected $table = 't_zlis1_tail';
 
     protected $fillable = [
-        'id_head', 
+        'id_head',
         'wbs_element',
         'network',
         'document_number',
@@ -54,6 +54,6 @@ class Zlis1Tail extends Model
 
     public function faglbHead()
     {
-        return $this->belongsTo(Faglb::class, 'id_head'); 
+        return $this->belongsTo(Faglb::class, 'id_head');
     }
 }

@@ -58,11 +58,10 @@ class CapexProgress extends Model
             'id_capex' => $data['id_capex'],
             'tanggal' => $data['tanggal'],
             'description' => $data['description'],
-            'updated_at'=>now(),
+            'updated_at' => now(),
         ]);
 
         return DB::table('t_capex_progress')->where('id_capex_progress', $id)->first();
-
     }
 
     public function Capex()

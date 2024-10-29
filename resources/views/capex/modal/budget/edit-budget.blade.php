@@ -15,13 +15,15 @@
                     <div class="mb-3 row">
                         <label for="edit-description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="edit-description" name="description" style="text-align: center;" required>
+                            <input type="text" class="form-control" id="edit-description" name="description"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit-budget-cos" class="form-label font-weight-bold">Budget Cos</label>
-                            <input type="number" class="form-control column-input edit-budget" id="edit_budget_cos" name="budget_cos" style="text-align: center;" required>
+                            <input type="number" class="form-control column-input edit-budget" id="edit_budget_cos"
+                                name="budget_cos" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -47,7 +49,7 @@
                 $('#edit_budget_capex_id').val(data.id_capex); // ID capex
                 $('#edit-description').val(data.description);
                 $('#edit_budget_cos').val(data.budget_cos);
-                
+
                 // Tampilkan modal
                 $('#edit-budget-modal').modal('show');
             },
@@ -93,7 +95,8 @@
                         console.log("Error: ", xhr.responseText); // Log kesalahan
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Terjadi kesalahan: ' + xhr.responseText, // Menampilkan pesan error
+                            text: 'Terjadi kesalahan: ' + xhr
+                            .responseText, // Menampilkan pesan error
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
@@ -102,13 +105,12 @@
             }
         });
     });
-
 </script>
 
 <script>
     // Ketika modal ditampilkan, ambil data dari tombol
     const editBudgetModal = document.getElementById('edit-budget-modal');
-    editBudgetModal.addEventListener('show.bs.modal', function (event) {
+    editBudgetModal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget; // Tombol yang mengaktifkan modal
 
         // Ambil data dari tombol
@@ -131,18 +133,19 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const numberInputs = document.querySelectorAll('input.edit-budget'); // Menggunakan kelas khusus untuk input update
-  
+    document.addEventListener('DOMContentLoaded', function() {
+        const numberInputs = document.querySelectorAll(
+        'input.edit-budget'); // Menggunakan kelas khusus untuk input update
+
         numberInputs.forEach(input => {
             input.addEventListener('input', function() {
                 // Menghapus semua karakter yang bukan angka dan koma
                 let value = this.value.replace(/[^0-9,]/g, '');
-  
+
                 // Memformat value agar tetap terlihat baik
                 this.value = value;
             });
-  
+
             input.addEventListener('blur', function() {
                 // Format saat fokus hilang (blur)
                 let value = this.value.replace(/,/g, ''); // Menghapus koma
@@ -153,5 +156,3 @@
         });
     });
 </script>
-
-    

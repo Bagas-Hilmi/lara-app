@@ -14,11 +14,11 @@ use Laratrust\Traits\DynamicUserRelationshipCalls;
 class User extends Authenticatable implements LaratrustUser
 {
     use HasApiTokens;
-    use Notifiable; 
+    use Notifiable;
     use DynamicUserRelationshipCalls;
     use HasRolesAndPermissions;
 
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -43,6 +43,4 @@ class User extends Authenticatable implements LaratrustUser
         'password',
         'remember_token',
     ];
-
-    
 }

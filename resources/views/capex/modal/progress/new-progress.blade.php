@@ -13,13 +13,15 @@
                     <div class="mb-3 row">
                         <label for="tanggal" class="form-label font-weight-bold">Date</label>
                         <div class="col">
-                            <input type="date" class="form-control" id="tanggal" name="tanggal" style="text-align: center;" required>
+                            <input type="date" class="form-control" id="tanggal" name="tanggal"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="description" name="description" style="text-align: center;" required>
+                            <input type="text" class="form-control" id="description" name="description"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -33,14 +35,14 @@
 </div>
 
 <script>
-    $('#new-progress-form').on('submit', function (e) {
+    $('#new-progress-form').on('submit', function(e) {
         e.preventDefault(); // Mencegah pengiriman otomatis form
         const form = this; // Simpan referensi form
         // Cek apakah form valid sebelum lanjut
         if (form.checkValidity()) {
             var formData = $(this).serialize();
             console.log("Form Data: ", formData); // Log form data sebelum dikirim
-            
+
             Swal.fire({
                 title: 'Apakah Anda yakin?',
                 text: "Progress ini akan ditambahkan!",
@@ -57,7 +59,7 @@
                         url: $(this).attr('action'), // Sesuaikan dengan route Anda
                         method: 'POST',
                         data: formData,
-                        success: function (response) {
+                        success: function(response) {
                             $('#new-progress-modal').modal('hide');
                             $('#progress-table').DataTable().ajax.reload();
                             Swal.fire({
@@ -67,10 +69,11 @@
                                 confirmButtonText: 'OK'
                             }).then(() => {
                                 // Refresh halaman setelah menutup pesan sukses
-                                $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                                $('#capex-table').DataTable().ajax
+                            .reload(); // Reload DataTable
                             });
                         },
-                        error: function (xhr) {
+                        error: function(xhr) {
                             console.log("Error: ", xhr.responseText); // Log kesalahan
                             Swal.fire({
                                 title: 'Terjadi kesalahan!',

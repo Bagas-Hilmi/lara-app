@@ -13,13 +13,15 @@
                     <div class="mb-3 row">
                         <label for="description" class="form-label font-weight-bold">Description</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="description" name="description" style="text-align: center;" required>
+                            <input type="text" class="form-control" id="description" name="description"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="porelease" class="form-label font-weight-bold">PO Release (USD)</label>
-                            <input type="number" class="form-control column-input new-porelease" id="po_release" name="po_release" style="text-align: center;" required>
+                            <input type="number" class="form-control column-input new-porelease" id="po_release"
+                                name="po_release" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -33,18 +35,19 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const numberInputs = document.querySelectorAll('input.new-porelease'); // Menggunakan kelas khusus untuk input update
-  
+    document.addEventListener('DOMContentLoaded', function() {
+        const numberInputs = document.querySelectorAll(
+        'input.new-porelease'); // Menggunakan kelas khusus untuk input update
+
         numberInputs.forEach(input => {
             input.addEventListener('input', function() {
                 // Menghapus semua karakter yang bukan angka dan koma
                 let value = this.value.replace(/[^0-9,]/g, '');
-  
+
                 // Memformat value agar tetap terlihat baik
                 this.value = value;
             });
-  
+
             input.addEventListener('blur', function() {
                 // Format saat fokus hilang (blur)
                 let value = this.value.replace(/,/g, ''); // Menghapus koma
@@ -57,7 +60,7 @@
 </script>
 
 <script>
-    $('#new-porelease-form').on('submit', function (e) {
+    $('#new-porelease-form').on('submit', function(e) {
         e.preventDefault(); // Mencegah tindakan default dari formulir
 
         // Ambil data dari form
@@ -68,7 +71,8 @@
         $(this).find('input[required], select[required]').each(function() {
             if ($(this).val() === '') {
                 isValid = false;
-                $(this).addClass('is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
+                $(this).addClass(
+                'is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
             } else {
                 $(this).removeClass('is-invalid'); // Hapus kelas invalid jika terisi
             }
@@ -101,7 +105,7 @@
                     url: $(this).attr('action'), // Sesuaikan dengan route Anda
                     method: 'POST',
                     data: formData,
-                    success: function (response) {
+                    success: function(response) {
                         $('#new-porelease-modal').modal('hide');
                         $('#porelease-table').DataTable().ajax.reload();
 
@@ -113,10 +117,11 @@
                             confirmButtonText: 'OK'
                         }).then(() => {
                             // Refresh halaman setelah menutup pesan sukses
-                            $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
+                            $('#capex-table').DataTable().ajax
+                        .reload(); // Reload DataTable
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.log("Error: ", xhr.responseText); // Log kesalahan
                         Swal.fire({
                             title: 'Terjadi kesalahan!',
@@ -130,4 +135,3 @@
         });
     });
 </script>
-

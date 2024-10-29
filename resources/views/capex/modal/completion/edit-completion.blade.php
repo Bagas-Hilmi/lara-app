@@ -1,4 +1,5 @@
-<div class="modal fade" id="edit-completion-modal" tabindex="-1" aria-labelledby="editCompletionModalLabel" aria-hidden="true">
+<div class="modal fade" id="edit-completion-modal" tabindex="-1" aria-labelledby="editCompletionModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
@@ -14,7 +15,8 @@
                     <div class="mb-3 row">
                         <label for="edit_date" class="form-label font-weight-bold">Date</label>
                         <div class="col">
-                            <input type="month" class="form-control" id="edit_date" name="date" style="text-align: center;" required>
+                            <input type="month" class="form-control" id="edit_date" name="date"
+                                style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -70,7 +72,8 @@
                     data: formData,
                     success: function(response) {
                         $('#edit-completion-modal').modal('hide'); // Menyembunyikan modal
-                        $('#completion-table').DataTable().ajax.reload(); // Reload DataTable
+                        $('#completion-table').DataTable().ajax
+                    .reload(); // Reload DataTable
                         Swal.fire({
                             title: 'Berhasil!',
                             text: response.message, // Menampilkan pesan sukses
@@ -83,7 +86,8 @@
                         console.log("Error: ", xhr.responseText); // Log kesalahan
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Terjadi kesalahan: ' + xhr.responseText, // Menampilkan pesan error
+                            text: 'Terjadi kesalahan: ' + xhr
+                            .responseText, // Menampilkan pesan error
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
@@ -92,12 +96,11 @@
             }
         });
     });
-
 </script>
 
 <script>
-   const editCompletionModal = document.getElementById('edit-completion-modal');
-    editCompletionModal.addEventListener('show.bs.modal', function (event) {
+    const editCompletionModal = document.getElementById('edit-completion-modal');
+    editCompletionModal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget; // Tombol yang memicu modal
 
         // Ambil data dari tombol
@@ -114,6 +117,4 @@
         editCompletionCapexIdInput.value = capexId;
         editDateInput.value = date;
     });
-
 </script>
-

@@ -39,5 +39,3 @@ class ProfileController extends Controller
         return back()->with('status', 'Profile successfully updated.');
     }
 }
-
-

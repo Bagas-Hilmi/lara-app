@@ -102,7 +102,7 @@ class CapexController extends Controller
                 $validated['expected_completed'],
                 $validated['wbs_number'],
                 $validated['cip_number'],
-                $userId 
+                $userId
             );
 
             // Kembalikan response sukses

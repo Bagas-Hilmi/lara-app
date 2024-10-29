@@ -6,48 +6,51 @@
                 <h5 class="modal-title" id="addDocFormLabel" style="color: white;">Upload Document</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-                <div class="modal-body">               
-                    <form id="addDocForm" action="{{ route('faglb.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="period" id="selectedPeriod" value="">
-                        <input type="hidden" name="id_ccb" id="selectedIdCcb" value="">
-                        <input type="hidden" name="flag" value="upload_documents">
+            <div class="modal-body">
+                <form id="addDocForm" action="{{ route('faglb.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="period" id="selectedPeriod" value="">
+                    <input type="hidden" name="id_ccb" id="selectedIdCcb" value="">
+                    <input type="hidden" name="flag" value="upload_documents">
 
-                        <div class="container-fluid">
-                            <div class="dropdown mb-3">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false" required>
-                                    Pilih Period
-                                </button>
-                                <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown" >
-                                    <!-- pake AJAX -->
-                                </ul>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label" for="faglb">FAGLB</label>
-                                    <input type="file" class="form-control custom-file-input" id="faglb" name="faglb" accept=".xlsx,.xls,.csv" required>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label" for="zlis1">ZLIS1</label>
-                                    <input type="file" class="form-control custom-file-input" id="zlis1" name="zlis1" accept=".xlsx,.xls,.csv" required>
-                                </div>
+                    <div class="container-fluid">
+                        <div class="dropdown mb-3">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false" required>
+                                Pilih Period
+                            </button>
+                            <ul class="dropdown-menu" id="periodList" aria-labelledby="periodDropdown">
+                                <!-- pake AJAX -->
+                            </ul>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label" for="faglb">FAGLB</label>
+                                <input type="file" class="form-control custom-file-input" id="faglb"
+                                    name="faglb" accept=".xlsx,.xls,.csv" required>
                             </div>
                         </div>
-                </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn bg-gradient-success" id="uploadDoc">Upload</button>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label" for="zlis1">ZLIS1</label>
+                                <input type="file" class="form-control custom-file-input" id="zlis1"
+                                    name="zlis1" accept=".xlsx,.xls,.csv" required>
+                            </div>
+                        </div>
                     </div>
-                    </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn bg-gradient-success" id="uploadDoc">Upload</button>
+            </div>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById('addDocForm').addEventListener('submit', function (event) {
+    document.getElementById('addDocForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Mencegah pengiriman form default
 
         // Cek apakah pengguna telah memilih periode
@@ -61,7 +64,7 @@
             });
             return; // Hentikan pengiriman form jika periode tidak dipilih
         }
-        
+
         // Tampilkan konfirmasi SweetAlert
         Swal.fire({
             title: 'Konfirmasi',
@@ -78,75 +81,77 @@
                 const formData = new FormData(this);
 
                 fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value // Tambahkan token CSRF
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Cek status respon
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sukses!',
-                            text: data.message, // Tampilkan pesan sukses
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            $('#addDocFormModal').modal('hide'); // Ganti #modal-id dengan ID modal Anda
-                            // Menyegarkan atau menutup modal jika diperlukan
-                            $('#faglb-table').DataTable().ajax.reload();
-                        });
-                    } else {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')
+                                .value // Tambahkan token CSRF
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Cek status respon
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sukses!',
+                                text: data.message, // Tampilkan pesan sukses
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                $('#addDocFormModal').modal(
+                                'hide'); // Ganti #modal-id dengan ID modal Anda
+                                // Menyegarkan atau menutup modal jika diperlukan
+                                $('#faglb-table').DataTable().ajax.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: data.message, // Tampilkan pesan kesalahan
+                                confirmButtonText: 'Coba Lagi'
+                            });
+                        }
+                    })
+                    .catch(error => {
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
-                            text: data.message, // Tampilkan pesan kesalahan
-                            confirmButtonText: 'Coba Lagi'
+                            text: 'Terjadi kesalahan! Silakan coba lagi.', // Tampilkan pesan kesalahan umum
+                            confirmButtonText: 'OK'
                         });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Terjadi kesalahan! Silakan coba lagi.', // Tampilkan pesan kesalahan umum
-                        confirmButtonText: 'OK'
                     });
-                });
             }
         });
     });
 </script>
 
 <script>
-    $(document).on("click", '[data-bs-target="#addDocFormModal"]', function () {
+    $(document).on("click", '[data-bs-target="#addDocFormModal"]', function() {
         var url = $(this).data("url");
-        $.get(url, function (data) {
+        $.get(url, function(data) {
             var periodList = $("#periodList");
             periodList.empty();
             periodList.append(
                 '<li><a class="dropdown-item" href="#" data-id="" data-period="">Pilih Period</a></li>'
             );
 
-            $.each(data.periods, function (index, period) {
+            $.each(data.periods, function(index, period) {
                 periodList.append(
                     '<li><a class="dropdown-item" href="#" data-id="' +
-                        period.id_ccb +
-                        '" data-period="' +
-                        period.period_cip +
-                        '">' +
-                        period.period_cip +
-                        " / " +
-                        period.id_ccb +
-                        "</a></li>"
+                    period.id_ccb +
+                    '" data-period="' +
+                    period.period_cip +
+                    '">' +
+                    period.period_cip +
+                    " / " +
+                    period.id_ccb +
+                    "</a></li>"
                 );
             });
         });
     });
 
-    $(document).on("click", ".dropdown-item", function () {
+    $(document).on("click", ".dropdown-item", function() {
         var selectedPeriod = $(this).data("period");
         var selectedIdCcb = $(this).data("id");
 
@@ -157,11 +162,10 @@
     });
 
     // Jika Anda ingin menampilkan modal untuk mengganti file
-    $(document).on("click", '[data-bs-target="#replaceDocFormModal"]', function () {
+    $(document).on("click", '[data-bs-target="#replaceDocFormModal"]', function() {
         var existingFile = $(this).data("existing-file");
         $("#existingFileName").text(existingFile);
     });
-
 </script>
 
 <style>
@@ -169,47 +173,61 @@
     .month-input-container {
         display: inline-block;
         border-radius: 4px;
-        padding: 5px; /* Kurangi padding */
+        padding: 5px;
+        /* Kurangi padding */
         background-color: #f9f9f9;
         box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
     }
 
     .custom-file-input {
-        border: 1px solid #ccc; /* Customize the border */
-        box-shadow: none; /* Remove shadow */
-        border-radius: 4px; /* Tambahkan sudut melengkung */
-        padding: 10px; /* Menambah padding untuk input */
+        border: 1px solid #ccc;
+        /* Customize the border */
+        box-shadow: none;
+        /* Remove shadow */
+        border-radius: 4px;
+        /* Tambahkan sudut melengkung */
+        padding: 10px;
+        /* Menambah padding untuk input */
     }
 
     .custom-file-input:focus {
-        border-color: #42bd37; /* Warna border saat fokus */
-        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
+        border-color: #42bd37;
+        /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);
+        /* Menambah efek shadow saat fokus */
     }
 
     .modal-body .form-label {
-        font-weight: bold; /* Make labels bold */
-        margin-bottom: 0.5rem; /* Jarak antara label dan input */
+        font-weight: bold;
+        /* Make labels bold */
+        margin-bottom: 0.5rem;
+        /* Jarak antara label dan input */
     }
 
     .modal-body .input-group {
-        margin-bottom: 1rem; /* Space between input groups */
+        margin-bottom: 1rem;
+        /* Space between input groups */
     }
 
     /* Styling untuk input file */
     .custom-file-input {
-        cursor: pointer; /* Mengubah pointer saat hover */
+        cursor: pointer;
+        /* Mengubah pointer saat hover */
     }
+
     .form-control {
-        border: 1px solid #ccc; /* Customize the border */
-        box-shadow: none; /* Remove shadow */
-        border-radius: 4px; /* Tambahkan sudut melengkung */
+        border: 1px solid #ccc;
+        /* Customize the border */
+        box-shadow: none;
+        /* Remove shadow */
+        border-radius: 4px;
+        /* Tambahkan sudut melengkung */
     }
+
     .form-control:focus {
-        border-color: #42bd37; /* Warna border saat fokus */
-        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
+        border-color: #42bd37;
+        /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);
+        /* Menambah efek shadow saat fokus */
     }
 </style>
-
-
-    
-    

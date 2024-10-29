@@ -1,11 +1,12 @@
-<div class="modal fade" id="edit-porelease-modal" tabindex="-1" aria-labelledby="editPoreleaseModalLabel" aria-hidden="true"> 
-    <div class="modal-dialog modal-dialog-centered"> 
+<div class="modal fade" id="edit-porelease-modal" tabindex="-1" aria-labelledby="editPoreleaseModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37">
                 <h4 class="modal-title" id="editPoreleaseModalLabel" style="color: white;"> Edit PO Release </h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body"> 
+            <div class="modal-body">
                 <form id="edit-porelease-form" action="{{ route('capex.store') }}" method="POST">
                     <input type="hidden" id="edit_porelease_id" name="id" value="">
                     <input type="hidden" name="flag" value="edit-porelease">
@@ -14,13 +15,15 @@
                     <div class="mb-3 row">
                         <label for="edit_description_porelease" class="form-label font-weight-bold">Description</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="edit_description_porelease" name="description_porelease" style="text-align: center;" required>
+                            <input type="text" class="form-control" id="edit_description_porelease"
+                                name="description_porelease" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="edit_porelease" class="form-label font-weight-bold">PO Release</label>
                         <div class="col">
-                            <input type="number" class="form-control column-input edit-porelease" id="edit_porelease" name="po_release" style="text-align: center;" required>
+                            <input type="number" class="form-control column-input edit-porelease" id="edit_porelease"
+                                name="po_release" style="text-align: center;" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -29,10 +32,10 @@
                     </div>
                 </form>
             </div>
-        </div> 
+        </div>
     </div>
 </div>
-    
+
 <script>
     function editPorelease(id) {
         $.ajax({
@@ -44,7 +47,7 @@
                 $('#edit_porelease_capex_id').val(data.id_capex); // ID capex
                 $('#edit_description_porelease').val(data.description); // Ubah ke description_porelease
                 $('#edit_porelease').val(data.po_release);
-                
+
                 // Tampilkan modal
                 $('#edit-porelease-modal').modal('show');
             },
@@ -90,7 +93,8 @@
                         console.log("Error: ", xhr.responseText); // Log kesalahan
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Terjadi kesalahan: ' + xhr.responseText, // Menampilkan pesan error
+                            text: 'Terjadi kesalahan: ' + xhr
+                            .responseText, // Menampilkan pesan error
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
@@ -99,12 +103,11 @@
             }
         });
     });
-
 </script>
 
 <script>
-   const editPoreleaseModal = document.getElementById('edit-porelease-modal');
-    editPoreleaseModal.addEventListener('show.bs.modal', function (event) {
+    const editPoreleaseModal = document.getElementById('edit-porelease-modal');
+    editPoreleaseModal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget; // Tombol yang memicu modal
 
         // Ambil data dari tombol
@@ -124,22 +127,22 @@
         editPoreleaseInput.value = poRelease;
         editDescriptionPoreleaseInput.value = descriptionPorelease;
     });
-
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const numberInputs = document.querySelectorAll('input.edit-porelease'); // Menggunakan kelas khusus untuk input update
-  
+    document.addEventListener('DOMContentLoaded', function() {
+        const numberInputs = document.querySelectorAll(
+        'input.edit-porelease'); // Menggunakan kelas khusus untuk input update
+
         numberInputs.forEach(input => {
             input.addEventListener('input', function() {
                 // Menghapus semua karakter yang bukan angka dan koma
                 let value = this.value.replace(/[^0-9,]/g, '');
-  
+
                 // Memformat value agar tetap terlihat baik
                 this.value = value;
             });
-  
+
             input.addEventListener('blur', function() {
                 // Format saat fokus hilang (blur)
                 let value = this.value.replace(/,/g, ''); // Menghapus koma

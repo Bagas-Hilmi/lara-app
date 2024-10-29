@@ -12,7 +12,7 @@ class FaglbTail extends Model
     protected $table = 't_faglb_tail';
 
     protected $fillable = [
-        'id_head', 
+        'id_head',
         'asset',
         'sub_number',
         'posting_date',
@@ -39,6 +39,6 @@ class FaglbTail extends Model
 
     public function faglbHead()
     {
-        return $this->belongsTo(Faglb::class, 'id_head'); 
+        return $this->belongsTo(Faglb::class, 'id_head');
     }
 }
