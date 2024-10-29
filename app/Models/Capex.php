@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Container\Attributes\Auth;
 class Capex extends Model
 {
     use HasFactory;
@@ -72,11 +72,13 @@ class Capex extends Model
         $startup,
         $expectedCompleted,
         $wbsNumber,
-        $cipNumber
+        $cipNumber,
+        $userId // Tambahkan userId sebagai parameter
     ) {
+
         // Simpan data baru ke database dengan raw SQL
-        $query = 'INSERT INTO t_master_capex (project_desc, wbs_capex, remark, request_number, requester, capex_number, amount_budget, status_capex, budget_type, startup, expected_completed, wbs_number, cip_number, created_at, updated_at) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $query = 'INSERT INTO t_master_capex (project_desc, wbs_capex, remark, request_number, requester, capex_number, amount_budget, status_capex, budget_type, startup, expected_completed, wbs_number, cip_number, created_at, updated_at, created_by) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
         DB::insert($query, [
             $projectDesc,
@@ -93,18 +95,20 @@ class Capex extends Model
             $wbsNumber,
             $cipNumber,
             now(),
-            now()
+            now(),
+            $userId, // created_by
         ]);
 
         // Mendapatkan ID capex terakhir yang dimasukkan
         $lastInsertedId = DB::getPdo()->lastInsertId();
 
         // Simpan data ke tabel CapexStatus (asumsi id_capex adalah foreign key)
-        DB::insert('INSERT INTO t_capex_status (id_capex, status, created_at, updated_at) VALUES (?, ?, ?, ?)', [
+        DB::insert('INSERT INTO t_capex_status (id_capex, status, created_at, updated_at, created_by) VALUES (?, ?, ?, ?, ?)', [
             $lastInsertedId,
             $statusCapex,
             now(),
-            now()
+            now(),
+            $userId, // created_by
         ]);
 
         return response()->json([
@@ -113,7 +117,7 @@ class Capex extends Model
         ]);
     }
 
-    public static function updateCapexData($id_capex, $project_desc, $wbs_capex, $remark, $request_number, $requester, $capex_number, $amount_budget, $status_capex, $budget_type, $startup, $expected_completed, $wbs_number, $cip_number)
+    public static function updateCapexData($id_capex, $project_desc, $wbs_capex, $remark, $request_number, $requester, $capex_number, $amount_budget, $status_capex, $budget_type, $startup, $expected_completed, $wbs_number, $cip_number,  $userId)
     {
         // Buat query untuk memperbarui data Capex
         $query = 'UPDATE t_master_capex 
@@ -130,7 +134,8 @@ class Capex extends Model
                       expected_completed = ?, 
                       wbs_number = ?, 
                       cip_number = ?, 
-                      updated_at = ?
+                      updated_at = ?,
+                      updated_by = ?
                   WHERE id_capex = ?';
 
         // Buat parameter untuk query
@@ -149,6 +154,7 @@ class Capex extends Model
             $wbs_number,
             $cip_number,
             now(), // Timestamp untuk updated_at
+            $userId,
             $id_capex
         ];
 
@@ -156,11 +162,12 @@ class Capex extends Model
         $result = DB::update($query, $params);
 
         // Tambahkan status capex ke tabel CapexStatus
-        $statusQuery = 'INSERT INTO capex_status (id_capex, status, created_at, updated_at) 
-                        VALUES (?, ?, ?, ?)';
+        $statusQuery = 'INSERT INTO capex_status (id_capex, status, created_by, created_at, updated_at) 
+                    VALUES (?, ?, ?, ?, ?)';
         $statusParams = [
             $id_capex,
             $status_capex,
+            $userId,
             now(), // Timestamp untuk created_at
             now()  // Timestamp untuk updated_at
         ];

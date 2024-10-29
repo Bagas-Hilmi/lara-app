@@ -13,6 +13,7 @@ use App\Imports\FaglbImport;
 use App\Imports\Zlis1Import;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class FaglbController extends Controller
 {
@@ -28,10 +29,10 @@ class FaglbController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            
+
             $status = $request->get('status', 1);
 
-            
+
             $query = Faglb::query()->where('status', $status);
 
             return DataTables::of($query)
@@ -73,144 +74,139 @@ class FaglbController extends Controller
         if ($flag == 'upload_documents') {
             // Mulai transaksi database
             DB::beginTransaction();
-            try {
-                $request->validate([
-                    'faglb' => 'required|file|mimes:xlsx,xls,csv|max:2048',
-                    'zlis1' => 'required|file|mimes:xlsx,xls,csv|max:2048',
-                    'period' => 'required',
-                    'id_ccb' => 'required',
-                    'flag' => 'required|string|in:upload_documents,update_file',
-                ]);
 
-                // Logika untuk mengupload dokumen baru
-                $faglbHead = new Faglb();
-                $faglbHead->period = $request->input('period');
-                $faglbHead->id_ccb = $request->input('id_ccb');
-                $faglbHead->save();
+            $request->validate([
+                'faglb' => 'required|file|mimes:xlsx,xls,csv|max:2048',
+                'zlis1' => 'required|file|mimes:xlsx,xls,csv|max:2048',
+                'period' => 'required',
+                'id_ccb' => 'required',
+                'flag' => 'required|string|in:upload_documents,update_file',
+            ]);
 
-                // Proses unggah dan import FAGLB file
-                if ($request->hasFile('faglb')) {
-                    $faglbFile = $request->file('faglb');
-                    $faglbFileName = $faglbFile->getClientOriginalName();
-                    $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
-                    $faglbHead->faglb_filename = $faglbFileName;
+            // Logika untuk mengupload dokumen baru
+            $faglbHead = new Faglb();
+            $faglbHead->period = $request->input('period');
+            $faglbHead->id_ccb = $request->input('id_ccb');
+            $faglbHead->created_by = Auth::id();
+            $faglbHead->save();
 
-                    try {
-                        $this->importFaglb($faglbFilePath, $faglbHead->id_head); // Import ke database
-                    } catch (\Exception $e) {
-                        Storage::delete($faglbFilePath); // Hapus file jika ada error
-                        throw new \Exception('Gagal mengimpor file FAGLB: ' . $e->getMessage());
-                    }
+            // Proses unggah dan import FAGLB file
+            if ($request->hasFile('faglb')) {
+                $faglbFile = $request->file('faglb');
+                $faglbFileName = $faglbFile->getClientOriginalName();
+                $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
+                $faglbHead->faglb_filename = $faglbFileName;
+
+                try {
+                    $this->importFaglb($faglbFilePath, $faglbHead->id_head); // Import ke database
+                } catch (\Exception $e) {
+                    Storage::delete($faglbFilePath); // Hapus file jika ada error
+                    throw new \Exception('Gagal mengimpor file FAGLB: ' . $e->getMessage());
                 }
-
-                // Proses unggah dan import ZLIS1 file
-                if ($request->hasFile('zlis1')) {
-                    $zlis1File = $request->file('zlis1');
-                    $zlis1FileName = $zlis1File->getClientOriginalName();
-                    $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
-                    $faglbHead->zlis1_filename = $zlis1FileName;
-
-                    try {
-                        $this->importZlis1($zlis1FilePath, $faglbHead->id_head); // Import ke database
-                    } catch (\Exception $e) {
-                        Storage::delete($zlis1FilePath); // Hapus file jika ada error
-                        throw new \Exception('Gagal mengimpor file ZLIS1: ' . $e->getMessage());
-                    }
-                }
-
-                // Simpan data ke database
-                $faglbHead->save();
-
-                // Commit transaksi jika semua berhasil
-                DB::commit();
-                return response()->json(['success' => true, 'message' => 'Data FAGLB dan ZLIS1 berhasil diimpor!']);
-            } catch (\Exception $e) {
-                // Rollback jika terjadi kesalahan
-                DB::rollBack();
-                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }
+
+            // Proses unggah dan import ZLIS1 file
+            if ($request->hasFile('zlis1')) {
+                $zlis1File = $request->file('zlis1');
+                $zlis1FileName = $zlis1File->getClientOriginalName();
+                $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
+                $faglbHead->zlis1_filename = $zlis1FileName;
+
+                try {
+                    $this->importZlis1($zlis1FilePath, $faglbHead->id_head); // Import ke database
+                } catch (\Exception $e) {
+                    Storage::delete($zlis1FilePath); // Hapus file jika ada error
+                    throw new \Exception('Gagal mengimpor file ZLIS1: ' . $e->getMessage());
+                }
+            }
+
+            // Simpan data ke database
+            $faglbHead->save();
+
+            // Commit transaksi jika semua berhasil
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Data FAGLB dan ZLIS1 berhasil diimpor!']);
         } elseif ($flag == 'update_file') {
             DB::beginTransaction();
-            try {
-                $request->validate([
-                    'faglb' => 'sometimes|file|mimes:xlsx,xls,csv|max:2048', // Optional jika hanya ingin update salah satu
-                    'zlis1' => 'sometimes|file|mimes:xlsx,xls,csv|max:2048',
-                    'id_head' => 'required|integer',
-                ]);
 
-                $id = $request->input('id_head');
-                $faglbHead = Faglb::findOrFail($id);
+            $request->validate([
+                'faglb' => 'sometimes|file|mimes:xlsx,xls,csv|max:2048', // Optional jika hanya ingin update salah satu
+                'zlis1' => 'sometimes|file|mimes:xlsx,xls,csv|max:2048',
+                'id_head' => 'required|integer',
+            ]);
 
-                // Update FAGLB file jika ada
-                if ($request->hasFile('faglb')) {
-                    $faglbFile = $request->file('faglb');
-                    $faglbFileName = $faglbFile->getClientOriginalName();
-                    $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
-                    $faglbHead->faglb_filename = $faglbFileName;
+            $id = $request->input('id_head');
+            $faglbHead = Faglb::findOrFail($id);
 
-                    try {
-                        $this->importFaglb($faglbFilePath, $id); // Import file
-                    } catch (\Exception $e) {
-                        Storage::delete($faglbFilePath); // Hapus file jika ada error
-                        throw new \Exception('Gagal mengimpor file FAGLB: ' . $e->getMessage());
-                    }
+            // Update FAGLB file jika ada
+            if ($request->hasFile('faglb')) {
+                $faglbFile = $request->file('faglb');
+                $faglbFileName = $faglbFile->getClientOriginalName();
+                $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
+                $faglbHead->faglb_filename = $faglbFileName;
+
+                try {
+                    $this->importFaglb($faglbFilePath, $id); // Import file
+                } catch (\Exception $e) {
+                    Storage::delete($faglbFilePath); // Hapus file jika ada error
+                    throw new \Exception('Gagal mengimpor file FAGLB: ' . $e->getMessage());
                 }
-
-                // Update ZLIS1 file jika ada
-                if ($request->hasFile('zlis1')) {
-                    $zlis1File = $request->file('zlis1');
-                    $zlis1FileName = $zlis1File->getClientOriginalName();
-                    $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
-                    $faglbHead->zlis1_filename = $zlis1FileName;
-
-                    try {
-                        $this->importZlis1($zlis1FilePath, $id); // Import file
-                    } catch (\Exception $e) {
-                        Storage::delete($zlis1FilePath); // Hapus file jika ada error
-                        throw new \Exception('Gagal mengimpor file ZLIS1: ' . $e->getMessage());
-                    }
-                }
-
-                $faglbHead->save();
-                DB::commit();
-
-                return response()->json(['success' => true, 'message' => 'File berhasil diperbarui']);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }
+
+            // Update ZLIS1 file jika ada
+            if ($request->hasFile('zlis1')) {
+                $zlis1File = $request->file('zlis1');
+                $zlis1FileName = $zlis1File->getClientOriginalName();
+                $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
+                $faglbHead->zlis1_filename = $zlis1FileName;
+
+                try {
+                    $this->importZlis1($zlis1FilePath, $id); // Import file
+                } catch (\Exception $e) {
+                    Storage::delete($zlis1FilePath); // Hapus file jika ada error
+                    throw new \Exception('Gagal mengimpor file ZLIS1: ' . $e->getMessage());
+                }
+            }
+
+            $faglbHead->updated_by = Auth::id();
+
+            $faglbHead->save();
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'File berhasil diperbarui']);
         }
     }
 
-    function formatAmount($amount) 
+    function formatAmount($amount)
     {
         // Hapus spasi jika ada
         $amount = trim($amount);
-        
+
         // Hapus pemisah ribuan (titik)
         $amount = str_replace('.', '', $amount);
-        
+
         // Ganti koma desimal dengan titik
         $amount = str_replace(',', '.', $amount);
-        
+
         // Convert ke float
         return (float) $amount;
     }
 
     public function importFaglb($file, $id_head)
     {
-        function formatAmount($amount) {
-            if(empty($amount)) return 0;
-            
+        function formatAmount($amount)
+        {
+            if (empty($amount)) return 0;
+
             $amount = trim($amount);
             // Hapus pemisah ribuan (titik)
             $amount = str_replace('.', '', $amount);
             // Ganti koma desimal dengan titik
             $amount = str_replace(',', '.', $amount);
-            
+
             return (float) $amount;
         }
-        
+
         if ($file) {
             $faglbData = Excel::toArray(new FaglbImport, $file);
 
@@ -357,7 +353,7 @@ class FaglbController extends Controller
         $faglbHead->save();
 
         // Temukan semua record terkait di t_faglb_tail dan t_zlis1_tail
-        $idHead = $faglbHead->id_head; 
+        $idHead = $faglbHead->id_head;
 
         // Ubah status di t_faglb_tail
         DB::table('t_faglb_tail')

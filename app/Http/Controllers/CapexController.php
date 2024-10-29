@@ -84,6 +84,9 @@ class CapexController extends Controller
                 'wbs_number'    => 'required|string',
                 'cip_number'    => 'required|string',
             ]);
+
+            $userId = Auth::id();
+
             // Simpan data baru ke database
             $result = Capex::add(
                 $validated['project_desc'],
@@ -99,6 +102,7 @@ class CapexController extends Controller
                 $validated['expected_completed'],
                 $validated['wbs_number'],
                 $validated['cip_number'],
+                $userId 
             );
 
             // Kembalikan response sukses

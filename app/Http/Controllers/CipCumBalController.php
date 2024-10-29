@@ -88,7 +88,6 @@ class CipCumBalController extends Controller
                 $request->input('cumbal_rp'),
                 $request->input('report_status', 0),
                 $request->input('status', 1),
-                Auth::id(),
                 Auth::id()
             ),
             'update' => CCB::updateData(

@@ -113,16 +113,10 @@
                                     url: "{{ route('capex.index') }}",
                                     type: "GET",
                                     data: function (d) {
-                                        d.status = 1; 
-                                        d.year = $('#yearFilter').val(); 
+                                        d.status = 1; // Filter status tetap
+                                        d.year = $('#yearFilter').val(); // Tambahkan filter tahun dari dropdown
                                     }
                                 },
-                                columnDefs: [
-                                    {
-                                        targets: '_all',
-                                        className: 'text-nowrap'
-                                    }
-                                ],
                 
                                 columns: [
                                     {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},

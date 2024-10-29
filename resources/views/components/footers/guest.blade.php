@@ -8,9 +8,8 @@
 
                     </script>,
                     made with <i class="fa fa-heart"></i> 
-                    </div>
-            </div>
-           
+                </div>
+            </div>     
         </div>
     </div>
 </footer>
