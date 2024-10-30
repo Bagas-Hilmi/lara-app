@@ -34,10 +34,6 @@ class ReportController extends Controller
             }
 
             return DataTables::of($query)
-                ->addColumn('action', function ($row) {
-                    return view('report/datatables/actionbtn', ['row' => $row]);
-                })
-                ->rawColumns(['action'])
                 ->make(true);
         }
 

@@ -102,6 +102,7 @@
                 
                             // Initialize DataTable
                             var table = $('#capex-table').DataTable({
+                                responsive: false,
                                 info: true,
                                 paging: true,
                                 searching: true,

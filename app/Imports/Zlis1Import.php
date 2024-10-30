@@ -10,17 +10,17 @@ class Zlis1Import implements ToModel
     public function model(array $row)
     {
         return new Zlis1Tail([
-            'wbs_element' => $row[0],  
-            'network' => $row[1],  
-            'document_number' => $row[2],  
+            'wbs_element' => $row[0],
+            'network' => $row[1],
+            'document_number' => $row[2],
             'company_code' => $row[3],
             'fiscal_year' => $row[4],
-            'item' => $row[5], 
+            'item' => $row[5],
             'material_document' => $row[6],
             'material_doc_year' => $row[7],
             'material' => $row[8],
             'description' => $row[9],
-            'quantity' => $row[10], 
+            'quantity' => $row[10],
             'base_unit_of_measure' => $row[11],
             'value_tran_curr_1' => $row[12],
             'currency' => $row[13],
@@ -49,4 +49,3 @@ class Zlis1Import implements ToModel
         ]);
     }
 }
-

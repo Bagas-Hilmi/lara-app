@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\FaglbTail; 
+use App\Models\FaglbTail;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class FaglbImport implements ToModel
@@ -34,4 +34,3 @@ class FaglbImport implements ToModel
         ]);
     }
 }
-
