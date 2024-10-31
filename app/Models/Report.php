@@ -157,8 +157,6 @@ class Report extends Model
         }
     }
 
-
-
     public static function getAvailableCapexIds()
     {
         return DB::table('t_master_capex')

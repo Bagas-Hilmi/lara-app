@@ -100,7 +100,7 @@
     </div>
 </aside>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 
 <script>
     const sidebar = document.getElementById('sidenav-main');

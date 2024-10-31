@@ -24,11 +24,8 @@ class CipCumBalController extends Controller
     public function index(Request $request)
     {
 
-        $availableYears = DB::table('t_cip_cum_bal')
-            ->selectRaw('DISTINCT LEFT(period_cip, 4) as year')
-            ->where('status', 1)
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        $availableYears = CCB::getAvailableYears();
+        $periodRelease = CCB::getPeriodRelease();
 
         if ($request->ajax()) {
             $status = $request->get('status', 1);
@@ -50,7 +47,7 @@ class CipCumBalController extends Controller
                 ->make(true);
         }
 
-        return view('cipcumbal.index')->with('availableYears', $availableYears);
+        return view('cipcumbal.index')->with('availableYears', $availableYears) ->with('periodRelease', $periodRelease);
     }
 
 

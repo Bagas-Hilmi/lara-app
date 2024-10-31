@@ -25,10 +25,9 @@
                                     </button>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span id="yearText">Pilih Tahun</span> <!-- Placeholder -->
+                                            <span id="yearText"></span> <!-- Placeholder -->
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="yearDropdown">
-                                            <li><a class="dropdown-item" href="#" data-value="">Semua Tahun</a></li>
                                             @foreach ($availableYears as $year)
                                                 <li><a class="dropdown-item" href="#" data-value="{{ $year }}">{{ $year }}</a></li>
                                             @endforeach
@@ -83,16 +82,16 @@
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+                    <script src="assets/js/plugins/sweetalert.min.js"></script>
                     <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+                    <script src="assets/js/moment.min.js"></script>
                     <script src="{{ asset('/js/tooltip.js') }}"></script>
                     
                     <script>
                         $(document).ready(function() {
                             const currentYear = new Date().getFullYear();
                             $('#yearFilter').val(currentYear);
-                            $('#yearText').val(currentYear);
+                            $('#yearText').text(currentYear);
                             
                             $.ajaxSetup({
                                 headers: {

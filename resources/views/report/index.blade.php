@@ -19,13 +19,15 @@
                                 <div class="mb-2">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle"
-                                            style="background-color: #040404; border-color: #09170a;" type="button"
-                                            id="descriptionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            style="background-color: #040404; border-color: #09170a;" 
+                                            type="button"
+                                            id="descriptionDropdown" 
+                                            data-bs-toggle="dropdown" 
+                                            aria-expanded="false">
                                             <span id="descriptionText">Pilih Capex </span> <!-- Placeholder -->
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="descriptionDropdown">
-                                            <li><a class="dropdown-item" href="#" data-value="">Pilih Capex </a>
-                                            </li>
+                                            <li><a class="dropdown-item" href="#" data-value="">Pilih Capex </a></li>
                                             @foreach ($descriptions as $desc)
                                                 <li>
                                                     <a class="dropdown-item" href="#"
@@ -113,9 +115,9 @@
 
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+                <script src="assets/js/plugins/sweetalert.min.js"></script>
                 <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+                <script src="assets/js/moment.min.js"></script>
                 <script src="{{ asset('/js/tooltip.js') }}"></script>
 
                 <script>
@@ -284,12 +286,12 @@
 
                                     // Update total di footer
                                     $('#total-amount-rp').text(number_format(totalRp, 0, ',',
-                                    '.')); // Format untuk RP
+                                        '.')); // Format untuk RP
                                     $('#total-amount-us').text(number_format(totalUs, 2, ',',
-                                    '.')); // Format untuk US$
+                                        '.')); // Format untuk US$
                                 }
                             }
-                        });
+                            });
 
                         // Fungsi untuk memformat angka dengan tanda pemisah ribuan
                         function formatNumber(num) {
@@ -319,7 +321,7 @@
                                 document.getElementById('wbsText').innerText = wbsNumber ? wbsNumber :
                                     'WBS Number';
                                 document.getElementById('projectText').innerText = project ? project :
-                                'Project';
+                                    'Project';
                                 document.getElementById('budgetText').innerText = budget ? budget : 'Budget';
                                 document.getElementById('amountText').innerText = amount ? formatNumber(
                                     amount) : 'Amount'; // Format amount budget
@@ -356,7 +358,6 @@
                         }
 
 
-
                         $("#report-table").on("click", ".delete-btn", function() {
                             var id = $(this).data("id"); // Ambil ID dari data-id
 
@@ -379,7 +380,7 @@
                                         data: {
                                             _method: "DELETE", // Laravel membutuhkan ini untuk metode DELETE
                                             _token: $('meta[name="csrf-token"]').attr(
-                                            "content"), // Sertakan CSRF token
+                                                "content"), // Sertakan CSRF token
                                         },
                                         success: function(result) {
                                             // Menampilkan notifikasi sukses
@@ -555,31 +556,54 @@
 
     .info-box {
         background: #040404;
-        border-radius: 8px;
-        padding: 15px 20px;
+        /* Tetap menggunakan warna latar belakang hitam */
+        border-radius: 12px;
+        /* Membuat sudut lebih melengkung untuk tampilan card */
+        padding: 16px 20px;
+        /* Sedikit menambah padding atas bawah */
         min-width: 200px;
         flex: 1;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+            /* Shadow lebih dalam */
+            0 1px 3px rgba(0, 0, 0, 0.2);
+        /* Shadow tambahan untuk efek layer */
+        transition: all 0.2s ease;
+        /* Transisi untuk semua perubahan */
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Tambah border subtle */
     }
 
     .info-box:hover {
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+        /* Sedikit lebih tinggi saat hover */
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4),
+            /* Shadow lebih besar saat hover */
+            0 2px 4px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        /* Border lebih terang saat hover */
     }
 
     .info-box-label {
         color: #f1f5f0;
         font-size: 0.875rem;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+        /* Sedikit lebih besar margin bottom */
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.75px;
+        /* Sedikit lebih besar letter spacing */
         font-weight: bold;
+        opacity: 0.9;
+        /* Sedikit transparent untuk kontras */
     }
 
     .info-box-value {
         color: white;
-        font-size: 1rem;
+        font-size: 1.125rem;
+        /* Sedikit lebih besar ukuran font */
         font-weight: 600;
         margin: 0;
+        letter-spacing: 0.25px;
+        /* Tambah sedikit letter spacing */
     }
 </style>

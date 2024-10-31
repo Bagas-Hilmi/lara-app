@@ -121,4 +121,24 @@ class CCB extends Model
 
         return ['success' => true, 'message' => 'Data berhasil diperbarui!'];
     }
+
+    public static function getAvailableYears()
+    {
+        return DB::table('t_cip_cum_bal')
+            ->selectRaw('DISTINCT LEFT(period_cip, 4) as year')
+            ->where('status', 1)
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+    }
+
+    public static function getPeriodRelease()
+    {
+        return DB::table('t_cip_cum_bal')
+            ->selectRaw('period_cip, COUNT(*) as total_release')
+            ->where('status', 1)
+            ->where('report_status', 1)
+            ->groupBy('period_cip')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+    }
 }
