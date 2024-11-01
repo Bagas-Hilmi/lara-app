@@ -35,12 +35,13 @@ class CapexBudget extends Model
             ->get();
 
         foreach ($query as $item) {
-            // Hitung total PO_release berdasarkan id_capex
+            
             $totalBudgetcos = DB::table('t_capex_budget')
                 ->where('id_capex', $item->id_capex)
                 ->where('status', 1) // Pastikan statusnya juga 1
                 ->sum('budget_cos');
-            // Update PO_release di t_master_capex
+
+            
             DB::table('t_master_capex')
                 ->where('id_capex', $item->id_capex)
                 ->update(['budget_cos' => $totalBudgetcos]);
@@ -50,7 +51,6 @@ class CapexBudget extends Model
 
     public static function addBudget($capex_id, $description, $budget_cos)
     {
-        // Simpan data baru ke tabel t_capex_budget menggunakan Query Builder
         $budgetId = DB::table('t_capex_budget')->insertGetId([
             'id_capex' => $capex_id,
             'description' => $description,

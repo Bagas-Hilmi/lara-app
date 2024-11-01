@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Attributes\Auth;
+use Carbon\Carbon; // Pastikan Anda menggunakan Carbon
+
 class Capex extends Model
 {
     use HasFactory;
@@ -22,6 +24,7 @@ class Capex extends Model
         'capex_number',
         'amount_budget',
         'budget_cos',
+        'total_budget',
         'status_capex',
         'budget_type',
         'startup',
@@ -185,6 +188,70 @@ class Capex extends Model
             ->where('status', 1)
             ->orderBy('year', 'desc')
             ->pluck('year');
+    }
+
+    public static function getTotalBudget()
+    {
+        $affectedRows = DB::table('t_master_capex')
+            ->where('status', 1)
+            ->update([
+                'total_budget' => DB::raw('COALESCE(amount_budget, 0) + COALESCE(budget_cos, 0)')
+            ]);
+
+        return response()->json(['message' => "{$affectedRows} rows updated."]);
+    }
+
+    public static function getDaysLate()
+    {
+        // Ambil semua record dari t_master_capex
+        $capexRecords = DB::table('t_master_capex')->get();
+
+        foreach ($capexRecords as $record) {
+            // Menghitung selisih hari dari tanggal sekarang hingga tanggal expected_completed
+            $endDate = Carbon::parse($record->expected_completed);
+            $daysLeft = Carbon::now()->diffInDays($endDate); // Hitung selisih hari
+
+            // Jika sudah lewat, simpan nilai hari yang sudah lewat ke kolom days_late
+            if ($daysLeft < 0) {
+                // Menghitung berapa banyak hari sudah lewat
+                $daysOverdue = abs($daysLeft); // Ambil nilai absolut dari daysLeft
+                // Update kolom days_late dengan hari yang sudah lewat
+                DB::table('t_master_capex')
+                    ->where('id_capex', $record->id_capex)
+                    ->update(['days_late' => $daysOverdue]);
+            } else {
+                // Jika belum lewat, set days_late ke 0
+                DB::table('t_master_capex')
+                    ->where('id_capex', $record->id_capex)
+                    ->update(['days_late' => null]);
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Days late calculated and updated successfully!']);
+    }
+
+    public static function getDaysRemaining()
+    {
+        // Ambil semua record dari t_master_capex
+        $capexRecords = DB::table('t_master_capex')->get();
+
+        foreach ($capexRecords as $record) {
+            // Menghitung selisih hari dari tanggal sekarang hingga tanggal expected_completed
+            $endDate = Carbon::parse($record->expected_completed);
+            $daysRemaining = Carbon::now()->diffInDays($endDate); // Hitung selisih hari
+
+            // Jika sudah lewat, set days_remaining ke 0
+            if ($daysRemaining < 0) {
+                $daysRemaining = null; // Set ke 0 jika sudah lewat
+            }
+
+            // Update kolom days_remaining
+            DB::table('t_master_capex')
+                ->where('id_capex', $record->id_capex)
+                ->update(['days_remaining' => $daysRemaining]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Days remaining calculated and updated successfully!']);
     }
 
     public function CapexBudget()

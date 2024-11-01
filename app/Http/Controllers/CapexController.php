@@ -25,14 +25,17 @@ class CapexController extends Controller
             return redirect()->route('login'); // Arahkan ke halaman login
         }
 
-        $availableYears = Capex::getAvailableYears(); // Memanggil metode untuk mendapatkan tahun yang tersedia
+        // Memanggil metode
+        $availableYears = Capex::getAvailableYears();  
+        $totalBudget = Capex::getTotalBudget();
+        $daysLate = Capex::getDaysLate();
+        $daysRemaining = Capex::getDaysRemaining();
 
         if ($request->ajax()) {
             $status = $request->get('status', 1);
-            // Buat query untuk mengambil semua data dari model Capex
+            // Buat query untuk mengambil semua data 
             $query = Capex::query()->where('status', $status);
 
-            // Filter berdasarkan tahun yang dipilih
             if ($request->has('year') && !empty($request->year)) {
                 $query->where('created_at', 'LIKE', $request->year . '-%');
             }
@@ -45,7 +48,12 @@ class CapexController extends Controller
                 ->make(true);
         }
 
-        return view('capex.index')->with('availableYears', $availableYears);
+        return view('capex.index', [
+            'availableYears' => $availableYears,
+            'totalBudget' => $totalBudget,
+            'daysLate' => $daysLate,
+            'daysRemaining' => $daysRemaining,
+        ]);
     }
 
 
@@ -65,6 +73,7 @@ class CapexController extends Controller
 
         // Mengambil nilai flag
         $flag = $request->input('flag');
+        
         // Menjalankan logika berdasarkan nilai flag
         if ($flag === 'add') {
             $validated = $request->validate([
@@ -454,9 +463,14 @@ class CapexController extends Controller
             return response()->json(['success' => true, 'message' => 'Progress berhasil dinonaktifkan!']);
         } elseif ($flag === 'porelease') {
 
-            $progress = CapexPOrelease::findOrFail($id);
-            $progress->status = 0;
-            $progress->save();
+            $porelease = CapexPOrelease::findOrFail($id);
+            $porelease->status = 0;
+            $porelease->save();
+
+            $porelease = Capex::findOrFail($porelease->id_capex);
+
+            $porelease->PO_release = null;
+            $porelease->save();
 
             return response()->json(['success' => true, 'message' => 'PO Release berhasil dinonaktifkan!']);
         } elseif ($flag === 'completion') {
