@@ -46,7 +46,7 @@
                                                 <th class="text-center">Project Desc</th>
                                                 <th class="text-center">WBS Capex </th>
                                                 <th class="text-center">Remark</th>
-                                                <th class="text-center">Request Number</th>
+                                                <th class="text-center">Req Number</th>
                                                 <th class="text-center">Requester</th>
                                                 <th class="text-center">Capex Number</th>
                                                 <th class="text-center">Amount Budget (USD)</th>
@@ -146,7 +146,7 @@
                                     {data: 'amount_budget', name: 'amount_budget', className: 'text-right', 
                                     render: function(data, type) {
                                         if (type === 'display') {
-                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
                                         }
                                         return data;
                                     }},
@@ -155,16 +155,16 @@
                                         if (type === 'display') {
                                             // Cek jika data kosong
                                             if (data === null || data === "" || isNaN(data)) {
-                                                return null; 
+                                                return '-'; 
                                             }
-                                            return '<span>' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</span>';
+                                            return '<span>' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</span>';
                                         }
                                         return data;
                                     }},
                                     {data: 'total_budget', name: 'total_budget', className: 'text-right', 
                                     render: function(data, type) {
                                         if (type === 'display') {
-                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
                                         }
                                         return data;
                                     }},
@@ -173,7 +173,7 @@
                                             if(data === null || data ==="" || isNaN(data)){
                                                 return '-';
                                             }
-                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
                                         }
                                         return data;
                                     }},
@@ -207,8 +207,18 @@
                                         if (!data) return '-';
                                         return moment(data).isValid() ? moment(data).format('DD-MM-YYYY') : '-';
                                     }},
-                                    {data: 'days_remaining', name: 'days_remaining', className: 'text-center'},
-                                    {data: 'days_late', name: 'days_late', className: 'text-center'},
+                                    {data: 'days_remaining', name: 'days_remaining', className: 'text-center',
+                                    render: function(data) {
+                                            if (data === null || data === undefined) {
+                                                return '-';}
+                                            return data;
+                                    }},
+                                    {data: 'days_late', name: 'days_late', className: 'text-center',
+                                    render: function(data) {
+                                            if (data === null || data === undefined) {
+                                                return '-';}
+                                            return data;
+                                    }},
                                     {data: 'wbs_number', name: 'wbs_number', className: 'text-center'},
                                     {data: 'cip_number', name: 'cip_number', className: 'text-center'},
                                     {

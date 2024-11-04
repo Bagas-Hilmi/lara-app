@@ -133,26 +133,34 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const numberInputs = document.querySelectorAll(
-        'input.edit-budget'); // Menggunakan kelas khusus untuk input update
+    document.addEventListener('DOMContentLoaded', function () {
+        const numberInputs = document.querySelectorAll('input.edit-budget'); // Menggunakan kelas khusus untuk input update
 
         numberInputs.forEach(input => {
             input.addEventListener('input', function() {
-                // Menghapus semua karakter yang bukan angka dan koma
-                let value = this.value.replace(/[^0-9,]/g, '');
+                // Menghapus semua karakter yang bukan angka, koma, dan titik
+                let value = this.value.replace(/[^0-9.,]/g, '');
 
-                // Memformat value agar tetap terlihat baik
-                this.value = value;
+                // Memisahkan bagian integer dan desimal
+                let parts = value.split(',');
+                let integerPart = parts[0].replace(/\./g, ''); // Menghapus titik dari bagian integer
+                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; // Menyimpan bagian desimal maksimum 2 digit
+
+                // Memformat bagian integer dengan pemisah ribuan
+                let formattedInteger = parseInt(integerPart).toLocaleString('id-ID');
+
+                // Menggabungkan bagian integer dan desimal
+                this.value = formattedInteger + decimalPart;
             });
 
             input.addEventListener('blur', function() {
                 // Format saat fokus hilang (blur)
-                let value = this.value.replace(/,/g, ''); // Menghapus koma
+                let value = this.value.replace(/\./g, '').replace(/,/g, '.'); // Menghapus titik dan mengubah koma menjadi titik
                 if (value) {
-                    this.value = parseFloat(value).toString(); // Format menjadi 2 desimal
+                    this.value = parseFloat(value).toString(); 
                 }
             });
         });
     });
 </script>
+

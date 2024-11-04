@@ -62,27 +62,29 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const numberInputs = document.querySelectorAll(
-        'input.new-input'); // Menggunakan kelas khusus untuk input update
+    $(document).ready(function() {
+        // Fungsi untuk memformat input dengan pemisah ribuan
+        function formatCurrency(inputId) {
+            $(inputId).on('input', function() {
+                // Hapus koma sebelum format ulang
+                let value = $(this).val().replace(/,/g, '');
 
-        numberInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                // Menghapus semua karakter yang bukan angka dan koma
-                let value = this.value.replace(/[^0-9,]/g, '');
-
-                // Memformat value agar tetap terlihat baik
-                this.value = value;
-            });
-
-            input.addEventListener('blur', function() {
-                // Format saat fokus hilang (blur)
-                let value = this.value.replace(/,/g, ''); // Menghapus koma
-                if (value) {
-                    this.value = parseFloat(value).toString(); // Format menjadi 2 desimal
+                // Periksa apakah nilai valid
+                if (!isNaN(value) && value !== '') {
+                    // Format dengan pemisah ribuan
+                    $(this).val(parseFloat(value).toLocaleString('en-US'));
+                } else {
+                    // Kosongkan input jika tidak valid
+                    $(this).val('');
                 }
             });
-        });
+        }
+
+        // Panggil fungsi untuk kedua kolom input
+        formatCurrency('#balanceUSD');
+        formatCurrency('#balanceRP');
+        formatCurrency('#cumulativeBalanceUSD');
+        formatCurrency('#cumulativeBalanceRP');
     });
 </script>
 

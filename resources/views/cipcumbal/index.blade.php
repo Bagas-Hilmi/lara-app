@@ -70,7 +70,6 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">Action</th>
-                                                <th class="text-center">ID</th>
                                                 <th class="text-center">Period CIP</th>
                                                 <th class="text-center">Bal USD</th>
                                                 <th class="text-center">Bal RP</th>
@@ -137,11 +136,6 @@
                             className: 'text-center'
                         },
                         {
-                            data: 'id_ccb',
-                            name: 'id_ccb',
-                            className: 'text-center'
-                        },
-                        {
                             data: 'period_cip',
                             name: 'period_cip',
                             className: 'text-center'
@@ -154,7 +148,7 @@
                             render: function(data, type) {
                                 if (type === 'display') {
                                     return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
                                 }
                                 return data;
                             }
@@ -166,7 +160,7 @@
                             render: function(data, type) {
                                 if (type === 'display') {
                                     return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
                                 }
                                 return data;
                             }
@@ -178,7 +172,7 @@
                             render: function(data, type) {
                                 if (type === 'display') {
                                     return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
                                 }
                                 return data;
                             }
@@ -190,7 +184,7 @@
                             render: function(data, type) {
                                 if (type === 'display') {
                                     return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
+                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
                                 }
                                 return data;
                             }
@@ -371,6 +365,8 @@
     #cipCumBalTable td {
         padding: 8px;
         text-align: center;
+        color: #2c2626;
+
     }
 
     #cipCumBalTable thead th {
@@ -386,6 +382,7 @@
     #cipCumBalTable tbody tr {
         transition: background-color 0.3s ease;
         /* Efek transisi untuk warna latar belakang */
+                color: #2c2626;
     }
 
     #cipCumBalTable tbody tr:hover {

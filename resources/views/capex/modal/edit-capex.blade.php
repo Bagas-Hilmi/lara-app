@@ -60,6 +60,7 @@
                         <div class="col-md-4">
                             <label for="amount_budget_edit" class="form-label font-weight-bold">Amount Budget (USD)</label>
                             <input type="text" class="form-control column-input edit-capex" id="amount_budget_edit" name="amount_budget" style="text-align: center;" required>
+                            <input type="hidden" id="amount_budget_edit" name="amount_budget">
                         </div>
                         <div class="col-md-4 d-flex flex-column align-items-center">
                             <label for="status_capex_edit" class="form-label font-weight-bold">Type Capex</label>
@@ -224,33 +225,34 @@
 </script>
 
 <script>
-    $(document).ready(function() {
-        $('#amount_budget_edit').on('input', function() {
-            // Ambil nilai yang dimasukkan
-            let value = $(this).val();
+    document.addEventListener('DOMContentLoaded', function () {
+        const numberInputs = document.querySelectorAll('input.edit-capex'); // Menggunakan kelas khusus untuk input update
 
-            // Hapus semua karakter selain angka, titik, dan koma
-            value = value.replace(/[^0-9.,]/g, '');
+        numberInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Menghapus semua karakter yang bukan angka, koma, dan titik
+                let value = this.value.replace(/[^0-9.,]/g, '');
 
-            // Pisahkan bagian integer dan desimal
-            let parts = value.split(',');
+                // Memisahkan bagian integer dan desimal
+                let parts = value.split(',');
+                let integerPart = parts[0].replace(/\./g, ''); // Menghapus titik dari bagian integer
+                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; // Menyimpan bagian desimal maksimum 2 digit
 
-            // Tangani bagian integer (sebelum koma)
-            let integerPart = parts[0].replace(/\./g, ''); // Hapus semua titik dari bagian integer
-            let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) :
-            ''; // Simpan bagian desimal jika ada, maksimum 2 digit
+                // Memformat bagian integer dengan pemisah ribuan
+                let formattedInteger = parseInt(integerPart).toLocaleString('id-ID');
 
-            // Pastikan nilai adalah angka dan tidak kosong
-            if (!isNaN(integerPart) && integerPart !== '') {
-                // Tambahkan pemisah ribuan pada bagian integer
-                let formattedInteger = parseFloat(integerPart).toLocaleString('id-ID');
-                let formattedValue = formattedInteger +
-                decimalPart; // Gabungkan bagian integer dan desimal
-                $(this).val(formattedValue);
-            } else {
-                // Kosongkan input jika nilai tidak valid
-                $(this).val('');
-            }
+                // Menggabungkan bagian integer dan desimal
+                this.value = formattedInteger + decimalPart;
+            });
+
+            input.addEventListener('blur', function() {
+                // Format saat fokus hilang (blur)
+                let value = this.value.replace(/\./g, '').replace(/,/g, '.'); // Menghapus titik dan mengubah koma menjadi titik
+                if (value) {
+                    this.value = parseFloat(value).toString(); 
+                }
+            });
         });
     });
+</script>
 </script>

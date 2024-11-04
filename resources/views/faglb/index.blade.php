@@ -9,7 +9,7 @@
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-15">
+                <div class="col-12">
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             <div style="background-color: #3cb210;" class="shadow-primary border-radius-lg pt-4 pb-3"> 
@@ -22,12 +22,10 @@
                                     data-bs-toggle="modal" data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}">Add Doc Upload</a>  
                                 </div>
                                 <div class="table-responsive p-0">
-                                    <table id="faglb-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
+                                    <table id="faglb-table" class="table table-striped rounded-table p-0 mx-auto" style="width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th class="text-center">Action</th>
-                                                <th class="text-center">ID Head</th>
-                                                <th class="text-center">ID CipCumBal</th>
                                                 <th class="text-center">Period </th>
                                                 <th class="text-center">Report Status</th>
                                                 <th class="text-center">Created At</th>
@@ -79,15 +77,13 @@
                             type: "GET",
                         },
                         columns: [
-                            {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
-                            {data: 'id_head', name: 'id_head', className: 'text-center'},
-                            {data: 'id_ccb', name: 'id_ccb', className: 'text-center'},
-                            {data: 'period', name: 'period', className: 'text-center'},
-                            {data: 'report_status', name: 'report_status', className: 'text-center'},
+                            {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center',width: '15%'},
+                            {data: 'period', name: 'period', className: 'text-center',width: '15%'},
+                            {data: 'report_status', name: 'report_status', className: 'text-center',width: '20%'},
                             {
                                 data: 'created_at', 
                                 name: 'created_at', 
-                                className: 'text-center', 
+                                className: 'text-center', width: '25%',
                                 render: function(data) {
                                     return moment(data).format('YYYY-MM-DD ');
                                 }
@@ -95,7 +91,7 @@
                             {
                                 data: 'updated_at', 
                                 name: 'updated_at', 
-                                className: 'text-center', 
+                                className: 'text-center', width: '25%',
                                 render: function(data) {
                                     return moment(data).format('YYYY-MM-DD ');
                                 }
@@ -198,21 +194,28 @@
     .rounded-table td {
         border: none; /* Remove default borders to maintain rounded appearance */
     }
+    #faglb-table tbody td.action-column .btn-group {
+        display: flex;
+        justify-content: center;
+    }
 
     #faglb-table thead th {
-    background-color: #3cb210; /* Warna latar belakang header */
-    color: #ffffff; /* Warna teks header */
+        background-color: #3cb210; /* Warna latar belakang header */
+        color: #ffffff; /* Warna teks header */
+        width: auto; /* Atur lebar kolom header secara otomatis */
     }
 
     /* Gaya untuk baris tabel */
     #faglb-table tbody tr {
-        transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
+        transition: background-color  0.3s ease; /* Efek transisi untuk warna latar belakang */
+        color: #2c2626;
     }
 
     /* Gaya untuk sel tabel */
     #faglb-table tbody td {
         padding: 10px; /* Padding untuk sel */
         border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+        color: #2c2626;
     }
 
     /* Hover effect untuk baris tabel */
@@ -238,9 +241,6 @@
         border-color: #42bd37; /* Warna border saat fokus */
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Efek shadow saat fokus */
     }
-
-
-
     /* Indikator urutan di header DataTables */
     th.sorting::after, th.sorting_asc::after, th.sorting_desc::after {
         content: '▼'; /* Default panah ke bawah */
