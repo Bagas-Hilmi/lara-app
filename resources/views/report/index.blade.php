@@ -9,7 +9,7 @@
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-15">
+                <div class="col-12">
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             <div style="background-color: #3cb210;" class="shadow-primary border-radius-lg pt-4 pb-3">
@@ -26,6 +26,12 @@
                                             aria-expanded="false">
                                             <span id="descriptionText">Pilih Capex </span> <!-- Placeholder -->
                                         </button>
+                                        
+                                        {{-- Download berdasarkan filter --}}
+                                        <button onclick="downloadFilteredPDF()" class="btn btn-secondary" style="background-color: #bd1f20;">
+                                            <i class="fas fa-file-pdf"></i> Download PDF
+                                        </button>
+
                                         <ul class="dropdown-menu" aria-labelledby="descriptionDropdown">
                                             <li><a class="dropdown-item" href="#" data-value="">Pilih Capex </a></li>
                                             @foreach ($descriptions as $desc)
@@ -36,7 +42,8 @@
                                                         data-wbs="{{ $desc->wbs_number }}"
                                                         data-project_desc="{{ $desc->project_desc }}"
                                                         data-budget_type="{{ $desc->budget_type }}"
-                                                        data-amount_budget="{{ $desc->amount_budget }}">
+                                                        data-amount_budget="{{ $desc->amount_budget }}"
+                                                        data-requester="{{ $desc->requester }}">
                                                         {{ $desc->capex_number }}
                                                         <!-- Kolom capex_number yang ditampilkan -->
                                                     </a>
@@ -69,6 +76,7 @@
                                                 <div class="info-box-label">Amount Budget</div>
                                                 <div class="info-box-value" id="amountText">-</div>
                                             </div>
+                                            <input type="hidden" id="requesterText">
                                         </div>
 
                                     </div>
@@ -310,25 +318,23 @@
                                 const wbsNumber = this.getAttribute('data-wbs');
                                 const project = this.getAttribute('data-project_desc');
                                 const budget = this.getAttribute('data-budget_type');
+                                const requester = this.getAttribute('data-requester');
                                 const amount = this.getAttribute('data-amount_budget');
 
-                                // Perbarui teks pada tombol dropdown
-                                document.getElementById('descriptionText').textContent = text;
+                              // Perbarui teks dan data pada tombol dropdown
+                                const descriptionText = document.getElementById('descriptionText');
+                                descriptionText.textContent = text;
+                                descriptionText.setAttribute('data-capex-id', value); // Tambahkan ini
 
                                 // Mengubah teks pada tombol cip dan wbs
-                                document.getElementById('cipText').innerText = cipNumber ? cipNumber :
-                                    'CIP Number';
-                                document.getElementById('wbsText').innerText = wbsNumber ? wbsNumber :
-                                    'WBS Number';
-                                document.getElementById('projectText').innerText = project ? project :
-                                    'Project';
+                                document.getElementById('cipText').innerText = cipNumber ? cipNumber :'CIP Number';
+                                document.getElementById('wbsText').innerText = wbsNumber ? wbsNumber :'WBS Number';
+                                document.getElementById('projectText').innerText = project ? project :'Project';
                                 document.getElementById('budgetText').innerText = budget ? budget : 'Budget';
-                                document.getElementById('amountText').innerText = amount ? formatNumber(
-                                    amount) : 'Amount'; // Format amount budget
-
+                                document.getElementById('requesterText').innerText = requester ? requester : 'Requester';
+                                document.getElementById('amountText').innerText = amount ? formatNumber(amount) : 'Amount'; // Format amount budget
                                 // Mengatur filter DataTable berdasarkan value
                                 table.column(1).search(value).draw(); // Ganti 0 dengan indeks kolom yang sesuai
-
                                 // Reload DataTable
                                 table.ajax.reload(); // Memanggil reload untuk mendapatkan data terbaru
                             });
@@ -404,7 +410,29 @@
                                 }
                             });
                         });
+                        
+                        //download pdf
+                        $(document).ready(function() {
+                            window.downloadFilteredPDF = function() {
+                                // Ambil capex_id dari tombol dropdown yang aktif
+                                const selectedCapexId = $('#descriptionText').attr('data-capex-id'); // tambahkan atribut ini saat memilih dari dropdown
+                                
+                                // Cek apakah capex_id sudah dipilih
+                                if (!selectedCapexId) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Capex Belum Dipilih',
+                                        text: 'Silakan pilih Capex terlebih dahulu sebelum mengunduh PDF.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    return; 
+                                }
 
+                                // Jika sudah ada yang dipilih, lanjutkan dengan membuka PDF
+                                const url = `{{ route('report.pdf.filtered') }}?capex_id=${selectedCapexId}`;
+                                window.open(url, '_blank');
+                            };
+                        });
                     });
                 </script>
             @endpush
@@ -486,6 +514,7 @@
     #report-table tbody tr {
         transition: background-color 0.3s ease;
         /* Efek transisi untuk warna latar belakang */
+        color: #2c2626;
     }
 
     /* Gaya untuk sel tabel */
@@ -494,6 +523,7 @@
         /* Padding untuk sel */
         border-bottom: 1px solid #dee2e6;
         /* Garis bawah sel */
+        color: #2c2626;
     }
 
     /* Hover effect untuk baris tabel */

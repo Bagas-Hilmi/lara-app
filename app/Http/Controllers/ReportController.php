@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Report;
 use App\Models\Capex;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
@@ -38,6 +40,50 @@ class ReportController extends Controller
         }
 
         return view('report.index', compact('descriptions'));  // Mengirimkan data ke view
+    }
+
+    // Download berdasarkan filter
+    public function downloadFilteredPDF(Request $request)
+    {
+        try {
+            $query = Report::query();
+
+            if ($request->has('capex_id')) {
+                $query->where('id_capex', $request->capex_id);
+            }
+
+            $reports = $query->get();
+
+            // Hitung total
+            $totals = [
+                'amount_rp' => $reports->sum('amount_rp'),
+                'amount_us' => $reports->sum('amount_us')
+            ];
+
+            $capexData = Report::getActiveCapexDescriptions()
+                ->where('id_capex', $request->capex_id)
+                ->first();
+
+            $pdf = PDF::loadView('report.pdf-filtered', [
+                'reports' => $reports,
+                'capexData' => $capexData,
+                'totals' => $totals 
+            ]);
+
+            $fileName = 'report-capex';
+            if ($capexData) {
+                $cleanCapexNumber = preg_replace('/[\/\\\]/', '-', $capexData->capex_number);
+                $fileName .= '-' . $cleanCapexNumber;
+            }
+            $fileName .= '_' . date('Y-m-d') . '.pdf';
+
+            return $pdf->download($fileName);
+        } catch (\Exception $e) {
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat membuat PDF'
+            ], 500);
+        }
     }
 
     /**

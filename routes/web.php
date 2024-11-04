@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::resource('report', ReportController::class);
+    Route::get('report-pdf/filtered', [ReportController::class, 'downloadFilteredPDF'])->name('report.pdf.filtered');
 });
 
 

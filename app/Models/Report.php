@@ -42,7 +42,8 @@ class Report extends Model
                 't_master_capex.wbs_number',
                 't_master_capex.project_desc',
                 't_master_capex.budget_type',
-                't_master_capex.amount_budget'
+                't_master_capex.amount_budget',
+                't_master_capex.requester'
             )
             ->distinct('id_capex')
             ->where('t_report_cip.status', 1) // Anda bisa tambahkan kondisi di sini sesuai kebutuhan
