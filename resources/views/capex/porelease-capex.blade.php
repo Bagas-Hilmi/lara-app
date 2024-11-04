@@ -1,5 +1,5 @@
 <div class="modal fade" id="porelease-modal" tabindex="-1" aria-labelledby="poreleaseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="poreleaseModalLabel" style="color: white;">PO Release Details</h5>
@@ -22,8 +22,6 @@
                         <thead>
                             <tr>
                                 <th align="center">Action</th>
-                                <th align="center">ID Capex PO Release</th>
-                                <th align="center">ID Capex</th>
                                 <th align="center">Description</th>
                                 <th align="center">PO Release (USD)</th>
                                 <th align="center">Created_at</th>
@@ -60,8 +58,6 @@
                 },
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
-                    { data: 'id_capex_porelease', name: 'id_capex_porelease', className: 'text-center'},
-                    { data: 'id_capex', name: 'id_capex', className: 'text-center'},
                     { data: 'description', name: 'description', className: 'text-center'},
                     { data: 'PO_release', name: 'PO_release', className: 'text-center'},
                     {

@@ -23,8 +23,8 @@
                                     Select WBS Type
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="wbsCapexDropdownEdit">
-                                    <li><a class="dropdown-item" href="#" data-value="project">Project</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="non_project">Non-Project</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Project">Project</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Non Project">Non-Project</a></li>
                                 </ul>
                                 <input type="hidden" id="wbs_capex_edit" name="wbs_capex" required>
                             </div>
@@ -68,10 +68,10 @@
                                     Select Status
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownEdit">
-                                    <li><a class="dropdown-item" href="#" data-value="canceled">Canceled</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="close">Close</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="on_progress">On Progress</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="to_opex">To Opex</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Canceled">Canceled</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Close">Close</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="On Progress">On Progress</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="To Opex">To Opex</a></li>
                                 </ul>
                                 <input type="hidden" id="status_capex_edit" name="status_capex" style="text-align: center;" required>
                             </div>
@@ -83,8 +83,8 @@
                                     Select Status Budget
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="budgetTypeDropdownEdit">
-                                    <li><a class="dropdown-item" href="#" data-value="budgeted">Budgeted</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="unbudgeted">Unbudgeted</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Budgeted">Budgeted</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Unbudgeted">Unbudgeted</a></li>
                                 </ul>
                                 <input type="hidden" id="budget_type_edit" name="budget_type" required>
                             </div>
@@ -93,11 +93,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="startup_edit" class="form-label font-weight-bold">STARTUP</label>
-                            <input type="month" class="form-control" id="startup_edit" name="startup" required>
+                            <input type="date" class="form-control" id="startup_edit" name="startup" required>
                         </div>
                         <div class="col-md-6">
                             <label for="expected_completed_edit" class="form-label font-weight-bold">EXPECTED COMPLETED</label>
-                            <input type="month" class="form-control" id="expected_completed_edit" name="expected_completed" required>
+                            <input type="date" class="form-control" id="expected_completed_edit" name="expected_completed" required>
                         </div>
                     </div>
                 </form>
@@ -224,25 +224,33 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const numberInputs = document.querySelectorAll('input.edit-capex'); // Menggunakan kelas khusus untuk input update
-  
-        numberInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                // Menghapus semua karakter yang bukan angka dan koma
-                let value = this.value.replace(/[^0-9,]/g, '');
-  
-                // Memformat value agar tetap terlihat baik
-                this.value = value;
-            });
-  
-            input.addEventListener('blur', function() {
-                // Format saat fokus hilang (blur)
-                let value = this.value.replace(/,/g, ''); // Menghapus koma
-                if (value) {
-                    this.value = parseFloat(value).toString(); // Format menjadi 2 desimal
-                }
-            });
+    $(document).ready(function() {
+        $('#amount_budget_edit').on('input', function() {
+            // Ambil nilai yang dimasukkan
+            let value = $(this).val();
+
+            // Hapus semua karakter selain angka, titik, dan koma
+            value = value.replace(/[^0-9.,]/g, '');
+
+            // Pisahkan bagian integer dan desimal
+            let parts = value.split(',');
+
+            // Tangani bagian integer (sebelum koma)
+            let integerPart = parts[0].replace(/\./g, ''); // Hapus semua titik dari bagian integer
+            let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) :
+            ''; // Simpan bagian desimal jika ada, maksimum 2 digit
+
+            // Pastikan nilai adalah angka dan tidak kosong
+            if (!isNaN(integerPart) && integerPart !== '') {
+                // Tambahkan pemisah ribuan pada bagian integer
+                let formattedInteger = parseFloat(integerPart).toLocaleString('id-ID');
+                let formattedValue = formattedInteger +
+                decimalPart; // Gabungkan bagian integer dan desimal
+                $(this).val(formattedValue);
+            } else {
+                // Kosongkan input jika nilai tidak valid
+                $(this).val('');
+            }
         });
     });
 </script>

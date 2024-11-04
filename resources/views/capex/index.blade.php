@@ -42,7 +42,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">Action</th>
-                                                <th class="text-center">ID Capex</th>
+                                                <th class="text-center">ID</th>
                                                 <th class="text-center">Project Desc</th>
                                                 <th class="text-center">WBS Capex </th>
                                                 <th class="text-center">Remark</th>
@@ -51,12 +51,15 @@
                                                 <th class="text-center">Capex Number</th>
                                                 <th class="text-center">Amount Budget (USD)</th>
                                                 <th class="text-center">Budget Cos (USD)</th>
+                                                <th class="text-center">Total Budget</th>
                                                 <th class="text-center">PO Release</th>
                                                 <th class="text-center">Status Capex</th>
                                                 <th class="text-center">Budget Type</th>
                                                 <th class="text-center">Start Up</th>
-                                                <th class="text-center">Expected Completed</th>
-                                                <th class="text-center">Revise Completion Date</th>
+                                                <th class="text-center">Exp Completed</th>
+                                                <th class="text-center">Rev Completion Date</th>
+                                                <th class="text-center">Days Remaining</th>
+                                                <th class="text-center">Days Late</th>
                                                 <th class="text-center">WBS Number</th>
                                                 <th class="text-center">CIP Number</th>
                                                 <th class="text-center">Created_at</th>
@@ -122,7 +125,18 @@
                                     {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                                     {data: 'id_capex', name: 'id_capex', className: 'text-center'},
                                     {data: 'project_desc', name: 'project_desc', className: 'text-start'},
-                                    {data: 'wbs_capex', name: 'wbs_capex', className: 'text-start'},
+                                    {data: 'wbs_capex', name: 'wbs_capex', className: 'text-start',
+                                    render: function(data, type, row) {
+                                        if (type === 'display') {
+                                            if (data === 'Project') {
+                                                return '<span class="badge bg-info">Project</span>';
+                                            } else if (data === 'Non Project') {
+                                                return '<span class="badge bg-warning">Non Project</span>';
+                                            }
+                                            return data; // Untuk nilai lain tampilkan apa adanya
+                                        }
+                                        return data;
+                                    }},
                                     {data: 'remark', name: 'remark', className: 'text-start'},
                                     {data: 'request_number', name: 'request_number', className: 'text-right', render: function(data, type, row) {
                                         return '<div style="text-align: right;">' + data + '</div>';
@@ -139,21 +153,62 @@
                                     {data: 'budget_cos', name: 'budget_cos', className: 'text-right', 
                                     render: function(data, type) {
                                         if (type === 'display') {
+                                            // Cek jika data kosong
+                                            if (data === null || data === "" || isNaN(data)) {
+                                                return null; 
+                                            }
+                                            return '<span>' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</span>';
+                                        }
+                                        return data;
+                                    }},
+                                    {data: 'total_budget', name: 'total_budget', className: 'text-right', 
+                                    render: function(data, type) {
+                                        if (type === 'display') {
                                             return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                         }
                                         return data;
                                     }},
                                     {data: 'PO_release', name: 'PO_release', className: 'text-right',   render: function(data, type) {
                                         if (type === 'display') {
+                                            if(data === null || data ==="" || isNaN(data)){
+                                                return '-';
+                                            }
                                             return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</div>';
                                         }
                                         return data;
                                     }},
-                                    {data: 'status_capex', name: 'status_capex', className: 'text-start'},
+                                    {data: 'status_capex', name: 'status_capex', className: 'text-start',
+                                    render: function(data, type, row) {
+                                        if (type === 'display') {
+                                            if (data === 'Canceled') {
+                                                return '<span class="badge bg-danger">Canceled</span>';
+                                            } else if (data === 'Close') {
+                                                return '<span class="badge bg-secondary">Close</span>';
+                                            } else if (data === 'On Progress') {
+                                                return '<span class="badge bg-success">On Progress</span>';
+                                            } else if (data === 'To Opex') {
+                                                return '<span class="badge bg-info">To Opex</span>';
+                                            }
+                                            return data; // Untuk nilai lain tampilkan apa adanya
+                                        }
+                                        return data;
+                                    }},
                                     {data: 'budget_type', name: 'budget_type', className: 'text-center'},
-                                    {data: 'startup', name: 'startup', className: 'text-center'},
-                                    {data: 'expected_completed', name: 'expected_completed', className: 'text-center'},
-                                    {data: 'revise_completion_date', name: 'revise_completion_date', className: 'text-center'},
+                                    {data: 'startup', name: 'startup', className: 'text-center',
+                                    render: function(data) {
+                                            return moment(data).format('DD-MM-YYYY'); 
+                                    }},
+                                    {data: 'expected_completed', name: 'expected_completed', className: 'text-center',
+                                    render: function(data) {
+                                            return moment(data).format('DD-MM-YYYY'); 
+                                    }},
+                                    {data: 'revise_completion_date', name: 'revise_completion_date', className: 'text-center',
+                                    render: function(data) {
+                                        if (!data) return '-';
+                                        return moment(data).isValid() ? moment(data).format('DD-MM-YYYY') : '-';
+                                    }},
+                                    {data: 'days_remaining', name: 'days_remaining', className: 'text-center'},
+                                    {data: 'days_late', name: 'days_late', className: 'text-center'},
                                     {data: 'wbs_number', name: 'wbs_number', className: 'text-center'},
                                     {data: 'cip_number', name: 'cip_number', className: 'text-center'},
                                     {
@@ -188,8 +243,6 @@
 
                                 table.ajax.reload(); // Reload DataTable
                             });
-
-
                 
                             $(document).on('click', '.delete-capex', function() {
                                 var capexId = $(this).data('id');
@@ -307,12 +360,14 @@
     /* Gaya untuk baris tabel */
     #capex-table tbody tr {
         transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
+        color: #2c2626;
     }   
 
     /* Gaya untuk sel tabel */
     #capex-table tbody td {
         padding: 10px; /* Padding untuk sel */
         border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+        color: #2c2626;
     }
 
     /* Hover effect untuk baris tabel */
@@ -348,6 +403,15 @@
 
     .dropdown {
         position: relative;
+    }
+    .badge {
+        font-size: 0.875rem;
+        
+    }
+    /* Memastikan alignment badge tetap rapi */
+    .text-start {
+        text-align: left !important;
+        padding: 8px;
     }
 
 </style>

@@ -24,8 +24,8 @@
                                     Select WBS Type
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="wbsCapexDropdown">
-                                    <li><a class="dropdown-item" href="#" data-value="project">Project</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="non_project">Non-Project</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Project">Project</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Non-Project">Non-Project</a></li>
                                 </ul>
                                 <input type="hidden" id="wbs_capex" name="wbs_capex" required>
                             </div>
@@ -69,10 +69,10 @@
                                     Select Status
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                                    <li><a class="dropdown-item" href="#" data-value="canceled">Canceled</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="close">Closed</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="on_progress">On Progress</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="to_opex">To Opex</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Canceled">Canceled</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Close">Closed</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="On Progress">On Progress</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="To Opex">To Opex</a></li>
                                 </ul>
                                 <input type="hidden" id="status_capex" name="status_capex" style="text-align: center;" required>
                             </div>
@@ -84,8 +84,8 @@
                                     Select Status Budget
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="budgetTypeDropdown">
-                                    <li><a class="dropdown-item" href="#" data-value="budgeted">Budgeted</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="unbudgeted">Unbudgeted</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Budgeted">Budgeted</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Unbudgeted">Unbudgeted</a></li>
                                 </ul>
                                 <input type="hidden" id="budget_type" name="budget_type" style="text-align: center;" required>
                             </div>
@@ -94,12 +94,12 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="startup" class="form-label font-weight-bold">Startup</label>
-                            <input type="month" class="form-control" id="startup" name="startup" required>
+                            <input type="date" class="form-control" id="startup" name="startup" required>
                         </div>
                     
                         <div class="col-md-6">
                             <label for="expected_completed" class="form-label font-weight-bold">Expected Completed</label>
-                            <input type="month" class="form-control" id="expected_completed" name="expected_completed" required>
+                            <input type="date" class="form-control" id="expected_completed" name="expected_completed" required>
                         </div>
                     </div>
                 </form>

@@ -19,11 +19,18 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="porelease" class="form-label font-weight-bold">PO Release (USD)</label>
-                            <input type="number" class="form-control column-input new-porelease" id="po_release"
-                                name="po_release" style="text-align: center;" required>
+                            <label for="getSAPData" class="form-label font-weight-bold">Get SAP Data</label>
+                            <button type="button" class="btn btn-primary w-100" id="getSAPData" name="getSAPData" style="text-align: center;">
+                                Get SAP Data
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-success d-none" role="alert" id="successAlert">
+                                <strong>Success!</strong> Data sudah berhasil diambil.
+                            </div>
                         </div>
                     </div>
+                    
                     <div class="modal-footer">
                         <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn bg-gradient-success">Submit</button>
@@ -134,4 +141,15 @@
             }
         });
     });
+</script>
+
+<script>
+    $(document).ready(function() {
+    $('#getSAPData').on('click', function() {
+        // Logika untuk mengambil data SAP bisa ditambahkan di sini
+
+        // Tampilkan alert
+        $('#successAlert').removeClass('d-none'); // Menampilkan alert setelah data berhasil diambil
+    });
+});
 </script>

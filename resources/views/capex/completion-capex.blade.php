@@ -1,5 +1,5 @@
 <div class="modal fade" id="completion-modal" tabindex="-1" aria-labelledby="completionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="completionModalLabel" style="color: white;">Revise Completion Date</h5>
@@ -14,7 +14,7 @@
                         id="new-completion-btn"
                         data-bs-toggle="modal"
                         data-bs-target="#new-completion-modal">
-                        <i class="fas fa-plus"></i> NEW REVISE COMPLETION DATE
+                        <i class="fas fa-plus"></i> NEW REV COMPLETION DATE
                     </button>
                 </div>
                 <div class="table-responsive p-0">
@@ -22,8 +22,6 @@
                         <thead>
                             <tr>
                                 <th align="center">Action</th>
-                                <th align="center">ID Capex Completion</th>
-                                <th align="center">ID Capex</th>
                                 <th align="center">Date</th>
                                 <th align="center">Created_at</th>
                                 <th align="center">Updated_at</th>
@@ -60,8 +58,6 @@
                 },
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
-                    { data: 'id_capex_completion', name: 'id_capex_completion', className: 'text-center' },
-                    { data: 'id_capex', name: 'id_capex', className: 'text-center' },
                     { data: 'date', name: 'date', className: 'text-center' },
                     {
                         data: 'created_at',

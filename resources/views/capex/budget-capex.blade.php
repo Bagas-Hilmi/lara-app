@@ -1,5 +1,5 @@
 <div class="modal fade" id="budget-modal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="budgetModalLabel" style="color: white;">Budget Details</h5>
@@ -22,8 +22,6 @@
                         <thead>
                             <tr>
                                 <th align="center">Action</th>
-                                <th align="center">ID Capex Budget</th>
-                                <th align="center">ID Capex</th>
                                 <th align="center">Description</th>
                                 <th align="center">Budget Cos</th>
                                 <th align="center">Created_at</th>
@@ -60,8 +58,6 @@
                 },
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
-                    { data: 'id_capex_budget', name: 'id_capex_budget', className: 'text-center'},
-                    { data: 'id_capex', name: 'id_capex', className: 'text-center'},
                     { data: 'description', name: 'description', className: 'text-center'},
                     { data: 'budget_cos', name: 'budget_cos', className: 'text-center'},
                     {

@@ -1,5 +1,5 @@
 <div class="modal fade" id="status-modal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="statusModalLabel" style="color: white;">Status Details</h5>
@@ -10,8 +10,6 @@
                     <table id="status-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                         <thead>
                             <tr>
-                                <th align="center">ID Capex Status</th>
-                                <th align="center">ID Capex</th>
                                 <th align="center">Status </th>
                                 <th align="center">Created At</th>
                                 <th align="center">Updated At</th>
@@ -43,8 +41,6 @@
                    data: { flag: 'status' }
                },
                columns: [
-                   { data: 'id_capex_status', name: 'id_capex_status', className: 'text-center'},
-                   { data: 'id_capex', name: 'id_capex', className: 'text-center'},
                    { data: 'status', name: 'status', className: 'text-center'},
                    {
                        data: 'created_at',

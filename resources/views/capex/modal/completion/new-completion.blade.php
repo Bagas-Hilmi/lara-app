@@ -14,7 +14,7 @@
                     <div class="mb-3 row">
                         <label for="date" class="form-label font-weight-bold">Date</label>
                         <div class="col">
-                            <input type="month" class="form-control" id="date" name="date"
+                            <input type="date" class="form-control" id="date" name="date"
                                 style="text-align: center;" required>
                         </div>
                     </div>
