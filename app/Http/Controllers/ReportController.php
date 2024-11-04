@@ -67,7 +67,9 @@ class ReportController extends Controller
             $pdf = PDF::loadView('report.pdf-filtered', [
                 'reports' => $reports,
                 'capexData' => $capexData,
-                'totals' => $totals 
+                'totals' => $totals,
+                'signature_name' => $request->input('signature_name', '-') // Ambil nama tanda tangan
+ 
             ]);
 
             $fileName = 'report-capex';

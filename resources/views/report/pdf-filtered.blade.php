@@ -9,8 +9,8 @@
 <body>
 
     <div class="page-header">
-        <h1>PT. Ecogreen Oleochemicals - Batam Plant</h1>
-        <h2>CAPITAL EXPENDITURE</h2>
+        <h2>PT. Ecogreen Oleochemicals - Batam Plant</h2>
+        <h3>CAPITAL EXPENDITURE</h3>
     </div>
     {{-- Header Info --}}
     <div class="header-info">
@@ -23,14 +23,13 @@
             <div>{{ $capexData->capex_number ?? '-' }}</div>
         </div>
         <div class="info-box">
-            <div class="info-box-label">SAP Asset No (CIP) :</div>
+            <div class="info-box-label">SAP Asset No (CIP):</div>
             <div>{{ $capexData->cip_number ?? '-' }}</div>
         </div>
         <div class="info-box">
             <div class="info-box-label">WBS Number:</div>
             <div>{{ $capexData->wbs_number ?? '-' }}</div>
         </div>
-       
         <div class="info-box">
             <div class="info-box-label">Budget Type:</div>
             <div>{{ $capexData->budget_type ?? '-' }}</div>
@@ -40,6 +39,7 @@
             <div>{{ number_format($capexData->amount_budget ?? 0, 0, ',', '.') }}</div>
         </div>
     </div>
+    
 
     {{-- Table --}}
     <table>
@@ -97,7 +97,7 @@
 
     <div class="signature-section">
         <p>Acknowledged by</p>
-        <p class="spacing">{{ $capexData->requester ?? '-' }}</p>
+        <p class="spacing">{{ $signature_name }}</p>    
     </div>
     
 </body>
@@ -110,12 +110,19 @@
     }
     .header-info {
         margin-bottom: 20px;
+        display: flex; /* Menggunakan Flexbox untuk tata letak horizontal */
+        flex-wrap: wrap; /* Membungkus jika ada elemen yang tidak muat dalam satu baris */
+        gap: 20px; /* Jarak antar elemen */
     }
+
     .info-box {
-        margin-bottom: 10px;
+        display: flex; /* Mengatur elemen info-box dalam satu baris */
+        margin-bottom: 0; /* Menghapus margin bawah agar lebih rapi */
     }
+
     .info-box-label {
         font-weight: bold;
+        margin-right: 10px; /* Jarak antara label dan nilai */
     }
     table {
         width: 100%;

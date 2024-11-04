@@ -27,10 +27,11 @@
                                             <span id="descriptionText">Pilih Capex </span> <!-- Placeholder -->
                                         </button>
                                         
-                                        {{-- Download berdasarkan filter --}}
+                                       <!-- Button to open the modal -->
                                         <button onclick="downloadFilteredPDF()" class="btn btn-secondary" style="background-color: #bd1f20;">
                                             <i class="fas fa-file-pdf"></i> Download PDF
                                         </button>
+
 
                                         <ul class="dropdown-menu" aria-labelledby="descriptionDropdown">
                                             <li><a class="dropdown-item" href="#" data-value="">Pilih Capex </a></li>
@@ -120,6 +121,7 @@
                 <x-footers.auth></x-footers.auth>
             </div>
 
+            @include('report.new-report')
 
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -414,9 +416,8 @@
                         //download pdf
                         $(document).ready(function() {
                             window.downloadFilteredPDF = function() {
-                                // Ambil capex_id dari tombol dropdown yang aktif
-                                const selectedCapexId = $('#descriptionText').attr('data-capex-id'); // tambahkan atribut ini saat memilih dari dropdown
-                                
+                                const selectedCapexId = $('#descriptionText').attr('data-capex-id'); // Ambil capex_id
+
                                 // Cek apakah capex_id sudah dipilih
                                 if (!selectedCapexId) {
                                     Swal.fire({
@@ -428,11 +429,38 @@
                                     return; 
                                 }
 
-                                // Jika sudah ada yang dipilih, lanjutkan dengan membuka PDF
-                                const url = `{{ route('report.pdf.filtered') }}?capex_id=${selectedCapexId}`;
+                                // Tampilkan modal untuk memasukkan nama
+                                $('#signatureModal').modal('show');
+                            };
+
+                            // Fungsi untuk memproses download
+                            window.proceedWithDownload = function() {
+                                const signatureName = $('#signatureName').val();
+
+                                if (!signatureName) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Nama Tanda Tangan Kosong',
+                                        text: 'Silakan masukkan nama tanda tangan sebelum melanjutkan.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    return;
+                                }
+
+                                const selectedCapexId = $('#descriptionText').attr('data-capex-id');
+                                const url = `{{ route('report.pdf.filtered') }}?capex_id=${selectedCapexId}&signature_name=${encodeURIComponent(signatureName)}`;
+
+                                // Tutup modal
+                                $('#signatureModal').modal('hide');
+
+                                // Reset form
+                                $('#signatureForm')[0].reset();
+
+                                // Buka PDF di tab baru
                                 window.open(url, '_blank');
                             };
                         });
+
                     });
                 </script>
             @endpush
