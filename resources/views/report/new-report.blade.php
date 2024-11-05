@@ -12,6 +12,12 @@
                         <input type="text" class="form-control" id="signatureName" required>
                     </div>
                 </form>
+                <form id="confirmedForm">
+                    <div class="form-group">
+                        <label for="confirmedName">Name Confirmed</label>
+                        <input type="text" class="form-control" id="confirmedName" required>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

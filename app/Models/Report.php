@@ -43,14 +43,14 @@ class Report extends Model
                 't_master_capex.project_desc',
                 't_master_capex.budget_type',
                 't_master_capex.amount_budget',
-                't_master_capex.requester'
+                't_master_capex.wbs_capex'
             )
             ->distinct('id_capex')
             ->where('t_report_cip.status', 1) // Anda bisa tambahkan kondisi di sini sesuai kebutuhan
+            ->where('t_master_capex.status', 1) // Tambahkan kondisi status pada t_master_capex
+
             ->get();
     }
-
-
 
 
     public static function get_dtReportCip()
@@ -72,7 +72,7 @@ class Report extends Model
                 'created_at',
                 'updated_at'
             ])
-            ->orderBy('created_at', 'asc') // Urutan berdasarkan created_at, dengan ascending order
+            ->orderBy('date', 'asc') // Urutan berdasarkan created_at, dengan ascending order
             ->get();
     }
 

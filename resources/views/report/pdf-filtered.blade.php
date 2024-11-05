@@ -2,44 +2,38 @@
 <html>
 
 <head>
-    <title>Report Capex</title>
-    
+    <div class="page-header">
+        <h3>PT. Ecogreen Oleochemicals - Batam Plant</h3>
+    </div>    
 </head>
 
 <body>
-
-    <div class="page-header">
-        <h2>PT. Ecogreen Oleochemicals - Batam Plant</h2>
-        <h3>CAPITAL EXPENDITURE</h3>
-    </div>
     {{-- Header Info --}}
-    <div class="header-info">
-        <div class="info-box">
-            <div class="info-box-label">Project Description:</div>
-            <div>{{ $capexData->project_desc ?? '-' }}</div>
-        </div>
-        <div class="info-box">
-            <div class="info-box-label">Capex Number:</div>
-            <div>{{ $capexData->capex_number ?? '-' }}</div>
-        </div>
-        <div class="info-box">
-            <div class="info-box-label">SAP Asset No (CIP):</div>
-            <div>{{ $capexData->cip_number ?? '-' }}</div>
-        </div>
-        <div class="info-box">
-            <div class="info-box-label">WBS Number:</div>
-            <div>{{ $capexData->wbs_number ?? '-' }}</div>
-        </div>
-        <div class="info-box">
-            <div class="info-box-label">Budget Type:</div>
-            <div>{{ $capexData->budget_type ?? '-' }}</div>
-        </div>
-        <div class="info-box">
-            <div class="info-box-label">Amount Budget:</div>
-            <div>{{ number_format($capexData->amount_budget ?? 0, 0, ',', '.') }}</div>
-        </div>
+    <div class="header-section">
+        <div class="title">CAPITAL EXPENDITURE</div>
+        <table class="info-table">
+            <tr>
+                <td width="33%"><strong>Project Description:<strong></td>
+                <td width="33%"><strong>Capex Number:<strong></td>
+                <td width="33%"><strong>SAP Asset No (CIP):<strong></td>
+            </tr>
+            <tr>
+                <td>{{ $capexData->project_desc ?? '-' }}</td>
+                <td>{{ $capexData->capex_number ?? '-' }}</td>
+                <td>{{ $capexData->cip_number ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td><b>Number:<b></td>
+                <td><b>Budget Type:<b></td>
+                <td><b>Amount Budget:<b></td>
+            </tr>
+            <tr>
+                <td>{{ $capexData->wbs_number ?? '-' }}</td>
+                <td>{{ $capexData->budget_type ?? '-' }}</td>
+                <td>Rp {{ number_format($capexData->amount_budget ?? 0, 0, ',', '.') }}</td>
+            </tr>
+        </table>
     </div>
-    
 
     {{-- Table --}}
     <table>
@@ -47,10 +41,10 @@
             <tr>
                 <th>NO</th>
                 <th>FA Doc</th>
-                <th>Date</th>
+                <th style="width: 50px;">Date</th>
                 <th>Settle Doc</th>
                 <th>Material</th>
-                <th>Description</th>
+                <th style="width: 250px;">Description</th> 
                 <th>QTY</th>
                 <th>UOM</th>
                 <th>Amount (Rp)</th>
@@ -62,7 +56,7 @@
                 <tr>
                     <td class="text-right">{{ $index + 1 }}</td>
                     <td class="text-right">{{ $report->fa_doc }}</td>
-                    <td class="text-center">{{ $report->date }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($report->date)->format('d/m/Y') }}</td>
                     <td class="text-right">{{ $report->settle_doc }}</td>
                     <td class="text-right">{{ $report->material }}</td>
                     <td class="text-start">{{ $report->description }}</td>
@@ -92,13 +86,24 @@
             return number_format($number, $decimals, ',', '.');
         }
         @endphp
-                
+
+        @php
+        $sortedReports = $reports->sortBy('date');
+        @endphp
+                        
     </table>
 
-    <div class="signature-section">
-        <p>Acknowledged by</p>
-        <p class="spacing">{{ $signature_name }}</p>    
-    </div>
+        @if($wbs_capex !== "Non Project" && $confirmed_name)
+            <div class="signature-section-text">
+                <p>Confirmed By</p>
+                <p class="spacing">{{ $confirmed_name }}</p>    
+            </div>
+        @endif
+    
+        <div class="signature-section">
+            <p>Acknowledged by</p>
+            <p class="spacing">{{ $signature_name }}</p>    
+        </div>
     
 </body>
 
@@ -106,24 +111,33 @@
 <style>
     body {
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
-        font-size: 12px;
+        font-size: 8px;
     }
-    .header-info {
+    .header-section {
+        width: 100%;
         margin-bottom: 20px;
-        display: flex; /* Menggunakan Flexbox untuk tata letak horizontal */
-        flex-wrap: wrap; /* Membungkus jika ada elemen yang tidak muat dalam satu baris */
-        gap: 20px; /* Jarak antar elemen */
     }
 
-    .info-box {
-        display: flex; /* Mengatur elemen info-box dalam satu baris */
-        margin-bottom: 0; /* Menghapus margin bawah agar lebih rapi */
-    }
-
-    .info-box-label {
+    .title {
+        font-size: 9pt;
         font-weight: bold;
-        margin-right: 10px; /* Jarak antara label dan nilai */
+        margin-bottom: 10px;
     }
+
+    .info-table {
+        width: 100%;
+        border-collapse: collapse; /* Menghilangkan jarak antara border */
+        border-spacing: 0; /* Menghilangkan jarak antar sel */
+    }
+
+    .info-table td {
+        font-size: 9pt;
+        padding: 2px 5px;
+        vertical-align: top;
+        border: none; /* Menghilangkan border pada setiap sel */
+
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
@@ -132,8 +146,8 @@
     th,
     td {
         border: 1px solid #000;
-        padding-top: 10px; /* Jarak atas */
-        padding-bottom: 15px; /* Jarak bawah */
+        padding-top: 5px; /* Jarak atas */
+        padding-bottom: 5px; /* Jarak bawah */
         padding-left: 5px; /* Jarak kiri */
         padding-right: 5px; /* Jarak kanan */
         font-size: 10px;
@@ -143,7 +157,6 @@
         font-weight: bold;
         text-align: center;
     }
-
     
     .text-right {
         text-align: right;
@@ -160,12 +173,13 @@
         text-align: center;
         margin-top: 20px; /* Jarak dari tabel */
         float: right; /* Mengapung ke kanan */
+        font-size: 9pt
     }
-
-    .signature-line {
-        width: 150px;
-        border-bottom: 1px solid #000;
-        margin: 15px 0 25px 0; /* Jarak atas dan bawah dari garis */
+    .signature-section-text {
+        text-align: center;
+        margin-top: 20px; /* Jarak dari tabel */
+        float: left; 
+        font-size: 9pt
     }
 
     .spacing {

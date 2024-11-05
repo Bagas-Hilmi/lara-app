@@ -44,14 +44,15 @@
                                                         data-project_desc="{{ $desc->project_desc }}"
                                                         data-budget_type="{{ $desc->budget_type }}"
                                                         data-amount_budget="{{ $desc->amount_budget }}"
-                                                        data-requester="{{ $desc->requester }}">
+                                                        data-wbs_capex="{{ $desc->wbs_capex }}">
                                                         {{ $desc->capex_number }}
                                                         <!-- Kolom capex_number yang ditampilkan -->
                                                     </a>
                                                 </li>
                                             @endforeach
                                         </ul>
-
+                                        
+                                        {{-- isi dari box container --}}
                                         <div class="info-box-container">
                                             <div class="info-box">
                                                 <div class="info-box-label">CIP Number</div>
@@ -77,7 +78,7 @@
                                                 <div class="info-box-label">Amount Budget</div>
                                                 <div class="info-box-value" id="amountText">-</div>
                                             </div>
-                                            <input type="hidden" id="requesterText">
+                                            <input type="hidden" id="wbscapexText">    
                                         </div>
 
                                     </div>
@@ -145,7 +146,7 @@
                             processing: true,
                             serverSide: true,
                             order: [
-                                [1, 'desc']
+                                [4, 'asc']
                             ],
                             ajax: {
                                 url: "{{ route('report.index') }}",
@@ -178,8 +179,13 @@
                                 {
                                     data: 'date',
                                     name: 'date',
-                                    className: 'text-right'
-                                },
+                                    className: 'text-right',
+                                    render: function(data, type, row) {
+                                    if (type === 'sort' || type === 'filter') {
+                                        return data;
+                                    }
+                                    return moment(data).format('DD/MM/YYYY');
+                                }},
                                 {
                                     data: 'settle_doc',
                                     name: 'settle_doc',
@@ -307,6 +313,7 @@
                         function formatNumber(num) {
                             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Memformat angka dengan titik
                         }
+
                         // Ambil semua item dropdown
                         const dropdownItems = document.querySelectorAll('.dropdown-item');
                         dropdownItems.forEach(item => {
@@ -320,20 +327,22 @@
                                 const wbsNumber = this.getAttribute('data-wbs');
                                 const project = this.getAttribute('data-project_desc');
                                 const budget = this.getAttribute('data-budget_type');
-                                const requester = this.getAttribute('data-requester');
                                 const amount = this.getAttribute('data-amount_budget');
+                                const wbsCapex = this.getAttribute('data-wbs_capex');
 
                               // Perbarui teks dan data pada tombol dropdown
                                 const descriptionText = document.getElementById('descriptionText');
                                 descriptionText.textContent = text;
                                 descriptionText.setAttribute('data-capex-id', value); // Tambahkan ini
+                                descriptionText.setAttribute('data-wbs-capex', wbsCapex); // Tambahkan atribut wbs_capex
+
 
                                 // Mengubah teks pada tombol cip dan wbs
                                 document.getElementById('cipText').innerText = cipNumber ? cipNumber :'CIP Number';
                                 document.getElementById('wbsText').innerText = wbsNumber ? wbsNumber :'WBS Number';
                                 document.getElementById('projectText').innerText = project ? project :'Project';
                                 document.getElementById('budgetText').innerText = budget ? budget : 'Budget';
-                                document.getElementById('requesterText').innerText = requester ? requester : 'Requester';
+                                document.getElementById('wbscapexText').innerText = wbsCapex ? wbsCapex : 'WBS Capex';
                                 document.getElementById('amountText').innerText = amount ? formatNumber(amount) : 'Amount'; // Format amount budget
                                 // Mengatur filter DataTable berdasarkan value
                                 table.column(1).search(value).draw(); // Ganti 0 dengan indeks kolom yang sesuai
@@ -416,8 +425,8 @@
                         //download pdf
                         $(document).ready(function() {
                             window.downloadFilteredPDF = function() {
-                                const selectedCapexId = $('#descriptionText').attr('data-capex-id'); // Ambil capex_id
-
+                                const selectedCapexId = $('#descriptionText').attr('data-capex-id');
+                                
                                 // Cek apakah capex_id sudah dipilih
                                 if (!selectedCapexId) {
                                     Swal.fire({
@@ -426,17 +435,32 @@
                                         text: 'Silakan pilih Capex terlebih dahulu sebelum mengunduh PDF.',
                                         confirmButtonText: 'OK'
                                     });
-                                    return; 
+                                    return;
                                 }
-
-                                // Tampilkan modal untuk memasukkan nama
+                                
+                                // Cek WBS Capex sebelum menampilkan modal
+                                const wbsCapex = $('#descriptionText').attr('data-wbs-capex');
+                                if (wbsCapex === "Non Project") {
+                                    $('#confirmedForm').hide();
+                                } else {
+                                    $('#confirmedForm').show();
+                                }
+                                
+                                // Reset form sebelum menampilkan modal
+                                $('#signatureForm')[0].reset();
+                                $('#confirmedForm')[0].reset();
+                                
+                                // Tampilkan modal
                                 $('#signatureModal').modal('show');
                             };
 
                             // Fungsi untuk memproses download
                             window.proceedWithDownload = function() {
                                 const signatureName = $('#signatureName').val();
-
+                                const wbsCapex = $('#descriptionText').attr('data-wbs-capex');
+                                const selectedCapexId = $('#descriptionText').attr('data-capex-id');
+                                
+                                // Validasi signature name
                                 if (!signatureName) {
                                     Swal.fire({
                                         icon: 'warning',
@@ -447,20 +471,47 @@
                                     return;
                                 }
 
-                                const selectedCapexId = $('#descriptionText').attr('data-capex-id');
-                                const url = `{{ route('report.pdf.filtered') }}?capex_id=${selectedCapexId}&signature_name=${encodeURIComponent(signatureName)}`;
+                                // Validasi confirmed name hanya jika bukan Non Project
+                                const confirmedName = $('#confirmedName').val();
+                                if (wbsCapex !== "Non Project" && !confirmedName) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Nama Konfirmasi Kosong',
+                                        text: 'Silakan masukkan nama konfirmasi sebelum melanjutkan.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    return;
+                                }
+
+                                // Buat URL untuk download
+                                let url = `{{ route('report.pdf.filtered') }}?capex_id=${selectedCapexId}&signature_name=${encodeURIComponent(signatureName)}`;
+                                
+                                // Tambahkan confirmed_name ke URL hanya jika bukan Non Project
+                                if (wbsCapex !== "Non Project") {
+                                    url += `&confirmed_name=${encodeURIComponent(confirmedName)}`;
+                                }
 
                                 // Tutup modal
                                 $('#signatureModal').modal('hide');
 
                                 // Reset form
                                 $('#signatureForm')[0].reset();
+                                $('#confirmedForm')[0].reset();
 
                                 // Buka PDF di tab baru
                                 window.open(url, '_blank');
                             };
-                        });
 
+                            // Event listener untuk modal show
+                            $('#signatureModal').on('show.bs.modal', function() {
+                                const wbsCapex = $('#descriptionText').attr('data-wbs-capex');
+                                if (wbsCapex === "Non Project") {
+                                    $('#confirmedForm').hide();
+                                } else {
+                                    $('#confirmedForm').show();
+                                }
+                            });
+                        });
                     });
                 </script>
             @endpush

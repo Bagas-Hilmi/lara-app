@@ -71,7 +71,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
-                        order: [[1, 'desc']],
+                        order: [[3, 'desc']],
                         ajax: {
                             url: "{{ route('faglb.index') }}",
                             type: "GET",
