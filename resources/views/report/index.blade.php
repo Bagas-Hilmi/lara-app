@@ -26,6 +26,10 @@
                                             aria-expanded="false">
                                             <span id="descriptionText">Pilih Capex </span> <!-- Placeholder -->
                                         </button>
+
+                                        <button class="btn btn-secondary" style="background-color: #09170a; border-color: #09170a;">
+                                            <span id="wbscapexText">WBS Type</span> 
+                                        </button>
                                         
                                        <!-- Button to open the modal -->
                                         <button onclick="downloadFilteredPDF()" class="btn btn-secondary" style="background-color: #bd1f20;">
@@ -78,7 +82,6 @@
                                                 <div class="info-box-label">Amount Budget</div>
                                                 <div class="info-box-value" id="amountText">-</div>
                                             </div>
-                                            <input type="hidden" id="wbscapexText">    
                                         </div>
 
                                     </div>
@@ -484,11 +487,12 @@
                                 }
 
                                 // Buat URL untuk download
-                                let url = `{{ route('report.pdf.filtered') }}?capex_id=${selectedCapexId}&signature_name=${encodeURIComponent(signatureName)}`;
+                                let url = `{{ route('report.show', ':id') }}?pdf=filtered&capex_id=${selectedCapexId}&signature_name=${encodeURIComponent(signatureName)}`;
                                 
                                 // Tambahkan confirmed_name ke URL hanya jika bukan Non Project
                                 if (wbsCapex !== "Non Project") {
                                     url += `&confirmed_name=${encodeURIComponent(confirmedName)}`;
+                                    
                                 }
 
                                 // Tutup modal

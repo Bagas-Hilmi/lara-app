@@ -348,13 +348,20 @@
         }
     }
     
-    .rounded-table {
-        border-radius: 12px; /* Adjust the radius as needed */
-        overflow: hidden; /* Ensures child elements respect the border radius */
+    .rounded-table { 
+        border-radius: 12px; 
+        overflow: visible ; /* Untuk dropdown */
+    }
+
+    .table-responsive {
+        overflow-y: hidden !important; /* Menghilangkan scrollbar vertikal */
+        overflow-x: auto !important; /* Tetap bisa scroll horizontal jika perlu */
     }
     .rounded-table th,
     .rounded-table td {
         border: none; /* Remove default borders to maintain rounded appearance */
+        overflow: visible !important; /* Diubah dari hidden ke visible */
+
     }
 
     #capex-table thead th {

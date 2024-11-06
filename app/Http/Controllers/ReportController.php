@@ -111,9 +111,17 @@ class ReportController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        // Cek apakah parameter pdf=filtered ada
+        if (request()->query('pdf') === 'filtered') {
+            return $this->downloadFilteredPDF(request());
+        }
+
+        // Jika tidak ada parameter 'pdf=filtered', tampilkan detail report biasa
+        $report = Report::findOrFail($id);
+
+        return view('reports.show', compact('report'));
     }
 
     /**

@@ -1,4 +1,4 @@
-<div class="dropdown">
+<div class="dropdown dropdown-1">
     <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="actionDropdown_{{ $row->id }}" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-cog me-1"></i> Actions
     </button>
@@ -71,4 +71,3 @@
         </li>
     </ul>
 </div>
-
