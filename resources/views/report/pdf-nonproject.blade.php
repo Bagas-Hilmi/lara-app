@@ -93,10 +93,15 @@
                         
     </table>
 
-    <div class="signature-section">
-        <p>Acknowledged by</p>
-        <p class="spacing">{{ $capexData->requester ?? '-' }}</p>
-    </div>
+            <div class="signature-section-text">
+                <p>Confirmed By</p>
+                <p class="spacing">{{  }}</p>    
+            </div>
+    
+        <div class="signature-section">
+            <p>Acknowledged by</p>
+            <p class="spacing">{{$capexData->requester }}</p>    
+        </div>
     
 </body>
 

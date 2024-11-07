@@ -32,10 +32,9 @@
                                         </button>
                                         
                                        <!-- Button to open the modal -->
-                                        <button onclick="downloadFilteredPDF()" class="btn btn-secondary" style="background-color: #bd1f20;">
-                                            <i class="fas fa-file-pdf"></i> Download PDF
+                                       <button onclick="downloadFilteredPDF()" class="btn btn-secondary" style="background-color: #bd1f20;">
+                                        <i class="fas fa-file-pdf"></i> Download PDF
                                         </button>
-
 
                                         <ul class="dropdown-menu" aria-labelledby="descriptionDropdown">
                                             <li><a class="dropdown-item" href="#" data-value="">Pilih Capex </a></li>
@@ -48,7 +47,8 @@
                                                         data-project_desc="{{ $desc->project_desc }}"
                                                         data-budget_type="{{ $desc->budget_type }}"
                                                         data-amount_budget="{{ $desc->amount_budget }}"
-                                                        data-wbs_capex="{{ $desc->wbs_capex }}">
+                                                        data-wbs_capex="{{ $desc->wbs_capex }}"
+                                                        data-requester="{{ $desc->requester }}">
                                                         {{ $desc->capex_number }}
                                                         <!-- Kolom capex_number yang ditampilkan -->
                                                     </a>
@@ -83,7 +83,7 @@
                                                 <div class="info-box-value" id="amountText">-</div>
                                             </div>
                                         </div>
-
+                                        <input type="hidden" id="requesterText">
                                     </div>
                                 </div>
                                 <div class="table-responsive p-0">
@@ -124,8 +124,6 @@
                 </div>
                 <x-footers.auth></x-footers.auth>
             </div>
-
-            @include('report.new-report')
 
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -332,6 +330,7 @@
                                 const budget = this.getAttribute('data-budget_type');
                                 const amount = this.getAttribute('data-amount_budget');
                                 const wbsCapex = this.getAttribute('data-wbs_capex');
+                                const requester = this.getAttribute('data-requester');
 
                               // Perbarui teks dan data pada tombol dropdown
                                 const descriptionText = document.getElementById('descriptionText');
@@ -346,6 +345,7 @@
                                 document.getElementById('projectText').innerText = project ? project :'Project';
                                 document.getElementById('budgetText').innerText = budget ? budget : 'Budget';
                                 document.getElementById('wbscapexText').innerText = wbsCapex ? wbsCapex : 'WBS Capex';
+                                document.getElementById('requesterText').innerText = requester ? requester : 'Requester';
                                 document.getElementById('amountText').innerText = amount ? formatNumber(amount) : 'Amount'; // Format amount budget
                                 // Mengatur filter DataTable berdasarkan value
                                 table.column(1).search(value).draw(); // Ganti 0 dengan indeks kolom yang sesuai
@@ -428,7 +428,8 @@
                         //download pdf
                         $(document).ready(function() {
                             window.downloadFilteredPDF = function() {
-                                const selectedCapexId = $('#descriptionText').attr('data-capex-id');
+                                // Ambil capex_id dari tombol dropdown yang aktif
+                                const selectedCapexId = $('#descriptionText').attr('data-capex-id'); // tambahkan atribut ini saat memilih dari dropdown
                                 
                                 // Cek apakah capex_id sudah dipilih
                                 if (!selectedCapexId) {
@@ -438,83 +439,12 @@
                                         text: 'Silakan pilih Capex terlebih dahulu sebelum mengunduh PDF.',
                                         confirmButtonText: 'OK'
                                     });
-                                    return;
+                                    return; 
                                 }
-                                
-                                // Cek WBS Capex sebelum menampilkan modal
-                                const wbsCapex = $('#descriptionText').attr('data-wbs-capex');
-                                if (wbsCapex === "Non Project") {
-                                    $('#confirmedForm').hide();
-                                } else {
-                                    $('#confirmedForm').show();
-                                }
-                                
-                                // Reset form sebelum menampilkan modal
-                                $('#signatureForm')[0].reset();
-                                $('#confirmedForm')[0].reset();
-                                
-                                // Tampilkan modal
-                                $('#signatureModal').modal('show');
-                            };
-
-                            // Fungsi untuk memproses download
-                            window.proceedWithDownload = function() {
-                                const signatureName = $('#signatureName').val();
-                                const wbsCapex = $('#descriptionText').attr('data-wbs-capex');
-                                const selectedCapexId = $('#descriptionText').attr('data-capex-id');
-                                
-                                // Validasi signature name
-                                if (!signatureName) {
-                                    Swal.fire({
-                                        icon: 'warning',
-                                        title: 'Nama Tanda Tangan Kosong',
-                                        text: 'Silakan masukkan nama tanda tangan sebelum melanjutkan.',
-                                        confirmButtonText: 'OK'
-                                    });
-                                    return;
-                                }
-
-                                // Validasi confirmed name hanya jika bukan Non Project
-                                const confirmedName = $('#confirmedName').val();
-                                if (wbsCapex !== "Non Project" && !confirmedName) {
-                                    Swal.fire({
-                                        icon: 'warning',
-                                        title: 'Nama Konfirmasi Kosong',
-                                        text: 'Silakan masukkan nama konfirmasi sebelum melanjutkan.',
-                                        confirmButtonText: 'OK'
-                                    });
-                                    return;
-                                }
-
-                                // Buat URL untuk download
-                                let url = `{{ route('report.show', ':id') }}?pdf=filtered&capex_id=${selectedCapexId}&signature_name=${encodeURIComponent(signatureName)}`;
-                                
-                                // Tambahkan confirmed_name ke URL hanya jika bukan Non Project
-                                if (wbsCapex !== "Non Project") {
-                                    url += `&confirmed_name=${encodeURIComponent(confirmedName)}`;
-                                    
-                                }
-
-                                // Tutup modal
-                                $('#signatureModal').modal('hide');
-
-                                // Reset form
-                                $('#signatureForm')[0].reset();
-                                $('#confirmedForm')[0].reset();
-
-                                // Buka PDF di tab baru
+                                // Jika sudah ada yang dipilih, lanjutkan dengan membuka PDF
+                                const url = `{{ route('report.show', ':id') }}?pdf=filtered&capex_id=${selectedCapexId}`.replace(':id', selectedCapexId);
                                 window.open(url, '_blank');
                             };
-
-                            // Event listener untuk modal show
-                            $('#signatureModal').on('show.bs.modal', function() {
-                                const wbsCapex = $('#descriptionText').attr('data-wbs-capex');
-                                if (wbsCapex === "Non Project") {
-                                    $('#confirmedForm').hide();
-                                } else {
-                                    $('#confirmedForm').show();
-                                }
-                            });
                         });
                     });
                 </script>

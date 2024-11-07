@@ -11,8 +11,8 @@ use App\Models\CapexProgress;
 use App\Models\CapexPOrelease;
 use App\Models\CapexCompletion;
 use App\Models\CapexStatus;
-use App\Models\CapexPOcommitment;
 use Illuminate\Support\Facades\DB;
+use App\Models\CapexEngineer;
 use Illuminate\Support\Facades\Auth;
 
 class CapexController extends Controller
@@ -31,6 +31,7 @@ class CapexController extends Controller
         $totalBudget = Capex::getTotalBudget();
         $daysLate = Capex::getDaysLate();
         $daysRemaining = Capex::getDaysRemaining();
+
 
         if ($request->ajax()) {
             $status = $request->get('status', 1);
@@ -315,6 +316,21 @@ class CapexController extends Controller
                 'message' => 'Completion Date berhasil diperbarui!',
                 'data' => $completion
             ]);
+        } else if ($flag === 'add-engineer') {
+            // Validasi data input
+            $request->validate([
+                'nama' => 'required|string|max:50',
+            ]);
+
+            $engineer = CapexEngineer::addEngineer($request->all());
+
+
+            // Mengembalikan response sukses atau redirect
+            return response()->json([
+                'success' => true,
+                'message' => 'Description successfully added.',
+                'data' => $engineer,
+            ]);
         }
 
         return response()->json(['error' => 'Invalid flag specified.'], 400);
@@ -384,7 +400,6 @@ class CapexController extends Controller
 
             $status = $request->get('status', 1);
 
-
             $query = CapexCompletion::query()
                 ->where('id_capex', $id)
                 ->where('status', $status);
@@ -414,7 +429,15 @@ class CapexController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->make(true);
+        } else if ($flag === 'engineer') {
+
+            $query = CapexEngineer::query()
+                ->where('id_engineer', $id);
+
+            return DataTables::of($query)
+                ->make(true);
         }
+
 
         return response()->json(['error' => 'Flag tidak valid'], 400);
     }
