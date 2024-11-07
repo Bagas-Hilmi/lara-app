@@ -29,6 +29,11 @@
                                 <strong>Success!</strong> Data sudah berhasil diambil.
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <label for="porelease" class="form-label font-weight-bold">PO Release (USD)</label>
+                            <input type="number" class="form-control column-input new-porelease" id="po_release"
+                                name="po_release" style="text-align: center;" required>
+                        </div>
                     </div>
                     
                     <div class="modal-footer">

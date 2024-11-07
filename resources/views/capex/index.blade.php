@@ -15,7 +15,7 @@
                                 <h3 class="text-white text-capitalize ps-3">Master Capex</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="d-flex justify-content-between mb-2">
+                                <div class="d-flex mb-2">
                                     <!-- Tombol New Capex -->
                                     <button href="#" class="btn btn-sm btn-primary" 
                                         style="background-color: #09170a; border-color: #09170a;"  
@@ -23,7 +23,8 @@
                                         data-bs-target="#new-form">
                                         New capex
                                     </button>
-                                    <div class="dropdown">
+                                    
+                                    <div class="dropdown ms-2">
                                         <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span id="yearText"></span> <!-- Placeholder -->
                                         </button>
@@ -82,6 +83,7 @@
             @include('capex.porelease-capex')
             @include('capex.completion-capex')
             @include('capex.status-capex')
+            @include('capex.modal.view-commitment')
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -303,6 +305,71 @@
                                                 );
                                             }
                                         });
+                                    }
+                                });
+                            });
+                            let pocommitmentTable;
+
+                            $(document).ready(function() {
+                                // Inisialisasi variabel pocommitmentTable
+                                pocommitmentTable = null;
+
+                                // Event handler untuk menampilkan modal
+                                $('#viewPocommitmentModal').on('show.bs.modal', function (event) {
+                                    // Ambil elemen tombol yang diklik
+                                    var button = $(event.relatedTarget);
+
+                                    // Ambil nilai data-porelease-id dari tombol
+                                    var porelease_id = button.data('porelease-id');
+
+                                    // Hancurkan DataTable jika sudah ada
+                                    if (pocommitmentTable) {
+                                        pocommitmentTable.destroy();
+                                    }
+
+                                    // Inisialisasi DataTable baru
+                                    pocommitmentTable = $('#pocommitment-table').DataTable({
+                                        processing: true,
+                                        serverSide: true,
+                                        ajax: {
+                                            url: "{{ route('capex.show', ':id') }}".replace(':id', porelease_id), // Gunakan porelease_id di URL
+                                            data: function(d) {
+                                                d.flag = 'pocommitment';  // Flag untuk menentukan jenis data
+                                                d.id_porelease = porelease_id;  // Kirimkan porelease_id ke server
+                                                d.status = 1;  // Status yang diinginkan
+                                            }
+                                        },
+                                        columnDefs: [
+                                            {
+                                                targets: 0,
+                                                searchable: false,
+                                                orderable: false
+                                            }
+                                        ],
+                                        order: [[1, 'asc']],
+                                        columns: [
+                                            { data: 'doc_date', name: 'doc_date', className: 'text-center' , className: 'text-center'},
+                                            { data: 'wbs_object', name: 'wbs_object' , className: 'text-center'},
+                                            { data: 'cost_element', name: 'cost_element' , className: 'text-center'},
+                                            { data: 'purchasing_doc', name: 'purchasing_doc' , className: 'text-center'},
+                                            { data: 'reference_item', name: 'reference_item' , className: 'text-center'},
+                                            { data: 'no_material', name: 'no_material' , className: 'text-center'},
+                                            { data: 'material_desc', name: 'material_desc' , className: 'text-center'},
+                                            { data: 'qty', name: 'qty' , className: 'text-center'},
+                                            { data: 'uom', name: 'uom' , className: 'text-center'},
+                                            { data: 'valuein_obj', name: 'valuein_obj' , className: 'text-center'},
+                                            { data: 'obj_currency', name: 'obj_currency' , className: 'text-center'},
+                                            { data: 'value_trancurr', name: 'value_trancurr' , className: 'text-center'},
+                                            { data: 'tcurr', name: 'tcurr' }
+                                        ]
+                                    });
+                                });
+
+                                // Event handler untuk menutup modal
+                                $('#viewPocommitmentModal').on('hidden.bs.modal', function() {
+                                    // Hancurkan DataTable saat modal ditutup untuk membersihkan DataTable sebelumnya
+                                    if (pocommitmentTable) {
+                                        pocommitmentTable.destroy();
                                     }
                                 });
                             });

@@ -11,6 +11,7 @@ use App\Models\CapexProgress;
 use App\Models\CapexPOrelease;
 use App\Models\CapexCompletion;
 use App\Models\CapexStatus;
+use App\Models\CapexPOcommitment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +27,7 @@ class CapexController extends Controller
         }
 
         // Memanggil metode
-        $availableYears = Capex::getAvailableYears();  
+        $availableYears = Capex::getAvailableYears();
         $totalBudget = Capex::getTotalBudget();
         $daysLate = Capex::getDaysLate();
         $daysRemaining = Capex::getDaysRemaining();
@@ -73,7 +74,7 @@ class CapexController extends Controller
 
         // Mengambil nilai flag
         $flag = $request->input('flag');
-        
+
         // Menjalankan logika berdasarkan nilai flag
         if ($flag === 'add') {
             $validated = $request->validate([
@@ -400,6 +401,18 @@ class CapexController extends Controller
             $query = CapexStatus::query()->where('id_capex', $id);
 
             return DataTables::of($query)
+                ->make(true);
+        } else if ($flag === 'pocommitment') {
+
+            $id_porelease = $request->get('id_porelease');
+            $status = $request->get('status', 1);
+
+            $query = DB::table('t_capex_pocommitment_tail')
+                ->where('id_capex_porelease', $id_porelease)
+                ->where('status', $status);
+
+            return DataTables::of($query)
+                ->addIndexColumn()
                 ->make(true);
         }
 
