@@ -6,10 +6,9 @@
         data-capex-id="{{ $row->id_capex }}" 
         data-tanggal="{{ $row->tanggal }}"
         data-description="{{ $row->description }}"> 
-        <i class="fas fa-edit"></i> Edit
-    </button>
+        <i class="fas fa-edit"></i>
 
     <button type="button" class="btn bg-gradient-danger delete-progress-btn" data-id="{{ $row->id_capex_progress }}">
-        <i class="fas fa-trash-alt"></i> Delete
+        <i class="fas fa-trash-alt"></i>
     </button>
 </div>

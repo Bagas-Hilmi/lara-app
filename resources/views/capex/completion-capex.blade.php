@@ -19,7 +19,7 @@
                 </div>
                 <div class="table-responsive p-0">
                     <table id="completion-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
-                        <thead>
+                        <thead style="background-color: #3cb210; color: white;">
                             <tr>
                                 <th align="center">Action</th>
                                 <th align="center">Date</th>

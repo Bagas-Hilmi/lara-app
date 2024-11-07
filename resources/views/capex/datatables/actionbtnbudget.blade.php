@@ -6,11 +6,11 @@
         data-capex-id="{{ $row->id_capex }}" 
         data-description="{{ $row->description }}" 
         data-budget-cos="{{ $row->budget_cos }}">
-        <i class="fas fa-edit"></i> Edit
+        <i class="fas fa-edit"></i>
     </button>
 
     <button type="button" class="btn bg-gradient-danger delete-budget-btn" data-id="{{ $row->id_capex_budget }}">
-        <i class="fas fa-trash-alt"></i> Delete
+        <i class="fas fa-trash-alt"></i>
     </button>
     
 </div>

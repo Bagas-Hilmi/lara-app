@@ -5,10 +5,9 @@
         data-id="{{ $row->id_capex_completion }}" 
         data-capex-id="{{ $row->id_capex }}" 
         data-date="{{ $row->date }}"> 
-        <i class="fas fa-edit"></i> Edit
-    </button>
+        <i class="fas fa-edit"></i>
     
     <button type="button" class="btn bg-gradient-danger delete-completion-btn" data-id="{{ $row->id_capex_completion }}">
-        <i class="fas fa-trash-alt"></i> Delete
+        <i class="fas fa-trash-alt"></i>
     </button>
 </div>
