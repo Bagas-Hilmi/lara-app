@@ -92,7 +92,7 @@
             @include('capex.completion-capex')
             @include('capex.status-capex')
             @include('capex.modal.view-commitment')
-            @include('capex.modal.engineering-capex')
+            @include('capex.engineering-capex')
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>

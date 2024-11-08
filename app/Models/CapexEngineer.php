@@ -18,7 +18,7 @@ class CapexEngineer extends Model
     {
         $query = DB::table('t_capex_engineer')
             ->select([
-                'id_engineer',
+                'id_capex',
                 'nama',
                 'created_at',
                 'updated_at'
@@ -31,14 +31,14 @@ class CapexEngineer extends Model
     public static function addEngineer($data)
     {
         // Masukkan data completion baru ke dalam tabel menggunakan query builder
-        $completionId = DB::table('t_capex_engineer')->insertGetId([
-            'id_engineeer' => $data['id_engineer'],
+        $engineerId = DB::table('t_capex_engineer')->insertGetId([
+            'id_capex' => $data['id_capex'],
             'nama' => $data['nama'],
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         // Mengembalikan data completion yang baru ditambahkan
-        return DB::table('t_capex_engineer')->where('id_engineer', $completionId)->first();
+        return DB::table('t_capex_engineer')->where('id_engineer', $engineerId)->first();
     }
 }

@@ -9,14 +9,13 @@
                 <i class="fas fa-trash-alt" style="font-size: 1rem;"></i>
             </button>
     @endif
-        <button href="{{ route('faglb.show', ['faglb' => $row, 'flag' => 'show_faglb']) }}"
-            class="btn bg-gradient-info btn-sm action-btn">
-            <i class="fas fa-eye" style="font-size: 1rem;"></i> FAGLB
-        </button>
-        <button href="{{ route('faglb.show', ['faglb' => $row, 'flag' => 'show_zlis1']) }}"
-            class="btn bg-gradient-info btn-sm action-btn">
-            <i class="fas fa-eye" style="font-size: 1rem;"></i> ZLIS1
-        </button>
+            <button onclick="window.location.href='{{ route('faglb.show', ['faglb' => $row, 'flag' => 'show_faglb']) }}'"
+                    class="btn bg-gradient-info btn-sm action-btn">
+                <i class="fas fa-eye" style="font-size: 1rem;"></i> FAGLB
+            </button>
+
+            <button onclick="window.location.href='{{ route('faglb.show', ['faglb' => $row, 'flag' => 'show_zlis1']) }}'"
+                class="btn bg-gradient-info btn-sm action-btn">
+                <i class="fas fa-eye" style="font-size: 1rem;"></i> ZLIS1
+            </button>
 </div>
-
-

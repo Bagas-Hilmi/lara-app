@@ -31,6 +31,7 @@ class CapexController extends Controller
         $totalBudget = Capex::getTotalBudget();
         $daysLate = Capex::getDaysLate();
         $daysRemaining = Capex::getDaysRemaining();
+        $capexId = $request->get('id_capex', 17); // Atau cara lain untuk mendapatkan id_capex yang diinginkan
 
 
         if ($request->ajax()) {
@@ -55,6 +56,8 @@ class CapexController extends Controller
             'totalBudget' => $totalBudget,
             'daysLate' => $daysLate,
             'daysRemaining' => $daysRemaining,
+            'capexId' => $capexId,  // Pastikan id_capex diteruskan ke view
+
         ]);
     }
 
@@ -430,12 +433,11 @@ class CapexController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         } else if ($flag === 'engineer') {
+            $engineers = CapexEngineer::where('id_capex', $id)->get();
 
-            $query = CapexEngineer::query()
-                ->where('id_engineer', $id);
-
-            return DataTables::of($query)
-                ->make(true);
+            // Mengembalikan data engineer sebagai response dalam format DataTables
+            return DataTables::of($engineers)
+                ->make(true);  
         }
 
 
@@ -531,4 +533,37 @@ class CapexController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);
     }
+
+    // public function getDataFromSAP($flag=null, $soNo=null, $soltem=null, $batchNo=null)
+    // {
+    //     if ($flag == 'ZFM_EUDR_SHIPMENT' ){ 
+    //         $sapClient - 'Client-PRD-300'; 
+    //         $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?'; 
+    //         $sapFm = '&FM=' .$flag; 
+    //         $input_1 = '&SO_NUM=' .$soNo; 
+    //         $input_2 = '&SO_ITEM=' .$soItem; 
+    //         $input_3 = '&BATCH=' .$batchNo; 
+    //         $eobUrl = $sapReqUrl.$sapClient.$sapFm.$input_1.$input_2-$input_3; 
+    //     } 
+    //     $ch = curl_init ($eobUrl); 
+    //     // Set CURL options 
+    //     curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true); 
+    //     // Execute CURL request 
+    //     $response - curl_exec ($ch); 
+    //     // Check for cURL errors 
+    //     if (curl_errno($ch)) {
+    //         $error_message = curl_error ($ch); 
+    //         // Handle cURL error 
+    //         return response()->json(['error' => $error_message], 500);
+    //     }
+    //     // Close cURL resource 
+    //     curl_close ($ch); 
+    //     // Process the SAP response 
+    //     $data = json_decode ($response, true); 
+    //     // Return the retrieved data 
+    //     return response()->json(['data' => $data], 200);
+
+    // }
+
+
 }

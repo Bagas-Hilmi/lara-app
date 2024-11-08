@@ -28,7 +28,6 @@
     </div>
 </div>
 
-<!-- Modal for New Engineer Input -->
 <div class="modal fade" id="newEngineerModal" tabindex="-1" aria-labelledby="newEngineerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
@@ -133,45 +132,26 @@
 </script>
 
 <script>
-    $(document).ready(function() {
-        // Event saat modal dibuka
-        $('#newEngineerModal').on('shown.bs.modal', function(e) {
-            var idCapex = $(e.relatedTarget).data('id'); // Ambil ID Capex dari data-id
+$(document).ready(function() {
+    var capexId = {{ $capexId }}; // id_capex diteruskan ke view
 
-            // Inisialisasi DataTables
-            $('#engineerTable').DataTable({
-            processing: true,
-            serverSide: true,
-            destroy: true, // Agar inisialisasi ulang setiap kali modal dibuka
-            order: [[1, 'desc']],
-            ajax: {
-                url: '/capex/' + idCapex, // Mengarah ke function show dengan id_capex
-                type: 'GET',
-                data: {
-                    flag: 'engineer' // Tambahkan parameter flag
-                }
-            },
-            columns: [
-                { data: 'nama', name: 'nama', className: 'text-center' },
-                {
-                    data: 'created_at',
-                    name: 'created_at',
-                    className: 'text-center',
-                    render: function(data) {
-                        return moment(data).format('YYYY-MM-DD'); // Format tanggal
-                    }
-                },
-                {
-                    data: 'updated_at',
-                    name: 'updated_at',
-                    className: 'text-center',
-                    render: function(data) {
-                        return moment(data).format('YYYY-MM-DD'); // Format tanggal
-                    }
-                }
-            ]
-        });
-        });
-
+    $('#engineerTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '/capex/' + capexId,  // URL untuk mendapatkan data engineer berdasarkan id_capex
+            type: 'GET',
+            data: function(d) {
+                d.id_capex = capexId;  // Kirim id_capex sebagai data
+                d.flag = 'engineer';    // Kirim flag engineer
+            }
+        },
+        columns: [
+            { data: 'id_engineer' },  // Kolom ID engineer
+            { data: 'nama' }          // Kolom nama engineer
+        ]
     });
+});
+
+
 </script>
