@@ -17,15 +17,24 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="mb-2">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle"
-                                            style="background-color: #040404; border-color: #09170a;" 
-                                            type="button"
-                                            id="descriptionDropdown" 
-                                            data-bs-toggle="dropdown" 
-                                            aria-expanded="false">
-                                            <span id="descriptionText">Pilih Capex </span> <!-- Placeholder -->
-                                        </button>
+                                    <div>
+                                        <select id="descriptionSelect" class="form-control" style="width: 20%;">
+                                            <option value="" selected>Pilih Capex</option>
+                                            @foreach ($descriptions as $desc)
+                                                <option 
+                                                    value="{{ $desc->id_capex }}" 
+                                                    data-cip="{{ $desc->cip_number }}"
+                                                    data-wbs="{{ $desc->wbs_number }}"
+                                                    data-project_desc="{{ $desc->project_desc }}"
+                                                    data-budget_type="{{ $desc->budget_type }}"
+                                                    data-amount_budget="{{ $desc->amount_budget }}"
+                                                    data-wbs_capex="{{ $desc->wbs_capex }}"
+                                                    data-requester="{{ $desc->requester }}">
+                                                    {{ $desc->capex_number }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        
 
                                         <button class="btn btn-secondary" style="background-color: #09170a; border-color: #09170a;">
                                             <span id="wbscapexText">WBS Type</span> 
@@ -36,26 +45,6 @@
                                         <i class="fas fa-file-pdf"></i> Download PDF
                                         </button>
 
-                                        <ul class="dropdown-menu" aria-labelledby="descriptionDropdown">
-                                            <li><a class="dropdown-item" href="#" data-value="">Pilih Capex </a></li>
-                                            @foreach ($descriptions as $desc)
-                                                <li>
-                                                    <a class="dropdown-item" href="#"
-                                                        data-value="{{ $desc->id_capex }}"
-                                                        data-cip="{{ $desc->cip_number }}"
-                                                        data-wbs="{{ $desc->wbs_number }}"
-                                                        data-project_desc="{{ $desc->project_desc }}"
-                                                        data-budget_type="{{ $desc->budget_type }}"
-                                                        data-amount_budget="{{ $desc->amount_budget }}"
-                                                        data-wbs_capex="{{ $desc->wbs_capex }}"
-                                                        data-requester="{{ $desc->requester }}">
-                                                        {{ $desc->capex_number }}
-                                                        <!-- Kolom capex_number yang ditampilkan -->
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                        
                                         {{-- isi dari box container --}}
                                         <div class="info-box-container">
                                             <div class="info-box">
@@ -132,6 +121,11 @@
                 <script src="assets/js/moment.min.js"></script>
                 <script src="{{ asset('/js/tooltip.js') }}"></script>
 
+                {{-- <script src="assets/js/select2.min.js"></script>
+                <script src="assets/js/select2.min.css"></script> --}}
+                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
                 <script>
                     $(document).ready(function() {
                         // Setup CSRF token for AJAX requests
@@ -154,8 +148,12 @@
                                 type: "GET",
                                 data: function(d) {
                                     // Mengatur parameter pencarian berdasarkan dropdown yang dipilih
-                                    d.searchValue = document.getElementById('descriptionText').textContent;
-                                }
+                                    var descriptionText = document.getElementById('descriptionText');
+                                    if (descriptionText) {
+                                        d.searchValue = descriptionText.textContent;
+                                    } else {
+                                        d.searchValue = ''; // Atau nilai default jika tidak ditemukan
+                                    }                                }
                             },
                             columns: [{
                                     data: 'id_report_cip',
@@ -200,7 +198,7 @@
                                 {
                                     data: 'description',
                                     name: 'description',
-                                    className: 'text-center'
+                                    className: 'text-start'
                                 },
                                 {
                                     data: 'qty',
@@ -255,7 +253,7 @@
                                 var api = this.api();
 
                                 // Dapatkan nilai filter aktif dari dropdown
-                                var activeCapex = document.querySelector('#descriptionText').textContent.trim();
+                                var activeCapex = document.querySelector('#descriptionSelect').textContent.trim();
 
                                 // Reset total di footer
                                 $('#total-amount-rp').text('Total (RP)');
@@ -316,43 +314,46 @@
                         }
 
                         // Ambil semua item dropdown
-                        const dropdownItems = document.querySelectorAll('.dropdown-item');
-                        dropdownItems.forEach(item => {
-                            item.addEventListener('click', function(event) {
-                                event.preventDefault(); // Mencegah link melakukan refresh halaman
-
-                                // Ambil nilai dari data-value, data-cip, dan data-wbs
-                                const value = this.getAttribute('data-value');
-                                const text = this.textContent; // Ambil teks dari item dropdown
-                                const cipNumber = this.getAttribute('data-cip');
-                                const wbsNumber = this.getAttribute('data-wbs');
-                                const project = this.getAttribute('data-project_desc');
-                                const budget = this.getAttribute('data-budget_type');
-                                const amount = this.getAttribute('data-amount_budget');
-                                const wbsCapex = this.getAttribute('data-wbs_capex');
-                                const requester = this.getAttribute('data-requester');
-
-                              // Perbarui teks dan data pada tombol dropdown
-                                const descriptionText = document.getElementById('descriptionText');
-                                descriptionText.textContent = text;
-                                descriptionText.setAttribute('data-capex-id', value); // Tambahkan ini
-                                descriptionText.setAttribute('data-wbs-capex', wbsCapex); // Tambahkan atribut wbs_capex
+                        var descriptionSelect = $('#descriptionSelect');
+                            if (descriptionSelect.length) {
+                                descriptionSelect.select2({
+                                    placeholder: 'Cari Capex',
+                                    allowClear: true
+                                })
+                            }
 
 
-                                // Mengubah teks pada tombol cip dan wbs
-                                document.getElementById('cipText').innerText = cipNumber ? cipNumber :'CIP Number';
-                                document.getElementById('wbsText').innerText = wbsNumber ? wbsNumber :'WBS Number';
-                                document.getElementById('projectText').innerText = project ? project :'Project';
-                                document.getElementById('budgetText').innerText = budget ? budget : 'Budget';
-                                document.getElementById('wbscapexText').innerText = wbsCapex ? wbsCapex : 'WBS Capex';
-                                document.getElementById('requesterText').innerText = requester ? requester : 'Requester';
-                                document.getElementById('amountText').innerText = amount ? formatNumber(amount) : 'Amount'; // Format amount budget
-                                // Mengatur filter DataTable berdasarkan value
-                                table.column(1).search(value).draw(); // Ganti 0 dengan indeks kolom yang sesuai
-                                // Reload DataTable
-                                table.ajax.reload(); // Memanggil reload untuk mendapatkan data terbaru
+                            // Event handler ketika pengguna memilih opsi di Select2
+                            $('#descriptionSelect').on('select2:select', function(e) {
+                                // Ambil elemen terpilih
+                                const selectedOption = $(this).find(':selected');
+
+                                // Ambil data dari atribut data-* pada opsi yang dipilih
+                                const value = selectedOption.val();
+                                const text = selectedOption.text();
+                                const cipNumber = selectedOption.data('cip');
+                                const wbsNumber = selectedOption.data('wbs');
+                                const project = selectedOption.data('project_desc');
+                                const budget = selectedOption.data('budget_type');
+                                const amount = selectedOption.data('amount_budget');
+                                const wbsCapex = selectedOption.data('wbs_capex');
+                                const requester = selectedOption.data('requester');
+
+                                // Perbarui tampilan sesuai dengan pilihan yang diambil
+                                $('#descriptionText').text(text).attr('data-capex-id', value);
+                                $('#wbscapexText').text(wbsCapex || 'WBS Capex');
+                                $('#cipText').text(cipNumber || 'CIP Number');
+                                $('#wbsText').text(wbsNumber || 'WBS Number');
+                                $('#projectText').text(project || 'Project');
+                                $('#budgetText').text(budget || 'Budget');
+                                $('#wbscapexText').text(wbsCapex || 'WBS Capex');
+                                $('#requesterText').val(requester || 'Requester');
+                                $('#amountText').text(amount ? formatNumber(amount) : 'Amount');
+
+                                // Filter DataTable berdasarkan id_capex
+                                table.column(1).search(value).draw();
+                                table.ajax.reload();
                             });
-                        });
 
                         function number_format(number, decimals, decPoint, thousandsSep) {
                             number = (number + '').replace(',', '').replace(' ', '');
@@ -428,8 +429,8 @@
                         //download pdf
                         $(document).ready(function() {
                             window.downloadFilteredPDF = function() {
-                                // Ambil capex_id dari tombol dropdown yang aktif
-                                const selectedCapexId = $('#descriptionText').attr('data-capex-id'); // tambahkan atribut ini saat memilih dari dropdown
+                                // Ambil capex_id langsung dari Select2
+                                const selectedCapexId = $('#descriptionSelect').val();
                                 
                                 // Cek apakah capex_id sudah dipilih
                                 if (!selectedCapexId) {
@@ -441,6 +442,7 @@
                                     });
                                     return; 
                                 }
+
                                 // Jika sudah ada yang dipilih, lanjutkan dengan membuka PDF
                                 const url = `{{ route('report.show', ':id') }}?pdf=filtered&capex_id=${selectedCapexId}`.replace(':id', selectedCapexId);
                                 window.open(url, '_blank');
@@ -648,5 +650,19 @@
         margin: 0;
         letter-spacing: 0.25px;
         /* Tambah sedikit letter spacing */
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px; /* Menyesuaikan tinggi */
+        padding-left: 10px; /* Memberi jarak antara teks dan sisi kiri */
+        font-size: 14px;
+        border-radius: 4px;
+    }
+
+    /* Styling dropdown list */
+    .select2-dropdown {
+        max-height: 250px; /* Batasi tinggi dropdown */
+        overflow-y: auto; /* Scroll jika isi terlalu banyak */
+        font-size: 14px;
     }
 </style>

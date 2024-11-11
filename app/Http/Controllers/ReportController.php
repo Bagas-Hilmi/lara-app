@@ -20,6 +20,7 @@ class ReportController extends Controller
         $descriptions = Report::getActiveCapexDescriptions(); // Memanggil metode untuk mendapatkan deskripsi Capex yang aktif
 
         Report::insertReportCip(); // Memanggil metode untuk menyisipkan data ke t_report_cip
+        $engineers = Report::getEngineersForProjects();
 
         if ($request->ajax()) {
             // Ambil status dari permintaan, dengan nilai default 1 jika tidak ada
@@ -39,44 +40,55 @@ class ReportController extends Controller
                 ->make(true);
         }
 
-        return view('report.index', compact('descriptions'));  // Mengirimkan data ke view
+        return view('report.index', compact('descriptions', 'engineers'));
     }
 
     // Download berdasarkan filter
     public function downloadFilteredPDF(Request $request)
     {
-        try {
-            $query = Report::query();
-            if ($request->has('capex_id')) {
-                $query->where('id_capex', $request->capex_id);
-            }
-            $reports = $query->get();
-            // Hitung total
-            $totals = [
-                'amount_rp' => $reports->sum('amount_rp'),
-                'amount_us' => $reports->sum('amount_us')
-            ];
-            $capexData = Report::getActiveCapexDescriptions()
-                ->where('id_capex', $request->capex_id)
-                ->first();
-            $pdf = PDF::loadView('report.pdf-filtered', [
-                'reports' => $reports,
-                'capexData' => $capexData,
-                'totals' => $totals 
-            ]);
-            $fileName = 'report-capex';
-            if ($capexData) {
-                $cleanCapexNumber = preg_replace('/[\/\\\]/', '-', $capexData->capex_number);
-                $fileName .= '-' . $cleanCapexNumber;
-            }
-            $fileName .= '_' . date('Y-m-d') . '.pdf';
-            return $pdf->download($fileName);
-        } catch (\Exception $e) {
-            Log::error('PDF Generation Error: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Terjadi kesalahan saat membuat PDF'
-            ], 500);
+        $query = Report::query();
+        if ($request->has('capex_id')) {
+            $query->where('id_capex', $request->capex_id);
         }
+        $reports = $query->get();
+
+        // Hitung total
+        $totals = [
+            'amount_rp' => $reports->sum('amount_rp'),
+            'amount_us' => $reports->sum('amount_us')
+        ];
+
+        $capexData = Report::getActiveCapexDescriptions()
+            ->where('id_capex', $request->capex_id)
+            ->first();
+
+        // Cek apakah ini Project atau Non-Project
+        $isProject = $capexData && $capexData->wbs_capex === 'Project';
+
+        // Jika Project, ambil data engineer
+        $engineer = null;
+        if ($isProject) {
+            $engineer = Report::getEngineersForProjects();
+        }
+
+        // Pilih template berdasarkan tipe
+        $template = $isProject ? 'report.pdf-filtered-project' : 'report.pdf-filtered';
+
+        $pdf = PDF::loadView($template, [
+            'reports' => $reports,
+            'capexData' => $capexData,
+            'totals' => $totals,    
+            'engineer' => $engineer // Tambahkan data engineer ke view
+        ]);
+
+        $fileName = 'report-capex';
+        if ($capexData) {
+            $cleanCapexNumber = preg_replace('/[\/\\\]/', '-', $capexData->capex_number);
+            $fileName .= '-' . $cleanCapexNumber;
+        }
+        $fileName .= '_' . date('Y-m-d') . '.pdf';
+
+        return $pdf->download($fileName);
     }
 
     /**

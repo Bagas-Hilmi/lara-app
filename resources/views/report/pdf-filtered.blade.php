@@ -23,7 +23,7 @@
                 <td>{{ $capexData->cip_number ?? '-' }}</td>
             </tr>
             <tr>
-                <td><b>Number:<b></td>
+                <td><b>WBS Number:<b></td>
                 <td><b>Budget Type:<b></td>
                 <td><b>Amount Budget:<b></td>
             </tr>
@@ -92,7 +92,7 @@
         @endphp
                         
     </table>
-
+   
     <div class="signature-section">
         <p>Acknowledged by</p>
         <p class="spacing">{{ $capexData->requester ?? '-' }}</p>

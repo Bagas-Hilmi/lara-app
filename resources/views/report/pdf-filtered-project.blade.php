@@ -95,7 +95,7 @@
 
             <div class="signature-section-text">
                 <p>Confirmed By</p>
-                <p class="spacing">{{  }}</p>    
+                <p class="spacing">{{ $engineer->nama ?? '-' }}</p>
             </div>
     
         <div class="signature-section">
