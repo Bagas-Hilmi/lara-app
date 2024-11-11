@@ -39,10 +39,11 @@ class FaglbController extends Controller
                 ->addColumn('action', function ($row) {
                     return view('faglb/datatables/actionbtn', ['row' => $row]);
                 })
-                ->editColumn('report_status', function ($row) {
-                    return $row->report_status == 0 ? 'Unreleased' : 'Release';
+                ->addColumn('report_status', function ($row) {
+                    // Mengirim data report_status ke view
+                    return view('faglb/datatables/reportbtn', ['row' => $row]);
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'report_status'])  // Pastikan untuk tidak mengubah HTML di kolom ini
                 ->make(true);
         }
 
@@ -174,6 +175,36 @@ class FaglbController extends Controller
             DB::commit();
 
             return response()->json(['success' => true, 'message' => 'File berhasil diperbarui']);
+        } else if ($flag == 'update-btn') {
+            $reportId = $request->input('id_head');  // ID report
+            $newStatus = $request->input('status');  // Status baru (1: Released)
+
+            // Cari report berdasarkan 'id_head'
+            $report = Faglb::where('id_head', $reportId)->first();  // Menggunakan where() untuk mencari berdasarkan 'id_head'
+
+            if ($report) {
+                // Jika status saat ini sudah Released (1), tampilkan pesan gagal
+                if ($report->report_status == 1) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Report sudah Released'
+                    ]);
+                }
+
+                // Perbarui status report menjadi Released (1)
+                $report->report_status = $newStatus;
+                $report->save();  // Simpan perubahan
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Status berhasil diperbarui'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Report dengan id_head tidak ditemukan'
+                ]);
+            }
         }
     }
 

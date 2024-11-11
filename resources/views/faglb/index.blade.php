@@ -79,7 +79,7 @@
                         columns: [
                             {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center',width: '15%'},
                             {data: 'period', name: 'period', className: 'text-center',width: '15%'},
-                            {data: 'report_status', name: 'report_status', className: 'text-center',width: '20%'},
+                            { data: 'report_status', name: 'report_status', orderable: false, searchable: false, className: 'text-center', width: '20%'},
                             {
                                 data: 'created_at', 
                                 name: 'created_at', 
