@@ -18,6 +18,7 @@ class CapexEngineer extends Model
     {
         $query = DB::table('t_capex_engineer')
             ->select([
+                'id_engineer',
                 'id_capex',
                 'nama',
                 'created_at',
@@ -40,5 +41,10 @@ class CapexEngineer extends Model
 
         // Mengembalikan data completion yang baru ditambahkan
         return DB::table('t_capex_engineer')->where('id_engineer', $engineerId)->first();
+    }
+
+    public function Capex()
+    {
+        return $this->belongsTo(Capex::class, 'id_capex');
     }
 }

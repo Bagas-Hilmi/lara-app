@@ -31,8 +31,14 @@ class CapexController extends Controller
         $totalBudget = Capex::getTotalBudget();
         $daysLate = Capex::getDaysLate();
         $daysRemaining = Capex::getDaysRemaining();
-        $capexId = $request->get('id_capex', 17); // Atau cara lain untuk mendapatkan id_capex yang diinginkan
+        $capexId = $request->get('id_engineer');
 
+        // Jika tidak ada capexId, maka ambil semua data engineer
+        if (!$capexId) {
+            $engineers = CapexEngineer::all();  // Mengambil semua engineer tanpa filter
+        } else {
+            $engineers = CapexEngineer::where('id_engineer', $capexId)->get();
+        }
 
         if ($request->ajax()) {
             $status = $request->get('status', 1);
@@ -57,6 +63,7 @@ class CapexController extends Controller
             'daysLate' => $daysLate,
             'daysRemaining' => $daysRemaining,
             'capexId' => $capexId,  // Pastikan id_capex diteruskan ke view
+            'engineers' => $engineers
 
         ]);
     }
@@ -433,11 +440,9 @@ class CapexController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         } else if ($flag === 'engineer') {
-            $engineers = CapexEngineer::where('id_capex', $id)->get();
+            $engineers = CapexEngineer::all();  // Ambil semua data engineer
 
-            // Mengembalikan data engineer sebagai response dalam format DataTables
-            return DataTables::of($engineers)
-                ->make(true);  
+            return DataTables::of($engineers)->make(true);
         }
 
 

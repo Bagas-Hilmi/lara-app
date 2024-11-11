@@ -17,8 +17,8 @@
                     <table id="engineerTable" class="table table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Name</th>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Name</th>
                             </tr>
                         </thead>
                     </table>
@@ -132,26 +132,40 @@
 </script>
 
 <script>
-$(document).ready(function() {
-    var capexId = {{ $capexId }}; // id_capex diteruskan ke view
+   $(document).ready(function() {
+    var capexId = {{ $capexId ?? 'null' }}; // Ambil id_capex dari server
 
+    // Jika capexId tidak ada, langsung load DataTable untuk semua data
+    if (!capexId) {
+        loadDataTable(); // Load tanpa filter
+    } else {
+        loadDataTable(capexId); // Load berdasarkan capexId yang diberikan
+    }
+
+});
+
+// Fungsi untuk load DataTable
+function loadDataTable(capexId = null) {
     $('#engineerTable').DataTable({
         processing: true,
         serverSide: true,
+        order: [[0, 'desc']],
         ajax: {
-            url: '/capex/' + capexId,  // URL untuk mendapatkan data engineer berdasarkan id_capex
+            url: '/capex/engineers', // URL untuk mendapatkan data engineer
             type: 'GET',
             data: function(d) {
-                d.id_capex = capexId;  // Kirim id_capex sebagai data
-                d.flag = 'engineer';    // Kirim flag engineer
+                if (capexId) {
+                    d.id_capex = capexId;  // Kirim id_capex ke server jika ada
+                }
+                d.flag = 'engineer';   // Kirim flag untuk filter data engineer
             }
         },
         columns: [
-            { data: 'id_engineer' },  // Kolom ID engineer
-            { data: 'nama' }          // Kolom nama engineer
+            { data: 'id_engineer', className: 'text-center' },
+            { data: 'nama', className: 'text-center' }
         ]
     });
-});
+}
 
-
+    
 </script>

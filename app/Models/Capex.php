@@ -282,4 +282,9 @@ class Capex extends Model
     {
         return $this->hasMany(CapexPOcommitment::class, 'id_capex');
     }
+
+    public function CapexEngineer()
+    {
+        return $this->hasMany(CapexEngineer::class,'id_capex');
+    }
 }
