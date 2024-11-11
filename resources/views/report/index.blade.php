@@ -29,12 +29,26 @@
                                                     data-budget_type="{{ $desc->budget_type }}"
                                                     data-amount_budget="{{ $desc->amount_budget }}"
                                                     data-wbs_capex="{{ $desc->wbs_capex }}"
-                                                    data-requester="{{ $desc->requester }}">
+                                                    data-requester="{{ $desc->requester }}"
+                                                    data-status_capex="{{ $desc->status_capex }}">
                                                     {{ $desc->capex_number }}
                                                 </option>
                                             @endforeach
                                         </select>
                                         
+                                       <!-- Dropdown untuk memilih Status Capex -->
+                                        <select id="statusSelect" class="form-control" style="width: 20%;">
+                                            <option value="" selected>Pilih Status Capex</option>
+                                            @php
+                                                // Mengambil nilai status_capex yang unik dari $descriptions
+                                                $uniqueStatuses = $descriptions->unique('status_capex');
+                                            @endphp
+                                            
+                                            @foreach ($uniqueStatuses as $desc)
+                                                <option value="{{ $desc->id_capex }}">{{ $desc->status_capex }}</option>
+                                            @endforeach
+                                        </select>
+
 
                                         <button class="btn btn-secondary" style="background-color: #09170a; border-color: #09170a;">
                                             <span id="wbscapexText">WBS Type</span> 
@@ -71,6 +85,13 @@
                                                 <div class="info-box-label">Amount Budget</div>
                                                 <div class="info-box-value" id="amountText">-</div>
                                             </div>
+
+                                            <div class="info-box">
+                                                <div class="info-box-label">Status Capex</div>
+                                                <div class="info-box-value" id="statusText">-</div>
+                                            </div>
+                                            
+                                            
                                         </div>
                                         <input type="hidden" id="requesterText">
                                     </div>
@@ -338,6 +359,7 @@
                                 const amount = selectedOption.data('amount_budget');
                                 const wbsCapex = selectedOption.data('wbs_capex');
                                 const requester = selectedOption.data('requester');
+                                const statusCapex = selectedOption.data('status_capex');
 
                                 // Perbarui tampilan sesuai dengan pilihan yang diambil
                                 $('#descriptionText').text(text).attr('data-capex-id', value);
@@ -346,9 +368,10 @@
                                 $('#wbsText').text(wbsNumber || 'WBS Number');
                                 $('#projectText').text(project || 'Project');
                                 $('#budgetText').text(budget || 'Budget');
-                                $('#wbscapexText').text(wbsCapex || 'WBS Capex');
                                 $('#requesterText').val(requester || 'Requester');
+                                $('#statusText').text(statusCapex || 'Status Capex');
                                 $('#amountText').text(amount ? formatNumber(amount) : 'Amount');
+                                $('#statusSelect').val(statusCapex).trigger('change');  // Set nilai dropdown
 
                                 // Filter DataTable berdasarkan id_capex
                                 table.column(1).search(value).draw();
@@ -378,54 +401,26 @@
                             return result.join(dec);
                         }
 
+                        var statusSelect = $('#statusSelect');
+                        if (statusSelect.length) {
+                            statusSelect.select2({
+                                placeholder: 'Cari Status',
+                                allowClear: true,
+                                minimumResultsForSearch: Infinity // Menonaktifkan pencarian
 
-                        $("#report-table").on("click", ".delete-btn", function() {
-                            var id = $(this).data("id"); // Ambil ID dari data-id
-
-                            // Tampilkan SweetAlert untuk konfirmasi penghapusan
-                            Swal.fire({
-                                title: "Konfirmasi Hapus",
-                                text: "Apakah Anda yakin ingin menghapus item ini?",
-                                icon: "warning", // Tampilkan ikon peringatan
-                                showCancelButton: true, // Tampilkan tombol batal
-                                confirmButtonColor: "#3085d6", // Warna tombol konfirmasi
-                                cancelButtonColor: "#d33", // Warna tombol batal
-                                confirmButtonText: "Ya, hapus!",
-                                cancelButtonText: "Batal",
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // Jika pengguna mengkonfirmasi penghapusan
-                                    $.ajax({
-                                        url: "/report/" + id,
-                                        type: "POST",
-                                        data: {
-                                            _method: "DELETE", // Laravel membutuhkan ini untuk metode DELETE
-                                            _token: $('meta[name="csrf-token"]').attr(
-                                                "content"), // Sertakan CSRF token
-                                        },
-                                        success: function(result) {
-                                            // Menampilkan notifikasi sukses
-                                            Swal.fire(
-                                                "Terhapus!",
-                                                "Item telah berhasil dihapus.",
-                                                "success"
-                                            );
-                                            // Reload DataTable
-                                            $("#report-table").DataTable().ajax.reload();
-                                        },
-                                        error: function(xhr) {
-                                            // Menampilkan notifikasi jika terjadi error
-                                            Swal.fire(
-                                                "Gagal!",
-                                                "Terjadi kesalahan saat menghapus item.",
-                                                "error"
-                                            );
-                                        },
-                                    });
-                                }
                             });
+                        }
+
+                        // Event handler untuk perubahan status
+                        $('#statusSelect').on('select2:select', function(e) {
+                            const selectedStatus = $(this).val(); // Ambil id_capex yang dipilih
+                            const selectedOption = $(this).find(':selected');
+                            const statusCapex = selectedOption.text(); // Mengambil teks (status_capex)
+
+                            // Filter DataTable berdasarkan status (gunakan pencarian case-insensitive)
+                            table.column(1).search(selectedStatus, true, false).draw(); // true untuk case-insensitive, false untuk exact match
                         });
-                        
+
                         //download pdf
                         $(document).ready(function() {
                             window.downloadFilteredPDF = function() {

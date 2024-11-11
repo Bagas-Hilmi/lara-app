@@ -44,7 +44,8 @@ class Report extends Model
                 't_master_capex.budget_type',
                 't_master_capex.amount_budget',
                 't_master_capex.wbs_capex',
-                't_master_capex.requester'
+                't_master_capex.requester',
+                't_master_capex.status_capex'
 
             )
             ->distinct('id_capex')
@@ -56,20 +57,11 @@ class Report extends Model
 
     public static function getEngineersForProjects()
     {
-        return DB::table('t_capex_engineer')          // 1. Mulai dari tabel engineer
-            ->join('t_master_capex',                  // 2. Gabungkan dengan tabel master
-                't_master_capex.id_capex',            // 3. Kolom dari tabel master
-                '=',                                  // 4. Operator perbandingan
-                't_capex_engineer.id_capex')          // 5. Kolom dari tabel engineer
-            ->where('t_master_capex.wbs_capex', 'Project')  // 6. Filter hanya Project
-            ->select(                                // 7. Pilih kolom yang diinginkan
-                't_capex_engineer.nama',             // 8. Ambil nama engineer
-                't_capex_engineer.id_capex'          // 9. Ambil ID capex
-            )
-            ->get();                                 // 10. Eksekusi query
+        return DB::table('t_capex_engineer')
+            ->select('nama') // Mengambil kolom 'nama' saja
+            ->orderBy('id_engineer', 'desc') // Mengurutkan berdasarkan 'id_engineer' terbaru
+            ->first(); // Mengambil satu data terbaru
     }
-
-
 
     public static function get_dtReportCip()
     {
