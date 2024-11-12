@@ -30,10 +30,14 @@ class FaglbController extends Controller
     {
         if ($request->ajax()) {
 
-            $status = $request->get('status', 1);
+            $query = Faglb::query()->where('status', 1); 
 
-
-            $query = Faglb::query()->where('status', $status);
+            if ($request->has('status') && $request->status != '') {
+                $status = $request->status;
+                // Filter berdasarkan report_status
+                $query
+                ->where('report_status', $status);
+            }
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {

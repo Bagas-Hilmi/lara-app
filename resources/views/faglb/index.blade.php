@@ -16,11 +16,24 @@
                                 <h3 class="text-white text-capitalize ps-3">Upload Document FAGLB + ZLIS1</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="d-flex justify-content-between mb-2">
+                                <div class="d-flex mb-2">
                                     <!-- Tombol Add Doc Upload -->
-                                    <a href="#" class="btn btn-sm btn-primary" style="background-color: #09170a; border-color: #09170a;" 
-                                    data-bs-toggle="modal" data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}">Add Doc Upload</a>  
+                                    <button href="#" class="btn btn-sm btn-primary" 
+                                        style="background-color: #09170a; border-color: #09170a;" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#addDocFormModal" 
+                                        data-url="{{ route('faglb.create') }}">Upload Doc                                     
+                                    </button>  
+                                 
+                                    <!-- Dropdown untuk filter status -->
+                                    <select id="statusSelect" class="btn btn-secondary dropdown-toggle ms-2" 
+                                        style="background-color: #09170a;">
+                                        <option value="" style="text-align: center">Pilih Status </option>
+                                        <option value="1" style="text-align: center">Released</option>
+                                        <option value="0" style="text-align: center">Unreleased</option>
+                                    </select>                            
                                 </div>
+
                                 <div class="table-responsive p-0">
                                     <table id="faglb-table" class="table table-striped rounded-table p-0 mx-auto" style="width: 100%;">
                                         <thead>
@@ -56,6 +69,9 @@
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="assets/js/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+            <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
           
             <script>
                 $(document).ready(function() {
@@ -75,6 +91,12 @@
                         ajax: {
                             url: "{{ route('faglb.index') }}",
                             type: "GET",
+                            data: function(d) {
+                            var status = $('#statusSelect').val();  // Ambil status dari dropdown
+                            if (status) {
+                                d.status = status;  // Kirimkan status ke server sebagai parameter
+                            }
+                        }
                         },
                         columns: [
                             {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center',width: '15%'},
@@ -98,6 +120,10 @@
                             }
                         ]
                     });
+                    $('#statusSelect').on('change', function() {
+                        table.ajax.reload();  // Reload DataTables dengan filter baru
+                    });
+                    
 
                     $("#faglb-table").on("click", ".delete-btn", function () {
                         var id = $(this).data("id"); // Ambil ID dari data-id
@@ -194,10 +220,6 @@
     .rounded-table td {
         border: none; /* Remove default borders to maintain rounded appearance */
     }
-    #faglb-table tbody td.action-column .btn-group {
-        display: flex;
-        justify-content: center;
-    }
 
     #faglb-table thead th {
         background-color: #3cb210; /* Warna latar belakang header */
@@ -222,6 +244,7 @@
     #faglb-table tbody tr:hover {
         background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
     }
+
     #faglb-table th, #faglb-table td {
         padding: 8px;
         text-align: center;
