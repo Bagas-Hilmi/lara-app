@@ -165,16 +165,13 @@
                                 [4, 'asc']
                             ],
                             ajax: {
-                                url: "{{ route('report.index') }}",
+                                url: '',
                                 type: "GET",
                                 data: function(d) {
-                                    // Mengatur parameter pencarian berdasarkan dropdown yang dipilih
-                                    var descriptionText = document.getElementById('descriptionText');
-                                    if (descriptionText) {
-                                        d.searchValue = descriptionText.textContent;
-                                    } else {
-                                        d.searchValue = ''; // Atau nilai default jika tidak ditemukan
-                                    }                                }
+                                    // Jika sudah ada pilihan di dropdown, kirim `capex_id`, jika tidak biarkan kosong
+                                    const selectedCapexId = $('#descriptionSelect').val();
+                                    d.capex_id = selectedCapexId || '';
+                                }
                             },
                             columns: [{
                                     data: 'id_report_cip',
@@ -335,7 +332,7 @@
                         }
 
                         // Ambil semua item dropdown
-                        var descriptionSelect = $('#descriptionSelect');
+                            var descriptionSelect = $('#descriptionSelect');
                             if (descriptionSelect.length) {
                                 descriptionSelect.select2({
                                     placeholder: 'Cari Capex',
@@ -373,9 +370,18 @@
                                 $('#amountText').text(amount ? formatNumber(amount) : 'Amount');
                                 $('#statusSelect').val(statusCapex).trigger('change');  // Set nilai dropdown
 
-                                // Filter DataTable berdasarkan id_capex
-                                table.column(1).search(value).draw();
-                                table.ajax.reload();
+
+                                if (value) {
+                                    // Jika ada value (data dipilih), update URL dengan parameter capex_id
+                                    table.ajax.url('{{ route("report.index") }}?capex_id=' + value).load(); 
+                                } else {
+                                    // Jika tidak ada pilihan (clear), reset pencarian dan kembali ke URL default
+                                    table.ajax.url('{{ route("report.index") }}').load(); // Menggunakan load() untuk reload tabel
+                                }
+
+                            });
+                            $('#descriptionSelect').on('select2:unselect', function(e) {
+                                table.ajax.url('').load(); 
                             });
 
                         function number_format(number, decimals, decPoint, thousandsSep) {
@@ -438,11 +444,28 @@
                                     return; 
                                 }
 
+                                // Tampilkan SweetAlert sebelum membuka PDF
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Sedang Mengunduh...',
+                                    text: 'Tunggu sebentar, PDF sedang diproses.',
+                                    allowOutsideClick: false,  // Menghindari klik di luar modal Swal
+                                    didOpen: () => {
+                                        Swal.showLoading(); // Menampilkan loading spinner
+                                    }
+                                });
+
                                 // Jika sudah ada yang dipilih, lanjutkan dengan membuka PDF
                                 const url = `{{ route('report.show', ':id') }}?pdf=filtered&capex_id=${selectedCapexId}`.replace(':id', selectedCapexId);
+                                
+                                // Setelah URL dibuka, menutup Swal dan membuka PDF
                                 window.open(url, '_blank');
+
+                                // Menutup SweetAlert loading setelah URL dibuka
+                                Swal.close();
                             };
                         });
+
                     });
                 </script>
             @endpush

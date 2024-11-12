@@ -218,20 +218,20 @@
                                         if (!data) return '-';
                                         return moment(data).isValid() ? moment(data).format('DD-MM-YYYY') : '-';
                                     }},
-                                    {data: 'days_remaining', name: 'days_remaining', className: 'text-center',
+                                    {data: 'days_remaining', name: 'days_remaining', className: 'text-right',
                                     render: function(data) {
                                             if (data === null || data === undefined) {
                                                 return '-';}
                                             return data;
                                     }},
-                                    {data: 'days_late', name: 'days_late', className: 'text-center',
+                                    {data: 'days_late', name: 'days_late', className: 'text-right',
                                     render: function(data) {
                                             if (data === null || data === undefined) {
                                                 return '-';}
                                             return data;
                                     }},
-                                    {data: 'wbs_number', name: 'wbs_number', className: 'text-center'},
-                                    {data: 'cip_number', name: 'cip_number', className: 'text-center'},
+                                    {data: 'wbs_number', name: 'wbs_number', className: 'text-right'},
+                                    {data: 'cip_number', name: 'cip_number', className: 'text-right'},
                                     {
                                         data: 'created_at',
                                         name: 'created_at',

@@ -17,9 +17,8 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $descriptions = Report::getActiveCapexDescriptions(); // Memanggil metode untuk mendapatkan deskripsi Capex yang aktif
-
-        Report::insertReportCip(); // Memanggil metode untuk menyisipkan data ke t_report_cip
+        $descriptions = Report::getActiveCapexDescriptions(); 
+        Report::insertReportCip(); 
         $engineers = Report::getEngineersForProjects();
 
         if ($request->ajax()) {
@@ -32,7 +31,7 @@ class ReportController extends Controller
             // Periksa jika ada capex_id dalam permintaan
             if ($request->has('capex_id') && $request->input('capex_id') != '') {
                 $capexId = $request->input('capex_id');
-                // Tambahkan filter berdasarkan id_capex
+
                 $query->where('id_capex', $capexId);
             }
 
