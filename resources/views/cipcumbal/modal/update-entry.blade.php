@@ -62,28 +62,32 @@
   </div>
 </div>
 
+
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-      const numberInputs = document.querySelectorAll('input.update-input'); // Menggunakan kelas khusus untuk input update
+    $(document).ready(function() {
+        // Fungsi untuk memformat input dengan pemisah ribuan
+        function formatCurrency(inputId) {
+            $(inputId).on('input', function() {
+                // Hapus koma sebelum format ulang
+                let value = $(this).val().replace(/,/g, '');
 
-      numberInputs.forEach(input => {
-          input.addEventListener('input', function() {
-              // Menghapus semua karakter yang bukan angka dan koma
-              let value = this.value.replace(/[^0-9,]/g, '');
+                // Periksa apakah nilai valid
+                if (!isNaN(value) && value !== '') {
+                    // Format dengan pemisah ribuan
+                    $(this).val(parseFloat(value).toLocaleString('en-US'));
+                } else {
+                    // Kosongkan input jika tidak valid
+                    $(this).val('');
+                }
+            });
+        }
 
-              // Memformat value agar tetap terlihat baik
-              this.value = value;
-          });
-
-          input.addEventListener('blur', function() {
-              // Format saat fokus hilang (blur)
-              let value = this.value.replace(/,/g, ''); // Menghapus koma
-              if (value) {
-                  this.value = parseFloat(value).toString(); // Format menjadi 2 desimal
-              }
-          });
-      });
-  });
+        // Panggil fungsi untuk kedua kolom input
+        formatCurrency('#balanceUSDUpdate');
+        formatCurrency('#balanceRPUpdate');
+        formatCurrency('#cumulativeBalanceUSDUpdate');
+        formatCurrency('#cumulativeBalanceRPUpdate');
+    });
 </script>
 
 <script>
@@ -137,72 +141,80 @@
             addUpdateButtonListeners();
         });
     }
-
-    // Event listener untuk tombol update di dalam modal
-    document.getElementById('updateEntry').addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Update button clicked');
-
-        // Tampilkan SweetAlert untuk konfirmasi
-        Swal.fire({
-            title: 'Apakah Anda yakin ingin memperbarui entri ini?',
-            text: "Data ini akan diperbarui!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, perbarui!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const form = document.getElementById('updateEntryForm');
-                const formData = new FormData(form);
-    
-                // Pastikan `mode` diatur ke `UPDATE`
-                formData.append('mode', 'UPDATE');
-                // Menambahkan informasi pengguna untuk `updated_by`
-                const userIdMeta = document.querySelector('meta[name="user-id"]');
-                const userId = userIdMeta ? userIdMeta.getAttribute('content') : null;
-                formData.append('updated_by', userId);
-    
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Tampilkan pesan sukses menggunakan SweetAlert
-                        Swal.fire(
-                            'Sukses!',
-                            'Entry updated successfully!',
-                            'success'
-                        );
-                        bootstrap.Modal.getInstance(document.getElementById('update-form')).hide();
-                        if ($.fn.DataTable) {
-                            $('#cipCumBalTable').DataTable().ajax.reload();
-                        }
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            data.message || 'Error updating entry',
-                            'error'
-                        );
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire(
-                        'Error!',
-                        'An error occurred while updating the entry',
-                        'error'
-                    );
-                });
-            }
-        });
-    });
   });
 </script>
+
+<script>
+  document.getElementById('updateEntry').addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Tampilkan SweetAlert untuk konfirmasi
+      Swal.fire({
+          title: 'Apakah Anda yakin ingin memperbarui entri ini?',
+          text: "Data ini akan diperbarui!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, perbarui!',
+          cancelButtonText: 'Batal'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              const form = document.getElementById('updateEntryForm');
+              const formData = new FormData(form);
+  
+              // Pastikan `mode` diatur ke `UPDATE`
+              formData.append('mode', 'UPDATE');
+              
+              // Menambahkan informasi pengguna untuk `updated_by`
+              const userIdMeta = document.querySelector('meta[name="user-id"]');
+              const userId = userIdMeta ? userIdMeta.getAttribute('content') : null;
+              formData.append('updated_by', userId);
+  
+              // Mengirim data menggunakan AJAX
+              $.ajax({
+                  url: form.action,
+                  type: 'POST',
+                  data: formData,
+                  processData: false,
+                  contentType: false,
+                  headers: {
+                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                  },
+                  success: function(data) {
+                      if (data.success) {
+                          // Tampilkan pesan sukses menggunakan SweetAlert
+                          Swal.fire(
+                              'Sukses!',
+                              'Entry updated successfully!',
+                              'success'
+                          );
+                          // Tutup modal
+                          bootstrap.Modal.getInstance(document.getElementById('update-form')).hide();
+                          
+                          // Reload DataTable tanpa refresh halaman
+                          if ($.fn.DataTable) {
+                              $('#cipCumBalTable').DataTable().ajax.reload();
+                          }
+                      } else {
+                          Swal.fire(
+                              'Error!',
+                              data.message || 'Error updating entry',
+                              'error'
+                          );
+                      }
+                  },
+                  error: function(xhr, status, error) {
+                      console.error('Error:', error);
+                      Swal.fire(
+                          'Error!',
+                          'An error occurred while updating the entry',
+                          'error'
+                      );
+                  }
+              });
+          }
+      });
+  });
+</script>
+

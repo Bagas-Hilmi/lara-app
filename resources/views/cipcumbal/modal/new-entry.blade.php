@@ -1,4 +1,3 @@
-<!-- Modal -->
 <div class="modal fade" id="new-form" tabindex="-1" aria-labelledby="newFormLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -8,8 +7,8 @@
             </div>
             <div class="modal-body">
                 <form id="entryForm" action="{{ route('cipcumbal.store') }}" method="POST">
-                    <input type="hidden" name="flag" value="add">
                     @csrf
+                    <input type="hidden" name="flag" value="add">
 
                     <div class="container-fluid">
                         <!-- Year / Month Input -->
@@ -80,7 +79,6 @@
             });
         }
 
-        // Panggil fungsi untuk kedua kolom input
         formatCurrency('#balanceUSD');
         formatCurrency('#balanceRP');
         formatCurrency('#cumulativeBalanceUSD');
@@ -110,17 +108,17 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Jika pengguna mengonfirmasi, lakukan pengiriman form
-                    fetch(form.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
+                    // Jika pengguna mengonfirmasi, lakukan pengiriman form menggunakan AJAX
+                    $.ajax({
+                        url: form.action,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        success: function(data) {
                             if (data.success) {
                                 Swal.fire(
                                     'Sukses!',
@@ -139,8 +137,16 @@
                                     'error'
                                 );
                             }
-                        })
-                        .catch(error => console.error('Error:', error));
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire(
+                                'Gagal!',
+                                'An error occurred: ' + error,
+                                'error'
+                            );
+                            console.error('Error:', error);
+                        }
+                    });
                 }
             });
         } else {
@@ -154,7 +160,6 @@
         }
     });
 </script>
-
 
 <style>
     /* Container for month input */

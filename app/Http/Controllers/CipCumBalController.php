@@ -40,14 +40,14 @@ class CipCumBalController extends Controller
                 ->addColumn('action', function ($row) {
                     return view('cipcumbal/datatables.actionbtn', ['row' => $row]);
                 })
-                ->editColumn('report_status', function ($row) {
-                    return $row->report_status == 0 ? 'Unreleased' : 'Release';
+                ->addColumn('report_status', function ($row) {
+                    return view('cipcumbal/datatables.reportbtn', ['row' => $row]);
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'report_status'])
                 ->make(true);
         }
 
-        return view('cipcumbal.index')->with('availableYears', $availableYears) ->with('periodRelease', $periodRelease);
+        return view('cipcumbal.index')->with('availableYears', $availableYears)->with('periodRelease', $periodRelease);
     }
 
 
@@ -64,20 +64,20 @@ class CipCumBalController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
-        $validated = $request->validate([
-            'flag' => 'required|in:add,update',
-            'id' => 'required_if:flag,update|exists:t_cip_cum_bal,id_ccb',
-            'period_cip' => 'required|date_format:Y-m',
-            'bal_usd' => 'required|numeric',
-            'bal_rp' => 'required|numeric',
-            'cumbal_usd' => 'required|numeric',
-            'cumbal_rp' => 'required|numeric',
-        ]);
+        $flag = $request->input('flag'); // Ambil nilai flag
 
-        $flag = $request->input('flag'); // Mengambil nilai flag
-        $result = match ($flag) {
-            'add' => CCB::add(
+        if ($flag == 'add') {
+            // Validasi untuk operasi add
+            $validated = $request->validate([
+                'period_cip' => 'required|date_format:Y-m',
+                'bal_usd' => 'required|numeric',
+                'bal_rp' => 'required|numeric',
+                'cumbal_usd' => 'required|numeric',
+                'cumbal_rp' => 'required|numeric',
+            ]);
+
+            // Operasi add
+            $result = CCB::add(
                 $request->input('period_cip'),
                 $request->input('bal_usd'),
                 $request->input('bal_rp'),
@@ -86,8 +86,23 @@ class CipCumBalController extends Controller
                 $request->input('report_status', 0),
                 $request->input('status', 1),
                 Auth::id()
-            ),
-            'update' => CCB::updateData(
+            );
+
+            // Kembalikan respons JSON untuk add
+            return response()->json($result);
+        } elseif ($flag == 'update') {
+            // Validasi untuk operasi update
+            $validated = $request->validate([
+                'id' => 'required|exists:t_cip_cum_bal,id_ccb',
+                'period_cip' => 'required|date_format:Y-m',
+                'bal_usd' => 'required|numeric',
+                'bal_rp' => 'required|numeric',
+                'cumbal_usd' => 'required|numeric',
+                'cumbal_rp' => 'required|numeric',
+            ]);
+
+            // Operasi update
+            $result = CCB::updateData(
                 $request->input('id'),
                 $request->input('period_cip'),
                 $request->input('bal_usd'),
@@ -97,12 +112,44 @@ class CipCumBalController extends Controller
                 $request->input('report_status', 0),
                 $request->input('status', 1),
                 Auth::id()
-            ),
-            default => throw new \Exception('Invalid flag specified.') // Menghadapi nilai yang tidak valid
-        };
+            );
 
-        return response()->json($result); // Mengembalikan response JSON
+            // Kembalikan respons JSON untuk update
+            return response()->json($result);
+        } elseif ($flag == 'update-btn'){
+             $ccbId = $request->input('id_ccb');
+             $newStatus = $request->input('status');
+
+             $report = CCB::where('id_ccb', $ccbId)->first();
+
+             if ($report){
+                if ($report->report_status ==1){
+                    return response()->json([
+                        'success'=> false,
+                        'message'=> 'Report sudah released'
+                    ]);
+                }
+
+                $report->report_status = $newStatus;
+                $report->save();
+
+                return response()->json([
+                    'success'=> true,
+                    'message'=> 'Status berhasil diperbarui'
+                ]);
+             }else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Report dengan id_head tidak ditemukan'
+                ]);
+            }
+
+        }else {
+            throw new \Exception('Flag yang diberikan tidak valid.'); // Tangani flag tidak valid
+        }
     }
+
+
 
 
     /**
