@@ -89,6 +89,16 @@ class Report extends Model
     public static function insertReportCip()
     {
         // Ambil data yang akan dimasukkan
+        // Kita mulai dari t_faglb_head yang sudah released
+        $releasedHeads = DB::table('t_faglb_head')
+            ->where('report_status', 1)
+            ->pluck('id_head');
+
+        if ($releasedHeads->isEmpty()) {
+            Log::info('No released heads found');
+            return;
+        }
+
         $dataToInsert = DB::table('t_faglb_tail AS f')
             ->join('t_zlis1_tail AS z', function ($join) {
                 $join->on('f.asset', '=', 'z.asset')
@@ -97,6 +107,8 @@ class Report extends Model
             ->join('t_faglb_head AS h', 'f.id_head', '=', 'h.id_head')
             ->where('f.status', 1)
             ->where('z.status', 1)
+            ->whereIn('f.id_head', $releasedHeads) // Hanya ambil data dari head yang released
+            ->whereIn('z.id_head', $releasedHeads) // Pastikan ZLIS1 juga dari head yang released
             ->select([
                 'h.id_head',
                 'z.document_number AS fa_doc',
@@ -108,21 +120,21 @@ class Report extends Model
                 'f.base_unit_of_measure AS uom',
                 'f.amount_in_loc_curr_2 AS amount_rp',
                 'f.amount_in_lc AS amount_us',
-                'f.asset', // Tambahkan kolom asset
+                'f.asset',
                 DB::raw('NOW() AS created_at'),
                 DB::raw('NOW() AS updated_at')
             ])
             ->get();
 
-        // Insert data
+        Log::info('Found ' . $dataToInsert->count() . ' records to process');
+
+        // Proses setiap data yang ditemukan
         foreach ($dataToInsert as $data) {
             // Log nilai asset original
-            Log::info('Original Asset Value: ' . $data->asset);
+            Log::info('Processing asset: ' . $data->asset . ' from head ID: ' . $data->id_head);
 
             // Cari dengan menambahkan '-0' ke asset
             $assetWithSuffix = $data->asset . '-0';
-
-            Log::info('Looking for CIP number: ' . $assetWithSuffix);
 
             // Cari data dengan format yang sudah disesuaikan
             $matchingCapex = DB::table('t_master_capex')
@@ -164,6 +176,9 @@ class Report extends Model
                     'created_at' => $data->created_at,
                     'updated_at' => $data->updated_at,
                 ]);
+                Log::info('Inserted new record for asset: ' . $data->asset);
+            } else {
+                Log::info('Record already exists for asset: ' . $data->asset);
             }
         }
     }
