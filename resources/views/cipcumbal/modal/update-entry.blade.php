@@ -64,30 +64,24 @@
 
 
 <script>
-    $(document).ready(function() {
-        // Fungsi untuk memformat input dengan pemisah ribuan
-        function formatCurrency(inputId) {
-            $(inputId).on('input', function() {
-                // Hapus koma sebelum format ulang
-                let value = $(this).val().replace(/,/g, '');
-
-                // Periksa apakah nilai valid
-                if (!isNaN(value) && value !== '') {
-                    // Format dengan pemisah ribuan
-                    $(this).val(parseFloat(value).toLocaleString('en-US'));
-                } else {
-                    // Kosongkan input jika tidak valid
-                    $(this).val('');
-                }
-            });
-        }
-
-        // Panggil fungsi untuk kedua kolom input
-        formatCurrency('#balanceUSDUpdate');
-        formatCurrency('#balanceRPUpdate');
-        formatCurrency('#cumulativeBalanceUSDUpdate');
-        formatCurrency('#cumulativeBalanceRPUpdate');
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+      const numberInputs = document.querySelectorAll('input.update-input'); // Menggunakan kelas khusus untuk input update
+      numberInputs.forEach(input => {
+          input.addEventListener('input', function() {
+              // Menghapus semua karakter yang bukan angka dan koma
+              let value = this.value.replace(/[^0-9,]/g, '');
+              // Memformat value agar tetap terlihat baik
+              this.value = value;
+          });
+          input.addEventListener('blur', function() {
+              // Format saat fokus hilang (blur)
+              let value = this.value.replace(/,/g, ''); // Menghapus koma
+              if (value) {
+                  this.value = parseFloat(value).toString(); // Format menjadi 2 desimal
+              }
+          });
+      });
+  });
 </script>
 
 <script>
@@ -184,11 +178,14 @@
                   success: function(data) {
                       if (data.success) {
                           // Tampilkan pesan sukses menggunakan SweetAlert
-                          Swal.fire(
-                              'Sukses!',
-                              'Entry updated successfully!',
-                              'success'
-                          );
+                          Swal.fire({
+                                title: "Sukses!",
+                                text: "Entry saved successfully!",
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1000
+                                
+                          });
                           // Tutup modal
                           bootstrap.Modal.getInstance(document.getElementById('update-form')).hide();
                           

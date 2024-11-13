@@ -87,7 +87,8 @@
                             title: 'Berhasil!',
                             text: response.message, // Menampilkan pesan sukses
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            ShowConfirmButton: false,
+                            timer : 1000
                         });
                         $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
                     },

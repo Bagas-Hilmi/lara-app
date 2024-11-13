@@ -120,11 +120,13 @@
                         },
                         success: function(data) {
                             if (data.success) {
-                                Swal.fire(
-                                    'Sukses!',
-                                    'Entry saved successfully!',
-                                    'success'
-                                );
+                                Swal.fire({
+                                    title: "Sukses!",
+                                    text: "Entry saved successfully!",
+                                    icon: "success",
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                });
                                 // Reload DataTable tanpa refresh halaman
                                 $('#cipCumBalTable').DataTable().ajax.reload();
 

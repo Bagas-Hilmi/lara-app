@@ -201,7 +201,8 @@
                                     title: 'Berhasil!',
                                     text: 'Data berhasil disimpan!',
                                     icon: 'success',
-                                    confirmButtonText: 'OK'
+                                    showConfirmButton: false,
+                                    timer: 1000
                                 });
                             },
                             error: function(xhr) {

@@ -174,7 +174,8 @@
                                 title: 'Berhasil!',
                                 text: response.success,
                                 icon: 'success',
-                                confirmButtonText: 'OK'
+                                showConfirmButton: false,
+                                timer: 1000
                             }).then(() => {
                                 $('#new-form').modal('hide'); // Menutup modal setelah berhasil
                                 $('#capex-table').DataTable().ajax.reload(); // Reload DataTable

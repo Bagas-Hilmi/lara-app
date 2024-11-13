@@ -84,7 +84,8 @@
                             title: 'Berhasil!',
                             text: 'Completion Date berhasil ditambahkan!',
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            showConfirmButton: false,
+                            timer: 1000
                         }).then(() => {
                             // Refresh halaman setelah menutup pesan sukses
                             $('#capex-table').DataTable().ajax
