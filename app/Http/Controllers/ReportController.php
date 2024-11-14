@@ -17,26 +17,22 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $descriptions = Report::getActiveCapexDescriptions(); 
-        Report::insertReportCip(); 
+        $descriptions = Report::getActiveCapexDescriptions();
+        Report::insertReportCip();
         $engineers = Report::getEngineersForProjects();
 
         if ($request->ajax()) {
-            // Ambil status dari permintaan, dengan nilai default 1 jika tidak ada
-            $status = $request->get('status', 1);
+            $query = Report::query()
+                ->join('t_master_capex', 't_report_cip.id_capex', '=', 't_master_capex.id_capex')
+                ->where('t_report_cip.status', 1);
 
-            // Buat query berdasarkan model Report
-            $query = Report::query()->where('status', $status);
-
-            // Periksa jika ada capex_id dalam permintaan
             if ($request->has('capex_id') && $request->input('capex_id') != '') {
-                $capexId = $request->input('capex_id');
-
-                $query->where('id_capex', $capexId);
+                $query->where('t_report_cip.id_capex', $request->input('capex_id'));
+            } elseif ($request->has('status_capex') && $request->input('status_capex') != '') {
+                $query->where('t_master_capex.status_capex', $request->input('status_capex'));
             }
 
-            return DataTables::of($query)
-                ->make(true);
+            return DataTables::of($query)->make(true);
         }
 
         return view('report.index', compact('descriptions', 'engineers'));
@@ -76,7 +72,7 @@ class ReportController extends Controller
         $pdf = PDF::loadView($template, [
             'reports' => $reports,
             'capexData' => $capexData,
-            'totals' => $totals,    
+            'totals' => $totals,
             'engineer' => $engineer // Tambahkan data engineer ke view
         ]);
 

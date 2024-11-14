@@ -37,17 +37,17 @@
                                         </select>
                                         
                                        <!-- Dropdown untuk memilih Status Capex -->
-                                        <select id="statusSelect" class="form-control" style="width: 20%;">
-                                            <option value="" selected>Pilih Status Capex</option>
-                                            @php
-                                                // Mengambil nilai status_capex yang unik dari $descriptions
-                                                $uniqueStatuses = $descriptions->unique('status_capex');
-                                            @endphp
-                                            
-                                            @foreach ($uniqueStatuses as $desc)
-                                                <option value="{{ $desc->id_capex }}">{{ $desc->status_capex }}</option>
-                                            @endforeach
-                                        </select>
+                                       <select id="statusSelect" class="form-control" style="width: 20%;">
+                                        <option value="" selected>Pilih Status Capex</option>
+                                        @php
+                                            // Mengambil nilai status_capex yang unik dari $descriptions
+                                            $uniqueStatuses = $descriptions->pluck('status_capex')->unique()->values();
+                                        @endphp
+                                        
+                                        @foreach ($uniqueStatuses as $status)
+                                            <option value="{{ $status }}">{{ $status }}</option>
+                                        @endforeach
+                                    </select>
 
 
                                         <button class="btn btn-secondary" style="background-color: #09170a; border-color: #09170a;">
@@ -419,12 +419,46 @@
 
                         // Event handler untuk perubahan status
                         $('#statusSelect').on('select2:select', function(e) {
-                            const selectedStatus = $(this).val(); // Ambil id_capex yang dipilih
-                            const selectedOption = $(this).find(':selected');
-                            const statusCapex = selectedOption.text(); // Mengambil teks (status_capex)
+                            const selectedStatus = $(this).val();
+                            
+                            if (selectedStatus) {
+                                // Reset field text ke default karena kita menampilkan multiple data
+                                $('#descriptionText').text('Description').attr('data-capex-id', '');
+                                $('#wbscapexText').text('WBS Capex');
+                                $('#cipText').text('CIP Number');
+                                $('#wbsText').text('WBS Number');
+                                $('#projectText').text('Project');
+                                $('#budgetText').text('Budget');
+                                $('#requesterText').val('Requester');
+                                $('#statusText').text(selectedStatus); // Tetap tampilkan status yang dipilih
+                                $('#amountText').text('Amount');
+                                
+                                // Reset descriptionSelect karena kita menampilkan multiple data
+                                $('#descriptionSelect').val('').trigger('change');
 
-                            // Filter DataTable berdasarkan status (gunakan pencarian case-insensitive)
-                            table.column(1).search(selectedStatus, true, false).draw(); // true untuk case-insensitive, false untuk exact match
+                                // Update table dengan filter status_capex
+                                table.ajax.url('{{ route("report.index") }}?status_capex=' + selectedStatus).load();
+                            } else {
+                                // Jika tidak ada status yang dipilih, reset semua ke default
+                                $('#descriptionText').text('Description').attr('data-capex-id', '');
+                                $('#wbscapexText').text('WBS Capex');
+                                $('#cipText').text('CIP Number');
+                                $('#wbsText').text('WBS Number');
+                                $('#projectText').text('Project');
+                                $('#budgetText').text('Budget');
+                                $('#requesterText').val('Requester');
+                                $('#statusText').text('Status Capex');
+                                $('#amountText').text('Amount');
+                                
+                                // Reset descriptionSelect
+                                $('#descriptionSelect').val('').trigger('change');
+
+                                if (selectedStatus) {
+                                table.ajax.url('{{ route("report.index") }}?status_capex=' + selectedStatus).load();
+                            } else {
+                                table.ajax.url('{{ route("report.index") }}').load();
+                            }
+                            }
                         });
 
                         //download pdf
