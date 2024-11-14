@@ -96,7 +96,8 @@
                                 icon: 'success',
                                 title: 'Sukses!',
                                 text: data.message, // Tampilkan pesan sukses
-                                confirmButtonText: 'OK'
+                                showConfirmButton: false,
+                                timer: 1000
                             }).then(() => {
                                 $('#addDocFormModal').modal(
                                 'hide'); // Ganti #modal-id dengan ID modal Anda

@@ -28,7 +28,7 @@
                                     <!-- Dropdown untuk filter status -->
                                     <select id="statusSelect" class="btn btn-secondary dropdown-toggle ms-2" 
                                         style="background-color: #09170a;">
-                                        <option value="" style="text-align: center">Pilih Status </option>
+                                        <option value="" style="text-align: center">Semua Status </option>
                                         <option value="1" style="text-align: center">Released</option>
                                         <option value="0" style="text-align: center">Unreleased</option>
                                     </select>                            

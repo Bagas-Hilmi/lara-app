@@ -161,16 +161,18 @@
                                         }
                                         return data;
                                     }},
-                                    {data: 'budget_cos', name: 'budget_cos', className: 'text-right', 
-                                    render: function(data, type) {
-                                        if (type === 'display') {
-                                            // Cek jika data kosong
+                                    {data: 'budget_cos', name: 'budget_cos', className: 'text-right',
+                                        render: function(data, type, row) {
+                                            if (type === 'display') {
+                                                // Cek jika data kosong
                                             if (data === null || data === "" || isNaN(data)) {
-                                                return '-'; 
-                                            }
-                                            return '<span>' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</span>';
+                                        return '-'; 
                                         }
-                                        return data;
+                                            return '<div style="text-align: right;">' + 
+                                                '<span>' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</span>' + 
+                                                '</div>';
+                                            }
+                                            return data;
                                     }},
                                     {data: 'total_budget', name: 'total_budget', className: 'text-right', 
                                     render: function(data, type) {
@@ -204,7 +206,9 @@
                                         }
                                         return data;
                                     }},
-                                    {data: 'budget_type', name: 'budget_type', className: 'text-center'},
+                                    {data: 'budget_type', name: 'budget_type', className: 'text-right', render: function(data, type, row) {
+                                        return '<div style="text-align: right;">' + data + '</div>';
+                                    }},
                                     {data: 'startup', name: 'startup', className: 'text-center',
                                     render: function(data) {
                                             return moment(data).format('DD-MM-YYYY'); 
@@ -230,8 +234,8 @@
                                                 return '-';}
                                             return data;
                                     }},
-                                    {data: 'wbs_number', name: 'wbs_number', className: 'text-right'},
-                                    {data: 'cip_number', name: 'cip_number', className: 'text-right'},
+                                    {data: 'wbs_number', name: 'wbs_number', className: 'text-start'},
+                                    {data: 'cip_number', name: 'cip_number', className: 'text-start'},
                                     {
                                         data: 'created_at',
                                         name: 'created_at',

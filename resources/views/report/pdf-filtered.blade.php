@@ -92,7 +92,14 @@
         @endphp
                         
     </table>
-   
+    <div class="signature-section-left">
+        <p>Released By</p>
+        <p class="spacing">
+            <span>{{ Auth::user()->name ?? 'User' }}</span> | 
+            <span>{{ now()->format('d-m-Y') }}</span>
+        </p>
+    </div>
+
     <div class="signature-section">
         <p>Acknowledged by</p>
         <p class="spacing">{{ $capexData->requester ?? '-' }}</p>
@@ -168,7 +175,7 @@
         float: right; /* Mengapung ke kanan */
         font-size: 9pt
     }
-    .signature-section-text {
+    .signature-section-left {
         text-align: center;
         margin-top: 20px; /* Jarak dari tabel */
         float: left; 
@@ -177,6 +184,10 @@
 
     .spacing {
         margin-top: 50px; /* Ubah nilai ini sesuai kebutuhan */
+    }
+
+    .spacing span {
+        margin-right: 8x; /* Tambahkan jarak antar elemen */
     }
 
 </style>

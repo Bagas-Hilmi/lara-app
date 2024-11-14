@@ -93,15 +93,24 @@
                         
     </table>
 
-            <div class="signature-section-text">
-                <p>Confirmed By</p>
-                <p class="spacing">{{ $engineer->nama ?? '-' }}</p>
-            </div>
-    
-        <div class="signature-section">
-            <p>Acknowledged by</p>
-            <p class="spacing">{{$capexData->requester }}</p>    
-        </div>
+
+    <div class="signature-section-left">
+        <p>Released By</p>
+        <p class="spacing">
+            <span>{{ Auth::user()->name ?? 'User' }}</span> | 
+            <span>{{ now()->format('d-m-Y') }}</span>
+        </p>
+    </div>
+
+    <div class="signature-section-text">
+        <p>Confirmed By</p>
+        <p class="spacing">{{ $engineer->nama ?? '-' }}</p>
+    </div>
+        
+    <div class="signature-section">
+        <p>Acknowledged by</p>
+        <p class="spacing">{{$capexData->requester }}</p>    
+    </div>      
     
 </body>
 
@@ -176,9 +185,25 @@
     .signature-section-text {
         text-align: center;
         margin-top: 20px; /* Jarak dari tabel */
-        float: left; 
+        float: right; 
         font-size: 9pt
     }
+
+    .signature-section-left {
+        text-align: center;
+        margin-top: 20px; /* Jarak dari tabel */
+        float: left; /* Mengapung ke kiri */
+        font-size: 9pt;
+    }
+    
+    .signature-section p:first-child {
+        margin-right: 15px; /* Menambah jarak pada "Acknowledged by" */
+    }
+
+    .signature-section-text p:first-child {
+        margin-left: 15px; /* Menambah jarak pada "Confirmed By" */
+    }
+
 
     .spacing {
         margin-top: 50px; /* Ubah nilai ini sesuai kebutuhan */
