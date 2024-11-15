@@ -97,8 +97,8 @@
     <div class="signature-section-left">
         <p>Released By</p>
         <p class="spacing">
-            <span>{{ Auth::user()->name ?? 'User' }}</span> | 
-            <span>{{ now()->format('d-m-Y') }}</span>
+            <p>{{ Auth::user()->name ?? 'User' }}</p>  
+            <p>{{ now()->format('d-m-Y') }}</p>
         </p>
     </div>
 

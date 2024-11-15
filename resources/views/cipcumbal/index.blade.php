@@ -336,11 +336,6 @@
             /* Pastikan konten utama tidak overlap saat sidebar ditutup */
         }
 
-        /* Mengatur lebar tabel agar responsif */
-        #faglb-table {
-            width: 100%;
-            /* Memastikan tabel mengambil 100% lebar */
-        }
     }
 
     .rounded-table {
@@ -399,7 +394,6 @@
         font-size: 15px;
     }
 
-    /* Fokus pada dropdown */
     .form-select:focus {
         border-color: #42bd37;
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);

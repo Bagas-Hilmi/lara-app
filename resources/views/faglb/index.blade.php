@@ -26,12 +26,19 @@
                                     </button>  
                                  
                                     <!-- Dropdown untuk filter status -->
-                                    <select id="statusSelect" class="btn btn-secondary dropdown-toggle ms-2" 
-                                        style="background-color: #09170a;">
-                                        <option value="" style="text-align: center">Semua Status </option>
-                                        <option value="1" style="text-align: center">Released</option>
-                                        <option value="0" style="text-align: center">Unreleased</option>
-                                    </select>                            
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle ms-2" type="button" id="statusSelect" 
+                                                data-bs-toggle="dropdown" aria-expanded="false" 
+                                                style="background-color: #09170a;"
+                                                data-value="">  <!-- Default value kosong -->
+                                            Semua Status
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="statusSelect">
+                                            <li><a class="dropdown-item text-center" href="#" data-value="">Semua Status</a></li>
+                                            <li><a class="dropdown-item text-center" href="#" data-value="1">Released</a></li>
+                                            <li><a class="dropdown-item text-center" href="#" data-value="0">Unreleased</a></li>
+                                        </ul>
+                                    </div>                            
                                 </div>
 
                                 <div class="table-responsive p-0">
@@ -92,8 +99,8 @@
                             url: "{{ route('faglb.index') }}",
                             type: "GET",
                             data: function(d) {
-                            var status = $('#statusSelect').val();  // Ambil status dari dropdown
-                            if (status) {
+                                var status = $('#statusSelect').attr('data-value');  // Ambil status dari atribut data-value
+                                if (status) {
                                 d.status = status;  // Kirimkan status ke server sebagai parameter
                             }
                         }
@@ -120,8 +127,17 @@
                             }
                         ]
                     });
-                    $('#statusSelect').on('change', function() {
-                        table.ajax.reload();  // Reload DataTables dengan filter baru
+                    $('.dropdown-item').on('click', function(e) {
+                        e.preventDefault();
+                        const value = $(this).data('value');
+                        const text = $(this).text();
+                        
+                        // Update button dropdown
+                        $('#statusSelect')
+                            .text(text)
+                            .attr('data-value', value);
+                        
+                        table.ajax.reload();  // Reload table dengan filter baru
                     });
                     
 

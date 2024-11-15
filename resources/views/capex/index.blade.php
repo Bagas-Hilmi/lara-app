@@ -294,11 +294,13 @@
                                             success: function(response) {
                                                 if (response.success) {
                                                     // SweetAlert success notification
-                                                    Swal.fire(
-                                                        'Deleted!',
-                                                        'Capex has been deleted.',
-                                                        'success'
-                                                    );
+                                                    Swal.fire({
+                                                        title: 'Deleted!',
+                                                        text: 'Capex has been deleted.',
+                                                        icon: 'success',
+                                                        showConfirmButton: false,
+                                                        timer: 1000
+                                                    });
 
                                                     // Reload the DataTable
                                                     $('#capex-table').DataTable().ajax.reload();
