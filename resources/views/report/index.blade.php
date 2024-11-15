@@ -21,9 +21,7 @@
                                         <select id="descriptionSelect" class="form-control" style="width: 20%;">
                                             <option value="" selected>Pilih Capex</option>
                                             @foreach ($descriptions as $desc)
-                                                <option 
-                                                    value="{{ $desc->id_capex }}" 
-                                                    data-cip="{{ $desc->cip_number }}"
+                                                <option value="{{ $desc->id_capex }}" data-cip="{{ $desc->cip_number }}"
                                                     data-wbs="{{ $desc->wbs_number }}"
                                                     data-project_desc="{{ $desc->project_desc }}"
                                                     data-budget_type="{{ $desc->budget_type }}"
@@ -35,28 +33,33 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        
-                                       <!-- Dropdown untuk memilih Status Capex -->
-                                       <select id="statusSelect" class="form-control" style="width: 20%;">
-                                        <option value="" selected>Pilih Status Capex</option>
-                                        @php
-                                            // Mengambil nilai status_capex yang unik dari $descriptions
-                                            $uniqueStatuses = $descriptions->pluck('status_capex')->unique()->values();
-                                        @endphp
-                                        
-                                        @foreach ($uniqueStatuses as $status)
-                                            <option value="{{ $status }}">{{ $status }}</option>
-                                        @endforeach
-                                    </select>
+
+                                        <!-- Dropdown untuk memilih Status Capex -->
+                                        <select id="statusSelect" class="form-control" style="width: 20%;">
+                                            <option value="" selected>Pilih Status Capex</option>
+                                            @php
+                                                // Mengambil nilai status_capex yang unik dari $descriptions
+                                                $uniqueStatuses = $descriptions
+                                                    ->pluck('status_capex')
+                                                    ->unique()
+                                                    ->values();
+                                            @endphp
+
+                                            @foreach ($uniqueStatuses as $status)
+                                                <option value="{{ $status }}">{{ $status }}</option>
+                                            @endforeach
+                                        </select>
 
 
-                                        <button class="btn btn-secondary" style="background-color: #09170a; border-color: #09170a;">
-                                            <span id="wbscapexText">WBS Type</span> 
+                                        <button class="btn btn-secondary"
+                                            style="background-color: #09170a; border-color: #09170a;">
+                                            <span id="wbscapexText">WBS Type</span>
                                         </button>
-                                        
-                                       <!-- Button to open the modal -->
-                                       <button onclick="downloadFilteredPDF()" class="btn btn-secondary" style="background-color: #bd1f20;">
-                                        <i class="fas fa-file-pdf"></i> Download PDF
+
+                                        <!-- Button to open the modal -->
+                                        <button onclick="downloadFilteredPDF()" class="btn btn-secondary"
+                                            style="background-color: #bd1f20;">
+                                            <i class="fas fa-file-pdf"></i> Download PDF
                                         </button>
 
                                         {{-- isi dari box container --}}
@@ -90,8 +93,8 @@
                                                 <div class="info-box-label">Status Capex</div>
                                                 <div class="info-box-value" id="statusText">-</div>
                                             </div>
-                                            
-                                            
+
+
                                         </div>
                                         <input type="hidden" id="requesterText">
                                     </div>
@@ -198,11 +201,12 @@
                                     name: 'date',
                                     className: 'text-right',
                                     render: function(data, type, row) {
-                                    if (type === 'sort' || type === 'filter') {
-                                        return data;
+                                        if (type === 'sort' || type === 'filter') {
+                                            return data;
+                                        }
+                                        return moment(data).format('DD/MM/YYYY');
                                     }
-                                    return moment(data).format('DD/MM/YYYY');
-                                }},
+                                },
                                 {
                                     data: 'settle_doc',
                                     name: 'settle_doc',
@@ -324,7 +328,7 @@
                                         '.')); // Format untuk US$
                                 }
                             }
-                            });
+                        });
 
                         // Fungsi untuk memformat angka dengan tanda pemisah ribuan
                         function formatNumber(num) {
@@ -332,17 +336,19 @@
                         }
 
                         // Ambil semua item dropdown
+                        $(document).ready(function() {
+                            // Inisialisasi Select2 tanpa AJAX
                             var descriptionSelect = $('#descriptionSelect');
                             if (descriptionSelect.length) {
                                 descriptionSelect.select2({
                                     placeholder: 'Cari Capex',
-                                    allowClear: true
-                                })
+                                    allowClear: true,
+                                    minimumInputLength: 2 // Aktifkan pencarian setelah mengetik 2 karakter
+                                });
                             }
 
-
                             // Event handler ketika pengguna memilih opsi di Select2
-                            $('#descriptionSelect').on('select2:select', function(e) {
+                            descriptionSelect.on('select2:select', function(e) {
                                 // Ambil elemen terpilih
                                 const selectedOption = $(this).find(':selected');
 
@@ -368,21 +374,22 @@
                                 $('#requesterText').val(requester || 'Requester');
                                 $('#statusText').text(statusCapex || 'Status Capex');
                                 $('#amountText').text(amount ? formatNumber(amount) : 'Amount');
-                                $('#statusSelect').val(statusCapex).trigger('change');  // Set nilai dropdown
-
+                                $('#statusSelect').val(statusCapex).trigger('change'); // Set nilai dropdown
 
                                 if (value) {
                                     // Jika ada value (data dipilih), update URL dengan parameter capex_id
-                                    table.ajax.url('{{ route("report.index") }}?capex_id=' + value).load(); 
+                                    table.ajax.url('{{ route('report.index') }}?capex_id=' + value).load();
                                 } else {
                                     // Jika tidak ada pilihan (clear), reset pencarian dan kembali ke URL default
-                                    table.ajax.url('{{ route("report.index") }}').load(); // Menggunakan load() untuk reload tabel
+                                    table.ajax.url('{{ route('report.index') }}').load();
                                 }
+                            });
+                        });
 
-                            });
-                            $('#descriptionSelect').on('select2:unselect', function(e) {
-                                table.ajax.url('').load(); 
-                            });
+
+                        $('#descriptionSelect').on('select2:unselect', function(e) {
+                            table.ajax.url('').load();
+                        });
 
                         function number_format(number, decimals, decPoint, thousandsSep) {
                             number = (number + '').replace(',', '').replace(' ', '');
@@ -420,7 +427,7 @@
                         // Event handler untuk perubahan status
                         $('#statusSelect').on('select2:select', function(e) {
                             const selectedStatus = $(this).val();
-                            
+
                             if (selectedStatus) {
                                 // Reset field text ke default karena kita menampilkan multiple data
                                 $('#descriptionText').text('Description').attr('data-capex-id', '');
@@ -432,12 +439,12 @@
                                 $('#requesterText').val('Requester');
                                 $('#statusText').text(selectedStatus); // Tetap tampilkan status yang dipilih
                                 $('#amountText').text('Amount');
-                                
+
                                 // Reset descriptionSelect karena kita menampilkan multiple data
                                 $('#descriptionSelect').val('').trigger('change');
 
                                 // Update table dengan filter status_capex
-                                table.ajax.url('{{ route("report.index") }}?status_capex=' + selectedStatus).load();
+                                table.ajax.url('{{ route('report.index') }}?status_capex=' + selectedStatus).load();
                             } else {
                                 // Jika tidak ada status yang dipilih, reset semua ke default
                                 $('#descriptionText').text('Description').attr('data-capex-id', '');
@@ -449,24 +456,30 @@
                                 $('#requesterText').val('Requester');
                                 $('#statusText').text('Status Capex');
                                 $('#amountText').text('Amount');
-                                
+
                                 // Reset descriptionSelect
                                 $('#descriptionSelect').val('').trigger('change');
 
                                 if (selectedStatus) {
-                                table.ajax.url('{{ route("report.index") }}?status_capex=' + selectedStatus).load();
-                            } else {
-                                table.ajax.url('{{ route("report.index") }}').load();
-                            }
+                                    table.ajax.url('{{ route('report.index') }}?status_capex=' + selectedStatus)
+                                .load();
+                                } else {
+                                    table.ajax.url('{{ route('report.index') }}').load();
+                                }
                             }
                         });
+
+                        $('#statusSelect').on('select2:unselect', function(e){
+                            table.ajax.url('').load();
+                        });
+                        
 
                         //download pdf
                         $(document).ready(function() {
                             window.downloadFilteredPDF = function() {
                                 // Ambil capex_id langsung dari Select2
                                 const selectedCapexId = $('#descriptionSelect').val();
-                                
+
                                 // Cek apakah capex_id sudah dipilih
                                 if (!selectedCapexId) {
                                     Swal.fire({
@@ -475,7 +488,7 @@
                                         text: 'Silakan pilih Capex terlebih dahulu sebelum mengunduh PDF.',
                                         confirmButtonText: 'OK'
                                     });
-                                    return; 
+                                    return;
                                 }
 
                                 // Tampilkan SweetAlert sebelum membuka PDF
@@ -483,15 +496,17 @@
                                     icon: 'info',
                                     title: 'Sedang Mengunduh...',
                                     text: 'Tunggu sebentar, PDF sedang diproses.',
-                                    allowOutsideClick: false,  // Menghindari klik di luar modal Swal
+                                    allowOutsideClick: false, // Menghindari klik di luar modal Swal
                                     didOpen: () => {
                                         Swal.showLoading(); // Menampilkan loading spinner
                                     }
                                 });
 
                                 // Jika sudah ada yang dipilih, lanjutkan dengan membuka PDF
-                                const url = `{{ route('report.show', ':id') }}?pdf=filtered&capex_id=${selectedCapexId}`.replace(':id', selectedCapexId);
-                                
+                                const url =
+                                    `{{ route('report.show', ':id') }}?pdf=filtered&capex_id=${selectedCapexId}`
+                                    .replace(':id', selectedCapexId);
+
                                 // Setelah URL dibuka, menutup Swal dan membuka PDF
                                 window.open(url, '_blank');
 
@@ -705,16 +720,20 @@
     }
 
     .select2-container .select2-selection--single {
-        height: 38px; /* Menyesuaikan tinggi */
-        padding-left: 10px; /* Memberi jarak antara teks dan sisi kiri */
+        height: 38px;
+        /* Menyesuaikan tinggi */
+        padding-left: 10px;
+        /* Memberi jarak antara teks dan sisi kiri */
         font-size: 14px;
         border-radius: 4px;
     }
 
     /* Styling dropdown list */
     .select2-dropdown {
-        max-height: 250px; /* Batasi tinggi dropdown */
-        overflow-y: auto; /* Scroll jika isi terlalu banyak */
+        max-height: 250px;
+        /* Batasi tinggi dropdown */
+        overflow-y: auto;
+        /* Scroll jika isi terlalu banyak */
         font-size: 14px;
     }
 </style>
