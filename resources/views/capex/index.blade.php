@@ -207,7 +207,7 @@
                                         return data;
                                     }},
                                     {data: 'budget_type', name: 'budget_type', className: 'text-right', render: function(data, type, row) {
-                                        return '<div style="text-align: right;">' + data + '</div>';
+                                        return '<div style="text-align: left;">' + data + '</div>';
                                     }},
                                     {data: 'startup', name: 'startup', className: 'text-center',
                                     render: function(data) {
@@ -430,7 +430,6 @@
     
     .rounded-table { 
         border-radius: 12px; 
-        overflow: visible ; /* Untuk dropdown */
     }
 
     .table-responsive {
@@ -501,6 +500,12 @@
     .dropdown {
         position: relative;
     }
+    .dropdown-menu {
+    max-height: 170px; /* Sesuaikan tinggi maksimal yang diinginkan */
+    overflow-y: auto; /* Menambahkan scrollbar vertikal ketika konten melebihi max-height */
+    overflow-x: hidden; /* Mencegah scrollbar horizontal */
+    }
+
     .badge {
         font-size: 0.875rem;
         

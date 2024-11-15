@@ -19,6 +19,7 @@
                             <tr>
                                 <th class="text-center">No</th>
                                 <th class="text-center">Name</th>
+                                <th class="text-center">Created At</th>
                             </tr>
                         </thead>
                     </table>
@@ -132,40 +133,51 @@
 </script>
 
 <script>
-   $(document).ready(function() {
-    var capexId = {{ $capexId ?? 'null' }}; // Ambil id_capex dari server
+    $(document).ready(function() {
+        var capexId = {{ $capexId ?? 'null' }}; // Ambil id_capex dari server
 
-    // Jika capexId tidak ada, langsung load DataTable untuk semua data
-    if (!capexId) {
-        loadDataTable(); // Load tanpa filter
-    } else {
-        loadDataTable(capexId); // Load berdasarkan capexId yang diberikan
-    }
+        // Jika capexId tidak ada, langsung load DataTable untuk semua data
+        if (!capexId) {
+            loadDataTable(); // Load tanpa filter
+        } else {
+            loadDataTable(capexId); // Load berdasarkan capexId yang diberikan
+        }
 
-});
-
-// Fungsi untuk load DataTable
-function loadDataTable(capexId = null) {
-    $('#engineerTable').DataTable({
-        processing: true,
-        serverSide: true,
-        order: [[0, 'desc']],
-        ajax: {
-            url: '/capex/engineers', // URL untuk mendapatkan data engineer
-            type: 'GET',
-            data: function(d) {
-                if (capexId) {
-                    d.id_capex = capexId;  // Kirim id_capex ke server jika ada
-                }
-                d.flag = 'engineer';   // Kirim flag untuk filter data engineer
-            }
-        },
-        columns: [
-            { data: 'id_engineer', className: 'text-center' },
-            { data: 'nama', className: 'text-center' }
-        ]
     });
-}
 
-    
+    // Fungsi untuk load DataTable
+    function loadDataTable(capexId = null) {
+        $('#engineerTable').DataTable({
+            processing: true,
+            serverSide: true,
+            order: [
+                [0, 'desc']
+            ],
+            ajax: {
+                url: '/capex/engineers', // URL untuk mendapatkan data engineer
+                type: 'GET',
+                data: function(d) {
+                    if (capexId) {
+                        d.id_capex = capexId; // Kirim id_capex ke server jika ada
+                    }
+                    d.flag = 'engineer'; // Kirim flag untuk filter data engineer
+                }
+            },
+            columns: [{
+                    data: 'id_engineer',
+                    className: 'text-center'
+                },
+                {
+                    data: 'nama',
+                    className: 'text-center'
+                },
+                {   data: 'created_at',
+                    className: 'text-center',
+                    render: function(data) {
+                        return moment(data).format('YYYY-MM-DD');
+                    }
+                }
+            ]
+        });
+    }
 </script>
