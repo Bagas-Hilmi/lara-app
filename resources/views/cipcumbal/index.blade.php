@@ -118,7 +118,7 @@
                     processing: true,
                     serverSide: true,
                     order: [
-                        [8, 'desc']
+                        [7, 'desc']
                     ],
                     ajax: {
                         url: "{{ route('cipcumbal.index') }}",
@@ -272,11 +272,13 @@
                                 type: 'DELETE',
                                 success: function(result) {
                                     // Menampilkan notifikasi sukses
-                                    Swal.fire(
-                                        'Terhapus!',
-                                        'Item telah berhasil dihapus.',
-                                        'success'
-                                    );
+                                    Swal.fire({
+                                            title: "Terhapus!",
+                                            text: "Item berhasil dihapus!",
+                                            icon: "success",
+                                            showConfirmButton: false,
+                                            timer: 1000
+                                    });
                                     $('#cipCumBalTable').DataTable().ajax.reload();
 
                                 },

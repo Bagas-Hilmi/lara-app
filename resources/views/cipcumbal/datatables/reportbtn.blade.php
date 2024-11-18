@@ -38,7 +38,7 @@
                  success: function(response) {
                      if (response.success) {
                          // Ubah status tombol dan tampilkan sebagai Released
-                         button.removeClass('btn-warning').addClass('btn-success');
+                            button.removeClass('bg-gradient-warning').addClass('bg-gradient-success');
                          button.text('Released');
                          button.data('status', 1);  // Update status menjadi Released
  
@@ -48,10 +48,10 @@
                              title: 'Status Berhasil Diperbarui',
                              text: 'Report berhasil dirilis sebagai Released.',
                              showConfirmButton: false,
-                             timer: 900
+                             timer: 1000
                          });
  
-                         $('#faglb-table').DataTable().ajax.reload(); // Reload DataTable
+                        location.reload();
  
                      } else {
                          // SweetAlert for error
@@ -86,3 +86,33 @@
      });
     });
 </script>
+
+<style>
+        /* From Uiverse.io by suda-code */ 
+    .release-btn {
+    padding: 12.5px 30px;
+    border: 0;
+    border-radius: 100px;
+    background-color: #2ba8fb;
+    color: #ffffff;
+    font-weight: Bold;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    text-shadow: 1px 1px 1px #00000040;
+  box-shadow: 8px 8px 20px 0px #45090059;
+    }
+
+    .release-btn:hover {
+    background-color: #6fc5ff;
+    box-shadow: 0 0 20px #6fc5ff50;
+    transform: scale(1.1);
+    }
+
+    .release-btn:active {
+    background-color: #3d94cf;
+    transition: all 0.25s;
+    -webkit-transition: all 0.25s;
+    box-shadow: none;
+    transform: scale(0.98);
+    }
+</style>

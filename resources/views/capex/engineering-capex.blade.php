@@ -9,7 +9,7 @@
                 <div class="mb-3">
                     <button class="btn btn-primary mb-3" style="background-color: #09170a; border-color: #09170a;"
                         data-bs-toggle="modal" data-bs-target="#newEngineerModal">
-                        New Engineer
+                        Engineer
                     </button>
                 </div>
 

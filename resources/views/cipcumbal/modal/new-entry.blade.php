@@ -62,18 +62,19 @@
 
 <script>
     $(document).ready(function() {
-        // Fungsi untuk memformat input dengan pemisah ribuan
         function formatCurrency(inputId) {
             $(inputId).on('input', function() {
-                // Hapus koma sebelum format ulang
-                let value = $(this).val().replace(/,/g, '');
-
+                // Hapus semua karakter kecuali angka dan titik
+                let value = $(this).val().replace(/[^0-9.]/g, '');
+                
                 // Periksa apakah nilai valid
                 if (!isNaN(value) && value !== '') {
                     // Format dengan pemisah ribuan
-                    $(this).val(parseFloat(value).toLocaleString('en-US'));
+                    const numValue = parseFloat(value);
+                    if (!isNaN(numValue)) {
+                        $(this).val(numValue.toLocaleString('en-US'));
+                    }
                 } else {
-                    // Kosongkan input jika tidak valid
                     $(this).val('');
                 }
             });
@@ -90,13 +91,24 @@
     document.getElementById('saveEntry').addEventListener('click', function() {
         const form = document.getElementById('entryForm');
 
-        // Cek apakah form valid sebelum lanjut
+        // Fungsi untuk membersihkan format angka
+        function cleanNumber(value) {
+            // Hapus semua koma dan convert ke number
+            return value.replace(/,/g, '');
+        }
+
         if (form.checkValidity()) {
             const formData = new FormData(form);
-            // Pastikan `mode` sesuai
             formData.append('mode', 'ADD');
 
-            // Tampilkan SweetAlert untuk konfirmasi sebelum menyimpan
+            // Bersihkan format number sebelum mengirim
+            const numberFields = ['bal_usd', 'bal_rp', 'cumbal_usd', 'cumbal_rp'];
+            numberFields.forEach(field => {
+                const input = document.getElementsByName(field)[0];
+                const cleanedValue = cleanNumber(input.value);
+                formData.set(field, cleanedValue);
+            });
+
             Swal.fire({
                 title: 'Apakah Anda yakin?',
                 text: "Data ini akan disimpan!",
@@ -108,7 +120,6 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Jika pengguna mengonfirmasi, lakukan pengiriman form menggunakan AJAX
                     $.ajax({
                         url: form.action,
                         type: 'POST',
@@ -127,11 +138,11 @@
                                     showConfirmButton: false,
                                     timer: 1000
                                 });
-                                // Reload DataTable tanpa refresh halaman
                                 $('#cipCumBalTable').DataTable().ajax.reload();
-
-                                // Tutup modal setelah sukses
                                 $('#new-form').modal('hide');
+
+                                // Reset form setelah sukses
+                                form.reset();
                             } else {
                                 Swal.fire(
                                     'Gagal!',
@@ -152,7 +163,6 @@
                 }
             });
         } else {
-            // Jika form tidak valid, tampilkan pesan kesalahan
             Swal.fire({
                 title: 'Error!',
                 text: 'Silakan lengkapi semua input yang diperlukan.',

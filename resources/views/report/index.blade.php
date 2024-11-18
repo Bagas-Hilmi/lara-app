@@ -720,20 +720,23 @@
     }
 
     .select2-container .select2-selection--single {
-        height: 38px;
-        /* Menyesuaikan tinggi */
-        padding-left: 10px;
-        /* Memberi jarak antara teks dan sisi kiri */
-        font-size: 14px;
-        border-radius: 4px;
+        height: 45px; /* Menyesuaikan tinggi agar lebih proporsional */
+        padding-left: 15px; /* Memberikan ruang lebih pada sisi kiri */
+        padding-right: 15px; /* Memberikan ruang lebih pada sisi kanan */
+        font-size: 15px; /* Ukuran font lebih besar untuk keterbacaan */
+        border-radius: 8px; /* Membuat sudut lebih halus */
+        border: 1px solid #ccc; /* Border abu-abu muda untuk kesan elegan */
+        background-color: #ffffff; /* Latar belakang putih agar bersih */
+        color: #000000; /* Warna teks abu-abu gelap untuk kontras yang baik */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan halus di sekitar dropdown */
+        transition: all 0.3s ease; /* Menambahkan transisi halus saat berinteraksi */
     }
 
-    /* Styling dropdown list */
-    .select2-dropdown {
-        max-height: 250px;
-        /* Batasi tinggi dropdown */
-        overflow-y: auto;
-        /* Scroll jika isi terlalu banyak */
-        font-size: 14px;
+    /* Efek fokus pada select2 */
+    .select2-container .select2-selection--single:focus {
+        border-color: #3cff00; /* Mengubah border menjadi biru saat fokus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Menambahkan bayangan biru saat fokus */
+        outline: none; /* Menghilangkan outline default */
     }
+    
 </style>
