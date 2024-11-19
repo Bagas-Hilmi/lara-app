@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Report;
+use App\Models\ReportCategory;
 use App\Models\Capex;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -17,25 +18,52 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $descriptions = Report::getActiveCapexDescriptions();
-        Report::insertReportCip();
-        $engineers = Report::getEngineersForProjects();
+        $flag = $request->input('flag', 'cip'); // Default flag adalah 'cip'
 
-        if ($request->ajax()) {
-            $query = Report::query()
-                ->join('t_master_capex', 't_report_cip.id_capex', '=', 't_master_capex.id_capex')
-                ->where('t_report_cip.status', 1);
+        if ($flag === 'cip') {
+            $descriptions = Report::getActiveCapexDescriptions();
+            Report::insertReportCip();
+            $engineers = Report::getEngineersForProjects();
 
-            if ($request->has('capex_id') && $request->input('capex_id') != '') {
-                $query->where('t_report_cip.id_capex', $request->input('capex_id'));
-            } elseif ($request->has('status_capex') && $request->input('status_capex') != '') {
-                $query->where('t_master_capex.status_capex', $request->input('status_capex'));
+            if ($request->ajax()) {
+                $query = Report::query()
+                    ->join('t_master_capex', 't_report_cip.id_capex', '=', 't_master_capex.id_capex')
+                    ->where('t_report_cip.status', 1);
+
+                if ($request->has('capex_id') && $request->input('capex_id') != '') {
+                    $query->where('t_report_cip.id_capex', $request->input('capex_id'));
+                } elseif ($request->has('status_capex') && $request->input('status_capex') != '') {
+                    $query->where('t_master_capex.status_capex', $request->input('status_capex'));
+                }
+
+                return DataTables::of($query)->make(true);
             }
 
-            return DataTables::of($query)->make(true);
+            return view('report.reportCip.index', compact('descriptions', 'engineers'));
+        } else if ($flag === 'category') {
+            
+            if ($request->ajax()) {
+                $data = ReportCategory::select([
+                    'category',
+                    'project',
+                    'number',
+                    'budget',
+                    'unbudget',
+                    'carried_over',
+                    'amount',
+                    'actual_ytd',
+                    'balance'
+                ])->get();
+                
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->make(true);
+            }
+
+            return view('report.reportCategory.index');
         }
 
-        return view('report.index', compact('descriptions', 'engineers'));
+        return redirect()->route('report.index', ['flag' => 'cip']);
     }
 
     // Download berdasarkan filter
@@ -67,7 +95,7 @@ class ReportController extends Controller
         }
 
         // Pilih template berdasarkan tipe
-        $template = $isProject ? 'report.pdf-filtered-project' : 'report.pdf-filtered';
+        $template = $isProject ? 'report.reportCip.pdf-filtered-project' : 'report.reportCip.pdf-filtered';
 
         $pdf = PDF::loadView($template, [
             'reports' => $reports,
