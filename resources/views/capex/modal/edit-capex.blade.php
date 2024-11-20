@@ -92,13 +92,30 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="startup_edit" class="form-label font-weight-bold">STARTUP</label>
                             <input type="date" class="form-control" id="startup_edit" name="startup" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="expected_completed_edit" class="form-label font-weight-bold">EXPECTED COMPLETED</label>
                             <input type="date" class="form-control" id="expected_completed_edit" name="expected_completed" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="category_edit" class="form-label font-weight-bold">Category</label>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Category
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="categoryDropdownEdit">
+                                    <li><a class="dropdown-item" href="#" data-value="General Operation">General Operation</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="IT">IT</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Environment">Environment</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Safety">Safety</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Improvement Plant efficiency">Improvement Plant efficiency</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Invesment">Invesment</a></li>
+                                </ul>
+                                <input type="hidden" id="category_edit" name="category" style="text-align: center;" required>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -130,6 +147,7 @@
             var expected_completed = $(this).data('expected_completed');
             var wbs_number = $(this).data('wbs_number');
             var cip_number = $(this).data('cip_number');
+            var category = $(this).data('category');
 
             // Isi data ke dalam modal
             $('#project_desc_edit').val(project_desc);
@@ -145,6 +163,7 @@
             $('#expected_completed_edit').val(expected_completed);
             $('#wbs_number_edit').val(wbs_number);
             $('#cip_number_edit').val(cip_number);
+            $('#category_edit').val(category);
 
             $('#id_capex_edit').val(id_capex); // Pastikan Anda memiliki input tersembunyi di modal Anda
 
@@ -152,6 +171,14 @@
             $('#wbsCapexDropdownEdit').text(wbs_capex.charAt(0).toUpperCase() + wbs_capex.slice(1).replace(/_/g, ' ')); // Ubah _ menjadi spasi dan huruf pertama menjadi kapital
             $('#statusDropdownEdit').text(status_capex.charAt(0).toUpperCase() + status_capex.slice(1).replace(/_/g, ' ')); // Ubah _ menjadi spasi dan huruf pertama menjadi kapital
             $('#budgetTypeDropdownEdit').text(budget_type === 'budgeted' ? 'Budgeted' : 'Unbudgeted');
+            $('#categoryDropdownEdit').text(
+                category === 'General Operation' ? 'General Operation' :
+                category === 'IT' ? 'IT' :
+                category === 'Environment' ? 'Environment' :
+                category === 'Safety' ? 'Safety' :
+                category === 'Improvement Plant efficiency' ? 'Improvement Plant efficiency' :
+                category === 'Invesment' ? 'Invesment' : 'Unknown'
+            );
         });
 
             // Event handler untuk menyimpan perubahan pada modal
@@ -172,6 +199,7 @@
                     expected_completed: $('#expected_completed_edit').val(),
                     wbs_number: $('#wbs_number_edit').val(),
                     cip_number: $('#cip_number_edit').val(),
+                    category: $('#category_edit').val(),
                     flag: 'update' // Menyertakan flag update
                 }; // Mengambil semua data dalam form
                 

@@ -92,14 +92,31 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="startup" class="form-label font-weight-bold">Startup</label>
                             <input type="date" class="form-control" id="startup" name="startup" required>
                         </div>
                     
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="expected_completed" class="form-label font-weight-bold">Expected Completed</label>
                             <input type="date" class="form-control" id="expected_completed" name="expected_completed" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="category" class="form-label font-weight-bold">Category</label>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Category
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                                    <li><a class="dropdown-item" href="#" data-value="General Operation">General Operation</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="IT">IT</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Environment">Environment</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Safety">Safety</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Improvement Plant efficiency">Improvement Plant efficiency</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Invesment">Invesment</a></li>
+                                </ul>
+                                <input type="hidden" id="category" name="category" style="text-align: center;" required>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -134,11 +151,12 @@
                 expected_completed: $('#expected_completed').val(),
                 wbs_number: $('#wbs_number').val(),
                 cip_number: $('#cip_number').val(),
+                category: $('#category').val(),
                 flag: $('input[name="flag"]').val() // Ambil flag dari input hidden
             };
 
             // Cek apakah semua field yang required terisi
-            if (!formData.project_desc || !formData.wbs_capex || !formData.request_number || !formData.requester || !formData.capex_number || !formData.amount_budget || !formData.status_capex || !formData.budget_type || !formData.startup || !formData.expected_completed || !formData.wbs_number || !formData.cip_number ) {
+            if (!formData.project_desc || !formData.wbs_capex || !formData.request_number || !formData.requester || !formData.capex_number || !formData.amount_budget || !formData.status_capex || !formData.budget_type || !formData.startup || !formData.expected_completed || !formData.wbs_number || !formData.cip_number || !formData.category ) {
                 Swal.fire({
                     title: 'Error!',
                     text: 'Silakan lengkapi semua input yang diperlukan.',
@@ -250,6 +268,14 @@
                 var text = $(this).text();
                 $('#budgetTypeDropdown').text(text); // Ubah teks tombol menjadi item yang dipilih
                 $('#budget_type').val(value); // Atur nilai input tersembunyi
+            });
+        });
+        $('#categoryDropdown').on('click', function() {
+            $('.dropdown-menu[aria-labelledby="categoryDropdown"] .dropdown-item').on('click', function() {
+                var value = $(this).data('value');
+                var text = $(this).text();
+                $('#categoryDropdown').text(text); // Ubah teks tombol menjadi item yang dipilih
+                $('#category').val(value); // Atur nilai input tersembunyi
             });
         });
     });

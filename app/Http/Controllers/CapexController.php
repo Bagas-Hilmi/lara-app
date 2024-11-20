@@ -93,6 +93,7 @@ class CapexController extends Controller
                 'id_capex'       => 'required_if:flag,update|exists:t_master_capex,id_capex',
                 'project_desc'   => 'required|string|max:255',
                 'wbs_capex'      => 'required|string',
+                'category'      => 'required|string',
                 'remark'         => 'required|string|max:255',
                 'request_number' => 'required|string|max:255',
                 'requester'      => 'required|string|max:255',
@@ -111,6 +112,7 @@ class CapexController extends Controller
             // Simpan data baru ke database
             $result = Capex::add(
                 $validated['project_desc'],
+                $validated['category'],
                 $validated['wbs_capex'],
                 $validated['remark'],
                 $validated['request_number'],
@@ -134,6 +136,7 @@ class CapexController extends Controller
                 'id_capex'       => 'required_if:flag,update|exists:t_master_capex,id_capex',
                 'project_desc'   => 'required|string|max:255',
                 'wbs_capex'      => 'required|string',
+                'category'      => 'required|string',
                 'remark'         => 'required|string|max:255',
                 'request_number' => 'required|string|max:255',
                 'requester'      => 'required|string|max:255',
@@ -162,6 +165,7 @@ class CapexController extends Controller
                 $capex->expected_completed = $validated['expected_completed'];
                 $capex->wbs_number = $validated['wbs_number'];
                 $capex->cip_number = $validated['cip_number'];
+                $capex->category = $validated['category'];
                 $capex->save();
 
                 $capexStatus = new CapexStatus();

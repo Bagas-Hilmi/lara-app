@@ -53,6 +53,7 @@
                                                 <th class="text-center">Action</th>
                                                 <th class="text-center">ID</th>
                                                 <th class="text-center">Project Desc</th>
+                                                <th class="text-center">Category</th>
                                                 <th class="text-center">WBS Capex </th>
                                                 <th class="text-center">Remark</th>
                                                 <th class="text-center">Req Number</th>
@@ -140,6 +141,29 @@
                                             $(td).css('text-align','left');
                                         }
                                     },
+                                    {data: 'category', name: 'category', 
+                                        createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align','left');
+                                        }, 
+                                        render: function(data, type, row) {
+                                        if (type === 'display') {
+                                            if (data === 'General Operation') {
+                                                return '<span class="badge bg-secondary">General Operation</span>';
+                                            } else if (data === 'IT') {
+                                                return '<span class="badge bg-secondary">IT</span>';
+                                            } else if (data === 'Environment') {
+                                                return '<span class="badge bg-secondary">Environment</span>';
+                                            } else if (data === 'Safety') {
+                                                return '<span class="badge bg-secondary">Safety</span>';
+                                            } else if (data === 'Improvement Plant efficiency') {
+                                                return '<span class="badge bg-secondary">Improvement Plant efficiency</span>';
+                                            } else if (data === 'Invesment') {
+                                                return '<span class="badge bg-secondary">Invesment</span>';
+                                            }
+                                            return data; // Untuk nilai lain tampilkan apa adanya
+                                        }
+                                        return data;
+                                    }},
                                     {data: 'wbs_capex', name: 'wbs_capex', 
                                     createdCell: function(td, cellData, rowData, rowIndex, colIndex){
                                             $(td).css('text-align','left');
@@ -172,14 +196,16 @@
                                         }
                                     },
 
-                                    {data: 'capex_number', name: 'capex_number', className: 'text-right'},
+                                    {data: 'capex_number', name: 'capex_number', createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                            $(td).css('text-align', 'left');
+                                    }},
                                     {data: 'amount_budget', name: 'amount_budget', className: 'text-right', 
                                     render: function(data) {
                                         return data 
                                             ? '<div style="text-align: right;">' + data.toLocaleString() + '</div>' 
                                             : '';
                                     }},
-                                    {data: 'budget_cos', name: 'budget_cos', className: 'text-right',
+                                    {data: 'budget_cos', name: 'budget_cos',
                                         render: function(data, type, row) {
                                             if (type === 'display') {
                                                 // Cek jika data kosong
@@ -192,7 +218,7 @@
                                             }
                                             return data;
                                     }},
-                                    {data: 'total_budget', name: 'total_budget', className: 'text-right', 
+                                    {data: 'total_budget', name: 'total_budget', 
                                     render: function(data, type) {
                                         if (type === 'display') {
                                             return '<div style="text-align: right;">' + data.toLocaleString() + '</div>';

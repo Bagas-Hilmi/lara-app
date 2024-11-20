@@ -221,7 +221,10 @@
                                 {
                                     data: 'description',
                                     name: 'description',
-                                    className: 'text-start'
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                        $(td).css('text-align','left');
+                                    }
+                                   
                                 },
                                 {
                                     data: 'qty',
@@ -251,7 +254,8 @@
                                     name: 'amount_us',
                                     className: 'text-right',
                                     render: function(data, type, row) {
-                                        return data ? number_format(data, 2, ',', '.') : '-';
+                                        return '<div style="text-align: right;">' + (data ? number_format(data,
+                                            0, ',', '.') : '-') + '</div>';
                                     }
                                 },
                                 {
