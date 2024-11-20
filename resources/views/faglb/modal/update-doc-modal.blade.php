@@ -64,9 +64,16 @@
                     contentType: false,
                     success: function(response) {
                         if (response.success) {
-                            $("#replaceDocFormModal").modal("hide");
-                            $("#faglb-table").DataTable().ajax.reload();
-                            Swal.fire("Sukses", "File berhasil diperbarui", "success");
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sukses!',
+                                text: "File berhasil di update!",
+                                showConfirmButton: false,
+                                timer: 1000
+                            }).then(() => {
+                                $('#replaceDocFormModal').modal('hide'); 
+                                $('#faglb-table').DataTable().ajax.reload();
+                            });
                         } else {
                             Swal.fire(
                                 "Error",

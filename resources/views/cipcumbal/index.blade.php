@@ -262,7 +262,8 @@
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, hapus!',
+                        confirmButtonText: 'OK!',
+                        cancelButtonText: 'Batal',
                         position: 'center'
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -274,7 +275,7 @@
                                     // Menampilkan notifikasi sukses
                                     Swal.fire({
                                             title: "Terhapus!",
-                                            text: "Item berhasil dihapus!",
+                                            text: "Entry has been deleted!",
                                             icon: "success",
                                             showConfirmButton: false,
                                             timer: 1000

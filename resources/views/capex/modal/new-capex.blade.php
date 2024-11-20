@@ -172,7 +172,7 @@
                             // Tampilkan pesan sukses dengan SweetAlert
                             Swal.fire({
                                 title: 'Berhasil!',
-                                text: response.success,
+                                text: 'Data Capex berhasil di upload. ' + response.success,
                                 icon: 'success',
                                 showConfirmButton: false,
                                 timer: 1000

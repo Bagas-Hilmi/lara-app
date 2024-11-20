@@ -152,8 +152,8 @@
                             showCancelButton: true, // Tampilkan tombol batal
                             confirmButtonColor: "#3085d6", // Warna tombol konfirmasi
                             cancelButtonColor: "#d33", // Warna tombol batal
-                            confirmButtonText: "Ya, hapus!",
-                            cancelButtonText: "Batal",
+                            confirmButtonText: "OK",
+                            cancelButtonText: 'Batal'
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 // Jika pengguna mengkonfirmasi penghapusan

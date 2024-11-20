@@ -95,13 +95,11 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Sukses!',
-                                text: data.message, // Tampilkan pesan sukses
+                                text: "File berhasil di upload!",
                                 showConfirmButton: false,
                                 timer: 1000
                             }).then(() => {
-                                $('#addDocFormModal').modal(
-                                'hide'); // Ganti #modal-id dengan ID modal Anda
-                                // Menyegarkan atau menutup modal jika diperlukan
+                                $('#addDocFormModal').modal('hide'); 
                                 $('#faglb-table').DataTable().ajax.reload();
                             });
                         } else {

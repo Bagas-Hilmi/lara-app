@@ -183,7 +183,7 @@
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, simpan!',
+                    confirmButtonText: 'Ya, perbarui!',
                     cancelButtonText: 'Tidak'
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -199,7 +199,7 @@
                                 // Menampilkan pesan sukses
                                 Swal.fire({
                                     title: 'Berhasil!',
-                                    text: 'Data berhasil disimpan!',
+                                    text: 'Capex berhasil di update!',
                                     icon: 'success',
                                     showConfirmButton: false,
                                     timer: 1000
@@ -255,5 +255,4 @@
             });
         });
     });
-</script>
 </script>

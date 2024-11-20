@@ -133,7 +133,7 @@
                             if (data.success) {
                                 Swal.fire({
                                     title: "Sukses!",
-                                    text: "Entry saved successfully!",
+                                    text: "Entry berhasil di upload!",
                                     icon: "success",
                                     showConfirmButton: false,
                                     timer: 1000

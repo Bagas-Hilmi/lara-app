@@ -541,20 +541,18 @@ class CapexController extends Controller
 
     // public function getDataFromSAP($flag=null, $soNo=null, $soltem=null, $batchNo=null)
     // {
-    //     if ($flag == 'ZFM_EUDR_SHIPMENT' ){ 
-    //         $sapClient - 'Client-PRD-300'; 
-    //         $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?'; 
+    //     if ($flag == 'ZFM_GET_CJE3' ){ 
+    //         $sapClient = 'Client-DEV-110'; 
+    //         $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?Client=DEV-110&FM=ZFM_GET_CJE3&PSPHI=P-1525-01'; 
     //         $sapFm = '&FM=' .$flag; 
     //         $input_1 = '&SO_NUM=' .$soNo; 
-    //         $input_2 = '&SO_ITEM=' .$soItem; 
-    //         $input_3 = '&BATCH=' .$batchNo; 
-    //         $eobUrl = $sapReqUrl.$sapClient.$sapFm.$input_1.$input_2-$input_3; 
+    //         $eobUrl = $sapReqUrl.$sapClient.$sapFm.$input_1; 
     //     } 
     //     $ch = curl_init ($eobUrl); 
     //     // Set CURL options 
     //     curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true); 
     //     // Execute CURL request 
-    //     $response - curl_exec ($ch); 
+    //     $response = curl_exec ($ch); 
     //     // Check for cURL errors 
     //     if (curl_errno($ch)) {
     //         $error_message = curl_error ($ch); 
@@ -567,6 +565,9 @@ class CapexController extends Controller
     //     $data = json_decode ($response, true); 
     //     // Return the retrieved data 
     //     return response()->json(['data' => $data], 200);
+
+    //     $jsonResponse = $this->getDataFromSap($flag,$soN0, $soItem, $batchNo);
+    //     $txtData = $jsonResponse->original;
 
     // }
 

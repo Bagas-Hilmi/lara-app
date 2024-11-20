@@ -97,9 +97,9 @@
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
+            confirmButtonText: 'OK',
             cancelButtonText: 'Batal'
-            }).then((result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     url: '/capex/' + budgetId, // Sesuaikan URL endpoint dengan id

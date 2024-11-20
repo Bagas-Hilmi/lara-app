@@ -135,8 +135,15 @@
                                 columns: [
                                     {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                                     {data: 'id_capex', name: 'id_capex', className: 'text-center'},
-                                    {data: 'project_desc', name: 'project_desc', className: 'text-start'},
-                                    {data: 'wbs_capex', name: 'wbs_capex', className: 'text-start',
+                                    {data: 'project_desc', name: 'project_desc', 
+                                        createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align','left');
+                                        }
+                                    },
+                                    {data: 'wbs_capex', name: 'wbs_capex', 
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align','left');
+                                        },
                                     render: function(data, type, row) {
                                         if (type === 'display') {
                                             if (data === 'Project') {
@@ -148,28 +155,39 @@
                                         }
                                         return data;
                                     }},
-                                    {data: 'remark', name: 'remark', className: 'text-start'},
-                                    {data: 'request_number', name: 'request_number', className: 'text-right', render: function(data, type, row) {
-                                        return '<div style="text-align: right;">' + data + '</div>';
+                                    {data: 'remark', name: 'remark',
+                                        createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align', 'left');
                                     }},
-                                    {data: 'requester', name: 'requester', className: 'text-start'},
+                                    
+                                    {data: 'request_number', name: 'request_number',
+                                        createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align', 'right');
+                                    }},
+                                    {
+                                        data: 'requester',
+                                        name: 'requester',
+                                        createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                            $(td).css('text-align', 'left'); 
+                                        }
+                                    },
+
                                     {data: 'capex_number', name: 'capex_number', className: 'text-right'},
                                     {data: 'amount_budget', name: 'amount_budget', className: 'text-right', 
-                                    render: function(data, type) {
-                                        if (type === 'display') {
-                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
-                                        }
-                                        return data;
+                                    render: function(data) {
+                                        return data 
+                                            ? '<div style="text-align: right;">' + data.toLocaleString() + '</div>' 
+                                            : '';
                                     }},
                                     {data: 'budget_cos', name: 'budget_cos', className: 'text-right',
                                         render: function(data, type, row) {
                                             if (type === 'display') {
                                                 // Cek jika data kosong
-                                            if (data === null || data === "" || isNaN(data)) {
-                                        return '-'; 
+                                            if (data === null || data === "" || isNaN(Number(data))) {
+                                                return '-'; 
                                         }
                                             return '<div style="text-align: right;">' + 
-                                                '<span>' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</span>' + 
+                                                '<span>' + data.toLocaleString() + '</span>' + 
                                                 '</div>';
                                             }
                                             return data;
@@ -177,16 +195,16 @@
                                     {data: 'total_budget', name: 'total_budget', className: 'text-right', 
                                     render: function(data, type) {
                                         if (type === 'display') {
-                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
+                                            return '<div style="text-align: right;">' + data.toLocaleString() + '</div>';
                                         }
                                         return data;
                                     }},
                                     {data: 'PO_release', name: 'PO_release', className: 'text-right',   render: function(data, type) {
                                         if (type === 'display') {
-                                            if(data === null || data ==="" || isNaN(data)){
+                                            if(data === null || data ==="" || isNaN(Number(data))){
                                                 return '-';
                                             }
-                                            return '<div style="text-align: right;">' + parseFloat(data).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
+                                            return '<div style="text-align: right;">' + data.toLocaleString() + '</div>';
                                         }
                                         return data;
                                     }},
@@ -234,8 +252,14 @@
                                                 return '-';}
                                             return data;
                                     }},
-                                    {data: 'wbs_number', name: 'wbs_number', className: 'text-start'},
-                                    {data: 'cip_number', name: 'cip_number', className: 'text-start'},
+                                    {data: 'wbs_number', name: 'wbs_number',
+                                        createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                            $(td).css('text-align', 'left'); 
+                                    }},
+                                    {data: 'cip_number', name: 'cip_number',
+                                        createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                            $(td).css('text-align', 'left'); 
+                                    }},
                                     {
                                         data: 'created_at',
                                         name: 'created_at',
@@ -280,7 +304,7 @@
                                     showCancelButton: true,
                                     confirmButtonColor: '#3085d6',
                                     cancelButtonColor: '#d33',
-                                    confirmButtonText: 'Ya, hapus!',
+                                    confirmButtonText: 'OK',
                                     cancelButtonText: 'Batal'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
@@ -323,6 +347,7 @@
                                     }
                                 });
                             });
+                            
                             let pocommitmentTable;
 
                             $(document).ready(function() {
