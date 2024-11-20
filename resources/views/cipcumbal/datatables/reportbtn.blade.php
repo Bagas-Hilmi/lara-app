@@ -39,8 +39,8 @@
                      if (response.success) {
                          // Ubah status tombol dan tampilkan sebagai Released
                             button.removeClass('bg-gradient-warning').addClass('bg-gradient-success');
-                         button.text('Released');
-                         button.data('status', 1);  // Update status menjadi Released
+                            button.text('Released');
+                            button.data('status', 1);  // Update status menjadi Released
  
                          // SweetAlert for success
                          Swal.fire({
@@ -51,7 +51,7 @@
                              timer: 1000
                          });
  
-                        location.reload();
+                         $('#cipCumBalTable').DataTable().ajax.reload();
  
                      } else {
                          // SweetAlert for error

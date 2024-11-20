@@ -38,7 +38,7 @@
                  success: function(response) {
                      if (response.success) {
                          // Ubah status tombol dan tampilkan sebagai Released
-                         button.removeClass('btn-warning').addClass('btn-success');
+                         button.removeClass('bg-gradient-warning').addClass('bg-gradient-success');
                          button.text('Released');
                          button.data('status', 1);  // Update status menjadi Released
  
