@@ -41,29 +41,21 @@ class ReportController extends Controller
 
             return view('report.reportCip.index', compact('descriptions', 'engineers'));
         } else if ($flag === 'category') {
-            
+
             if ($request->ajax()) {
-                $data = ReportCategory::select([
-                    'category',
-                    'project',
-                    'number',
-                    'budget',
-                    'unbudget',
-                    'carried_over',
-                    'amount',
-                    'actual_ytd',
-                    'balance'
-                ])->get();
+                // Memanggil method dari model untuk mendapatkan data
+                $data = ReportCategory::getReportCategoryData();
                 
                 return DataTables::of($data)
-                    ->addIndexColumn()
+                    ->addIndexColumn() //nomor urut
                     ->make(true);
             }
 
             return view('report.reportCategory.index');
         }
 
-        return redirect()->route('report.index', ['flag' => 'cip']);
+        return redirect()->route('report.index', ['flag' => 'cip'])
+        ->with('success', 'Data berhasil ditambahkan!');
     }
 
     // Download berdasarkan filter

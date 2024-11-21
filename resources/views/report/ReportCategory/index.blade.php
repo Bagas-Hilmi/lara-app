@@ -18,37 +18,38 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="mb-2">
+                                   
+                                    
                                     
                                 </div>
                                 <div class="table-responsive p-0">
-                                    <table id="cate-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
+                                    <table id="cate-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
                                         <thead style="background-color: #3cb210; color: white;">
                                             <tr>
-                                                <th align="center">No</th>
-                                                <th align="center">Category</th>
-                                                <th align="center">Project</th>
-                                                <th align="center">Number</th>
-                                                <th align="center">Budget 2024</th>
-                                                <th align="center">Unbudget 2024</th>
-                                                <th align="center">Carried Over</th>
-                                                <th align="center">Amount</th>
-                                                <th align="center">Actual YTD</th>
-                                                <th align="center">Balance</th>
-                                                
+                                                <th class="text-center">No</th>
+                                                <th class="text-center">Category</th>
+                                                <th class="text-center">Project</th>
+                                                <th class="text-center">Number</th>
+                                                <th class="text-center">Budget 2024</th>
+                                                <th class="text-center">Unbudget 2024</th>
+                                                <th class="text-center">Carried Over</th>
+                                                <th class="text-center">Amount</th>
+                                                <th class="text-center">Actual YTD</th>
+                                                <th class="text-center">Balance</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <th align="center">IT</th>                                            
+                                           
                                         </tbody>
                                         <tfoot>
-                                            <tr>
-                                                <th colspan="4">Sub Total</th>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
+                                            <tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
+                                                <th colspan="4">Total</th>
+                                                <th class="text-right"></th>
+                                                <th class="text-right"></th>
+                                                <th class="text-right"></th>
+                                                <th class="text-right"></th>
+                                                <th class="text-right"></th>
+                                                <th class="text-right"></th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -66,112 +67,164 @@
                 <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
                 <script src="assets/js/moment.min.js"></script>
 
-                {{-- <script src="assets/js/select2.min.js"></script>
-                <script src="assets/js/select2.min.css"></script> --}}
-                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
                 <script>
-                $(document).ready(function() {
-                    var table = $('#cate-table').DataTable({
-                        processing: true,
-                        serverSide: true,
-                        ajax: {
-                            url: '{!! route('report.index') !!}',
-                            type: 'GET',
-                            data: {
-                                flag: 'category'
-                            }
-                        },
-                        columns: [
-                            { 
-                                data: null,
-                                render: function (data, type, row, meta) {
-                                    return meta.row + meta.settings._iDisplayStart + 1;
+                    $(document).ready(function() {
+                        var table = $('#cate-table').DataTable({
+                            processing: true,
+                            serverSide: true,
+                            ordering: false,
+                            ajax: {
+                                url: '{!! route('report.index') !!}',
+                                type: 'GET',
+                                data: {
+                                    flag: 'category'
+                                }
+                            },
+                            columns: [
+                                { data: 'DT_RowIndex', name: 'DT_RowIndex' },  // Untuk nomor urut
+
+                                { data: 'category', visible: false }, // Hide kolom category
+                                { 
+                                    data: 'project',
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                        $(td).css('text-align', 'left');
+                                    }
                                 },
-                                className: 'text-center'
-                            },
-                            { data: 'category', name: 'category', className: 'text-start' },
-                            { data: 'project', name: 'project', className: 'text-start' },
-                            { data: 'number', name: 'number', className: 'text-start' },
-                            { 
-                                data: 'budget', 
-                                name: 'budget', 
-                                className: 'text-right',
-                                render: function(data) {
-                                    return data ? data.toLocaleString() : '';
+                                { data: 'number', className: 'text-center' },
+                                { 
+                                    data: 'budget',
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
+                                    render: function(data) {
+                                        return data ? data.toLocaleString() : '';
+                                    }
+                                },
+                                { 
+                                    data: 'unbudget',
+                                    className: 'text-right',
+                                    render: function(data) {
+                                        return data ? data.toLocaleString() : '';
+                                    }
+                                },
+                                { 
+                                    data: 'carried_over',
+                                    className: 'text-right',
+                                    render: function(data) {
+                                        return data ? data.toLocaleString() : '';
+                                    }
+                                },
+                                { 
+                                    data: 'amount',
+                                    className: 'text-right',
+                                    render: function(data) {
+                                        return data ? data.toLocaleString() : '';
+                                    }
+                                },
+                                { 
+                                    data: 'actual_ytd',
+                                    className: 'text-right',
+                                    render: function(data) {
+                                        return data ? data.toLocaleString() : '';
+                                    }
+                                },
+                                { 
+                                    data: 'balance',
+                                    className: 'text-right',
+                                    render: function(data) {
+                                        return data ? data.toLocaleString() : '';
+                                    }
                                 }
-                            },
-                            { 
-                                data: 'unbudget', 
-                                name: 'unbudget', 
-                                className: 'text-right',
-                                render: function(data) {
-                                    return data ? data.toLocaleString() : '';
-                                }
-                            },
-                            { 
-                                data: 'carried_over', 
-                                name: 'carried_over', 
-                                className: 'text-right',
-                                render: function(data) {
-                                    return data ? data.toLocaleString() : '';
-                                }
-                            },
-                            { 
-                                data: 'amount', 
-                                name: 'amount', 
-                                className: 'text-right',
-                                render: function(data) {
-                                    return data ? data.toLocaleString() : '';
-                                }
-                            },
-                            { 
-                                data: 'actual_ytd', 
-                                name: 'actual_ytd', 
-                                className: 'text-right',
-                                render: function(data) {
-                                    return data ? data.toLocaleString() : '';
-                                }
-                            },
-                            { 
-                                data: 'balance', 
-                                name: 'balance', 
-                                className: 'text-right',
-                                render: function(data) {
-                                    return data ? data.toLocaleString() : '';
-                                }
-                            }
-                        ],
-                        rowGroup: {
-                            dataSrc: 'category',
-                            className: 'category-row',
-                            startRender: function (rows, group) {
-                                console.log('Rows:', rows);  // Debug: cek data baris
-                                console.log('Group:', group);  // Debug: cek nilai group
-                                return $('<tr>')
-                                    .append('<td colspan="9" class="font-weight-bold bg-light">' + group + '</td>');
-                            }
-                        },
-                        order: [[0, 'asc']],
-                        footerCallback: function(row, data, start, end, display) {
-                            var api = this.api();
+                            ],
+                            drawCallback: function(settings) {
+                                var api = this.api();
+                                var rows = api.rows({ page: 'current' }).nodes();
+                                var last = null;
+                                var groupHeader = null;
+                                var counter = 1;
 
-                            // Kolom yang akan dijumlahkan
-                            var columns = [4, 5, 6, 7, 8, 9]; // Tambahkan kolom ke-9 di sini
-                            columns.forEach(function(colIndex) {
-                                var total = api
-                                    .column(colIndex, { page: 'current' })
-                                    .data()
-                                    .reduce(function(acc, val) {
-                                        return acc + (parseFloat(val) || 0);
-                                    }, 0);
+                                api.rows({ page: 'current' }).data().each(function(group, i) {
+                                    if (last !== group.category) {
+                                        counter = 1;
+                                        // Insert category header before the first row of the group
+                                        groupHeader = $('<tr class="group">' +
+                                            '<td colspan="1" style="font-weight: bold; padding: 10px;"></td>' +  // Kolom pertama (kosong atau bisa ditambahkan konten lain)
+                                            '<td colspan="9" style="font-weight: bold; padding: 10px; text-align: left;">' +  // Kolom kedua untuk teks
+                                            group.category + 
+                                            '</td>' +
+                                        '</tr>');
 
-                                $(api.column(colIndex).footer()).html(total.toLocaleString());
-                            });
-                        }
+                                        $(rows[i]).before(groupHeader);
+
+                                        // Calculate subtotal for this group
+                                        var subtotal = {
+                                            budget: 0,
+                                            unbudget: 0,
+                                            carried_over: 0,
+                                            amount: 0,
+                                            actual_ytd: 0,
+                                            balance: 0
+                                        };
+
+                                        // Find all rows for current category
+                                        var categoryRows = [];
+                                        api.rows({ page: 'current' }).data().each(function(data, index) {
+                                            if (data.category === group.category) {
+                                                categoryRows.push(index);
+                                                subtotal.budget += parseFloat(data.budget || 0);
+                                                subtotal.unbudget += parseFloat(data.unbudget || 0);
+                                                subtotal.carried_over += parseFloat(data.carried_over || 0);
+                                                subtotal.amount += parseFloat(data.amount || 0);
+                                                subtotal.actual_ytd += parseFloat(data.actual_ytd || 0);
+                                                subtotal.balance += parseFloat(data.balance || 0);
+                                            }
+                                        });
+
+                                        categoryRows.forEach(function(rowIndex, index) {
+                                            $(rows[rowIndex]).find('td:first').html(index + 1);
+                                        });
+
+                                        // Find last row of current category
+                                        var lastRowIndex = categoryRows[categoryRows.length - 1];
+                                        $(rows[lastRowIndex]).after(
+                                            '<tr class="group-subtotal">' +
+                                            '<td colspan="3" style="padding: 7px;">Sub Total</td>' +
+                                            '<td class="text-right" style="padding: 8px;">' + 
+                                            (subtotal.budget ? subtotal.budget.toLocaleString() : '') + '</td>' +
+                                            '<td class="text-right" style="padding: 8px;">' + 
+                                            (subtotal.unbudget ? subtotal.unbudget.toLocaleString() : '') + '</td>' +
+                                            '<td class="text-right" style="padding: 8px;">' + 
+                                            (subtotal.carried_over ? subtotal.carried_over.toLocaleString() : '') + '</td>' +
+                                            '<td class="text-right" style="padding: 8px;">' + 
+                                            (subtotal.amount ? subtotal.amount.toLocaleString() : '') + '</td>' +
+                                            '<td class="text-right" style="padding: 8px;">' + 
+                                            (subtotal.actual_ytd ? subtotal.actual_ytd.toLocaleString() : '') + '</td>' +
+                                            '<td class="text-right" style="padding: 8px;">' + 
+                                            (subtotal.balance ? subtotal.balance.toLocaleString() : '') + '</td>' +
+                                            '</tr>'
+                                        );
+
+                                        last = group.category;
+                                    }
+                                });
+                            },
+                            footerCallback: function(row, data, start, end, display) {
+                                var api = this.api();
+                                var columns = [4, 5, 6, 7, 8, 9];
+
+                                columns.forEach(function(colIndex) {
+                                    var total = api
+                                        .column(colIndex, { page: 'current' })
+                                        .data()
+                                        .reduce(function(acc, val) {
+                                            return acc + (parseFloat(val) || 0);
+                                        }, 0);
+
+                                    $(api.column(colIndex).footer()).html(total.toLocaleString());
+                                });
+                            }
+                        });
                     });
-                });
                 </script>
                 
             @endpush
@@ -252,7 +305,7 @@
 
     /* Gaya untuk sel tabel */
     #cate-table tbody td {
-        padding: 10px;
+        padding: 8px;
         /* Padding untuk sel */
         border-bottom: 1px solid #dee2e6;
         /* Garis bawah sel */
@@ -308,6 +361,21 @@
         /* Warna border saat fokus */
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);
         /* Menambah efek shadow saat fokus */
+    }
+    .group td {
+        font-weight: bold !important;
+        background-color: #000000 !important;
+        color: white !important;
+    }
+
+    .group-subtotal td {
+        background-color: #e0e8e0 !important;
+        font-weight: bold;
+    }
+
+    tr.group,
+    tr.group-subtotal {
+        cursor: default !important;
     }
 
 </style>
