@@ -46,7 +46,7 @@ class ReportCategory extends Model
                             'project' => $category->project_desc,
                             'number' => $category->capex_number,
                             'budget' => $category->amount_budget,
-                            // Ganti nilai statis dengan perhitungan atau ambil dari sumber lain
+                            // Ganti nilai statis 
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]

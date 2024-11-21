@@ -293,4 +293,13 @@ class Capex extends Model
     {
         return $this->hasMany(CapexEngineer::class,'id_capex');
     }
+
+    public function Report()
+    {
+        return $this->hasMany(Report::class,'id_capex');
+    }
+    public function ReportCategory()
+    {
+        return $this->hasMany(ReportCategory::class,'id_capex');
+    }
 }
