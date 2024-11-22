@@ -1,4 +1,5 @@
 <div class="dropdown dropdown-1">
+    @if ($row->status_capex == 'Canceled' || $row->status_capex == 'To Opex' || $row->status_capex == 'On Progress' | $row->status_capex == 'Close')
     <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="actionDropdown_{{ $row->id }}" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-cog me-1"></i> Actions
     </button>
@@ -71,4 +72,5 @@
             </a>
         </li>
     </ul>
+    @endif
 </div>

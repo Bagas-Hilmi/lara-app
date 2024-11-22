@@ -31,52 +31,66 @@ class ReportCategory extends Model
     public static function getReportCategoryData()
     {
         DB::beginTransaction();
-            $categories = DB::table('t_master_capex')
-                ->select('id_capex', 'category', 'project_desc', 'capex_number', 'amount_budget')
-                ->where('status', 1)
-                ->distinct() // Menghilangkan data duplikat
-                ->get();
 
-            foreach ($categories as $category) {
-                DB::table('t_report_category')
-                    ->updateOrInsert(
-                        ['id_capex' => $category->id_capex], // kriteria pencarian
-                        [
-                            'category' => $category->category,
-                            'project' => $category->project_desc,
-                            'number' => $category->capex_number,
-                            'budget' => $category->amount_budget,
-                            // Ganti nilai statis 
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]
-                    );
-            }
+        // Ambil data dari t_master_capex
+        $categories = DB::table('t_master_capex')
+            ->select('id_capex', 'category', 'project_desc', 'capex_number', 'amount_budget')
+            ->where('status', 1)
+            ->distinct() 
+            ->get();
 
-            DB::commit();
+        // Melakukan insert/update untuk setiap kategori
+        foreach ($categories as $category) {
+            DB::table('t_report_category')
+                ->updateOrInsert(
+                    ['id_capex' => $category->id_capex], // Kriteria pencarian
+                    [
+                        'category' => $category->category,
+                        'project' => $category->project_desc,
+                        'number' => $category->capex_number,
+                        'budget' => $category->amount_budget,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+        }
 
-            return DB::table('t_report_category')
-                ->orderByRaw("CASE category
-                WHEN 'General Operation' THEN 1
-                WHEN 'IT' THEN 2
-                WHEN 'Environment' THEN 3
-                WHEN 'Safety' THEN 4
-                WHEN 'Improvement Plant efficiency' THEN 5
-                WHEN 'Invesment' THEN 6
-                ELSE 7 END")
-                ->get();
-           
+        // Update amount setelah insert/update data selesai
+        DB::table('t_report_category')
+            ->update([
+                'amount' => DB::raw('IFNULL(budget, 0) + IFNULL(unbudget, 0) + IFNULL(carried_over, 0)')
+            ]);
+
+        // Update balance setelah amount diupdate
+        DB::table('t_report_category')
+            ->update([
+                'balance' => DB::raw('IFNULL(amount, 0) - IFNULL(actual_ytd, 0)')
+            ]);
+
+        // Commit transaksi setelah semua query selesai
+        DB::commit();
+
+        // Return data yang telah diupdate dan diurutkan berdasarkan kategori
+        return DB::table('t_report_category')
+            ->orderByRaw("CASE category
+                    WHEN 'General Operation' THEN 1
+                    WHEN 'IT' THEN 2
+                    WHEN 'Environment' THEN 3
+                    WHEN 'Safety' THEN 4
+                    WHEN 'Improvement Plant efficiency' THEN 5
+                    WHEN 'Invesment' THEN 6
+                    ELSE 7 END")
+            ->get();
     }
+
 
     public static function getCategory()
     {
         return DB::table('t_report_category')
-        ->select('category')
-        ->orderByRaw("FIELD(category, 'General Operation', 'IT', 'Environment', 'Safety')") // Urutan khusus
-        ->get();
-
+            ->select('category')
+            ->orderByRaw("FIELD(category, 'General Operation', 'IT', 'Environment', 'Safety')") // Urutan khusus
+            ->get();
     }
-
 
 
     public function capex()

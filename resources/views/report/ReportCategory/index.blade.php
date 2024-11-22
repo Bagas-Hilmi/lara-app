@@ -371,6 +371,7 @@
     .group-subtotal td {
         background-color: #e0e8e0 !important;
         font-weight: bold;
+        
     }
 
     tr.group,
