@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="capex-edit" action="{{ route('capex.store') }}" method="POST"> <!-- Tetap menggunakan route yang sama -->
+                <form id="capex-edit" action="{{ route('capex.store') }}" method="POST" enctype="multipart/form-data"> <!-- Tetap menggunakan route yang sama -->
                     <input type="hidden" name="flag" value="update"> 
                     <input type="hidden" id="id_capex_edit" name="id_capex" required>
                     @csrf 
@@ -57,12 +57,13 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="amount_budget_edit" class="form-label font-weight-bold">Amount Budget (USD)</label>
                             <input type="text" class="form-control column-input edit-capex" id="amount_budget_edit" name="amount_budget" style="text-align: center;" required>
                             <input type="hidden" id="amount_budget_edit" name="amount_budget">
                         </div>
-                        <div class="col-md-4 d-flex flex-column align-items-center">
+
+                        <div class="col-md-3">
                             <label for="status_capex_edit" class="form-label font-weight-bold">Type Capex</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
@@ -77,7 +78,13 @@
                                 <input type="hidden" id="status_capex_edit" name="status_capex" style="text-align: center;" required>
                             </div>
                         </div>
-                        <div class="col-md-4 d-flex flex-column align-items-center">
+
+                        <div class="col-md-3" id="fileUploadContainer" style="display: none;">
+                            <label class="form-label font-weight-bold">Upload PDF</label>
+                            <input type="file" class="form-control" name="file_pdf" accept="application/pdf" required>
+                        </div>
+
+                        <div class="col-md-3 ">
                             <label for="budget_type_edit" class="form-label font-weight-bold">Status Budget</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
@@ -167,9 +174,9 @@
 
             $('#id_capex_edit').val(id_capex); // Pastikan Anda memiliki input tersembunyi di modal Anda
 
-            // Jika Anda menggunakan dropdown untuk wbs_capex, status_capex, dan budget_type, Anda bisa menambahkan logika untuk menandai pilihan yang tepat
-            $('#wbsCapexDropdownEdit').text(wbs_capex.charAt(0).toUpperCase() + wbs_capex.slice(1).replace(/_/g, ' ')); // Ubah _ menjadi spasi dan huruf pertama menjadi kapital
-            $('#statusDropdownEdit').text(status_capex.charAt(0).toUpperCase() + status_capex.slice(1).replace(/_/g, ' ')); // Ubah _ menjadi spasi dan huruf pertama menjadi kapital
+            
+            $('#wbsCapexDropdownEdit').text(wbs_capex.charAt(0).toUpperCase() + wbs_capex.slice(1).replace(/_/g, ' ')); 
+            $('#statusDropdownEdit').text(status_capex.charAt(0).toUpperCase() + status_capex.slice(1).replace(/_/g, ' ')); 
             $('#budgetTypeDropdownEdit').text(budget_type === 'budgeted' ? 'Budgeted' : 'Unbudgeted');
             $('#categoryDropdownEdit').text(
                 category === 'General Operation' ? 'General Operation' :
@@ -183,27 +190,66 @@
 
             // Event handler untuk menyimpan perubahan pada modal
             $('#save-edit-capex').click(function() {
-                // Ambil data dari form
-                var formData = {
-                    id_capex: $('#id_capex_edit').val(), // Mengambil id_capex dari input hidden
-                    project_desc: $('#project_desc_edit').val(),
-                    wbs_capex: $('#wbs_capex_edit').val(),
-                    remark: $('#remark_edit').val(),
-                    request_number: $('#request_number_edit').val(),
-                    requester: $('#requester_edit').val(),
-                    capex_number: $('#capex_number_edit').val(),
-                    amount_budget: $('#amount_budget_edit').val(),
-                    status_capex: $('#status_capex_edit').val(),
-                    budget_type: $('#budget_type_edit').val(),
-                    startup: $('#startup_edit').val(),
-                    expected_completed: $('#expected_completed_edit').val(),
-                    wbs_number: $('#wbs_number_edit').val(),
-                    cip_number: $('#cip_number_edit').val(),
-                    category: $('#category_edit').val(),
-                    flag: 'update' // Menyertakan flag update
-                }; // Mengambil semua data dalam form
+                // Ambil status capex
+                var status_capex = $('#status_capex_edit').val();
                 
-                // Tampilkan konfirmasi sebelum mengirim data
+                // Cek jika status Close
+                if (status_capex === 'Close') {
+                    var fileInput = $('input[name="file_pdf"]');
+                    
+                    // Validasi file
+                    if (fileInput.get(0).files.length === 0) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Harap unggah file PDF untuk status Close',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        return; // Hentikan proses
+                    }
+
+                    // Validasi tipe file
+                    var file = fileInput.get(0).files[0];
+                    var allowedTypes = ['application/pdf'];
+                    
+                    if (!allowedTypes.includes(file.type)) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Hanya file PDF',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        return; // Hentikan proses
+                    }
+                }
+
+                // Buat FormData untuk mendukung upload file
+                var formData = new FormData();
+                
+                // Tambahkan data form
+                formData.append('id_capex', $('#id_capex_edit').val());
+                formData.append('project_desc', $('#project_desc_edit').val());
+                formData.append('wbs_capex', $('#wbs_capex_edit').val());
+                formData.append('remark', $('#remark_edit').val());
+                formData.append('request_number', $('#request_number_edit').val());
+                formData.append('requester', $('#requester_edit').val());
+                formData.append('capex_number', $('#capex_number_edit').val());
+                formData.append('amount_budget', $('#amount_budget_edit').val());
+                formData.append('status_capex', status_capex);
+                formData.append('budget_type', $('#budget_type_edit').val());
+                formData.append('startup', $('#startup_edit').val());
+                formData.append('expected_completed', $('#expected_completed_edit').val());
+                formData.append('wbs_number', $('#wbs_number_edit').val());
+                formData.append('cip_number', $('#cip_number_edit').val());
+                formData.append('category', $('#category_edit').val());
+                formData.append('flag', 'update');
+
+                // Tambahkan file jika ada
+                if (status_capex === 'Close') {
+                    formData.append('file_pdf', fileInput.get(0).files[0]);
+                }
+
+                // Tampilkan konfirmasi
                 Swal.fire({
                     title: 'Konfirmasi',
                     text: 'Apakah Anda yakin ingin menyimpan perubahan ini?',
@@ -215,16 +261,16 @@
                     cancelButtonText: 'Tidak'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Kirim data ke server menggunakan AJAX jika pengguna menekan "Ya"
+                        // Kirim data ke server menggunakan AJAX
                         $.ajax({
-                            url: "{{ route('capex.store') }}", // Ganti dengan route yang sesuai
+                            url: "{{ route('capex.store') }}",
                             type: 'POST',
                             data: formData,
+                            processData: false,  // Penting untuk FormData
+                            contentType: false,  // Penting untuk FormData
                             success: function(response) {
-                                // Tindakan setelah berhasil menyimpan data
-                                $('#edit-form').modal('hide'); // Sembunyikan modal
-                                $('#capex-table').DataTable().ajax.reload(); // Reload DataTable
-                                // Menampilkan pesan sukses
+                                $('#edit-form').modal('hide');
+                                $('#capex-table').DataTable().ajax.reload();
                                 Swal.fire({
                                     title: 'Berhasil!',
                                     text: 'Capex berhasil di update!',
@@ -234,13 +280,11 @@
                                 });
                             },
                             error: function(xhr) {
-                                // Tindakan jika terjadi kesalahan
                                 var errors = xhr.responseJSON.errors;
-                                // Menampilkan kesalahan ke pengguna
                                 $.each(errors, function(key, value) {
                                     Swal.fire({
                                         title: 'Error!',
-                                        text: value[0], // Tampilkan pesan kesalahan pertama
+                                        text: value[0],
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
@@ -281,6 +325,78 @@
                     this.value = parseFloat(value).toString(); 
                 }
             });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ambil elemen-elemen yang dibutuhkan
+        const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
+        const fileUploadContainer = document.getElementById('fileUploadContainer');
+        const fileUploadInput = fileUploadContainer.querySelector('input[type="file"]');
+        const saveEditButton = document.getElementById('save-edit-capex');
+        const statusCapexInput = document.getElementById('status_capex_edit');
+        const statusDropdownButton = document.getElementById('statusDropdownEdit');
+
+        // Sembunyikan container upload file secara default
+        fileUploadContainer.style.display = 'none';
+
+        // Event listener untuk dropdown status
+        categoryDropdownItems.forEach(item => {
+            item.addEventListener('click', function(event) {
+                const selectedValue = this.getAttribute('data-value');
+                
+                // Update hidden input dan dropdown button
+                statusCapexInput.value = selectedValue;
+                statusDropdownButton.textContent = selectedValue;
+
+                // Tampilkan/sembunyikan upload file container
+                if (selectedValue === 'Close') {
+                    fileUploadContainer.style.display = 'block';    
+                    fileUploadInput.setAttribute('required', 'required'); 
+                } else {
+                    fileUploadContainer.style.display = 'none';
+                    fileUploadInput.removeAttribute('required'); 
+
+                    
+                    fileUploadInput.value = '';
+                }
+            });
+        });
+
+        
+        saveEditButton.addEventListener('click', function(event) {
+            const statusValue = statusCapexInput.value;
+
+            
+            if (statusValue === 'Close') {
+                if (!fileUploadInput.files.length) {
+                    
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Harap unggah file PDF untuk status Close',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    event.preventDefault(); 
+                    return false;
+                }
+
+                const allowedTypes = ['application/pdf'];
+                const fileType = fileUploadInput.files[0].type;
+                
+                if (!allowedTypes.includes(fileType)) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Hanya file PDF atau Excel yang diperbolehkan',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    event.preventDefault(); 
+                    return false;
+                }
+            }
         });
     });
 </script>

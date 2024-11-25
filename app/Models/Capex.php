@@ -177,8 +177,8 @@ class Capex extends Model
             $id_capex,
             $status_capex,
             $userId,
-            now(), // Timestamp untuk created_at
-            now()  // Timestamp untuk updated_at
+            now(), 
+            now()  
         ];
 
         DB::insert($statusQuery, $statusParams);
