@@ -400,9 +400,9 @@
                                         ajax: {
                                             url: "{{ route('capex.show', ':id') }}".replace(':id', porelease_id), // Gunakan porelease_id di URL
                                             data: function(d) {
-                                                d.flag = 'pocommitment';  // Flag untuk menentukan jenis data
+                                                d.flag = 'pocommitment';  
                                                 d.id_porelease = porelease_id;  // Kirimkan porelease_id ke server
-                                                d.status = 1;  // Status yang diinginkan
+                                                d.status = 1;  // 
                                             }
                                         },
                                         columnDefs: [
@@ -415,7 +415,7 @@
                                         order: [[1, 'asc']],
                                         columns: [
                                             { data: 'doc_date', name: 'doc_date', className: 'text-center' , className: 'text-center'},
-                                            { data: 'wbs_object', name: 'wbs_object' , className: 'text-center'},
+                                            { data: 'wbs', name: 'wbs' , className: 'text-center'},
                                             { data: 'cost_element', name: 'cost_element' , className: 'text-center'},
                                             { data: 'purchasing_doc', name: 'purchasing_doc' , className: 'text-center'},
                                             { data: 'reference_item', name: 'reference_item' , className: 'text-center'},

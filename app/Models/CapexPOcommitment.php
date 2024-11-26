@@ -14,7 +14,7 @@ class CapexPOcommitment extends Model
     protected $fillable = [
         'id_capex',
         'doc_date',
-        'wbs_object',
+        'wbs',
         'cost_element',
         'purchasing_doc',
         'reference_item',

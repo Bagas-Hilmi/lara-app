@@ -20,7 +20,8 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="getSAPData" class="form-label font-weight-bold">Get SAP Data</label>
-                            <button type="button" class="btn btn-primary w-100" id="getSAPData" name="getSAPData" style="text-align: center;">
+                            <button type="button" class="btn btn-primary w-100" id="getSAPData" name="getSAPData"
+                                style="text-align: center;">
                                 Get SAP Data
                             </button>
                         </div>
@@ -35,7 +36,7 @@
                                 name="po_release" style="text-align: center;" required>
                         </div>
                     </div>
-                    
+
                     <div class="modal-footer">
                         <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn bg-gradient-success">Submit</button>
@@ -45,38 +46,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const numberInputs = document.querySelectorAll('input.new-porelease'); // Menggunakan kelas khusus untuk input update
-
-        numberInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                // Menghapus semua karakter yang bukan angka, koma, dan titik
-                let value = this.value.replace(/[^0-9.,]/g, '');
-
-                // Memisahkan bagian integer dan desimal
-                let parts = value.split(',');
-                let integerPart = parts[0].replace(/\./g, ''); // Menghapus titik dari bagian integer
-                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; // Menyimpan bagian desimal maksimum 2 digit
-
-                // Memformat bagian integer dengan pemisah ribuan
-                let formattedInteger = parseInt(integerPart).toLocaleString('id-ID');
-
-                // Menggabungkan bagian integer dan desimal
-                this.value = formattedInteger + decimalPart;
-            });
-
-            input.addEventListener('blur', function() {
-                // Format saat fokus hilang (blur)
-                let value = this.value.replace(/\./g, '').replace(/,/g, '.'); // Menghapus titik dan mengubah koma menjadi titik
-                if (value) {
-                    this.value = parseFloat(value).toString(); 
-                }
-            });
-        });
-    });
-</script>
 
 <script>
     $('#new-porelease-form').on('submit', function(e) {
@@ -91,7 +60,7 @@
             if ($(this).val() === '') {
                 isValid = false;
                 $(this).addClass(
-                'is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
+                    'is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
             } else {
                 $(this).removeClass('is-invalid'); // Hapus kelas invalid jika terisi
             }
@@ -104,10 +73,9 @@
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
-            return; // Hentikan eksekusi jika ada field yang kosong
+            return;
         }
 
-        // Tampilkan konfirmasi sebelum mengirim data
         Swal.fire({
             title: 'Konfirmasi',
             text: 'Apakah Anda yakin ingin menambahkan PO Release ini?',
@@ -119,16 +87,14 @@
             cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Kirim data melalui AJAX jika pengguna menekan "Ya"
                 $.ajax({
-                    url: $(this).attr('action'), // Sesuaikan dengan route Anda
+                    url: $(this).attr('action'),
                     method: 'POST',
                     data: formData,
                     success: function(response) {
                         $('#new-porelease-modal').modal('hide');
                         $('#porelease-table').DataTable().ajax.reload();
 
-                        // Tampilkan pesan sukses dengan SweetAlert
                         Swal.fire({
                             title: 'Berhasil!',
                             text: 'PO Release berhasil ditambahkan!',
@@ -138,7 +104,7 @@
                         }).then(() => {
                             // Refresh halaman setelah menutup pesan sukses
                             $('#capex-table').DataTable().ajax
-                        .reload(); // Reload DataTable
+                                .reload(); // Reload DataTable
                         });
                     },
                     error: function(xhr) {
@@ -157,12 +123,35 @@
 </script>
 
 <script>
-    $(document).ready(function() {
-    $('#getSAPData').on('click', function() {
-        // Logika untuk mengambil data SAP bisa ditambahkan di sini
+    $(document).on('click', '#getSAPData', function() {
+        let capexId = $('#new_porelease_capex_id').val();
 
-        // Tampilkan alert
-        $('#successAlert').removeClass('d-none'); // Menampilkan alert setelah data berhasil diambil
+        if (capexId) {
+            $.ajax({
+                url: '/capex',
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    id_capex: capexId,
+                    flag: 'get-sap-data',
+                },
+                beforeSend: function() {
+                    $('#getSAPData').text('Processing...').attr('disabled', true);
+                },
+                success: function(response) {
+                    Swal.fire('Berhasil!', response.message, 'success');
+                    $('#getSAPData').text('Get SAP Data').attr('disabled', false);
+
+                    // Reload tabel t_capex_pocommitment_tail
+                    $('#pocommitment-tail-table').DataTable().ajax.reload();
+                },
+                error: function(xhr) {
+                    Swal.fire('Error!', xhr.responseJSON.error, 'error');
+                    $('#getSAPData').text('Get SAP Data').attr('disabled', false);
+                },
+            });
+        } else {
+            alert('ID Capex tidak ditemukan!');
+        }
     });
-});
 </script>

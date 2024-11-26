@@ -14,7 +14,7 @@ use App\Models\CapexStatus;
 use Illuminate\Support\Facades\DB;
 use App\Models\CapexEngineer;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
 class CapexController extends Controller
 {
     /**
@@ -83,10 +83,8 @@ class CapexController extends Controller
     public function store(Request $request)
     {
 
-        // Mengambil nilai flag
         $flag = $request->input('flag');
 
-        // Menjalankan logika berdasarkan nilai flag
         if ($flag === 'add') {
             $validated = $request->validate([
                 'flag' => 'required|in:add,update',
@@ -132,7 +130,7 @@ class CapexController extends Controller
             return response()->json($result);
         } else if ($flag === 'update') {
             $validated = $request->validate([
-                'flag' => 'required|in:add,update',
+                'flag' => 'required|in:update',
                 'id_capex'       => 'required_if:flag,update|exists:t_master_capex,id_capex',
                 'project_desc'   => 'required|string|max:255',
                 'wbs_capex'      => 'required|string',
@@ -148,6 +146,8 @@ class CapexController extends Controller
                 'expected_completed'    => 'required|string',
                 'wbs_number'    => 'required|string',
                 'cip_number'    => 'required|string',
+                'file_pdf' => 'required_if:status_capex,Close,flag,update|file|mimes:pdf|max:2048',
+
             ]);
             // Perbarui data yang sudah ada
             $capex = Capex::find($validated['id_capex']); // Cari data berdasarkan id_capex
@@ -166,6 +166,16 @@ class CapexController extends Controller
                 $capex->wbs_number = $validated['wbs_number'];
                 $capex->cip_number = $validated['cip_number'];
                 $capex->category = $validated['category'];
+                // Handle file upload for Close status
+                if ($validated['status_capex'] === 'Close' && $request->hasFile('file_pdf')) {
+
+                    // Ambil file yang diunggah
+                    $file = $request->file('file_pdf');
+                    $originalFileName = $file->getClientOriginalName();
+                    $filePath = $file->storeAs('uploads/capexFiles', $originalFileName);
+                    $capex->file_pdf = $filePath;
+                }
+
                 $capex->save();
 
                 $capexStatus = new CapexStatus();
@@ -345,7 +355,65 @@ class CapexController extends Controller
                 'message' => 'Description successfully added.',
                 'data' => $engineer,
             ]);
+        } else if ($flag === 'get-sap-data') {
+            $request->validate([
+                'id_capex' => 'required|string', // Tambahkan 'required' jika 'id_capex' wajib
+            ]);
+
+            // Mencari Capex berdasarkan ID
+            $capex = DB::table('t_master_capex')->where('id_capex', $request->id_capex)->first();
+            if (!$capex || empty($capex->wbs_number)) {
+                return response()->json(['error' => 'WBS number tidak ditemukan'], 404);
+            }
+
+            // Mendapatkan data dari SAP
+            $jsonResponse = $this->getDataFromSAP();
+            $txtData = $jsonResponse->original;
+
+            // Memfilter data yang sesuai dengan WBS dari capex
+            // Debug untuk memastikan nilai WBS dan wbs_number
+            $dataToProcess = array_filter($txtData['IT_EXPORT'], function ($data) use ($capex) {
+                if (isset($data['WBS'])) {
+                    $baseWbs = substr($data['WBS'], 0, 7); // Ambil 7 karakter pertama dari SAP
+                    $capexWbs = substr($capex->wbs_number, 0, 7); // Ambil 7 karakter pertama dari wbs_number Capex
+                    return $baseWbs === $capexWbs;
+                }
+                return false;
+            });
+
+
+            // Mengecek apakah data yang sesuai ada
+            if (empty($dataToProcess)) {
+                return response()->json(['message' => 'Tidak ada data yang cocok untuk WBS ini']);
+            }
+
+            // Menyimpan data yang sudah difilter ke tabel t_capex_pocommitment_tail
+            foreach ($dataToProcess as $data) {
+                if (isset($data['WOGBTR']) && $data['WOGBTR'] != 0) { // Pastikan WOGBTR tidak 0
+                    DB::table('t_capex_pocommitment_tail')->insert([
+                        'purchasing_doc' => $data['REFBN'],
+                        'reference_item' => $data['RFPOS'],
+                        'doc_date' => $data['BLDAT'],
+                        'fiscal_year' => $data['GJAHR'],
+                        'no_material' => $data['MATNR'],
+                        'material_desc' => $data['SGTXT'],
+                        'qty' => $data['GESMNG'],
+                        'uom' => $data['MEINH'],
+                        'value_trancurr' => $data['WTGBTR'],
+                        'tcurr' => $data['TWAER'],
+                        'valuein_obj' => $data['WOGBTR'],
+                        'cost_element' => $data['SAKTO'],
+                        'wbs' => $data['WBS'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+            // Mengirimkan respons sukses
+            return response()->json(['message' => 'Data berhasil disimpan']);
         }
+
+
 
         return response()->json(['error' => 'Invalid flag specified.'], 400);
     }
@@ -379,8 +447,6 @@ class CapexController extends Controller
                     ->rawColumns(['action'])
                     ->make(true);
             }
-
-            // Jika flag adalah 'progress'
         } else if ($flag === 'progress') {
             $status = $request->get('status', 1);
 
@@ -543,37 +609,31 @@ class CapexController extends Controller
         return response()->json(['success' => false, 'message' => 'Invalid flag!'], 400);
     }
 
-    // public function getDataFromSAP($flag=null, $soNo=null, $soltem=null, $batchNo=null)
-    // {
-    //     if ($flag == 'ZFM_GET_CJE3' ){ 
-    //         $sapClient = 'Client-DEV-110'; 
-    //         $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?Client=DEV-110&FM=ZFM_GET_CJE3&PSPHI=P-1525-01'; 
-    //         $sapFm = '&FM=' .$flag; 
-    //         $input_1 = '&SO_NUM=' .$soNo; 
-    //         $eobUrl = $sapReqUrl.$sapClient.$sapFm.$input_1; 
-    //     } 
-    //     $ch = curl_init ($eobUrl); 
-    //     // Set CURL options 
-    //     curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true); 
-    //     // Execute CURL request 
-    //     $response = curl_exec ($ch); 
-    //     // Check for cURL errors 
-    //     if (curl_errno($ch)) {
-    //         $error_message = curl_error ($ch); 
-    //         // Handle cURL error 
-    //         return response()->json(['error' => $error_message], 500);
-    //     }
-    //     // Close cURL resource 
-    //     curl_close ($ch); 
-    //     // Process the SAP response 
-    //     $data = json_decode ($response, true); 
-    //     // Return the retrieved data 
-    //     return response()->json(['data' => $data], 200);
+    public function getDataFromSAP()
+    {
+        $flag = 'ZFM_GET_CJE3'; 
+        $sapClient = 'Client=DEV-110';
+        $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?';//anggap ada
+        $sapFm = '&FM=' . $flag;
+        $input_1 = '&PSPHI=P-1525-01';
+        $eobUrl = $sapReqUrl . $sapClient . $sapFm . $input_1;
 
-    //     $jsonResponse = $this->getDataFromSap($flag,$soN0, $soItem, $batchNo);
-    //     $txtData = $jsonResponse->original;
+        $ch = curl_init($eobUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    // }
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            $error_message = curl_error($ch);
+            return response()->json(['error' => $error_message], 500);
+        }
+
+        curl_close($ch);
+
+        $data = json_decode($response, true);
 
 
+        // Tampilkan data di browser
+        return response()->json($data);
+    }
 }
