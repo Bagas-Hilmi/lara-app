@@ -412,21 +412,33 @@
                                                 orderable: false
                                             }
                                         ],
-                                        order: [[1, 'asc']],
+                                        order: [[2, 'asc']],
                                         columns: [
-                                            { data: 'doc_date', name: 'doc_date', className: 'text-center' , className: 'text-center'},
-                                            { data: 'wbs', name: 'wbs' , className: 'text-center'},
-                                            { data: 'cost_element', name: 'cost_element' , className: 'text-center'},
                                             { data: 'purchasing_doc', name: 'purchasing_doc' , className: 'text-center'},
                                             { data: 'reference_item', name: 'reference_item' , className: 'text-center'},
+                                            { data: 'doc_date', name: 'doc_date', className: 'text-center' , className: 'text-center'},
+                                            { data: 'fiscal_year', name: 'fiscal_year', className: 'text-center' , className: 'text-center'},
                                             { data: 'no_material', name: 'no_material' , className: 'text-center'},
-                                            { data: 'material_desc', name: 'material_desc' , className: 'text-center'},
+                                            { data: 'material_desc', data: 'material_desc',
+                                                createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                                    $(td).css('text-align', 'left');
+                                                }
+                                            },
                                             { data: 'qty', name: 'qty' , className: 'text-center'},
                                             { data: 'uom', name: 'uom' , className: 'text-center'},
-                                            { data: 'valuein_obj', name: 'valuein_obj' , className: 'text-center'},
-                                            { data: 'obj_currency', name: 'obj_currency' , className: 'text-center'},
                                             { data: 'value_trancurr', name: 'value_trancurr' , className: 'text-center'},
-                                            { data: 'tcurr', name: 'tcurr' }
+                                            { data: 'tcurr', name: 'tcurr' },
+                                            { data: 'valuein_obj', name: 'valuein_obj' , data: 'valuein_obj',
+                                                createdCell: function(td, rowData, rowIndex, cellData) {
+                                                    $(td).css('text-align', 'right');
+                                                }
+                                            },
+                                            { data: 'cost_element', name: 'cost_element' , className: 'text-center'},
+                                            { data: 'wbs', data: 'wbs',
+                                                createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                                    $(td).css('text-align', 'left');
+                                                }
+                                            }
                                         ]
                                     });
                                 });

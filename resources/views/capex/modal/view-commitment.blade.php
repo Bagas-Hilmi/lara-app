@@ -11,19 +11,19 @@
                     <table class="table" id="pocommitment-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                         <thead style="background-color: #3cb210; color: white;">
                             <tr>
-                                <th align="center">Doc Date</th>
-                                <th align="center">WBS Object</th>
-                                <th align="center">Cost Element</th>
                                 <th align="center">Purchasing Doc</th>
                                 <th align="center">Reference Item</th>
+                                <th align="center">Doc Date</th>
+                                <th align="center">Fiscal Year</th>
                                 <th align="center">Material No</th>
                                 <th align="center">Material Desc</th>
                                 <th align="center">Qty</th>
                                 <th align="center">UOM</th>
-                                <th align="center">Value in Obj</th>
-                                <th align="center">Obj Currency</th>
                                 <th align="center">Value Trancurr</th>
                                 <th align="center">TCurr</th>
+                                <th align="center">Value in Obj</th>
+                                <th align="center">Cost Element</th>
+                                <th align="center">WBS</th>
                             </tr>
                         </thead>
                     </table>

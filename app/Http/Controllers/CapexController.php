@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CapexEngineer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+
 class CapexController extends Controller
 {
     /**
@@ -278,16 +279,28 @@ class CapexController extends Controller
                 'po_release' => 'required|numeric|min:0',
             ]);
 
-            $porelease = CapexPOrelease::addPORelease($request->all());
+            DB::beginTransaction();
+            try {
+                // Simpan PO Release
+                $poreleaseId = DB::table('t_capex_porelease')->insertGetId([
+                    'id_capex' => $request->id_capex,
+                    'description' => $request->description,
+                    'po_release' => $request->po_release,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            CapexPOrelease::get_dtCapexPOrelease();
+                // Update foreign key di t_capex_pocommitment_tail
+                DB::table('t_capex_pocommitment_tail')
+                    ->whereNull('id_capex_porelease')
+                    ->update(['id_capex_porelease' => $poreleaseId]);
 
-            // Respons sukses
-            return response()->json([
-                'success' => true,
-                'message' => 'Description successfully added.',
-                'data' => $porelease,
-            ]);
+                DB::commit();
+                return response()->json(['message' => 'PO Release berhasil ditambahkan']);
+            } catch (\Exception $e) {
+                DB::rollback();
+                return response()->json(['error' => 'Gagal menyimpan PO Release'], 500);
+            }
         } else if ($flag === 'edit-porelease') {
 
             $request->validate([
@@ -357,60 +370,64 @@ class CapexController extends Controller
             ]);
         } else if ($flag === 'get-sap-data') {
             $request->validate([
-                'id_capex' => 'required|string', // Tambahkan 'required' jika 'id_capex' wajib
+                'id_capex' => 'required|string',
             ]);
 
-            // Mencari Capex berdasarkan ID
+            // Cari data Capex
             $capex = DB::table('t_master_capex')->where('id_capex', $request->id_capex)->first();
             if (!$capex || empty($capex->wbs_number)) {
                 return response()->json(['error' => 'WBS number tidak ditemukan'], 404);
             }
 
-            // Mendapatkan data dari SAP
+            // Ambil data dari SAP
             $jsonResponse = $this->getDataFromSAP();
             $txtData = $jsonResponse->original;
 
-            // Memfilter data yang sesuai dengan WBS dari capex
-            // Debug untuk memastikan nilai WBS dan wbs_number
+            // Filter data berdasarkan WBS
             $dataToProcess = array_filter($txtData['IT_EXPORT'], function ($data) use ($capex) {
                 if (isset($data['WBS'])) {
-                    $baseWbs = substr($data['WBS'], 0, 7); // Ambil 7 karakter pertama dari SAP
-                    $capexWbs = substr($capex->wbs_number, 0, 7); // Ambil 7 karakter pertama dari wbs_number Capex
+                    $baseWbs = substr($data['WBS'], 0, 7);
+                    $capexWbs = substr($capex->wbs_number, 0, 7);
                     return $baseWbs === $capexWbs;
                 }
                 return false;
             });
 
-
-            // Mengecek apakah data yang sesuai ada
             if (empty($dataToProcess)) {
                 return response()->json(['message' => 'Tidak ada data yang cocok untuk WBS ini']);
             }
 
-            // Menyimpan data yang sudah difilter ke tabel t_capex_pocommitment_tail
-            foreach ($dataToProcess as $data) {
-                if (isset($data['WOGBTR']) && $data['WOGBTR'] != 0) { // Pastikan WOGBTR tidak 0
-                    DB::table('t_capex_pocommitment_tail')->insert([
-                        'purchasing_doc' => $data['REFBN'],
-                        'reference_item' => $data['RFPOS'],
-                        'doc_date' => $data['BLDAT'],
-                        'fiscal_year' => $data['GJAHR'],
-                        'no_material' => $data['MATNR'],
-                        'material_desc' => $data['SGTXT'],
-                        'qty' => $data['GESMNG'],
-                        'uom' => $data['MEINH'],
-                        'value_trancurr' => $data['WTGBTR'],
-                        'tcurr' => $data['TWAER'],
-                        'valuein_obj' => $data['WOGBTR'],
-                        'cost_element' => $data['SAKTO'],
-                        'wbs' => $data['WBS'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+            // Mulai transaction untuk memastikan data tersimpan dengan aman
+            DB::beginTransaction();
+            try {
+                foreach ($dataToProcess as $data) {
+                    if (isset($data['WOGBTR']) && $data['WOGBTR'] != 0) {
+                        DB::table('t_capex_pocommitment_tail')->insert([
+                            'purchasing_doc' => $data['REFBN'],
+                            'reference_item' => $data['RFPOS'],
+                            'doc_date' => $data['BLDAT'],
+                            'fiscal_year' => $data['GJAHR'],
+                            'no_material' => $data['MATNR'],
+                            'material_desc' => $data['SGTXT'],
+                            'qty' => $data['GESMNG'],
+                            'uom' => $data['MEINH'],
+                            'value_trancurr' => $data['WTGBTR'],
+                            'tcurr' => $data['TWAER'],
+                            'valuein_obj' => $data['WOGBTR'],
+                            'cost_element' => $data['SAKTO'],
+                            'wbs' => $data['WBS'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
                 }
+
+                DB::commit();
+                return response()->json(['message' => 'Data berhasil disimpan']);
+            } catch (\Exception $e) {
+                DB::rollback();
+                return response()->json(['error' => 'Terjadi kesalahan saat menyimpan data'], 500);
             }
-            // Mengirimkan respons sukses
-            return response()->json(['message' => 'Data berhasil disimpan']);
         }
 
 
@@ -611,9 +628,9 @@ class CapexController extends Controller
 
     public function getDataFromSAP()
     {
-        $flag = 'ZFM_GET_CJE3'; 
+        $flag = 'ZFM_GET_CJE3';
         $sapClient = 'Client=DEV-110';
-        $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?';//anggap ada
+        $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?'; //anggap ada
         $sapFm = '&FM=' . $flag;
         $input_1 = '&PSPHI=P-1525-01';
         $eobUrl = $sapReqUrl . $sapClient . $sapFm . $input_1;

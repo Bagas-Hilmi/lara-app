@@ -26,11 +26,6 @@
                             </button>
                         </div>
                         <div class="col-md-6">
-                            <div class="alert alert-success d-none" role="alert" id="successAlert">
-                                <strong>Success!</strong> Data sudah berhasil diambil.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
                             <label for="porelease" class="form-label font-weight-bold">PO Release (USD)</label>
                             <input type="number" class="form-control column-input new-porelease" id="po_release"
                                 name="po_release" style="text-align: center;" required>
@@ -48,110 +43,112 @@
 </div>
 
 <script>
-    $('#new-porelease-form').on('submit', function(e) {
-        e.preventDefault(); // Mencegah tindakan default dari formulir
+    $(document).ready(function() {
+        // Fungsi untuk mendapatkan data SAP
+        $(document).on('click', '#getSAPData', function() {
+            let capexId = $('#new_porelease_capex_id').val();
 
-        // Ambil data dari form
-        var formData = $(this).serialize();
-
-        // Cek apakah semua field yang required terisi
-        var isValid = true;
-        $(this).find('input[required], select[required]').each(function() {
-            if ($(this).val() === '') {
-                isValid = false;
-                $(this).addClass(
-                    'is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
-            } else {
-                $(this).removeClass('is-invalid'); // Hapus kelas invalid jika terisi
-            }
-        });
-
-        if (!isValid) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Silakan lengkapi semua input yang diperlukan.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: 'Apakah Anda yakin ingin menambahkan PO Release ini?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, tambahkan!',
-            cancelButtonText: 'Tidak'
-        }).then((result) => {
-            if (result.isConfirmed) {
+            if (capexId) {
                 $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: formData,
+                    url: '/capex',
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        id_capex: capexId,
+                        flag: 'get-sap-data',
+                    },
+                    beforeSend: function() {
+                        $('#getSAPData').text('Processing...').attr('disabled', true);
+                    },
                     success: function(response) {
-                        $('#new-porelease-modal').modal('hide');
-                        $('#porelease-table').DataTable().ajax.reload();
+                        Swal.fire('Berhasil!', response.message, 'success');
+                        $('#getSAPData').text('Get SAP Data').attr('disabled', true);
 
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: 'PO Release berhasil ditambahkan!',
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 1000
-                        }).then(() => {
-                            // Refresh halaman setelah menutup pesan sukses
-                            $('#capex-table').DataTable().ajax
-                                .reload(); // Reload DataTable
-                        });
+                        // Reload tabel t_capex_pocommitment_tail
+                        $('#pocommitment-tail-table').DataTable().ajax.reload();
                     },
                     error: function(xhr) {
-                        console.log("Error: ", xhr.responseText); // Log kesalahan
-                        Swal.fire({
-                            title: 'Terjadi kesalahan!',
-                            text: 'Error: ' + xhr.responseText,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
+                        Swal.fire('Error!', xhr.responseJSON.error || 'Terjadi kesalahan',
+                            'error');
+                        $('#getSAPData').text('Get SAP Data').attr('disabled', false);
+                    },
                 });
+            } else {
+                Swal.fire('Error!', 'ID Capex tidak ditemukan!', 'error');
             }
         });
-    });
-</script>
 
-<script>
-    $(document).on('click', '#getSAPData', function() {
-        let capexId = $('#new_porelease_capex_id').val();
+        // Fungsi untuk submit new-porelease form
+        $('#new-porelease-form').on('submit', function(e) {
+            e.preventDefault(); // Mencegah tindakan default dari form submit
 
-        if (capexId) {
-            $.ajax({
-                url: '/capex',
-                type: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    id_capex: capexId,
-                    flag: 'get-sap-data',
-                },
-                beforeSend: function() {
-                    $('#getSAPData').text('Processing...').attr('disabled', true);
-                },
-                success: function(response) {
-                    Swal.fire('Berhasil!', response.message, 'success');
-                    $('#getSAPData').text('Get SAP Data').attr('disabled', false);
+            // Ambil data dari form
+            var formData = $(this).serialize();
 
-                    // Reload tabel t_capex_pocommitment_tail
-                    $('#pocommitment-tail-table').DataTable().ajax.reload();
-                },
-                error: function(xhr) {
-                    Swal.fire('Error!', xhr.responseJSON.error, 'error');
-                    $('#getSAPData').text('Get SAP Data').attr('disabled', false);
-                },
+            // Validasi input yang diperlukan
+            var isValid = true;
+            $(this).find('input[required], select[required]').each(function() {
+                if ($(this).val() === '') {
+                    isValid = false;
+                    $(this).addClass('is-invalid'); // Tambahkan kelas invalid jika kosong
+                } else {
+                    $(this).removeClass('is-invalid'); // Hapus kelas invalid jika terisi
+                }
             });
-        } else {
-            alert('ID Capex tidak ditemukan!');
-        }
+
+            if (!isValid) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Silakan lengkapi semua input yang diperlukan.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Konfirmasi sebelum submit
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah Anda yakin ingin menambahkan PO Release ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, tambahkan!',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        method: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            $('#new-porelease-modal').modal('hide');
+                            $('#porelease-table').DataTable().ajax.reload();
+
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'PO Release berhasil ditambahkan!',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 1000
+                            }).then(() => {
+                                $('#capex-table').DataTable().ajax.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            console.error("Error: ", xhr
+                            .responseText); // Log kesalahan
+                            Swal.fire({
+                                title: 'Terjadi kesalahan!',
+                                text: 'Error: ' + xhr.responseText,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        });
     });
 </script>
