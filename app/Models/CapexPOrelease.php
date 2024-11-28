@@ -84,6 +84,23 @@ class CapexPOrelease extends Model
         return DB::table('t_capex_porelease')->where('id_capex_porelease', $id)->first();
     }
 
+    public static function getStatus($id, $status = null)
+    {
+        $query = DB::table('t_capex_porelease')
+            ->join('t_master_capex', 't_capex_porelease.id_capex', '=', 't_master_capex.id_capex')
+            ->select('t_capex_porelease.*', 't_master_capex.status_capex');
+
+        if ($id) {
+            $query->where('t_capex_porelease.id_capex', $id); // Filter berdasarkan ID
+        }
+
+        if (!is_null($status)) {
+            $query->where('t_capex_porelease.status', $status); // Tambahkan filter status jika diberikan
+        }
+        
+        return $query->get();
+    }
+
     public function Capex()
     {
         return $this->belongsTo(Capex::class, 'id_capex');

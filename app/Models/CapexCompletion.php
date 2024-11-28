@@ -79,6 +79,23 @@ class CapexCompletion extends Model
         return DB::table('t_capex_completion_date')->where('id_capex_completion', $id)->first();
     }
 
+    public static function getStatus($id, $status = null)
+    {
+        $query = DB::table('t_capex_completion_date') 
+            ->join('t_master_capex', 't_capex_completion_date.id_capex', '=', 't_master_capex.id_capex')
+            ->select('t_capex_completion_date.*', 't_master_capex.status_capex');
+
+        if($id){
+            $query->where('t_capex_completion_date.id_capex', $id);
+        }
+
+        if(!is_null($status)){
+            $query->where('t_capex_completion_date.status', $status);
+        }
+
+        return $query->get();
+    }
+
     public function Capex()
     {
         return $this->belongsTo(Capex::class, 'id_capex');

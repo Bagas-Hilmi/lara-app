@@ -34,7 +34,7 @@
                destroy: true, // Menghancurkan instance DataTable sebelumnya
                processing: true,
                serverSide: true,
-               order: [[0, 'desc']],
+               order: [[1, 'desc']],
                ajax: {
                    url: '/capex/' + idCapex, // Mengarah ke function show dengan id_capex
                    type: 'GET',

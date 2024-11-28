@@ -64,6 +64,23 @@ class CapexProgress extends Model
         return DB::table('t_capex_progress')->where('id_capex_progress', $id)->first();
     }
 
+    public static function getStatus($id, $status = null)
+    {
+        $query = DB::table('t_capex_progress')
+            ->join('t_master_capex', 't_capex_progress.id_capex', '=', 't_master_capex.id_capex')
+            ->select('t_capex_progress.*','t_master_capex.status_capex');
+
+            if($id){
+                $query->where('t_capex_progress.id_capex',$id);
+            }
+
+            if (!is_null($status)){
+                $query->where('t_capex_progress.status', $status);
+            }
+
+            return $query->get();
+    }
+
     public function Capex()
     {
         return $this->belongsTo(Capex::class, 'id_capex');

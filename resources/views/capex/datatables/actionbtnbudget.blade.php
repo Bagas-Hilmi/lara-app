@@ -1,4 +1,5 @@
 <div class="btn-group" role="group" aria-label="Basic example">
+    @if ($row->status_capex == 'Canceled' || $row->status_capex == 'To Opex' || $row->status_capex == 'On Progress')
     <button type="button" class="btn bg-gradient-secondary" 
         data-bs-toggle="modal" 
         data-bs-target="#edit-budget-modal" 
@@ -12,5 +13,6 @@
     <button type="button" class="btn bg-gradient-danger delete-budget-btn" data-id="{{ $row->id_capex_budget }}">
         <i class="fas fa-trash-alt"></i>
     </button>
+    @endif
     
 </div>

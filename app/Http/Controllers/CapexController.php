@@ -446,16 +446,15 @@ class CapexController extends Controller
         $flag = $request->input('flag');
 
         if ($flag === 'budget') {
-            // Jika permintaan AJAX untuk DataTables
             if ($request->ajax()) {
 
-                // Ambil status dari request, jika tidak ada default ke 1
                 $status = $request->get('status', 1);
 
-                // Buat query untuk mengambil data berdasarkan id_capex dan status
                 $query = CapexBudget::query()
-                    ->where('id_capex', $id) // Ambil data berdasarkan id_capex
-                    ->where('status', $status); // Ambil data berdasarkan status
+                    ->where('id_capex', $id)
+                    ->where('status', $status);
+
+                $query = CapexBudget::getStatus($id, $status);
 
                 return DataTables::of($query)
                     ->addColumn('action', function ($row) {
@@ -465,27 +464,33 @@ class CapexController extends Controller
                     ->make(true);
             }
         } else if ($flag === 'progress') {
-            $status = $request->get('status', 1);
 
-            $query = CapexProgress::query()
-                ->where('id_capex', $id)
-                ->where('status', $status);
+            if ($request->ajax()) {
 
-            return DataTables::of($query)
-                ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtnprogress', ['row' => $row]);
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+                $status = $request->get('status', 1);
+
+                $query = CapexProgress::query()
+                    ->where('id_capex', $id)
+                    ->where('status', $status);
+
+                $query = CapexProgress::getStatus($id, $status);
+
+                return DataTables::of($query)
+                    ->addColumn('action', function ($row) {
+                        return view('capex/datatables/actionbtnprogress', ['row' => $row]);
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
         } else if ($flag === 'porelease') {
 
             $status = $request->get('status', 1);
-
 
             $query = CapexPOrelease::query()
                 ->where('id_capex', $id)
                 ->where('status', $status);
 
+            $query = CapexPOrelease::getStatus($id, $status);
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
@@ -501,6 +506,7 @@ class CapexController extends Controller
                 ->where('id_capex', $id)
                 ->where('status', $status);
 
+            $query = CapexCompletion::getStatus($id, $status);
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {

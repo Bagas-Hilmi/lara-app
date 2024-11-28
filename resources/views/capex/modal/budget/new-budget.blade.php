@@ -20,7 +20,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="budget-cos" class="form-label font-weight-bold">Budget Cos (USD)</label>
-                            <input type="number" class="form-control column-input new-budget" id="budget_cos"
+                            <input type="text" class="form-control column-input new-budget" id="budget_cos"
                                 name="budget_cos" style="text-align: center;" required>
                         </div>
                     </div>

@@ -22,7 +22,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit-budget-cos" class="form-label font-weight-bold">Budget Cos</label>
-                            <input type="number" class="form-control column-input edit-budget" id="edit_budget_cos"
+                            <input type="text" class="form-control column-input edit-budget" id="edit_budget_cos"
                                 name="budget_cos" style="text-align: center;" required>
                         </div>
                     </div>

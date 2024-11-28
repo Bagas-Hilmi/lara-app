@@ -35,13 +35,13 @@ class CapexBudget extends Model
             ->get();
 
         foreach ($query as $item) {
-            
+
             $totalBudgetcos = DB::table('t_capex_budget')
                 ->where('id_capex', $item->id_capex)
                 ->where('status', 1) // Pastikan statusnya juga 1
                 ->sum('budget_cos');
 
-            
+
             DB::table('t_master_capex')
                 ->where('id_capex', $item->id_capex)
                 ->update(['budget_cos' => $totalBudgetcos]);
@@ -82,6 +82,24 @@ class CapexBudget extends Model
 
         return $result; // Mengembalikan hasil update
     }
+
+    public static function getStatus($id, $status = null)
+    {
+        $query = DB::table('t_capex_budget')
+            ->join('t_master_capex', 't_capex_budget.id_capex', '=', 't_master_capex.id_capex')
+            ->select('t_capex_budget.*', 't_master_capex.status_capex');
+
+        if ($id) {
+            $query->where('t_capex_budget.id_capex', $id); // Filter berdasarkan ID
+        }
+
+        if (!is_null($status)) {
+            $query->where('t_capex_budget.status', $status); // Tambahkan filter status jika diberikan
+        }
+        
+        return $query->get();
+    }
+
 
     public function Capex()
     {
