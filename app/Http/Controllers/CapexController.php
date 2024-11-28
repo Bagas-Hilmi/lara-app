@@ -173,8 +173,8 @@ class CapexController extends Controller
                     // Ambil file yang diunggah
                     $file = $request->file('file_pdf');
                     $originalFileName = $file->getClientOriginalName();
-                    $filePath = $file->storeAs('uploads/capexFiles', $originalFileName);
-                    $capex->file_pdf = $filePath;
+                    $filePath = $file->storeAs('public/uploads/capexFiles', $originalFileName);
+                    $capex->file_pdf = str_replace('public/', '', $filePath);
                 }
 
                 $capex->save();
@@ -536,6 +536,19 @@ class CapexController extends Controller
             $engineers = CapexEngineer::all();  // Ambil semua data engineer
 
             return DataTables::of($engineers)->make(true);
+        } else if ($flag === 'view-pdf') {
+            $capex = Capex::findOrFail($id);
+
+            $filename = $capex->file_pdf; 
+            $path = storage_path('app/public/uploads/capexFiles/' . $filename);
+
+            // Jika file tidak ditemukan, kembalikan 404
+            if (!file_exists($path)) {
+                abort(404, 'File not found.');
+            }
+
+            // Tampilkan file PDF
+            return response()->file($path);
         }
 
 

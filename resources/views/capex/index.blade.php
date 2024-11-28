@@ -235,32 +235,52 @@
                                         return data;
                                     }},
                                     {data: 'status_capex', name: 'status_capex', className: 'text-start',
-                                    render: function(data, type, row) {
-                                        if (type === 'display') {
-                                            if (data === 'Canceled') {
-                                                return '<span class="badge bg-danger">Canceled</span>';
-                                            } else if (data === 'Close') {
-                                                return '<span class="badge bg-secondary">Close</span>';
-                                            } else if (data === 'On Progress') {
-                                                return '<span class="badge bg-success">On Progress</span>';
-                                            } else if (data === 'To Opex') {
-                                                return '<span class="badge bg-info">To Opex</span>';
+                                        render: function(data, type, row) {
+                                            if (type === 'display') {
+                                                let badgeClass = '';
+                                                switch(data) {
+                                                    case 'Canceled':
+                                                        badgeClass = 'bg-danger';
+                                                        break;
+                                                    case 'Close':
+                                                        badgeClass = 'bg-secondary';
+                                                        break;
+                                                    case 'On Progress':
+                                                        badgeClass = 'bg-success';
+                                                        break;
+                                                    case 'To Opex':
+                                                        badgeClass = 'bg-info';
+                                                        break;
+                                                    default:
+                                                        return data;
+                                                }
+
+                                                // Jika status adalah Close, tambahkan icon mata
+                                                if (data === 'Close') {
+                                                    return `
+                                                        <span class="badge ${badgeClass} me-2">${data}</span>
+                                                        <a href="#" class="view-pdf" data-file="${row.file_pdf}" data-id="${row.id_capex}">
+                                                            <i class="fas fa-eye text-info" title="View PDF"></i>
+                                                        </a>
+                                                    `;
+                                                }
+
+                                                return `<span class="badge ${badgeClass}">${data}</span>`;
                                             }
-                                            return data; // Untuk nilai lain tampilkan apa adanya
+                                            return data;
                                         }
-                                        return data;
-                                    }},
+                                    },
                                     {data: 'budget_type', name: 'budget_type', className: 'text-right', render: function(data, type, row) {
                                         return '<div style="text-align: left;">' + data + '</div>';
                                     }},
                                     {data: 'startup', name: 'startup', className: 'text-center',
-                                    render: function(data) {
-                                            return moment(data).format('DD-MM-YYYY'); 
-                                    }},
+                                        render: function(data) {
+                                                return moment(data).format('DD-MM-YYYY'); 
+                                        }},
                                     {data: 'expected_completed', name: 'expected_completed', className: 'text-center',
-                                    render: function(data) {
-                                            return moment(data).format('DD-MM-YYYY'); 
-                                    }},
+                                        render: function(data) {
+                                                return moment(data).format('DD-MM-YYYY'); 
+                                        }},
                                     {data: 'revise_completion_date', name: 'revise_completion_date', className: 'text-center',
                                     render: function(data) {
                                         if (!data) return '-';
@@ -304,6 +324,20 @@
                                     }
                                 ]
                             });
+
+                            $(document).on('click', '.view-pdf', function(e) {
+                                e.preventDefault();
+                                const filePath = $(this).data('file'); // Mengambil nama file dari data attribute
+                                const id = $(this).data('id'); // Mengambil ID Capex
+                                const flag = 'view-pdf'; // Flag untuk membuka file PDF
+
+                                // Menggunakan URL publik untuk membuka file
+                                const fileUrl = '/storage/' + filePath; // Akses file menggunakan /storage/
+                                window.open(fileUrl, '_blank');
+                            });
+
+
+
 
                             $('#yearDropdown').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
                                 var year = $(this).data('value'); // Ambil nilai tahun
@@ -445,7 +479,7 @@
                                                 }
                                             },
                                             { data: 'cost_element',createdCell:function(td){
-                                                $(td).css('text-aling','right');
+                                                $(td).css('text-align','right')
                                             }},
                                             { data: 'wbs',
                                                 createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
@@ -507,10 +541,13 @@
     }
     
     .rounded-table { 
-        border-radius: 12px;
-        overflow: hidden; 
+        border-radius: 12px; 
     }
 
+    .table-responsive {
+        overflow-y: hidden !important; /* Menghilangkan scrollbar vertikal */
+        overflow-x: auto !important; /* Tetap bisa scroll horizontal jika perlu */
+    }
     .rounded-table th,
     .rounded-table td {
         border: none; /* Remove default borders to maintain rounded appearance */
@@ -528,6 +565,7 @@
     color: #ffffff; /* Warna teks header */
     }
 
+    /* Gaya untuk baris tabel */
     #capex-table tbody tr {
         transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
         color: #2c2626;
@@ -539,18 +577,9 @@
         border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
         color: #2c2626;
     }
-    
-    #pocommitment-table tbody td {
-        padding: 10px; /* Padding untuk sel */
-        border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
-        color: #2c2626;
-    }
 
     /* Hover effect untuk baris tabel */
     #capex-table tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
-    }
-    #pocommitment-table tbody tr:hover {
         background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
     }
     #capex-table th, #capex-table td {
