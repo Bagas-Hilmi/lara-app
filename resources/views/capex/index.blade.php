@@ -414,27 +414,40 @@
                                         ],
                                         order: [[2, 'asc']],
                                         columns: [
-                                            { data: 'purchasing_doc', name: 'purchasing_doc' , className: 'text-center'},
-                                            { data: 'reference_item', name: 'reference_item' , className: 'text-center'},
-                                            { data: 'doc_date', name: 'doc_date', className: 'text-center' , className: 'text-center'},
-                                            { data: 'fiscal_year', name: 'fiscal_year', className: 'text-center' , className: 'text-center'},
-                                            { data: 'no_material', name: 'no_material' , className: 'text-center'},
-                                            { data: 'material_desc', data: 'material_desc',
+                                            { data:'purchasing_doc', createdCell: function(td, rowData, rowIndex, cellData){
+                                                $(td).css('text-align', 'right');
+                                            }},
+                                            { data: 'reference_item', createdCell: function(td){
+                                                $(td).css('text-align', 'right');
+                                            }},
+                                            { data: 'doc_date', name: 'doc_date', className: 'text-center'},
+                                            { data: 'fiscal_year', name: 'fiscal_year', className: 'text-center'},
+                                            { data: 'no_material', createdCell: function(td){
+                                                $(td).css('text-align', 'left');
+                                            }},
+                                            { data: 'material_desc',
                                                 createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
                                                     $(td).css('text-align', 'left');
-                                                }
-                                            },
-                                            { data: 'qty', name: 'qty' , className: 'text-center'},
+                                            }},
+                                            { data: 'qty',createdCell:function(td){
+                                                $(td).css('text-align', 'right');
+                                            }},
                                             { data: 'uom', name: 'uom' , className: 'text-center'},
-                                            { data: 'value_trancurr', name: 'value_trancurr' , className: 'text-center'},
-                                            { data: 'tcurr', name: 'tcurr' },
-                                            { data: 'valuein_obj', name: 'valuein_obj' , data: 'valuein_obj',
+                                            { data: 'value_trancurr', createdCell: function(td){
+                                                $(td).css('text-align', 'right');
+                                            }},
+                                            { data: 'tcurr', createdCell:function(td){
+                                                $(td).css('text-align', 'center');
+                                            }},
+                                            { data: 'valuein_obj',
                                                 createdCell: function(td, rowData, rowIndex, cellData) {
                                                     $(td).css('text-align', 'right');
                                                 }
                                             },
-                                            { data: 'cost_element', name: 'cost_element' , className: 'text-center'},
-                                            { data: 'wbs', data: 'wbs',
+                                            { data: 'cost_element',createdCell:function(td){
+                                                $(td).css('text-aling','right');
+                                            }},
+                                            { data: 'wbs',
                                                 createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
                                                     $(td).css('text-align', 'left');
                                                 }
@@ -494,13 +507,10 @@
     }
     
     .rounded-table { 
-        border-radius: 12px; 
+        border-radius: 12px;
+        overflow: hidden; 
     }
 
-    .table-responsive {
-        overflow-y: hidden !important; /* Menghilangkan scrollbar vertikal */
-        overflow-x: auto !important; /* Tetap bisa scroll horizontal jika perlu */
-    }
     .rounded-table th,
     .rounded-table td {
         border: none; /* Remove default borders to maintain rounded appearance */
@@ -518,7 +528,6 @@
     color: #ffffff; /* Warna teks header */
     }
 
-    /* Gaya untuk baris tabel */
     #capex-table tbody tr {
         transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
         color: #2c2626;
@@ -530,9 +539,18 @@
         border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
         color: #2c2626;
     }
+    
+    #pocommitment-table tbody td {
+        padding: 10px; /* Padding untuk sel */
+        border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+        color: #2c2626;
+    }
 
     /* Hover effect untuk baris tabel */
     #capex-table tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+    }
+    #pocommitment-table tbody tr:hover {
         background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
     }
     #capex-table th, #capex-table td {
