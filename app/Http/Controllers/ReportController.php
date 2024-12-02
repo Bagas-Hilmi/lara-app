@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Report;
 use App\Models\ReportCategory;
 use App\Models\Capex;
+use App\Models\ReportSummary;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
@@ -45,17 +46,29 @@ class ReportController extends Controller
             if ($request->ajax()) {
                 // Memanggil method dari model untuk mendapatkan data
                 $data = ReportCategory::getReportCategoryData();
-                
+
                 return DataTables::of($data)
                     ->addIndexColumn() //nomor urut
                     ->make(true);
             }
 
             return view('report.reportCategory.index');
+        } else if ($flag === 'summary') {
+            if ($request->ajax()) {
+                // Memanggil method dari model untuk mendapatkan data
+                $data = ReportSummary::getMasterdata();
+
+                // Membuat DataTables dari data yang diambil
+                return DataTables::of($data)
+                    ->addIndexColumn() // nomor urut
+                    ->make(true);
+            }
+
+            return view('report.reportSummary.index');
         }
 
         return redirect()->route('report.index', ['flag' => 'cip'])
-        ->with('success', 'Data berhasil ditambahkan!');
+            ->with('success', 'Data berhasil ditambahkan!');
     }
 
     // Download berdasarkan filter

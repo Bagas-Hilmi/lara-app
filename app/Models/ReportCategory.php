@@ -22,7 +22,7 @@ class ReportCategory extends Model
         'number',
         'budget',
         'unbudget',
-        'carried_over', // Ditambahkan ke fillable karena ada di select
+        'carried_over', 
         'amount',
         'actual_ytd',
         'balance',
@@ -30,56 +30,68 @@ class ReportCategory extends Model
 
     public static function getReportCategoryData()
     {
-        DB::beginTransaction();
 
-        // Ambil data dari t_master_capex
+        // Ambil data dari t_master_capex yang aktif
         $categories = DB::table('t_master_capex')
-            ->select('id_capex', 'category', 'project_desc', 'capex_number', 'amount_budget')
+            ->select('id_capex', 'category', 'project_desc', 'capex_number', 'total_budget', 'budget_type', 'status')
             ->where('status', 1)
-            ->distinct() 
+            ->where('status_capex', 'On Progress') 
+            ->distinct()
             ->get();
 
-        // Melakukan insert/update untuk setiap kategori
+        // Proses insert/update/delete
         foreach ($categories as $category) {
             DB::table('t_report_category')
                 ->updateOrInsert(
-                    ['id_capex' => $category->id_capex], // Kriteria pencarian
+                    ['id_capex' => $category->id_capex],
                     [
                         'category' => $category->category,
                         'project' => $category->project_desc,
                         'number' => $category->capex_number,
-                        'budget' => $category->amount_budget,
+                        'budget' => strtolower($category->budget_type) == 'budgeted' ? $category->total_budget : null,
+                        'unbudget' => strtolower($category->budget_type) == 'unbudgeted' ? $category->total_budget : null,  
+                        'status' => $category->status, 
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]
                 );
         }
 
-        // Update amount setelah insert/update data selesai
+        // Hapus data di report_category yang statusnya 0 di master_capex
         DB::table('t_report_category')
+            ->whereNotIn(
+                'id_capex',
+                DB::table('t_master_capex')
+                    ->where('status', 1)
+                    ->pluck('id_capex')
+            )
+            ->delete();
+
+        // Update amount 
+        DB::table('t_report_category')
+            ->where('status', 1) // Pastikan hanya update data aktif
             ->update([
                 'amount' => DB::raw('IFNULL(budget, 0) + IFNULL(unbudget, 0) + IFNULL(carried_over, 0)')
             ]);
 
-        // Update balance setelah amount diupdate
+        // Update balance
         DB::table('t_report_category')
+            ->where('status', 1) // Pastikan hanya update data aktif
             ->update([
                 'balance' => DB::raw('IFNULL(amount, 0) - IFNULL(actual_ytd, 0)')
             ]);
 
-        // Commit transaksi setelah semua query selesai
-        DB::commit();
-
-        // Return data yang telah diupdate dan diurutkan berdasarkan kategori
+        // Return data yang diurutkan
         return DB::table('t_report_category')
+            ->where('status', 1) // Hanya ambil data aktif
             ->orderByRaw("CASE category
-                    WHEN 'General Operation' THEN 1
-                    WHEN 'IT' THEN 2
-                    WHEN 'Environment' THEN 3
-                    WHEN 'Safety' THEN 4
-                    WHEN 'Improvement Plant efficiency' THEN 5
-                    WHEN 'Invesment' THEN 6
-                    ELSE 7 END")
+            WHEN 'General Operation' THEN 1
+            WHEN 'IT' THEN 2
+            WHEN 'Environment' THEN 3
+            WHEN 'Safety' THEN 4
+            WHEN 'Improvement Plant efficiency' THEN 5
+            WHEN 'Invesment' THEN 6
+            ELSE 7 END")
             ->get();
     }
 
