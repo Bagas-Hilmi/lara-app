@@ -22,7 +22,7 @@ class ReportCategory extends Model
         'number',
         'budget',
         'unbudget',
-        'carried_over', 
+        'carried_over',
         'amount',
         'actual_ytd',
         'balance',
@@ -35,12 +35,24 @@ class ReportCategory extends Model
         $categories = DB::table('t_master_capex')
             ->select('id_capex', 'category', 'project_desc', 'capex_number', 'total_budget', 'budget_type', 'status')
             ->where('status', 1)
-            ->where('status_capex', 'On Progress') 
+            ->where('status_capex', 'On Progress') // Tambahkan kondisi ini
             ->distinct()
             ->get();
 
-        // Proses insert/update/delete
+        
         foreach ($categories as $category) {
+            // Ambil tahun dari capex_number menggunakan regex
+            preg_match('/\d{4}$/', $category->capex_number, $matches);
+            $capex_year = $matches[0] ?? null; // Jika tidak ditemukan, nilainya null
+        
+            // Periksa apakah tahun capex lebih kecil dari tahun saat ini
+            $is_carried_over = ((int)$capex_year < date('Y'));
+        
+            // Logika untuk kolom
+            $carried_over = $is_carried_over ? $category->total_budget : null;
+            $budget = !$is_carried_over && strtolower($category->budget_type) == 'budgeted' ? $category->total_budget : null;
+            $unbudget = !$is_carried_over && strtolower($category->budget_type) == 'unbudgeted' ? $category->total_budget : null;
+        
             DB::table('t_report_category')
                 ->updateOrInsert(
                     ['id_capex' => $category->id_capex],
@@ -48,16 +60,16 @@ class ReportCategory extends Model
                         'category' => $category->category,
                         'project' => $category->project_desc,
                         'number' => $category->capex_number,
-                        'budget' => strtolower($category->budget_type) == 'budgeted' ? $category->total_budget : null,
-                        'unbudget' => strtolower($category->budget_type) == 'unbudgeted' ? $category->total_budget : null,  
-                        'status' => $category->status, 
+                        'budget' => $budget,       
+                        'unbudget' => $unbudget,   
+                        'carried_over' => $carried_over, 
+                        'status' => $category->status,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]
                 );
         }
-
-        // Hapus data di report_category yang statusnya 0 di master_capex
+        
         DB::table('t_report_category')
             ->whereNotIn(
                 'id_capex',
@@ -67,16 +79,15 @@ class ReportCategory extends Model
             )
             ->delete();
 
-        // Update amount 
         DB::table('t_report_category')
-            ->where('status', 1) // Pastikan hanya update data aktif
+            ->where('status', 1) 
             ->update([
                 'amount' => DB::raw('IFNULL(budget, 0) + IFNULL(unbudget, 0) + IFNULL(carried_over, 0)')
             ]);
 
         // Update balance
         DB::table('t_report_category')
-            ->where('status', 1) // Pastikan hanya update data aktif
+            ->where('status', 1) 
             ->update([
                 'balance' => DB::raw('IFNULL(amount, 0) - IFNULL(actual_ytd, 0)')
             ]);

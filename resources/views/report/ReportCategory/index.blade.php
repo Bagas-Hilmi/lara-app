@@ -30,8 +30,8 @@
                                                 <th class="text-center">Category</th>
                                                 <th class="text-center">Project</th>
                                                 <th class="text-center">Number</th>
-                                                <th class="text-center">Budget 2024</th>
-                                                <th class="text-center">Unbudget 2024</th>
+                                                <th class="text-center">Budget {{ date('Y') }}</th>
+                                                <th class="text-center">Unbudget {{ date('Y') }}</th>
                                                 <th class="text-center">Carried Over</th>
                                                 <th class="text-center">Amount</th>
                                                 <th class="text-center">Actual YTD</th>
@@ -102,35 +102,45 @@
                                 },
                                 { 
                                     data: 'unbudget',
-                                    className: 'text-right',
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
                                     render: function(data) {
                                         return data ? data.toLocaleString() : '';
                                     }
                                 },
                                 { 
                                     data: 'carried_over',
-                                    className: 'text-right',
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
                                     render: function(data) {
                                         return data ? data.toLocaleString() : '';
                                     }
                                 },
                                 { 
                                     data: 'amount',
-                                    className: 'text-right',
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
                                     render: function(data) {
                                         return data ? data.toLocaleString() : '';
                                     }
                                 },
                                 { 
                                     data: 'actual_ytd',
-                                    className: 'text-right',
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
                                     render: function(data) {
                                         return data ? data.toLocaleString() : '';
                                     }
                                 },
                                 { 
                                     data: 'balance',
-                                    className: 'text-right',
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
                                     render: function(data) {
                                         return data ? data.toLocaleString() : '';
                                     }
