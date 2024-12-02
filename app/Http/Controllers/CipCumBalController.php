@@ -37,6 +37,7 @@ class CipCumBalController extends Controller
             }
 
             return DataTables::of($query)
+                ->addIndexColumn() //nomor urut
                 ->addColumn('action', function ($row) {
                     return view('cipcumbal/datatables.actionbtn', ['row' => $row]);
                 })

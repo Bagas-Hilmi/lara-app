@@ -26,6 +26,7 @@ class Capex extends Model
         'amount_budget',
         'budget_cos',
         'total_budget',
+        'PO_release',
         'status_capex',
         'budget_type',
         'startup',
@@ -298,8 +299,14 @@ class Capex extends Model
     {
         return $this->hasMany(Report::class,'id_capex');
     }
+
     public function ReportCategory()
     {
         return $this->hasMany(ReportCategory::class,'id_capex');
+    }
+    
+    public function ReportSummary()
+    {
+        return $this->hasMany(ReportSummary::class,'id_capex');
     }
 }

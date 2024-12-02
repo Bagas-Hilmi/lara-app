@@ -167,6 +167,18 @@
     });
 </script>
 
+<script>
+    document.getElementById('faglb').addEventListener('change', function() {
+        const allowedExtensions = ['xlsx', 'xls', 'csv'];
+        const fileExtension = this.value.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+            alert('Only Excel files (.xlsx, .xls, .csv) are allowed!');
+            this.value = ''; // Reset file input
+        }
+    });
+</script>
+
+
 <style>
     /* Container for month input */
     .month-input-container {

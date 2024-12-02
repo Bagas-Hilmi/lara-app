@@ -40,6 +40,7 @@ class FaglbController extends Controller
             }
 
             return DataTables::of($query)
+                ->addIndexColumn() //nomor urut
                 ->addColumn('action', function ($row) {
                     return view('faglb/datatables/actionbtn', ['row' => $row]);
                 })
@@ -217,13 +218,10 @@ class FaglbController extends Controller
         // Hapus spasi jika ada
         $amount = trim($amount);
 
-        // Hapus pemisah ribuan (titik)
         $amount = str_replace('.', '', $amount);
 
-        // Ganti koma desimal dengan titik
         $amount = str_replace(',', '.', $amount);
 
-        // Convert ke float
         return (float) $amount;
     }
 
@@ -234,9 +232,7 @@ class FaglbController extends Controller
             if (empty($amount)) return 0;
 
             $amount = trim($amount);
-            // Hapus pemisah ribuan (titik)
             $amount = str_replace('.', '', $amount);
-            // Ganti koma desimal dengan titik
             $amount = str_replace(',', '.', $amount);
 
             return (float) $amount;

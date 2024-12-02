@@ -330,73 +330,73 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Ambil elemen-elemen yang dibutuhkan
-        const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
-        const fileUploadContainer = document.getElementById('fileUploadContainer');
-        const fileUploadInput = fileUploadContainer.querySelector('input[type="file"]');
-        const saveEditButton = document.getElementById('save-edit-capex');
-        const statusCapexInput = document.getElementById('status_capex_edit');
-        const statusDropdownButton = document.getElementById('statusDropdownEdit');
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
+    const fileUploadContainer = document.getElementById('fileUploadContainer');
+    const fileUploadInput = fileUploadContainer.querySelector('input[type="file"]');
+    const saveEditButton = document.getElementById('save-edit-capex');
+    const statusCapexInput = document.getElementById('status_capex_edit');
+    const statusDropdownButton = document.getElementById('statusDropdownEdit');
 
-        // Sembunyikan container upload file secara default
-        fileUploadContainer.style.display = 'none';
+    // Fungsi untuk toggle container file upload
+    function toggleFileUploadContainer(status) {
+        if (status === 'Close') {
+            fileUploadContainer.style.display = 'block';    
+            fileUploadInput.setAttribute('required', 'required'); 
+        } else {
+            fileUploadContainer.style.display = 'none';
+            fileUploadInput.removeAttribute('required'); 
+            fileUploadInput.value = ''; // Reset input
+        }
+    }
 
-        // Event listener untuk dropdown status
-        categoryDropdownItems.forEach(item => {
-            item.addEventListener('click', function(event) {
-                const selectedValue = this.getAttribute('data-value');
-                
-                // Update hidden input dan dropdown button
-                statusCapexInput.value = selectedValue;
-                statusDropdownButton.textContent = selectedValue;
+    // Fungsi validasi input file PDF
+    function validatePDFInput(fileInput) {
+        const allowedTypes = ['application/pdf'];
+        const file = fileInput.files[0];
 
-                // Tampilkan/sembunyikan upload file container
-                if (selectedValue === 'Close') {
-                    fileUploadContainer.style.display = 'block';    
-                    fileUploadInput.setAttribute('required', 'required'); 
-                } else {
-                    fileUploadContainer.style.display = 'none';
-                    fileUploadInput.removeAttribute('required'); 
-
-                    
-                    fileUploadInput.value = '';
-                }
+        if (!file) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Harap unggah file PDF untuk status Close',
+                icon: 'error',
+                confirmButtonText: 'OK'
             });
-        });
+            return false;
+        }
 
-        
-        saveEditButton.addEventListener('click', function(event) {
-            const statusValue = statusCapexInput.value;
+        if (!allowedTypes.includes(file.type)) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Hanya file PDF',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return false;
+        }
 
-            
-            if (statusValue === 'Close') {
-                if (!fileUploadInput.files.length) {
-                    
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Harap unggah file PDF untuk status Close',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    event.preventDefault(); 
-                    return false;
-                }
+        return true;
+    }
 
-                const allowedTypes = ['application/pdf'];
-                const fileType = fileUploadInput.files[0].type;
-                
-                if (!allowedTypes.includes(fileType)) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Hanya file PDF atau Excel yang diperbolehkan',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    event.preventDefault(); 
-                    return false;
-                }
-            }
+    // Event listener untuk dropdown status
+    categoryDropdownItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const selectedValue = this.getAttribute('data-value');
+            statusCapexInput.value = selectedValue;
+            statusDropdownButton.textContent = selectedValue;
+
+            toggleFileUploadContainer(selectedValue);
         });
     });
+
+    // Event listener untuk tombol save
+    saveEditButton.addEventListener('click', function(event) {
+        const statusValue = statusCapexInput.value;
+
+        if (statusValue === 'Close' && !validatePDFInput(fileUploadInput)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+});
 </script>

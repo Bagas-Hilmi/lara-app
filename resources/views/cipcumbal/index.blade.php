@@ -70,6 +70,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">Action</th>
+                                                <th class="text-center">No</th>
                                                 <th class="text-center">Period CIP</th>
                                                 <th class="text-center">Bal USD</th>
                                                 <th class="text-center">Bal RP</th>
@@ -118,7 +119,7 @@
                     processing: true,
                     serverSide: true,
                     order: [
-                        [7, 'desc']
+                        [8, 'desc']
                     ],
                     ajax: {
                         url: "{{ route('cipcumbal.index') }}",
@@ -135,6 +136,7 @@
                             searchable: false,
                             className: 'text-center'
                         },
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex',orderable: false, searchable: false },  
                         {
                             data: 'period_cip',
                             name: 'period_cip',

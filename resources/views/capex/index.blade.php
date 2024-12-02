@@ -573,7 +573,7 @@
 
     /* Gaya untuk sel tabel */
     #capex-table tbody td {
-        padding: 10px; /* Padding untuk sel */
+        padding: 8px; /* Padding untuk sel */
         border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
         color: #2c2626;
     }
