@@ -96,8 +96,13 @@
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
-                                    render: function(data) {
-                                        return data ? data.toLocaleString() : '';
+                                    render: function (data, type, row) {
+                                        // Format angka menggunakan Intl.NumberFormat
+                                        return new Intl.NumberFormat('id-ID', { 
+                                            style: 'decimal', 
+                                            minimumFractionDigits: 2, 
+                                            maximumFractionDigits: 2 
+                                        }).format(data);
                                     }
                                 },
                                 { 
@@ -105,8 +110,13 @@
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
-                                    render: function(data) {
-                                        return data ? data.toLocaleString() : '';
+                                    render: function (data, type, row) {
+                                        // Format angka menggunakan Intl.NumberFormat
+                                        return new Intl.NumberFormat('id-ID', { 
+                                            style: 'decimal', 
+                                            minimumFractionDigits: 2, 
+                                            maximumFractionDigits: 2 
+                                        }).format(data);
                                     }
                                 },
                                 { 
@@ -114,8 +124,13 @@
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
-                                    render: function(data) {
-                                        return data ? data.toLocaleString() : '';
+                                    render: function (data, type, row) {
+                                        // Format angka menggunakan Intl.NumberFormat
+                                        return new Intl.NumberFormat('id-ID', { 
+                                            style: 'decimal', 
+                                            minimumFractionDigits: 2, 
+                                            maximumFractionDigits: 2 
+                                        }).format(data);
                                     }
                                 },
                                 { 
@@ -123,8 +138,13 @@
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
-                                    render: function(data) {
-                                        return data ? data.toLocaleString() : '';
+                                    render: function (data, type, row) {
+                                        // Format angka menggunakan Intl.NumberFormat
+                                        return new Intl.NumberFormat('id-ID', { 
+                                            style: 'decimal', 
+                                            minimumFractionDigits: 2, 
+                                            maximumFractionDigits: 2 
+                                        }).format(data);
                                     }
                                 },
                                 { 
@@ -132,8 +152,13 @@
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
-                                    render: function(data) {
-                                        return data ? data.toLocaleString() : '';
+                                    render: function (data, type, row) {
+                                        // Format angka menggunakan Intl.NumberFormat
+                                        return new Intl.NumberFormat('id-ID', { 
+                                            style: 'decimal', 
+                                            minimumFractionDigits: 2, 
+                                            maximumFractionDigits: 2 
+                                        }).format(data);
                                     }
                                 },
                                 { 
@@ -141,8 +166,13 @@
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
-                                    render: function(data) {
-                                        return data ? data.toLocaleString() : '';
+                                    render: function (data, type, row) {
+                                        // Format angka menggunakan Intl.NumberFormat
+                                        return new Intl.NumberFormat('id-ID', { 
+                                            style: 'decimal', 
+                                            minimumFractionDigits: 2, 
+                                            maximumFractionDigits: 2 
+                                        }).format(data);
                                     }
                                 }
                             ],

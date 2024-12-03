@@ -35,7 +35,7 @@ class ReportCategory extends Model
         $categories = DB::table('t_master_capex')
             ->select('id_capex', 'category', 'project_desc', 'capex_number', 'total_budget', 'budget_type', 'status')
             ->where('status', 1)
-            ->where('status_capex', 'On Progress') // Tambahkan kondisi ini
+            ->where('status_capex', 'On Progress') 
             ->distinct()
             ->get();
 
@@ -52,6 +52,10 @@ class ReportCategory extends Model
             $carried_over = $is_carried_over ? $category->total_budget : null;
             $budget = !$is_carried_over && strtolower($category->budget_type) == 'budgeted' ? $category->total_budget : null;
             $unbudget = !$is_carried_over && strtolower($category->budget_type) == 'unbudgeted' ? $category->total_budget : null;
+
+            $actual_ytd = DB::table('t_report_cip')
+            ->where('id_capex', $category->id_capex)
+            ->sum('amount_us');
         
             DB::table('t_report_category')
                 ->updateOrInsert(
@@ -62,7 +66,8 @@ class ReportCategory extends Model
                         'number' => $category->capex_number,
                         'budget' => $budget,       
                         'unbudget' => $unbudget,   
-                        'carried_over' => $carried_over, 
+                        'carried_over' => $carried_over,
+                        'actual_ytd' => $actual_ytd,
                         'status' => $category->status,
                         'created_at' => now(),
                         'updated_at' => now(),
