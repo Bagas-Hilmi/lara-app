@@ -141,3 +141,21 @@
         });
     });
 </script>
+
+<style>
+    /* Gaya untuk sel tabel */
+    #budget-table tbody td {
+       padding: 8px; /* Padding untuk sel */
+       border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+       color: #2c2626;
+   }
+
+   /* Hover effect untuk baris tabel */
+   #budget-table tbody tr:hover {
+       background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+   }
+   #budget-table th, #budget-table td {
+       padding: 8px;
+       text-align: center;
+   }
+</style>

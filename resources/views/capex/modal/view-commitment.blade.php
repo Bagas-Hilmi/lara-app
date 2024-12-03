@@ -1,6 +1,6 @@
 <!-- Modal untuk PO Commitment -->
 <div class="modal fade" id="viewPocommitmentModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="editFormLabel" style="color: white;">Data PO Commitment</h5>
@@ -32,3 +32,21 @@
         </div>
     </div>
 </div>
+
+<style>
+     /* Gaya untuk sel tabel */
+     #pocommitment-table tbody td {
+        padding: 8px; /* Padding untuk sel */
+        border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+        color: #2c2626;
+    }
+
+    /* Hover effect untuk baris tabel */
+    #pocommitment-table tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+    }
+    #pocommitment-table th, #pocommitment-table td {
+        padding: 8px;
+        text-align: center;
+    }
+</style>

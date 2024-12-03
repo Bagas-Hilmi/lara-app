@@ -181,3 +181,21 @@
         });
     }
 </script>
+
+<style>
+    /* Gaya untuk sel tabel */
+    #engineerTable tbody td {
+       padding: 8px; /* Padding untuk sel */
+       border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+       color: #2c2626;
+   }
+
+   /* Hover effect untuk baris tabel */
+   #engineerTable tbody tr:hover {
+       background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+   }
+   #engineerTable th, #engineerTable td {
+       padding: 8px;
+       text-align: center;
+   }
+</style>
