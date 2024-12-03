@@ -15,50 +15,28 @@
                                 <table class="table table-striped table-bordered" id="faglbTable">
                                     <thead class="thead-dark">
                                         <tr class="text-center">
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">No
-                                            </th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Asset</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Sub-number</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Posting Date</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Document Number</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Reference Key</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Material</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Business Area</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Quantity</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Base Unit of Measure</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Document Type</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Posting Key</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Document Currency</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Amount in Doc. Curr.</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Local Currency</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Amount in LC</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Local Currency 2</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Amount in Loc. Curr. 2</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Text</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Assignment</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">
-                                                Profit Center</th>
-                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">WBS
-                                                Element</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">No</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Asset</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Sub-number</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Posting Date</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Document Number</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Reference Key</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Material</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Business Area</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Quantity</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Base Unit of Measure</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Document Type</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Posting Key</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Document Currency</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Amount in Doc. Curr.</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Local Currency</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Amount in LC</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Local Currency 2</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Amount in Loc. Curr. 2</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Text</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Assignment</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">Profit Center</th>
+                                            <th style="text-align: center; white-space: nowrap; vertical-align: middle;">WBSElement</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -99,45 +77,50 @@
     </div>
 
     @push('js')
-    @endpush
+    <script src="assets/js/moment.min.js"></script>
+
     <script>
-        $(document).ready(function() {
-            $('#faglbTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": false,
-                "scrollX": true,
-                "columnDefs": [{
-                        "targets": 0,
-                        "data": null,
-                        "orderable": false,
-                        "searchable": false,
-                        "render": function(data, type, row, meta) {
-                            return meta.row + 1;
-                        }
+    $(document).ready(function () {
+        // Aktifkan moment.js untuk DataTables
+        $.fn.dataTable.moment('DD/MM/YYYY'); 
+
+        $('#faglbTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: false,
+            scrollX: true,
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1;
                     },
-                    {
-                        "targets": 3, // kolom tanggal
-                        "type": "date", // definisikan tipe data tanggal
-                        "render": function(data, type, row) {
-                            if (type === 'sort') {
-                                // Format untuk pengurutan
-                                return moment(data, 'DD/MM/YYYY').format('YYYY-MM-DD');
-                            }
-                            return data;
+                },
+                {
+                    targets: 3, // Kolom tanggal
+                    type: 'date',
+                    render: function(data, type, row) {
+                        if (type === 'sort') {
+                            // Konversi format DD/MM/YYYY ke YYYY-MM-DD untuk sorting
+                            return moment(data, 'DD/MM/YYYY').format('YYYY-MM-DD');
                         }
+                        return data;
                     }
-                ],
-                "order": [
-                    [3, 'asc']
-                ], // Urutkan berdasarkan kolom tanggal
-                "pageLength": -1 // Tampilkan semua data dalam satu halaman untuk PDF
-            });
+                }
+            ],
+            order: [[3, 'asc']], // Kolom tanggal (index 3)
+            pageLength: -1, // Tampilkan semua data dalam satu halaman untuk PDF
         });
+    });
     </script>
+@endpush
+
 @endsection
 
 <style>
@@ -152,7 +135,7 @@
     table th {
         height: 50px;
         /* Mengatur tinggi baris */
-        vertical-align: middle;
+       
         /* Konten vertikal di tengah */
         white-space: nowrap;
         /* Mencegah teks turun ke baris berikutnya */
