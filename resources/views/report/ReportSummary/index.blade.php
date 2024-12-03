@@ -17,7 +17,6 @@
                                 <h3 class="text-white text-capitalize ps-3">Report Summary</h3>
                             </div>
                             <div class="card-body p-3">
-                               
                                 <div class="table-responsive p-0">
                                     <table id="summary-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
                                         <thead style="background-color: #3cb210; color: white;">
@@ -171,8 +170,46 @@
                                         }
                                         return data;
                                     }},
-                                    {data: 'recost_rp', name: 'recost_rp'},
-                                    {data: 'recost_usd', name: 'recost_usd'},
+
+                                    {data: 'recost_rp', name: 'recost_rp',
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
+                                    render: function(data, type, row) {
+                                        if (data === '' || data === null || data === undefined) {
+                                            data = null;
+                                        }
+                                        if (data !== null) {
+                                            return new Intl.NumberFormat('id-ID', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+
+                                        // Jika data null, return null
+                                        return data;
+                                    }},
+
+                                    {data: 'recost_usd', name: 'recost_usd', 
+                                    createdCell: function(td, rowData, rowIndex, cellData, colIndex){
+                                        $(td).css('text-align', 'right');
+                                    },
+                                    render: function(data, type, row) {
+                                        if (data === '' || data === null || data === undefined) {
+                                            data = null;
+                                        }
+                                        if (data !== null) {
+                                            return new Intl.NumberFormat('id-ID', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+
+                                        // Jika data null, return null
+                                        return data;
+                                    }},
                                     {data: 'PO_release', name: 'PO_release', className: 'text-right',   render: function(data, type) {
                                         if (type === 'display') {
                                             if(data === null || data ==="" || isNaN(Number(data))){
