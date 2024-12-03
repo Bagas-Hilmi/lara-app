@@ -30,7 +30,10 @@
     <link id="pagestyle" href="{{ asset('assets') }}/css/material-dashboard.css?v=3.0.0" rel="stylesheet" />
 
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-
+    <script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
+    <script src="assets/js/moment.min.js"></script>
+    <script src="{{ asset('/js/tooltip.js') }}"></script>
 </head>
 
 <body class="{{ $bodyClass }}">

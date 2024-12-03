@@ -97,7 +97,7 @@
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-                    <script src="assets/js/plugins/sweetalert.min.js"></script>
+                    <script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>
                     <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
                     <script src="assets/js/moment.min.js"></script>
                     <script src="{{ asset('/js/tooltip.js') }}"></script>
@@ -469,13 +469,29 @@
                                             { data: 'uom', name: 'uom' , className: 'text-center'},
                                             { data: 'value_trancurr', createdCell: function(td){
                                                 $(td).css('text-align', 'right');
-                                            }},
+                                            },  render: function (data, type, row) {
+                                            // Format angka menggunakan Intl.NumberFormat
+                                            return new Intl.NumberFormat('id-ID', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+                                            },
                                             { data: 'tcurr', createdCell:function(td){
                                                 $(td).css('text-align', 'center');
                                             }},
                                             { data: 'valuein_obj',
                                                 createdCell: function(td, rowData, rowIndex, cellData) {
                                                     $(td).css('text-align', 'right');
+                                                },
+                                                render: function (data, type, row) {
+                                                    // Format angka menggunakan Intl.NumberFormat
+                                                    return new Intl.NumberFormat('id-ID', { 
+                                                        style: 'decimal', 
+                                                        minimumFractionDigits: 2, 
+                                                        maximumFractionDigits: 2 
+                                                    }).format(data);
                                                 }
                                             },
                                             { data: 'cost_element',createdCell:function(td){

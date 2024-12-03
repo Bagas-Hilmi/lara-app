@@ -24,7 +24,6 @@
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
-    <script src="assets/js/plugins/sweetalert.min.js"></script>
 
     @stack('js')
 </head>
@@ -105,7 +104,7 @@
     function showLogoutSwal() {
         Swal.fire({
             title: "Are you sure?",
-            text: "Do you want to sign out?",
+            text: "Apakah anda ingin Logout",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: 'Yes, sign out!',

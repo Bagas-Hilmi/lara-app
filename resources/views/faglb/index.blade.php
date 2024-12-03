@@ -67,8 +67,6 @@
 
             @push('css')
             <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
             @endpush
 
             @push('js')
@@ -77,8 +75,6 @@
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="assets/js/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
-            <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-            <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 
           
             <script>
@@ -146,14 +142,14 @@
                     $("#faglb-table").on("click", ".delete-btn", function () {
                         var id = $(this).data("id"); // Ambil ID dari data-id
 
-                        // Tampilkan SweetAlert untuk konfirmasi penghapusan
+                       
                         Swal.fire({
                             title: "Konfirmasi Hapus",
                             text: "Apakah Anda yakin ingin menghapus item ini?",
-                            icon: "warning", // Tampilkan ikon peringatan
-                            showCancelButton: true, // Tampilkan tombol batal
-                            confirmButtonColor: "#3085d6", // Warna tombol konfirmasi
-                            cancelButtonColor: "#d33", // Warna tombol batal
+                            icon: "warning", 
+                            showCancelButton: true, 
+                            confirmButtonColor: "#3085d6", 
+                            cancelButtonColor: "#d33", 
                             confirmButtonText: "OK",
                             cancelButtonText: 'Batal'
                         }).then((result) => {

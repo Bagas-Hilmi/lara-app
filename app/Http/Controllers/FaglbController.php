@@ -30,13 +30,13 @@ class FaglbController extends Controller
     {
         if ($request->ajax()) {
 
-            $query = Faglb::query()->where('status', 1); 
+            $query = Faglb::query()->where('status', 1);
 
             if ($request->has('status') && $request->status != '') {
                 $status = $request->status;
                 // Filter berdasarkan report_status
                 $query
-                ->where('report_status', $status);
+                    ->where('report_status', $status);
             }
 
             return DataTables::of($query)
@@ -241,18 +241,25 @@ class FaglbController extends Controller
         if ($file) {
             $faglbData = Excel::toArray(new FaglbImport, $file);
 
-
             // Ambil data dari sheet pertama
             $faglbRows = $faglbData[0];
 
             // Mengabaikan baris pertama (header)
             array_shift($faglbRows);
 
+            // Sorting berdasarkan tanggal
+            usort($faglbRows, function ($a, $b) {
+                // Konversi tanggal Excel ke objek DateTime
+                $dateA = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($a[2]);
+                $dateB = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($b[2]);
+
+                return $dateA <=> $dateB;
+            });
+
             // Hapus data lama dari t_faglb_tail berdasarkan id_head sebelum memasukkan data baru
             DB::table('t_faglb_tail')->where('id_head', $id_head)->delete();
 
             foreach ($faglbRows as $index => $row) {
-
                 DB::table('t_faglb_tail')->insert([
                     'id_head' => $id_head,
                     'Asset' => $row[0],
