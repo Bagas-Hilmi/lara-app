@@ -19,6 +19,8 @@
         type="text/css"href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <!-- Nucleo Icons -->
     <link href="{{ asset('assets') }}/fontawesome/css/all.min.css" rel="stylesheet" />
+    
+    <link href="{{ asset('assets') }}/css/select2.min.css" rel="stylesheet" />
 
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
@@ -34,6 +36,8 @@
     <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
     <script src="assets/js/moment.min.js"></script>
     <script src="{{ asset('/js/tooltip.js') }}"></script>
+    <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+
 </head>
 
 <body class="{{ $bodyClass }}">

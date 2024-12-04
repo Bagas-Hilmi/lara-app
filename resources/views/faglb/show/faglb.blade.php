@@ -76,14 +76,10 @@
         </div>
     </div>
 
-    @push('js')
     <script src="assets/js/moment.min.js"></script>
 
     <script>
     $(document).ready(function () {
-        // Aktifkan moment.js untuk DataTables
-        $.fn.dataTable.moment('DD/MM/YYYY'); 
-
         $('#faglbTable').DataTable({
             paging: true,
             searching: true,
@@ -94,32 +90,27 @@
             scrollX: true,
             columnDefs: [
                 {
-                    targets: 0,
-                    data: null,
-                    orderable: false,
-                    searchable: false,
-                    render: function (data, type, row, meta) {
-                        return meta.row + 1;
+                    targets: 3, // Kolom tanggal
+                    render: function (data, type, row) {
+                        if (data && type === 'display') {
+                            // Tetap tampilkan dalam format DD/MM/YYYY
+                            var parts = data.split('-'); // Jika format input YYYY-MM-DD
+                            if (parts.length === 3) {
+                                return parts[2] + '/' + parts[1] + '/' + parts[0];
+                            }
+                        } else if (type === 'sort') {
+                            // Tetap gunakan YYYY-MM-DD untuk penyortiran
+                            return data;
+                        }
+                        return data; // Fallback jika tidak ada data
                     },
                 },
-                {
-                    targets: 3, // Kolom tanggal
-                    type: 'date',
-                    render: function(data, type, row) {
-                        if (type === 'sort') {
-                            // Konversi format DD/MM/YYYY ke YYYY-MM-DD untuk sorting
-                            return moment(data, 'DD/MM/YYYY').format('YYYY-MM-DD');
-                        }
-                        return data;
-                    }
-                }
             ],
-            order: [[3, 'asc']], // Kolom tanggal (index 3)
-            pageLength: -1, // Tampilkan semua data dalam satu halaman untuk PDF
+            order: [[3, 'asc']], // Urutkan berdasarkan kolom tanggal
+            pageLength: 10, // Jumlah data per halaman
         });
     });
     </script>
-@endpush
 
 @endsection
 

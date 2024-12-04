@@ -80,36 +80,43 @@
                 <a class="nav-link text-white {{ $activePage == '' ? 'active bg-gradient-success' : '' }}"
                     href="#submenu1" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                     <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1.2rem;" class="fas fa-list ps-2 pe-2 text-center"></i>
+                        <i style="font-size: 1.2rem;" class="fas fa-table-list ps-2 pe-2 text-center"></i>
                     </div>
                     <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Capex</span>
                 </a>
-                <ul class="collapse list-unstyled" id="submenu1">
+                <ul class="collapse list-unstyled {{ in_array($activePage, ['reportCip', 'reportCategory', 'reportSummary', 'reportTax']) ? 'show' : '' }}" id="submenu1">
                     <li class="nav-item">
                         <a class="nav-link text-white {{ $activePage == 'reportCip' ? 'active bg-gradient-success' : '' }}"
-                        href="{{ route('report.index', ['flag' => 'cip']) }}" style="padding-left: 40px;">
+                            href="{{ route('report.index', ['flag' => 'cip']) }}" style="padding-left: 40px;">
                             <div class="custom-icon-color text-center me-1">
                                 <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
                             </div>
                             <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report CIP</span>
                         </a>
                         <a class="nav-link text-white {{ $activePage == 'reportCategory' ? 'active bg-gradient-success' : '' }}"
-                        href="{{ route('report.index', ['flag' => 'category']) }}" style="padding-left: 40px;">
+                            href="{{ route('report.index', ['flag' => 'category']) }}" style="padding-left: 40px;">
                             <div class="custom-icon-color text-center me-1">
                                 <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
                             </div>
                             <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Category</span>
                         </a>
                         <a class="nav-link text-white {{ $activePage == 'reportSummary' ? 'active bg-gradient-success' : '' }}"
-                        href="{{ route('report.index', ['flag' => 'summary']) }}" style="padding-left: 40px;">
+                            href="{{ route('report.index', ['flag' => 'summary']) }}" style="padding-left: 40px;">
                             <div class="custom-icon-color text-center me-1">
                                 <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
                             </div>
                             <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Summary</span>
                         </a>
+                        <a class="nav-link text-white {{ $activePage == 'reportTax' ? 'active bg-gradient-success' : '' }}"
+                            href="{{ route('report.index', ['flag' => 'tax']) }}" style="padding-left: 40px;">
+                            <div class="custom-icon-color text-center me-1">
+                                <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                            </div>
+                            <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Tax</span>
+                        </a>
                     </li>
                 </ul>
-            </li>                             
+            </li>
         </ul>
     </div>
 </aside>

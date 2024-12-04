@@ -138,18 +138,18 @@
                 </div>
                 <x-footers.auth></x-footers.auth>
             </div>
+            
+                <link href="{{ asset('assets') }}/css/select2.min.css" rel="stylesheet" />
 
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-                <script src="assets/js/plugins/sweetalert.min.js"></script>
                 <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
+                <script src="{{ asset('assets/sweetalert/sweetalert2.min.js') }}"></script>
                 <script src="assets/js/moment.min.js"></script>
                 <script src="{{ asset('/js/tooltip.js') }}"></script>
 
-                {{-- <script src="assets/js/select2.min.js"></script>
-                <script src="assets/js/select2.min.css"></script> --}}
-                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+
 
                 <script>
                     $(document).ready(function() {
@@ -252,12 +252,19 @@
                                 {
                                     data: 'amount_us',
                                     name: 'amount_us',
-                                    className: 'text-right',
-                                    render: function(data, type, row) {
-                                        return '<div style="text-align: right;">' + (data ? number_format(data,
-                                            0, ',', '.') : '-') + '</div>';
+                                    render: function (data, type, row) {
+                                        // Format angka menggunakan Intl.NumberFormat
+                                        return new Intl.NumberFormat('id-ID', { 
+                                            style: 'decimal', 
+                                            minimumFractionDigits: 2, 
+                                            maximumFractionDigits: 2 
+                                        }).format(data);
+                                    },
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                        $(td).css('text-align', 'right');
                                     }
                                 },
+
                                 {
                                     data: 'created_at',
                                     name: 'created_at',
@@ -348,7 +355,7 @@
                                 descriptionSelect.select2({
                                     placeholder: 'Cari Capex',
                                     allowClear: true,
-                                    minimumInputLength: 2 // Aktifkan pencarian setelah mengetik 2 karakter
+                                    // minimumInputLength: 2 // Aktifkan pencarian setelah mengetik 2 karakter
                                 });
                             }
 

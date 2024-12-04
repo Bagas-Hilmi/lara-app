@@ -68,7 +68,8 @@
                         var table = $('#summary-table').DataTable({
                             processing: true,
                             serverSide: true,
-                            ordering: false,
+                            ordering: true,
+                            order: [[7,'desc']],
                             ajax: {
                                 url: '{!! route('report.index') !!}',
                                 type: 'GET',

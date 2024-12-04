@@ -46,7 +46,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">Action</th>
-                                                <th class="text-center">No</th>
+                                                <th class="text-center">ID Head</th>
                                                 <th class="text-center">Period </th>
                                                 <th class="text-center">Report Status</th>
                                                 <th class="text-center">Created At</th>
@@ -71,9 +71,9 @@
 
             @push('js')
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+            <script src="assets/js/moment.min.js"></script>
             <script src="assets/js/plugins/sweetalert.min.js"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
-            <script src="assets/js/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
 
           
@@ -91,7 +91,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
-                        order: [[4, 'desc']],
+                        order: [[1, 'desc']],
                         ajax: {
                             url: "{{ route('faglb.index') }}",
                             type: "GET",
@@ -104,7 +104,7 @@
                         },
                         columns: [
                             {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center',width: '15%'},
-                            {data: 'DT_RowIndex', name: 'DT_RowIndex',orderable: false, searchable: false },  
+                            {data: 'id_head', name:'id_head' },  
                             {data: 'period', name: 'period', className: 'text-center',width: '15%'},
                             { data: 'report_status', name: 'report_status', orderable: false, searchable: false, className: 'text-center', width: '20%'},
                             {
