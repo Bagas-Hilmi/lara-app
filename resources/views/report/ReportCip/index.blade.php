@@ -125,8 +125,8 @@
                                             <tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
                                                 <td colspan="9"></td>
                                                 <td align="center">Total :</td>
-                                                <td align="center" id="total-amount-rp">Total (RP)</td>
-                                                <td align="center" id="total-amount-us">Total (US$)</td>
+                                                <td class="text-right" id="total-amount-rp">Total (RP)</td>
+                                                <td class="text-right" id="total-amount-us">Total (US$)</td>
                                                 <td colspan="2"></td>
                                             </tr>
                                         </tfoot>
@@ -282,7 +282,7 @@
                                     }
                                 }
                             ],
-                            // Tambahkan drawCallback untuk menghitung total
+                            
                             drawCallback: function(settings) {
                                 var api = this.api();
 
@@ -355,7 +355,7 @@
                                 descriptionSelect.select2({
                                     placeholder: 'Cari Capex',
                                     allowClear: true,
-                                    // minimumInputLength: 2 // Aktifkan pencarian setelah mengetik 2 karakter
+                                    minimumInputLength: 2 // Aktifkan pencarian setelah mengetik 2 karakter
                                 });
                             }
 

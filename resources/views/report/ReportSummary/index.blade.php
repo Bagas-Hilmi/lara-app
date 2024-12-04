@@ -47,6 +47,34 @@
                                                 <th class="text-center">CIP Number</th>
                                             </tr>
                                         </thead>
+                                        <tfoot style="background-color: #294822; color: #ffffff; font-weight: bold;">
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th>Total All Capex : </th>
+                                                <th style="text-align: right;" id="total-budget-footer"></th>
+                                                <th style="text-align: right;" id="recost-rp-footer"></th>
+                                                <th style="text-align: right;" id="recost-usd-footer"></th>
+                                                <th style="text-align: right;" id="po-release-footer"></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -106,7 +134,7 @@
                                             } else if (data === 'Invesment') {
                                                 return '<span class="badge bg-secondary">Invesment</span>';
                                             }
-                                            return data; // Untuk nilai lain tampilkan apa adanya
+                                            return data; 
                                         }
                                         return data;
                                 }},
@@ -121,7 +149,7 @@
                                             } else if (data === 'Non Project') {
                                                 return '<span class="badge bg-warning">Non Project</span>';
                                             }
-                                            return data; // Untuk nilai lain tampilkan apa adanya
+                                            return data; 
                                         }
                                         return data;
                                 }},
@@ -283,7 +311,22 @@
                                         createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
                                             $(td).css('text-align', 'left'); 
                                     }},
-                            ]
+                            ],
+                            footerCallback: function(row, data, start, end, display) {
+                                var api = this.api();
+                                var columns = [10,11,12,13];
+
+                                columns.forEach(function(colIndex) {
+                                    var total = api
+                                        .column(colIndex, { page: 'current' })
+                                        .data()
+                                        .reduce(function(acc, val) {
+                                            return acc + (parseFloat(val) || 0);
+                                        }, 0);
+
+                                    $(api.column(colIndex).footer()).html(total.toLocaleString());
+                                });
+                            }
                         });
                     });
                 </script>

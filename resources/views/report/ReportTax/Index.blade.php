@@ -38,7 +38,7 @@
                                                 <th class="text-center">Fa Doc</th>
                                             </tr>
                                         </thead>
-                                        <tfoot style="background-color: #2a6b4f; color: white;">
+                                        <tfoot style="background-color: #294822; color: #ffffff; font-weight: bold;">
                                             <tr>
                                                 <th colspan="10" class="text-center">Total All Capex</th>
                                                 <th id="total-rp" class="text-center"></th>
@@ -68,7 +68,7 @@
                             processing: true,
                             serverSide: true,
                             ordering: true,
-                            order: [[2, 'desc']],
+                            order: [[2, 'asc']],
                             ajax: {
                                 url: '{!! route('report.index') !!}',
                                 type: 'GET',
