@@ -373,7 +373,6 @@ class CapexController extends Controller
                 'id_capex' => 'required|string',
             ]);
 
-            // Cari data Capex
             $capex = DB::table('t_master_capex')->where('id_capex', $request->id_capex)->first();
             if (!$capex || empty($capex->wbs_number)) {
                 return response()->json(['error' => 'WBS number tidak ditemukan'], 404);
@@ -381,13 +380,36 @@ class CapexController extends Controller
 
             // Ambil data dari SAP
             $jsonResponse = $this->getDataFromSAP();
+
+            // Pastikan data valid
+            if (empty($jsonResponse->original['IT_EXPORT'])) {
+                return response()->json(['error' => 'Data SAP tidak ditemukan'], 404);
+            }
+
             $txtData = $jsonResponse->original;
+
+            function getBaseWbs($wbs)
+            {
+                if (strpos($wbs, '/') !== false) {
+                    // Ambil hingga sebelum '/'
+                    return substr($wbs, 0, strpos($wbs, '/'));
+                }
+
+                if (strpos($wbs, '-') !== false) {
+                    // Ambil hingga sebelum karakter kedua '-'
+                    return substr($wbs, 0, strpos($wbs, '-') + 1);
+                }
+
+                return substr($wbs, 0, 1); // Ambil karakter pertama, misalnya 'P' atau 'A'
+            }
 
             // Filter data berdasarkan WBS
             $dataToProcess = array_filter($txtData['IT_EXPORT'], function ($data) use ($capex) {
                 if (isset($data['WBS'])) {
-                    $baseWbs = substr($data['WBS'], 0, 7);
-                    $capexWbs = substr($capex->wbs_number, 0, 7);
+                    // Ambil bagian pertama dari WBS
+                    $baseWbs = getBaseWbs($data['WBS']);
+                    $capexWbs = getBaseWbs($capex->wbs_number);
+
                     return $baseWbs === $capexWbs;
                 }
                 return false;
@@ -539,7 +561,7 @@ class CapexController extends Controller
         } else if ($flag === 'view-pdf') {
             $capex = Capex::findOrFail($id);
 
-            $filename = $capex->file_pdf; 
+            $filename = $capex->file_pdf;
             $path = storage_path('app/public/uploads/capexFiles/' . $filename);
 
             // Jika file tidak ditemukan, kembalikan 404
@@ -648,7 +670,7 @@ class CapexController extends Controller
     public function getDataFromSAP()
     {
         $flag = 'ZFM_GET_CJE3';
-        $sapClient = 'Client=DEV-110';
+        $sapClient = 'Client=PRD-300';
         $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?'; //anggap ada
         $sapFm = '&FM=' . $flag;
         $input_1 = '&PSPHI=P-1525-01';

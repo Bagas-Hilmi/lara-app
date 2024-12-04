@@ -8,7 +8,7 @@ use App\Http\Controllers\CapexController;
 use App\Http\Controllers\ReportController;
 // Default route
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::middleware('auth')->group(function () {

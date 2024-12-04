@@ -11,6 +11,7 @@ use App\Models\ReportSummary;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
+use App\Models\ReportTax;
 
 class ReportController extends Controller
 {
@@ -33,6 +34,7 @@ class ReportController extends Controller
 
                 if ($request->has('capex_id') && $request->input('capex_id') != '') {
                     $query->where('t_report_cip.id_capex', $request->input('capex_id'));
+                    
                 } elseif ($request->has('status_capex') && $request->input('status_capex') != '') {
                     $query->where('t_master_capex.status_capex', $request->input('status_capex'));
                 }
@@ -65,7 +67,19 @@ class ReportController extends Controller
             }
 
             return view('report.reportSummary.index');
-        }
+        } else if ($flag === 'tax') {
+            if($request->ajax()){
+                
+                $data = ReportTax::getData();
+
+                return datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+            }
+            return view('report.reportTax.Index');
+
+        } 
+        
 
         return redirect()->route('report.index', ['flag' => 'cip'])
             ->with('success', 'Data berhasil ditambahkan!');

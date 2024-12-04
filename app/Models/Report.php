@@ -69,7 +69,7 @@ class Report extends Model
             ->select([
                 'id_report_cip',
                 'id_capex',
-                'id_head', // Menambahkan id_head
+                'id_head', 
                 'fa_doc',
                 'date',
                 'settle_doc',
@@ -82,14 +82,13 @@ class Report extends Model
                 'created_at',
                 'updated_at'
             ])
-            ->orderBy('date', 'asc') // Urutan berdasarkan created_at, dengan ascending order
+            ->orderBy('date', 'asc') 
             ->get();
     }
 
     public static function insertReportCip()
     {
-        // Ambil data yang akan dimasukkan
-        // Kita mulai dari t_faglb_head yang sudah released
+        
         $releasedHeads = DB::table('t_faglb_head')
             ->where('report_status', 1)
             ->pluck('id_head');
