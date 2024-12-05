@@ -40,7 +40,7 @@ class ReportSummary extends Model
     public static function getMasterdata()
     {
         return DB::table('t_master_capex')
-            ->join('t_report_summary', 't_master_capex.id_capex', '=', 't_report_summary.id_capex') 
+            ->leftJoin('t_report_summary', 't_master_capex.id_capex', '=', 't_report_summary.id_capex') 
             ->leftJoin('t_report_cip', 't_master_capex.id_capex', '=', 't_report_cip.id_capex') // Left join dengan t_report_cip untuk mendapatkan amount_rp
             ->select(
                 't_master_capex.id_capex',

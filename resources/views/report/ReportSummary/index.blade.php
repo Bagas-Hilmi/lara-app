@@ -97,7 +97,7 @@
                             processing: true,
                             serverSide: true,
                             ordering: true,
-                            order: [[7,'desc']],
+                            order: [[7,'asc']],
                             ajax: {
                                 url: '{!! route('report.index') !!}',
                                 type: 'GET',

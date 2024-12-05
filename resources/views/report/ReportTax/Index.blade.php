@@ -28,7 +28,6 @@
                                                 <th class="text-center">WBS Number</th>
                                                 <th class="text-center">Material</th>
                                                 <th class="text-center">Description</th>
-                                                <th class="text-center">Total Budget</th>
                                                 <th class="text-center">Qty</th>
                                                 <th class="text-center">Uom</th>
                                                 <th class="text-center">Amount (RP)</th>
@@ -40,7 +39,7 @@
                                         </thead>
                                         <tfoot style="background-color: #294822; color: #ffffff; font-weight: bold;">
                                             <tr>
-                                                <th colspan="10" class="text-center">Total All Capex</th>
+                                                <th colspan="9" class="text-center">Total All Capex</th>
                                                 <th id="total-rp" class="text-center"></th>
                                                 <th id="total-us" class="text-center"></th>
                                                 <th colspan="3" class="text-center"></th>
@@ -99,13 +98,7 @@
                                     }}, 
                                     {data: 'material', name: 'material'},
                                     {data: 'description', name: 'description'},
-                                    {data: 'total_budget', name: 'total_budget', 
-                                    render: function(data, type) {
-                                        if (type === 'display') {
-                                            return '<div style="text-align: right;">' + data.toLocaleString() + '</div>';
-                                        }
-                                        return data;
-                                    }},
+                                  
                                     {data: 'qty', name: 'qty'},
                                     {data: 'uom', name: 'uom'},
                                     {data: 'amount_rp', name: 'amount_rp',
@@ -166,7 +159,7 @@
                                         if (lastCapex !== null) {
                                             $(rows[i - 1]).after(
                                                 '<tr class="group-subtotal" style="background-color: #FDCA00; color: black;">' +  
-                                                '<td colspan="10" style="text-align: right; font-weight: bold;">Subtotal</td>' +
+                                                '<td colspan="9" style="text-align: right; font-weight: bold;">Subtotal</td>' +
                                                 '<td style="text-align: right; font-weight: bold;">' + 
                                                 subtotal.amount_rp.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                                 '<td style="text-align: right; font-weight: bold;">' + 
@@ -190,7 +183,7 @@
                                 if (lastCapex !== null) {
                                     $(rows[rows.length - 1]).after(
                                         '<tr class="group-subtotal" style="background-color: #FDCA00; color: black;">' +  
-                                        '<td colspan="10" style="text-align: right; font-weight: bold;">Subtotal</td>' +
+                                        '<td colspan="9" style="text-align: right; font-weight: bold;">Subtotal</td>' +
                                         '<td style="text-align: right; font-weight: bold;">' + 
                                         subtotal.amount_rp.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                         '<td style="text-align: right; font-weight: bold;">' + 
@@ -208,18 +201,18 @@
                                 };
 
                                 // Calculate total for the entire table
-                                api.column(10, { page: 'current' }).data().each(function(value) {
+                                api.column(9, { page: 'current' }).data().each(function(value) {
                                     total.amount_rp += parseFloat(value || 0);
                                 });
-                                api.column(11, { page: 'current' }).data().each(function(value) {
+                                api.column(10, { page: 'current' }).data().each(function(value) {
                                     total.amount_us += parseFloat(value || 0);
                                 });
 
                                 // Update footer
-                                $(api.column(10).footer()).html(
+                                $(api.column(9).footer()).html(
                                     total.amount_rp.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                                 );
-                                $(api.column(11).footer()).html(
+                                $(api.column(10).footer()).html(
                                     total.amount_us.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                                 );
                             }
