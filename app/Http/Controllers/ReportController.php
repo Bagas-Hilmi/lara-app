@@ -20,7 +20,7 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $flag = $request->input('flag', 'cip'); // Default flag adalah 'cip'
+        $flag = $request->input('flag', 'cip'); 
 
         if ($flag === 'cip') {
             $descriptions = Report::getActiveCapexDescriptions();
@@ -114,7 +114,7 @@ class ReportController extends Controller
         }
 
         // Pilih template berdasarkan tipe
-        $template = $isProject ? 'report.reportCip.pdf-filtered-project' : 'report.reportCip.pdf-filtered';
+        $template = $isProject ? 'report.reportCip.pdf-project' : 'report.reportCip.pdf-nonproject';
 
         $pdf = PDF::loadView($template, [
             'reports' => $reports,
