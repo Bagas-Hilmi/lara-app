@@ -59,10 +59,10 @@ class CapexBudget extends Model
             'updated_at' => now(),
         ]);
 
-        // Memperbarui total budget di t_master_capex
+        
         self::get_dtCapexBudget();
 
-        return $budgetId; // Mengembalikan ID budget yang baru ditambahkan
+        return $budgetId; 
     }
 
     public static function updateBudget($id, $description, $budget_cos, $capex_id)

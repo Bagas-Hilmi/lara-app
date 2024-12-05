@@ -59,7 +59,14 @@
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                     { data: 'description', name: 'description', className: 'text-center'},
-                    { data: 'PO_release', name: 'PO_release', className: 'text-center'},
+                    { data: 'PO_release', name: 'PO_release', className: 'text-center',
+                    render: function(data, type) {
+                                if (type === 'display') {
+                                    return '<div>' + parseFloat(data)
+                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
+                                }
+                                return data;
+                    }},
                     {
                         data: 'created_at',
                         name: 'created_at',

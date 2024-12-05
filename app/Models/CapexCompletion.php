@@ -36,7 +36,6 @@ class CapexCompletion extends Model
 
     public static function addCompletion($data)
     {
-        // Masukkan data completion baru ke dalam tabel menggunakan query builder
         $completionId = DB::table('t_capex_completion_date')->insertGetId([
             'id_capex' => $data['id_capex'],
             'date' => $data['date'],
@@ -44,7 +43,6 @@ class CapexCompletion extends Model
             'updated_at' => now(),
         ]);
 
-        // Update kolom revise_completion_date di tabel t_master_capex
         DB::table('t_master_capex')
             ->where('id_capex', $data['id_capex'])
             ->update([

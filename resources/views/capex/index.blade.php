@@ -505,16 +505,7 @@
                                         ]
                                     });
                                 });
-
-                                // Event handler untuk menutup modal
-                                $('#viewPocommitmentModal').on('hidden.bs.modal', function() {
-                                    // Hancurkan DataTable saat modal ditutup untuk membersihkan DataTable sebelumnya
-                                    if (pocommitmentTable) {
-                                        pocommitmentTable.destroy();
-                                    }
-                                });
                             });
-
                         });
                     </script>
                     @endpush

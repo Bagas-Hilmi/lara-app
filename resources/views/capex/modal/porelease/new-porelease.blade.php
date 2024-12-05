@@ -152,3 +152,35 @@
         });
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const numberInputs = document.querySelectorAll('input.new-porelease'); // Menggunakan kelas khusus untuk input update
+
+        numberInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Menghapus semua karakter yang bukan angka, koma, dan titik
+                let value = this.value.replace(/[^0-9.,]/g, '');
+
+                // Memisahkan bagian integer dan desimal
+                let parts = value.split(',');
+                let integerPart = parts[0].replace(/\./g, ''); 
+                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; 
+
+                // Memformat bagian integer dengan pemisah ribuan
+                let formattedInteger = parseInt(integerPart).toLocaleString('id-ID');
+
+                // Menggabungkan bagian integer dan desimal
+                this.value = formattedInteger + decimalPart;
+            });
+
+            input.addEventListener('blur', function() {
+                // Format saat fokus hilang (blur)
+                let value = this.value.replace(/\./g, '').replace(/,/g, '.'); 
+                if (value) {
+                    this.value = parseFloat(value).toString(); 
+                }
+            });
+        });
+    });
+</script>

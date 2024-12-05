@@ -190,7 +190,7 @@
                             // Tampilkan pesan sukses dengan SweetAlert
                             Swal.fire({
                                 title: 'Berhasil!',
-                                text: 'Data Capex berhasil di upload. ' + response.success,
+                                text: 'Data Capex berhasil di upload. ',
                                 icon: 'success',
                                 showConfirmButton: false,
                                 timer: 1000
@@ -292,8 +292,8 @@
 
                 // Memisahkan bagian integer dan desimal
                 let parts = value.split(',');
-                let integerPart = parts[0].replace(/\./g, ''); // Menghapus titik dari bagian integer
-                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; // Menyimpan bagian desimal maksimum 2 digit
+                let integerPart = parts[0].replace(/\./g, ''); 
+                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; 
 
                 // Memformat bagian integer dengan pemisah ribuan
                 let formattedInteger = parseInt(integerPart).toLocaleString('id-ID');
@@ -304,7 +304,7 @@
 
             input.addEventListener('blur', function() {
                 // Format saat fokus hilang (blur)
-                let value = this.value.replace(/\./g, '').replace(/,/g, '.'); // Menghapus titik dan mengubah koma menjadi titik
+                let value = this.value.replace(/\./g, '').replace(/,/g, '.'); 
                 if (value) {
                     this.value = parseFloat(value).toString(); 
                 }

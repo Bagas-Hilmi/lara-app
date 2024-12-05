@@ -55,14 +55,22 @@ class CapexPOrelease extends Model
 
     public static function addPORelease($data)
     {
-        // Masukkan data baru ke dalam tabel menggunakan query builder
+        // Masukkan data baru ke dalam tabel t_capex_porelease
         $poreleaseId = DB::table('t_capex_porelease')->insertGetId([
             'id_capex' => $data['id_capex'],
             'description' => $data['description'],
             'po_release' => $data['po_release'],
-            'created_at' => now(), // Jika Anda ingin mencatat waktu pembuatan
-            'updated_at' => now(), // Jika Anda ingin mencatat waktu pembaruan
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
+
+        // Update kolom PO_release di tabel t_master_capex
+        DB::table('t_master_capex')
+            ->where('id_capex', $data['id_capex'])
+            ->update([
+                'PO_release' => $data['po_release'],
+                'updated_at' => now()
+            ]);
 
         // Mengembalikan data yang baru ditambahkan
         return DB::table('t_capex_porelease')->where('id_capex_porelease', $poreleaseId)->first();
@@ -70,14 +78,14 @@ class CapexPOrelease extends Model
 
     public static function editPORelease($id, $data)
     {
-        // Temukan PO Release berdasarkan ID dan perbarui data menggunakan query builder
+
         DB::table('t_capex_porelease')
             ->where('id_capex_porelease', $id)
             ->update([
                 'id_capex' => $data['id_capex'],
                 'description' => $data['description_porelease'],
                 'po_release' => $data['po_release'],
-                'updated_at' => now(), // Jika Anda ingin mencatat waktu pembaruan
+                'updated_at' => now(),
             ]);
 
         // Mengembalikan data yang diperbarui
@@ -97,7 +105,7 @@ class CapexPOrelease extends Model
         if (!is_null($status)) {
             $query->where('t_capex_porelease.status', $status); // Tambahkan filter status jika diberikan
         }
-        
+
         return $query->get();
     }
 

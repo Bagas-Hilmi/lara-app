@@ -129,7 +129,6 @@ class Report extends Model
 
         // Proses setiap data yang ditemukan
         foreach ($dataToInsert as $data) {
-            // Log nilai asset original
             Log::info('Processing asset: ' . $data->asset . ' from head ID: ' . $data->id_head);
 
             // Cari dengan menambahkan '-0' ke asset

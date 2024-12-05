@@ -279,28 +279,13 @@ class CapexController extends Controller
                 'po_release' => 'required|numeric|min:0',
             ]);
 
-            DB::beginTransaction();
-            try {
-                // Simpan PO Release
-                $poreleaseId = DB::table('t_capex_porelease')->insertGetId([
-                    'id_capex' => $request->id_capex,
-                    'description' => $request->description,
-                    'po_release' => $request->po_release,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+            $porelease = CapexPOrelease::addPORelease($request->all());
 
-                // Update foreign key di t_capex_pocommitment_tail
-                DB::table('t_capex_pocommitment_tail')
-                    ->whereNull('id_capex_porelease')
-                    ->update(['id_capex_porelease' => $poreleaseId]);
-
-                DB::commit();
-                return response()->json(['message' => 'PO Release berhasil ditambahkan']);
-            } catch (\Exception $e) {
-                DB::rollback();
-                return response()->json(['error' => 'Gagal menyimpan PO Release'], 500);
-            }
+            return response()->json([
+                'success' => true,
+                'message' => 'POrelease successfully added.',
+                'data' => $porelease,
+            ]);
         } else if ($flag === 'edit-porelease') {
 
             $request->validate([
@@ -396,7 +381,13 @@ class CapexController extends Controller
                 }
 
                 if (strpos($wbs, '-') !== false) {
-                    // Ambil hingga sebelum karakter kedua '-'
+                    // Cek apakah WBS memiliki minimal dua bagian setelah '-'
+                    $parts = explode('-', $wbs);
+                    if (count($parts) >= 2) {
+                        return $parts[0] . '-' . $parts[1];
+                    }
+
+                    // Jika hanya satu '-', ambil hingga sebelum karakter kedua '-'
                     return substr($wbs, 0, strpos($wbs, '-') + 1);
                 }
 
