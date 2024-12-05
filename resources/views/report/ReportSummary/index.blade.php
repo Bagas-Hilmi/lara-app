@@ -248,7 +248,9 @@
                                         }
                                         return data;
                                     }},
-                                    {data: 'realized', name:'realized'},
+                                    {data: 'realized', name: 'realized', render: function(data, type, row) {
+                                        return data ? data + '%' : '0%'; // Tambahkan '%' ke nilai realized
+                                    }},                                    
                                     {data: 'status_capex', name: 'status_capex', className: 'text-start',
                                         render: function(data, type, row) {
                                             if (type === 'display') {

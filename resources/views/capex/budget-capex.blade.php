@@ -59,7 +59,12 @@
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
                     { data: 'description', name: 'description', className: 'text-center'},
-                    { data: 'budget_cos', name: 'budget_cos', className: 'text-center'},
+                    { data: 'budget_cos', name: 'budget_cos', className: 'text-center',
+                    render: function(data) {
+                        return data 
+                            ? '<div style="text-align: right;">' + data.toLocaleString() + '</div>' 
+                            : '';
+                    }},
                     {
                         data: 'created_at',
                         name: 'created_at',
