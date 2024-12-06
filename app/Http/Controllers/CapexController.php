@@ -279,13 +279,21 @@ class CapexController extends Controller
                 'po_release' => 'required|numeric|min:0',
             ]);
 
-            $porelease = CapexPOrelease::addPORelease($request->all());
-
-            return response()->json([
-                'success' => true,
-                'message' => 'POrelease successfully added.',
-                'data' => $porelease,
+            // Simpan PO Release
+            $poreleaseId = DB::table('t_capex_porelease')->insertGetId([
+                'id_capex' => $request->id_capex,
+                'description' => $request->description,
+                'po_release' => $request->po_release,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
+
+            // Update foreign key di t_capex_pocommitment_tail
+            DB::table('t_capex_pocommitment_tail')
+                ->whereNull('id_capex_porelease')
+                ->update(['id_capex_porelease' => $poreleaseId]);
+
+            return response()->json(['message' => 'PO Release berhasil ditambahkan']);
         } else if ($flag === 'edit-porelease') {
 
             $request->validate([
@@ -363,10 +371,10 @@ class CapexController extends Controller
                 return response()->json(['error' => 'WBS number tidak ditemukan'], 404);
             }
 
-            // Ambil data dari SAP
+
             $jsonResponse = $this->getDataFromSAP();
 
-            // Pastikan data valid
+
             if (empty($jsonResponse->original['IT_EXPORT'])) {
                 return response()->json(['error' => 'Data SAP tidak ditemukan'], 404);
             }
@@ -376,22 +384,22 @@ class CapexController extends Controller
             function getBaseWbs($wbs)
             {
                 if (strpos($wbs, '/') !== false) {
-                    // Ambil hingga sebelum '/'
+
                     return substr($wbs, 0, strpos($wbs, '/'));
                 }
 
                 if (strpos($wbs, '-') !== false) {
-                    // Cek apakah WBS memiliki minimal dua bagian setelah '-'
+
                     $parts = explode('-', $wbs);
                     if (count($parts) >= 2) {
                         return $parts[0] . '-' . $parts[1];
                     }
 
-                    // Jika hanya satu '-', ambil hingga sebelum karakter kedua '-'
+
                     return substr($wbs, 0, strpos($wbs, '-') + 1);
                 }
 
-                return substr($wbs, 0, 1); // Ambil karakter pertama, misalnya 'P' atau 'A'
+                return substr($wbs, 0, 1); // Ambil karakter pertama
             }
 
             // Filter data berdasarkan WBS

@@ -18,6 +18,8 @@ class ReportController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     
     public function index(Request $request)
     {
         $flag = $request->input('flag', 'cip'); 
@@ -39,7 +41,9 @@ class ReportController extends Controller
                     $query->where('t_master_capex.status_capex', $request->input('status_capex'));
                 }
 
-                return DataTables::of($query)->make(true);
+                return DataTables::of($query) 
+                ->addIndexColumn()
+                ->make(true);
             }
 
             return view('report.reportCip.index', compact('descriptions', 'engineers'));
