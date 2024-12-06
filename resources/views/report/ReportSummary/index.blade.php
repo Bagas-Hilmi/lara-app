@@ -225,7 +225,7 @@
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function(data, type, row) {
-                                        if (data === '' || data === null || data === undefined) {
+                                        if (data === '') {
                                             data = null;
                                         }
                                         if (data !== null) {
@@ -236,7 +236,6 @@
                                             }).format(data);
                                         }
 
-                                        // Jika data null, return null
                                         return data;
                                     }},
                                     {data: 'PO_release', name: 'PO_release', className: 'text-right',   render: function(data, type) {

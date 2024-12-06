@@ -105,9 +105,7 @@
                                         style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th align="center">ID Report CIP</th>
-                                                <th align="center">ID Capex</th>
-                                                <th align="center">ID Head</th>
+                                                <th align="center">No</th>
                                                 <th align="center">FA Doc </th>
                                                 <th align="center">Date </th>
                                                 <th align="center">Settle Doc</th>
@@ -123,7 +121,7 @@
                                         </thead>
                                         <tfoot>
                                             <tr style="background-color: #294822; color: #ffffff; font-weight: bold;">
-                                                <td colspan="9"></td>
+                                                <td colspan="7"></td>
                                                 <td align="center">Total :</td>
                                                 <td class="text-right" id="total-amount-rp">Total (RP)</td>
                                                 <td class="text-right" id="total-amount-us">Total (US$)</td>
@@ -144,12 +142,11 @@
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
                 <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
-                <script src="{{ asset('assets/sweetalert/sweetalert2.min.js') }}"></script>
                 <script src="assets/js/moment.min.js"></script>
                 <script src="{{ asset('/js/tooltip.js') }}"></script>
 
+                <link href="{{ asset('assets') }}/css/select2.min.css" rel="stylesheet" />
                 <script src="{{ asset('assets/js/select2.min.js') }}"></script>
-
 
                 <script>
                     $(document).ready(function() {
@@ -178,18 +175,8 @@
                                 }
                             },
                             columns: [{
-                                    data: 'id_report_cip',
-                                    name: 'id_report_cip',
-                                    className: 'text-center'
-                                },
-                                {
-                                    data: 'id_capex',
-                                    name: 'id_capex',
-                                    className: 'text-center'
-                                },
-                                {
-                                    data: 'id_head',
-                                    name: 'id_head',
+                                    data: 'DT_RowIndex',
+                                    name: 'DT_RowIndex',
                                     className: 'text-center'
                                 },
                                 {
@@ -355,7 +342,7 @@
                                 descriptionSelect.select2({
                                     placeholder: 'Cari Capex',
                                     allowClear: true,
-                                    minimumInputLength: 2 // Aktifkan pencarian setelah mengetik 2 karakter
+                                    minimumInputLength: 1 // Aktifkan pencarian setelah mengetik 2 karakter
                                 });
                             }
 

@@ -97,49 +97,60 @@
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function (data, type, row) {
-                                        // Format angka menggunakan Intl.NumberFormat
+                                        if(data ===''){
+                                            data=null;
+                                        }
+                                        if (data!==null){
                                         return new Intl.NumberFormat('id-ID', { 
                                             style: 'decimal', 
                                             minimumFractionDigits: 2, 
                                             maximumFractionDigits: 2 
                                         }).format(data);
                                     }
-                                },
+                                    return data;
+                                }},
                                 { 
                                     data: 'unbudget',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function (data, type, row) {
-                                        // Format angka menggunakan Intl.NumberFormat
+                                        if(data==''){
+                                            data = null;
+                                        }
+                                        if(data!== null){
                                         return new Intl.NumberFormat('id-ID', { 
                                             style: 'decimal', 
                                             minimumFractionDigits: 2, 
                                             maximumFractionDigits: 2 
                                         }).format(data);
                                     }
-                                },
+                                    return data;
+                                }},
                                 { 
                                     data: 'carried_over',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function (data, type, row) {
-                                        // Format angka menggunakan Intl.NumberFormat
+                                        if(data ==''){
+                                            data = null;
+                                        }
+                                        if(data!== null){
                                         return new Intl.NumberFormat('id-ID', { 
                                             style: 'decimal', 
                                             minimumFractionDigits: 2, 
                                             maximumFractionDigits: 2 
                                         }).format(data);
                                     }
-                                },
+                                    return data;
+                                }},
                                 { 
                                     data: 'amount',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function (data, type, row) {
-                                        // Format angka menggunakan Intl.NumberFormat
                                         return new Intl.NumberFormat('id-ID', { 
                                             style: 'decimal', 
                                             minimumFractionDigits: 2, 
@@ -153,14 +164,18 @@
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function (data, type, row) {
-                                        // Format angka menggunakan Intl.NumberFormat
+                                        if (data === '' || data === null || data === undefined) {
+                                            data == null;
+                                        }
+                                        if (data!== null){
                                         return new Intl.NumberFormat('id-ID', { 
                                             style: 'decimal', 
                                             minimumFractionDigits: 2, 
                                             maximumFractionDigits: 2 
                                         }).format(data);
                                     }
-                                },
+                                    return data;
+                                }},
                                 { 
                                     data: 'balance',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
