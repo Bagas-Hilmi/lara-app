@@ -119,7 +119,7 @@
                     processing: true,
                     serverSide: true,
                     order: [
-                        [8, 'desc']
+                        [1, 'desc']
                     ],
                     ajax: {
                         url: "{{ route('cipcumbal.index') }}",
@@ -136,7 +136,7 @@
                             searchable: false,
                             className: 'text-center'
                         },
-                        {data: 'DT_RowIndex', name: 'DT_RowIndex',orderable: false, searchable: false },  
+                        {data: 'id_ccb', name: 'id_ccb'},  
                         {
                             data: 'period_cip',
                             name: 'period_cip',
@@ -147,50 +147,78 @@
                             data: 'bal_usd',
                             name: 'bal_usd',
                             className: 'text-right',
-                            render: function(data, type) {
-                                if (type === 'display') {
-                                    return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
-                                }
-                                return data;
-                            }
-                        },
+                            render: function(data, type, row) {
+                                        if (data === '' || data === null || data === undefined) {
+                                            data = null;
+                                        }
+                                        if (data !== null) {
+                                            return new Intl.NumberFormat('en-US', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+
+                                        // Jika data null, return null
+                                        return data;
+                                    }},
                         {
                             data: 'bal_rp',
                             name: 'bal_rp',
                             className: 'text-right',
-                            render: function(data, type) {
-                                if (type === 'display') {
-                                    return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
-                                }
-                                return data;
-                            }
-                        },
+                            render: function(data, type, row) {
+                                        if (data === '' || data === null || data === undefined) {
+                                            data = null;
+                                        }
+                                        if (data !== null) {
+                                            return new Intl.NumberFormat('en-US', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+
+                                        // Jika data null, return null
+                                        return data;
+                                    }},
                         {
                             data: 'cumbal_usd',
                             name: 'cumbal_usd',
                             className: 'text-right',
-                            render: function(data, type) {
-                                if (type === 'display') {
-                                    return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
-                                }
-                                return data;
-                            }
-                        },
+                            render: function(data, type, row) {
+                                        if (data === '' || data === null || data === undefined) {
+                                            data = null;
+                                        }
+                                        if (data !== null) {
+                                            return new Intl.NumberFormat('en-US', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+
+                                        // Jika data null, return null
+                                        return data;
+                                    }},
                         {
                             data: 'cumbal_rp',
                             name: 'cumbal_rp',
                             className: 'text-right',
-                            render: function(data, type) {
-                                if (type === 'display') {
-                                    return '<div style="text-align: right;">' + parseFloat(data)
-                                        .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '</div>';
-                                }
-                                return data;
-                            }
-                        },
+                            render: function(data, type, row) {
+                                        if (data === '' || data === null || data === undefined) {
+                                            data = null;
+                                        }
+                                        if (data !== null) {
+                                            return new Intl.NumberFormat('en-US', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+
+                                        // Jika data null, return null
+                                        return data;
+                                    }},
 
                         {
                             data: 'report_status',

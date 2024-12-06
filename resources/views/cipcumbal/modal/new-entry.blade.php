@@ -60,32 +60,6 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function() {
-        function formatCurrency(inputId) {
-            $(inputId).on('input', function() {
-                // Hapus semua karakter kecuali angka dan titik
-                let value = $(this).val().replace(/[^0-9.]/g, '');
-                
-                // Periksa apakah nilai valid
-                if (!isNaN(value) && value !== '') {
-                    // Format dengan pemisah ribuan
-                    const numValue = parseFloat(value);
-                    if (!isNaN(numValue)) {
-                        $(this).val(numValue.toLocaleString('en-US'));
-                    }
-                } else {
-                    $(this).val('');
-                }
-            });
-        }
-
-        formatCurrency('#balanceUSD');
-        formatCurrency('#balanceRP');
-        formatCurrency('#cumulativeBalanceUSD');
-        formatCurrency('#cumulativeBalanceRP');
-    });
-</script>
 
 <script>
     document.getElementById('saveEntry').addEventListener('click', function() {

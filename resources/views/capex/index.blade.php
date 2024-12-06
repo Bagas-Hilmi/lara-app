@@ -336,9 +336,6 @@
                                 window.open(fileUrl, '_blank');
                             });
 
-
-
-
                             $('#yearDropdown').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
                                 var year = $(this).data('value'); // Ambil nilai tahun
                                 $('#yearFilter').val(year); // Set nilai tahun ke input tersembunyi
