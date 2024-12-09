@@ -30,7 +30,7 @@
                                                     data-wbs_capex="{{ $desc->wbs_capex }}"
                                                     data-requester="{{ $desc->requester }}"
                                                     data-status_capex="{{ $desc->status_capex }}">
-                                                    {{ $desc->capex_number }}
+                                                    {{ $desc->capex_number }} - {{ $desc->project_desc }}
                                                 </option>
                                             @endforeach
                                         </select>
