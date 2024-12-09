@@ -17,6 +17,47 @@
                                 <h3 class="text-white text-capitalize ps-3">Report Summary</h3>
                             </div>
                             <div class="card-body p-3">
+                                <div class="mb-2">
+                                    <div class="filter-container">
+                                        <!-- Dropdown to choose which filter to show -->
+                                        <div class="filter-dropdown">
+                                            <select id="filterTypeSelect" class="form-control">
+                                                <option value="">Pilih Jenis Filter</option>
+                                                <option value="category">Filter Category</option>
+                                                <option value="status">Filter Status</option>
+                                                <option value="budget">Filter Budget</option>
+                                            </select>
+                                        </div>
+                                
+                                        <!-- Existing Filters (initially hidden) -->
+                                        <div class="filter-select-container">
+                                            <select id="categorySelect" class="filter-select form-control hidden">
+                                                <option value="" selected>Pilih Category</option>
+                                                @foreach ($categories as $category)
+                                                    <option value="{{ $category }}">{{ $category }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                
+                                        <div class="filter-select-container">
+                                            <select id="statusSelect" class="filter-select form-control hidden">
+                                                <option value="" selected>Pilih Status</option>
+                                                @foreach ($status as $stat)
+                                                    <option value="{{ $stat }}">{{ $stat }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                
+                                        <div class="filter-select-container">
+                                            <select id="budgetSelect" class="filter-select form-control hidden">
+                                                <option value="" selected>Pilih Budget</option>
+                                                @foreach ($budgets as $budget)
+                                                    <option value="{{ $budget }}">{{ $budget }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive p-0">
                                     <table id="summary-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
                                         <thead style="background-color: #3cb210; color: white;">
@@ -84,11 +125,14 @@
                 <x-footers.auth></x-footers.auth>
             </div>
 
+
+            <link href="{{ asset('assets') }}/css/select2.min.css" rel="stylesheet" />
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
                 <script src="assets/js/plugins/sweetalert.min.js"></script>
                 <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
                 <script src="assets/js/moment.min.js"></script>
+                <script src="{{ asset('assets/js/select2.min.js') }}"></script>
 
                 <script>
                     $(document).ready(function() {
@@ -101,13 +145,25 @@
                             ajax: {
                                 url: '{!! route('report.index') !!}',
                                 type: 'GET',
-                                data: {
-                                    flag: 'summary'
-                                },
-                                error: function(xhr, error, thrown) {
-                                    console.log('Ajax Error:', thrown);
+                                data: function(d) {
+                                // Menambahkan flag ke data
+                                d.flag = 'summary';
+
+                                var categoryValue = $('#categorySelect').val();
+                                if (categoryValue) {
+                                    d.category = categoryValue;
                                 }
-                            },
+
+                                var statusValue = $('#statusSelect').val();
+                                if (statusValue) {
+                                    d.status_capex = statusValue;  
+                                }
+
+                                var budgetValue = $('#budgetSelect').val();
+                                if (budgetValue) {
+                                    d.budget_type = budgetValue;  
+                                }
+                            }},
                             columns: [
                                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },  // Untuk nomor urut
                                 {data: 'project_desc', name: 'project_desc', 
@@ -329,6 +385,122 @@
                                 });
                             }
                         });
+                        var categorySelect = $('#categorySelect');
+                        var statusSelect = $('#statusSelect');
+                        var budgetSelect = $('#budgetSelect');
+                        var filterTypeSelect = $('#filterTypeSelect');
+
+                        // Select2 Initialization
+                        if (categorySelect.length) {
+                            categorySelect.select2({
+                                placeholder: 'Cari Kategori',
+                                allowClear: true,
+                            });
+                        }
+
+                        if (statusSelect.length) {
+                            statusSelect.select2({
+                                placeholder: 'Cari Status',
+                                allowClear: true,
+                            });
+                        }
+
+                        if (budgetSelect.length) {
+                            budgetSelect.select2({
+                                placeholder: 'Cari Tipe Budget',
+                                allowClear: true,
+                            });
+                        }
+
+                        // Sembunyikan semua filter awal
+                        [categorySelect, statusSelect, budgetSelect].forEach(select => {
+                            $(select).closest('.form-control').addClass('hidden');
+                        });
+
+                        // Event listener untuk memilih jenis filter
+                        filterTypeSelect.on('change', function() {
+                            // Sembunyikan semua filter
+                            [categorySelect, statusSelect, budgetSelect].forEach(select => {
+                                $(select).closest('.form-control').addClass('hidden');
+                            });
+
+                            // Tampilkan filter sesuai pilihan
+                            switch($(this).val()) {
+                                case 'category':
+                                    categorySelect.closest('.form-control').removeClass('hidden');
+                                    break;
+                                case 'status':
+                                    statusSelect.closest('.form-control').removeClass('hidden');
+                                    break;
+                                case 'budget':
+                                    budgetSelect.closest('.form-control').removeClass('hidden');
+                                    break;
+                            }
+                        });
+
+                        // Event handling untuk masing-masing filter (sesuai kode sebelumnya)
+                        categorySelect.on('select2:select', function(e) {
+                            const categoryValue = $(this).val();
+                            if (categoryValue) {
+                                table.ajax.url('{{ route('report.index') }}?category=' + categoryValue).load();
+                            } else {
+                                table.ajax.url('{{ route('report.index') }}').load();
+                            }
+                        });
+
+                        statusSelect.on('select2:select', function(e) {
+                            const statusValue = $(this).val();
+                            if (statusValue) {
+                                table.ajax.url('{{ route('report.index') }}?status=' + statusValue);
+                            } else {
+                                table.ajax.url('{{ route('report.index') }}');
+                            }
+                            table.ajax.reload();
+                        });
+
+                        budgetSelect.on('select2:select', function(e) {
+                            const budgetValue = $(this).val();
+                            if (budgetValue) {
+                                table.ajax.url('{{ route('report.index') }}?budget=' + budgetValue);
+                            } else {
+                                table.ajax.url('{{ route('report.index') }}');
+                            }
+                            table.ajax.reload();
+                        });
+                    });
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const filterTypeSelect = document.getElementById('filterTypeSelect');
+                        const filterSelectContainers = document.querySelectorAll('.filter-select-container');
+
+                        // Hide all specific filters initially
+                        filterSelectContainers.forEach(container => {
+                            container.classList.add('hidden');
+                        });
+
+                        // Event listener for filter type selection
+                        filterTypeSelect.addEventListener('change', function() {
+                            // Hide all filters first
+                            filterSelectContainers.forEach(container => {
+                                container.classList.add('hidden');
+                            });
+
+                            // Show selected filter
+                            switch(this.value) {
+                                case 'category':
+                                    document.querySelector('.filter-select-container:has(#categorySelect)').classList.remove('hidden');
+                                    break;
+                                case 'status':
+                                    document.querySelector('.filter-select-container:has(#statusSelect)').classList.remove('hidden');
+                                    break;
+                                case 'budget':
+                                    document.querySelector('.filter-select-container:has(#budgetSelect)').classList.remove('hidden');
+                                    break;
+                                default:
+                                    // If no selection, all remain hidden
+                                    break;
+                            }
+                        });
                     });
                 </script>
             @endpush
@@ -467,4 +639,44 @@
         /* Menambah efek shadow saat fokus */
     }
 
+    .hidden {
+        display: none !important;
+    }
+    .filter-container {
+            margin-bottom: 10px;
+    }
+    #filterTypeSelect,
+    .filter-select {
+        width: 250px;
+        margin-bottom: 10px;
+    }
+
+    .filter-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    }
+
+    .filter-dropdown select {
+    width: 100%;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 24px;
+    cursor: pointer;
+    }
+
+    .filter-dropdown select:focus {
+    outline: none;
+    border-color: #66afe9;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+    }
 </style>

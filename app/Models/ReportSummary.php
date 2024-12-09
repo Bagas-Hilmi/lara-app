@@ -169,4 +169,40 @@ class ReportSummary extends Model
             throw new \Exception('Gagal memproses master data: ' . $e->getMessage());
         }
     }
+
+    public static function getCategory()
+    {
+        $categories = DB::table('t_master_capex')
+        ->select('category')
+        ->where('status', 1)
+        ->distinct()
+        ->pluck('category')
+        ->toArray();
+
+        return $categories;
+    }
+
+    public static function getStatusCapex()
+    {
+        $status = DB::table('t_master_capex')
+        ->select('status_capex')
+        ->where('status', 1)
+        ->distinct()
+        ->pluck('status_capex')
+        ->toArray();
+
+        return $status;
+    }
+
+    public static function getBudget()
+    {
+        $budgets = DB::table('t_master_capex')
+        ->select('budget_type')
+        ->where('status', 1)
+        ->distinct()
+        ->pluck('budget_type')
+        ->toArray();
+
+        return $budgets;
+    }
 }

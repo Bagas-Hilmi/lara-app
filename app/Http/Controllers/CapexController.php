@@ -371,10 +371,7 @@ class CapexController extends Controller
                 return response()->json(['error' => 'WBS number tidak ditemukan'], 404);
             }
 
-
             $jsonResponse = $this->getDataFromSAP();
-
-
             if (empty($jsonResponse->original['IT_EXPORT'])) {
                 return response()->json(['error' => 'Data SAP tidak ditemukan'], 404);
             }
@@ -421,25 +418,38 @@ class CapexController extends Controller
             // Mulai transaction untuk memastikan data tersimpan dengan aman
             DB::beginTransaction();
             try {
-                foreach ($dataToProcess as $data) {
-                    if (isset($data['WOGBTR']) && $data['WOGBTR'] != 0) {
-                        DB::table('t_capex_pocommitment_tail')->insert([
-                            'purchasing_doc' => $data['REFBN'],
-                            'reference_item' => $data['RFPOS'],
-                            'doc_date' => $data['BLDAT'],
-                            'fiscal_year' => $data['GJAHR'],
-                            'no_material' => $data['MATNR'],
-                            'material_desc' => $data['SGTXT'],
-                            'qty' => $data['GESMNG'],
-                            'uom' => $data['MEINH'],
-                            'value_trancurr' => $data['WTGBTR'],
-                            'tcurr' => $data['TWAER'],
-                            'valuein_obj' => $data['WOGBTR'],
-                            'cost_element' => $data['SAKTO'],
-                            'wbs' => $data['WBS'],
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
+                foreach ($txtData['IT_EXPORT'] as $data) {
+                    $baseWbs = getBaseWbs($data['WBS']);
+                    $capexWbs = getBaseWbs($capex->wbs_number);
+
+                    if ($baseWbs === $capexWbs) {
+                        if (isset($data['WOGBTR']) && $data['WOGBTR'] != 0) {
+                            $exists = DB::table('t_capex_pocommitment_tail')
+                                ->where('purchasing_doc', $data['REFBN'])
+                                ->where('reference_item', $data['RFPOS'])
+                                ->where('fiscal_year', $data['GJAHR'])
+                                ->exists();
+
+                            if (!$exists) {
+                                DB::table('t_capex_pocommitment_tail')->insert([
+                                    'purchasing_doc' => $data['REFBN'],
+                                    'reference_item' => $data['RFPOS'],
+                                    'doc_date' => $data['BLDAT'],
+                                    'fiscal_year' => $data['GJAHR'],
+                                    'no_material' => $data['MATNR'],
+                                    'material_desc' => $data['SGTXT'],
+                                    'qty' => $data['GESMNG'],
+                                    'uom' => $data['MEINH'],
+                                    'value_trancurr' => $data['WTGBTR'],
+                                    'tcurr' => $data['TWAER'],
+                                    'valuein_obj' => $data['WOGBTR'],
+                                    'cost_element' => $data['SAKTO'],
+                                    'wbs' => $data['WBS'],
+                                    'created_at' => now(),
+                                    'updated_at' => now(),
+                                ]);
+                            }
+                        }
                     }
                 }
 
@@ -450,8 +460,6 @@ class CapexController extends Controller
                 return response()->json(['error' => 'Terjadi kesalahan saat menyimpan data'], 500);
             }
         }
-
-
 
         return response()->json(['error' => 'Invalid flag specified.'], 400);
     }
