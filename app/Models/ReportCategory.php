@@ -107,18 +107,24 @@ class ReportCategory extends Model
             WHEN 'Safety' THEN 4
             WHEN 'Improvement Plant efficiency' THEN 5
             WHEN 'Invesment' THEN 6
-            ELSE 7 END")
-            ->get();
+            ELSE 7 END");
     }
 
 
     public static function getCategory()
     {
-        return DB::table('t_report_category')
-            ->select('category')
-            ->orderByRaw("FIELD(category, 'General Operation', 'IT', 'Environment', 'Safety')") // Urutan khusus
-            ->get();
+        $categories = DB::table('t_master_capex')
+        ->select('category')
+        ->where('status', 1)
+        ->where('status_capex', 'On Progress')
+        ->distinct()
+        ->pluck('category')
+        ->toArray();
+
+        return $categories;
     }
+
+    
 
 
     public function capex()

@@ -18,9 +18,12 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="mb-2">
-                                   
-                                    
-                                    
+                                    <select id="categorySelect" class="form-control" style="width: 20%;">
+                                        <option value="" selected>Pilih Category</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category }}">{{ $category }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="table-responsive p-0">
                                     <table id="cate-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
@@ -60,15 +63,18 @@
                 </div>
                 <x-footers.auth></x-footers.auth>
             </div>
-
+            
+            <link href="{{ asset('assets') }}/css/select2.min.css" rel="stylesheet" />
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
                 <script src="assets/js/plugins/sweetalert.min.js"></script>
                 <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
                 <script src="assets/js/moment.min.js"></script>
+                <script src="{{ asset('assets/js/select2.min.js') }}"></script>
 
                 <script>
-                    $(document).ready(function() {
+                   $(document).ready(function() {
+                        // Inisialisasi DataTable
                         var table = $('#cate-table').DataTable({
                             processing: true,
                             serverSide: true,
@@ -76,13 +82,19 @@
                             ajax: {
                                 url: '{!! route('report.index') !!}',
                                 type: 'GET',
-                                data: {
-                                    flag: 'category'
+                                data: function(d) {
+                                // Menambahkan flag ke data
+                                d.flag = 'category';
+
+                                // Menambahkan kategori yang dipilih ke data
+                                var categoryValue = $('#categorySelect').val();
+                                if (categoryValue) {
+                                    d.category = categoryValue;
                                 }
+                            }
                             },
                             columns: [
                                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },  // Untuk nomor urut
-
                                 { data: 'category', visible: false }, // Hide kolom category
                                 { 
                                     data: 'project',
@@ -98,17 +110,18 @@
                                     },
                                     render: function (data, type, row) {
                                         if(data ===''){
-                                            data=null;
+                                            data = null;
                                         }
-                                        if (data!==null){
-                                        return new Intl.NumberFormat('id-ID', { 
-                                            style: 'decimal', 
-                                            minimumFractionDigits: 2, 
-                                            maximumFractionDigits: 2 
-                                        }).format(data);
+                                        if (data !== null) {
+                                            return new Intl.NumberFormat('id-ID', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+                                        return data;
                                     }
-                                    return data;
-                                }},
+                                },
                                 { 
                                     data: 'unbudget',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
@@ -118,33 +131,35 @@
                                         if(data==''){
                                             data = null;
                                         }
-                                        if(data!== null){
-                                        return new Intl.NumberFormat('id-ID', { 
-                                            style: 'decimal', 
-                                            minimumFractionDigits: 2, 
-                                            maximumFractionDigits: 2 
-                                        }).format(data);
+                                        if(data !== null){
+                                            return new Intl.NumberFormat('id-ID', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+                                        return data;
                                     }
-                                    return data;
-                                }},
+                                },
                                 { 
                                     data: 'carried_over',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function (data, type, row) {
-                                        if(data ==''){
+                                        if(data == ''){
                                             data = null;
                                         }
-                                        if(data!== null){
-                                        return new Intl.NumberFormat('id-ID', { 
-                                            style: 'decimal', 
-                                            minimumFractionDigits: 2, 
-                                            maximumFractionDigits: 2 
-                                        }).format(data);
+                                        if(data !== null){
+                                            return new Intl.NumberFormat('id-ID', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+                                        return data;
                                     }
-                                    return data;
-                                }},
+                                },
                                 { 
                                     data: 'amount',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
@@ -167,22 +182,22 @@
                                         if (data === '' || data === null || data === undefined) {
                                             data == null;
                                         }
-                                        if (data!== null){
-                                        return new Intl.NumberFormat('id-ID', { 
-                                            style: 'decimal', 
-                                            minimumFractionDigits: 2, 
-                                            maximumFractionDigits: 2 
-                                        }).format(data);
+                                        if (data !== null){
+                                            return new Intl.NumberFormat('id-ID', { 
+                                                style: 'decimal', 
+                                                minimumFractionDigits: 2, 
+                                                maximumFractionDigits: 2 
+                                            }).format(data);
+                                        }
+                                        return data;
                                     }
-                                    return data;
-                                }},
+                                },
                                 { 
                                     data: 'balance',
                                     createdCell: function(td, rowData, rowIndex, cellData, colIndex){
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function (data, type, row) {
-                                        // Format angka menggunakan Intl.NumberFormat
                                         return new Intl.NumberFormat('id-ID', { 
                                             style: 'decimal', 
                                             minimumFractionDigits: 2, 
@@ -279,7 +294,32 @@
                                 });
                             }
                         });
-                    });
+
+                        // Inisialisasi Select2 untuk kategori
+                        var categorySelect = $('#categorySelect');
+                            if (categorySelect.length) {
+                                categorySelect.select2({
+                                    placeholder: 'Cari Kategori',
+                                    allowClear: true,
+                                });
+                            }
+                            categorySelect.on('select2:select', function (e) {
+                                const selectedOption = $(this).find(':selected'); 
+                                const categoryValue = selectedOption.val(); 
+
+                                console.log('Kategori dipilih:', categoryValue);
+
+                                if (categoryValue) {
+                                    table.ajax.url('{{ route('report.index') }}?category=' + categoryValue).load();
+                                } else {
+                                    table.ajax.url('{{ route('report.index') }}').load();
+                                }
+                            });
+                            categorySelect.on('select2:unselect', function (e) {
+                                table.ajax.url('{{ route('report.index') }}').load();
+                            });
+
+                        });
                 </script>
                 
             @endpush

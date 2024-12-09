@@ -19,10 +19,10 @@ class ReportController extends Controller
      * Display a listing of the resource.
      */
 
-     
+
     public function index(Request $request)
     {
-        $flag = $request->input('flag', 'cip'); 
+        $flag = $request->input('flag', 'cip');
 
         if ($flag === 'cip') {
             $descriptions = Report::getActiveCapexDescriptions();
@@ -36,54 +36,88 @@ class ReportController extends Controller
 
                 if ($request->has('capex_id') && $request->input('capex_id') != '') {
                     $query->where('t_report_cip.id_capex', $request->input('capex_id'));
-                    
                 } elseif ($request->has('status_capex') && $request->input('status_capex') != '') {
                     $query->where('t_master_capex.status_capex', $request->input('status_capex'));
                 }
 
-                return DataTables::of($query) 
-                ->addIndexColumn()
-                ->make(true);
+                return DataTables::of($query)
+                    ->addIndexColumn()
+                    ->make(true);
             }
 
             return view('report.reportCip.index', compact('descriptions', 'engineers'));
         } else if ($flag === 'category') {
 
-            if ($request->ajax()) {
-                // Memanggil method dari model untuk mendapatkan data
-                $data = ReportCategory::getReportCategoryData();
+            // Mendapatkan kategori untuk dropdown
+            $categories = ReportCategory::getCategory();
 
+            if ($request->ajax()) {
+                // Memanggil method dari model untuk mendapatkan query builder
+                $query = ReportCategory::getReportCategoryData();
+
+                // Jika ada kategori yang dipilih, filter berdasarkan kategori
+                if ($request->has('category') && $request->category != '') {
+                    $query->where('category', $request->category);
+                }
+
+                // Ambil data yang sudah difilter
+                $data = $query->get();
+
+                // Kirim data ke DataTables
                 return DataTables::of($data)
-                    ->addIndexColumn() //nomor urut
+                    ->addIndexColumn() // Menambahkan nomor urut
                     ->make(true);
             }
 
-            return view('report.reportCategory.index');
+            // Kembalikan tampilan dengan kategori
+            return view('report.reportCategory.index', compact('categories'));
         } else if ($flag === 'summary') {
+            $categories = ReportSummary::getCategory();
+            $status = ReportSummary::getStatusCapex();
+            $budgets = ReportSummary::getBudget();
+
+            // Jika request AJAX (untuk DataTables)
             if ($request->ajax()) {
-                // Memanggil method dari model untuk mendapatkan data
+                // Ambil data master tanpa filter terlebih dahulu
                 $data = ReportSummary::getMasterdata();
 
-                // Membuat DataTables dari data yang diambil
+                // Tambahkan filter jika parameter ada
+                if ($request->has('category') && $request->category != '') {
+                    $data = $data->where('category', $request->category);
+                }
+
+                if ($request->has('status_capex') && $request->status_capex != '') {
+                    $data = $data->where('status_capex', $request->status_capex);
+                }
+
+                if ($request->has('budget_type') && $request->budget_type != '') {
+                    $data = $data->where('budget_type', $request->budget_type);
+                }
+
+                if ($request->has('filter_type') && $request->has('filter_option')) {
+                    $data = $data->where($request->filter_type, $request->filter_option);
+                }
+
+                // Return data untuk DataTables
                 return DataTables::of($data)
-                    ->addIndexColumn() // nomor urut
-                    ->make(true);
+                    ->addIndexColumn() // Menambahkan kolom nomor urut
+                    ->make(true); // Mengembalikan data dalam format DataTables
             }
 
-            return view('report.reportSummary.index');
+            // Jika bukan request AJAX, tampilkan halaman dengan kategori, status, dan budget
+            return view('report.reportSummary.index', compact('categories', 'status', 'budgets'));
         } else if ($flag === 'tax') {
-            if($request->ajax()){
-                
+            if ($request->ajax()) {
+
                 $data = ReportTax::getData();
 
                 return datatables::of($data)
-                ->addIndexColumn()
-                ->make(true);
+                    ->addIndexColumn()
+                    ->make(true);
             }
             return view('report.reportTax.Index');
+        }
 
-        } 
-        
 
         return redirect()->route('report.index', ['flag' => 'cip'])
             ->with('success', 'Data berhasil ditambahkan!');
