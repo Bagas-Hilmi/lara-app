@@ -17,6 +17,18 @@
                                 <h3 class="text-white text-capitalize ps-3">Report Tax</h3>
                             </div>
                             <div class="card-body p-3">
+                                <div class="mb-2">
+                                    <div class="filter-container">
+                                        <div class="filter-select-container">
+                                            <select id="statusSelect" class= "form-control">
+                                                <option value="" selected>Pilih Status</option>
+                                                @foreach ($status as $stat)
+                                                    <option value="{{ $stat }}">{{ $stat }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive p-0">
                                     <table id="tax-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
                                         <thead style="background-color: #3cb210; color: white;">
@@ -35,6 +47,7 @@
                                                 <th class="text-center">Date</th>
                                                 <th class="text-center">Settle Doc</th>
                                                 <th class="text-center">Fa Doc</th>
+                                                <th class="text-center">Status Capex</th>
                                             </tr>
                                         </thead>
                                         <tfoot style="background-color: #294822; color: #ffffff; font-weight: bold;">
@@ -42,7 +55,7 @@
                                                 <th colspan="9" class="text-center">Total All Capex</th>
                                                 <th id="total-rp" class="text-center"></th>
                                                 <th id="total-us" class="text-center"></th>
-                                                <th colspan="3" class="text-center"></th>
+                                                <th colspan="4" class="text-center"></th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -54,11 +67,13 @@
                 <x-footers.auth></x-footers.auth>
             </div>
 
+            <link href="{{ asset('assets') }}/css/select2.min.css" rel="stylesheet" />
             @push('js')
                 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
                 <script src="assets/js/plugins/sweetalert.min.js"></script>
                 <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
                 <script src="assets/js/moment.min.js"></script>
+                <script src="{{ asset('assets/js/select2.min.js') }}"></script>
 
                 <script>
                     $(document).ready(function() {
@@ -71,13 +86,15 @@
                             ajax: {
                                 url: '{!! route('report.index') !!}',
                                 type: 'GET',
-                                data: {
-                                    flag: 'tax'
-                                },
-                                error: function(xhr, error, thrown) {
-                                    console.log('Ajax Error:', thrown);
+                                data: function(d) {
+                                // Menambahkan flag ke data
+                                d.flag = 'tax';
+                                                               
+                                var statusValue = $('#statusSelect').val();
+                                if (statusValue) {
+                                    d.status_capex = statusValue;  
                                 }
-                            },
+                            }},
                             columns: [
                                     {data: 'DT_RowIndex', name: 'DT_RowIndex' },  // Untuk nomor urut
                                     {data: 'project_desc', name: 'project_desc', 
@@ -96,8 +113,14 @@
                                         createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
                                             $(td).css('text-align', 'left'); 
                                     }}, 
-                                    {data: 'material', name: 'material'},
-                                    {data: 'description', name: 'description'},
+                                    {data: 'material', name: 'material', 
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                            $(td).css('text-align', 'right'); 
+                                    }},     
+                                    {data: 'description', name: 'description',
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                                            $(td).css('text-align', 'left'); 
+                                    }}, 
                                   
                                     {data: 'qty', name: 'qty'},
                                     {data: 'uom', name: 'uom'},
@@ -143,6 +166,7 @@
                                     {data: 'date', name: 'date'},
                                     {data: 'settle_doc', name:'settle_doc'},
                                     {data: 'fa_doc', name:'fa_doc'},
+                                    {data: 'status_capex', name:'status_capex'},
                             ],
                             drawCallback: function(settings) {
                                 var api = this.api();
@@ -164,7 +188,7 @@
                                                 subtotal.amount_rp.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                                 '<td style="text-align: right; font-weight: bold;">' + 
                                                 subtotal.amount_us.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
-                                                '<td colspan="3"></td>' +
+                                                '<td colspan="4"></td>' +
                                                 '</tr>'
                                             );
                                         }
@@ -188,7 +212,7 @@
                                         subtotal.amount_rp.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                         '<td style="text-align: right; font-weight: bold;">' + 
                                         subtotal.amount_us.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
-                                        '<td colspan="3"></td>' +
+                                        '<td colspan="4"></td>' +
                                         '</tr>'
                                     );
                                 }
@@ -217,6 +241,31 @@
                                 );
                             }
                         });
+                        var statusSelect = $('#statusSelect');
+                            if (statusSelect.length) {
+                                statusSelect.select2({
+                                    placeholder: 'Cari Status',
+                                    allowClear: true,
+                                });
+                            }
+
+                            // Event saat kategori dipilih
+                            statusSelect.on('select2:select', function (e) {
+                                const selectedOption = $(this).find(':selected'); 
+                                const statusValue = selectedOption.val(); 
+
+                                // Memuat ulang DataTable sesuai status yang dipilih
+                                if (statusValue) {
+                                    table.ajax.url('{{ route('report.index') }}?status=' + statusValue);
+                                } else {
+                                    table.ajax.url('{{ route('report.index') }}');
+                                }
+                                table.ajax.reload();  // Memanggil ulang data setelah mengubah URL
+                            });
+
+                            statusSelect.on('select2:unselect', function (e) {
+                                table.ajax.url('{{ route('report.index') }}').load();
+                            })
                     });
                 </script>
             @endpush
@@ -353,6 +402,16 @@
         /* Warna border saat fokus */
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);
         /* Menambah efek shadow saat fokus */
+    }
+
+    
+    .filter-container {
+            margin-bottom: 10px;
+    }
+    #filterTypeSelect,
+    .filter-select {
+        width: 250px;
+        margin-bottom: 10px;
     }
 
 </style>

@@ -76,12 +76,12 @@ class ReportController extends Controller
             $status = ReportSummary::getStatusCapex();
             $budgets = ReportSummary::getBudget();
 
-            // Jika request AJAX (untuk DataTables)
+            
             if ($request->ajax()) {
-                // Ambil data master tanpa filter terlebih dahulu
+                
                 $data = ReportSummary::getMasterdata();
 
-                // Tambahkan filter jika parameter ada
+                
                 if ($request->has('category') && $request->category != '') {
                     $data = $data->where('category', $request->category);
                 }
@@ -98,24 +98,28 @@ class ReportController extends Controller
                     $data = $data->where($request->filter_type, $request->filter_option);
                 }
 
-                // Return data untuk DataTables
                 return DataTables::of($data)
-                    ->addIndexColumn() // Menambahkan kolom nomor urut
-                    ->make(true); // Mengembalikan data dalam format DataTables
+                    ->addIndexColumn() 
+                    ->make(true); 
             }
 
-            // Jika bukan request AJAX, tampilkan halaman dengan kategori, status, dan budget
             return view('report.reportSummary.index', compact('categories', 'status', 'budgets'));
         } else if ($flag === 'tax') {
+            $status = ReportTax::getStatus();
+ 
             if ($request->ajax()) {
 
                 $data = ReportTax::getData();
+
+                if ($request->has('status_capex') && $request->status_capex != '') {
+                    $data = $data->where('status_capex', $request->status_capex);
+                }
 
                 return datatables::of($data)
                     ->addIndexColumn()
                     ->make(true);
             }
-            return view('report.reportTax.Index');
+            return view('report.reportTax.Index', compact('status'));
         }
 
 
