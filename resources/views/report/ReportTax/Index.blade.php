@@ -18,16 +18,12 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="mb-2">
-                                    <div class="filter-container">
-                                        <div class="filter-select-container">
-                                            <select id="statusSelect" class= "form-control">
-                                                <option value="" selected>Pilih Status</option>
-                                                @foreach ($status as $stat)
-                                                    <option value="{{ $stat }}">{{ $stat }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                                    <select id="statusSelect" class="form-control" style="width: 20%;">
+                                        <option value="" selected>Pilih Status</option>
+                                        @foreach ($status as $stat)
+                                            <option value="{{ $stat }}">{{ $stat }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="table-responsive p-0">
                                     <table id="tax-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
@@ -405,13 +401,29 @@
     }
 
     
-    .filter-container {
-            margin-bottom: 10px;
-    }
-    #filterTypeSelect,
-    .filter-select {
-        width: 250px;
-        margin-bottom: 10px;
+    .select2-container .select2-selection--single {
+        height: 50px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #ffffff;
+        color: #000000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+        font-size: 16px;
     }
 
+    .select2-container .select2-selection--single:focus {
+        border-color: #3cff00;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
+
+    .select2-container .select2-selection__clear {
+        position: absolute;
+        right: 15px;
+    } 
 </style>

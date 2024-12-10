@@ -19,13 +19,12 @@
                             <div class="card-body p-3">
                                 <div class="mb-2">
                                     <div class="filter-container">
-                                        <!-- Dropdown to choose which filter to show -->
                                         <div class="filter-dropdown">
                                             <select id="filterTypeSelect" class="form-control">
                                                 <option value="">Pilih Jenis Filter</option>
                                                 <option value="category">Filter Category</option>
                                                 <option value="status">Filter Status</option>
-                                                <option value="budget">Filter Budget</option>
+                                                <option value="budget">Filter Budget Type</option>
                                             </select>
                                         </div>
                                 
@@ -448,6 +447,10 @@
                             }
                         });
 
+                        categorySelect.on('select2:clear', function (e) {
+                            table.ajax.url('{{ route('report.index') }}').load(); // Reload semua data
+                        });
+
                         statusSelect.on('select2:select', function(e) {
                             const statusValue = $(this).val();
                             if (statusValue) {
@@ -456,6 +459,10 @@
                                 table.ajax.url('{{ route('report.index') }}');
                             }
                             table.ajax.reload();
+                        });
+
+                        statusSelect.on('select2:clear', function (e) {
+                            table.ajax.url('{{ route('report.index') }}').load(); // Reload semua data
                         });
 
                         budgetSelect.on('select2:select', function(e) {
@@ -467,25 +474,26 @@
                             }
                             table.ajax.reload();
                         });
+
+                        budgetSelect.on('select2:clear', function (e) {
+                            table.ajax.url('{{ route('report.index') }}').load(); // Reload semua data
+                        });
                     });
 
                     document.addEventListener('DOMContentLoaded', function() {
                         const filterTypeSelect = document.getElementById('filterTypeSelect');
                         const filterSelectContainers = document.querySelectorAll('.filter-select-container');
 
-                        // Hide all specific filters initially
                         filterSelectContainers.forEach(container => {
                             container.classList.add('hidden');
                         });
 
-                        // Event listener for filter type selection
                         filterTypeSelect.addEventListener('change', function() {
                             // Hide all filters first
                             filterSelectContainers.forEach(container => {
                                 container.classList.add('hidden');
                             });
 
-                            // Show selected filter
                             switch(this.value) {
                                 case 'category':
                                     document.querySelector('.filter-select-container:has(#categorySelect)').classList.remove('hidden');
@@ -507,8 +515,6 @@
         </div>
     </main>
 </x-layout>
-
-
 
 <style>
     .main-content {
@@ -649,29 +655,29 @@
     .filter-select {
         width: 250px;
         margin-bottom: 10px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
     }
+    
 
     .filter-dropdown {
     position: relative;
     display: inline-block;
     width: 300px;
     font-family: Arial, sans-serif;
-    font-size: 16px;
+    
     }
 
     .filter-dropdown select {
     width: 100%;
     padding: 10px 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 24px;
-    cursor: pointer;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 11pt;
     }
 
     .filter-dropdown select:focus {
@@ -679,4 +685,30 @@
     border-color: #66afe9;
     box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
     }
+
+    .select2-container .select2-selection--single {
+        height: 50px; /* Menyesuaikan tinggi agar lebih proporsional */
+        padding-inline: 10px; /* Padding kiri dan kanan otomatis menyesuaikan dengan teks */
+        font-size: 11pt; /* Ukuran font lebih besar untuk keterbacaan */
+        border-radius: 8px; /* Membuat sudut lebih halus */
+        border: 1px solid #ccc; /* Border abu-abu muda untuk kesan elegan */
+        background-color: #ffffff; /* Latar belakang putih agar bersih */
+        color: #000000; /* Warna teks abu-abu gelap untuk kontras yang baik */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan halus di sekitar dropdown */
+        transition: all 0.3s ease; /* Menambahkan transisi halus saat berinteraksi */
+        display: flex; /* Menjadikan container flex */
+        align-items: center; /* Menyelaraskan teks di tengah secara vertikal */
+        justify-content: space-between; /* Memastikan tombol x berada di sisi kanan */
+    }
+
+    /* Efek fokus pada select2 */
+    .select2-container .select2-selection--single:focus {
+        border-color: #3cff00; /* Mengubah border menjadi biru saat fokus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Menambahkan bayangan biru saat fokus */
+        outline: none; /* Menghilangkan outline default */
+    }
+        .select2-container .select2-selection__clear {
+        position: absolute;
+        right: 10px; /* Menempatkan tombol "x" di sisi kanan */
+    }   
 </style>

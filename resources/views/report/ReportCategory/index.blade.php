@@ -473,5 +473,29 @@
     tr.group-subtotal {
         cursor: default !important;
     }
+    .select2-container .select2-selection--single {
+        height: 50px; /* Menyesuaikan tinggi agar lebih proporsional */
+        padding-inline: 10px; /* Padding kiri dan kanan otomatis menyesuaikan dengan teks */
+        font-size: 11pt; /* Ukuran font lebih besar untuk keterbacaan */
+        border-radius: 8px; /* Membuat sudut lebih halus */
+        border: 1px solid #ccc; /* Border abu-abu muda untuk kesan elegan */
+        background-color: #ffffff; /* Latar belakang putih agar bersih */
+        color: #000000; /* Warna teks abu-abu gelap untuk kontras yang baik */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan halus di sekitar dropdown */
+        transition: all 0.3s ease; /* Menambahkan transisi halus saat berinteraksi */
+        display: flex; /* Menjadikan container flex */
+        align-items: center; /* Menyelaraskan teks di tengah secara vertikal */
+        justify-content: space-between; /* Memastikan tombol x berada di sisi kanan */
+    }
 
+    /* Efek fokus pada select2 */
+    .select2-container .select2-selection--single:focus {
+        border-color: #3cff00; /* Mengubah border menjadi biru saat fokus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Menambahkan bayangan biru saat fokus */
+        outline: none; /* Menghilangkan outline default */
+    }
+        .select2-container .select2-selection__clear {
+        position: absolute;
+        right: 10px; /* Menempatkan tombol "x" di sisi kanan */
+    }   
 </style>
