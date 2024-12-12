@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CapexEngineer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Models\ReportTax;
 
 class CapexController extends Controller
 {
@@ -132,26 +133,30 @@ class CapexController extends Controller
         } else if ($flag === 'update') {
             $validated = $request->validate([
                 'flag' => 'required|in:update',
-                'id_capex'       => 'required_if:flag,update|exists:t_master_capex,id_capex',
-                'project_desc'   => 'required|string|max:255',
-                'wbs_capex'      => 'required|string',
-                'category'      => 'required|string',
-                'remark'         => 'required|string|max:255',
+                'id_capex' => 'required_if:flag,update|exists:t_master_capex,id_capex',
+                'project_desc' => 'required|string|max:255',
+                'wbs_capex' => 'required|string',
+                'category' => 'required|string',
+                'remark' => 'required|string|max:255',
                 'request_number' => 'required|string|max:255',
-                'requester'      => 'required|string|max:255',
-                'capex_number'   => 'required|string|max:255',
-                'amount_budget'  => 'required|numeric',
-                'status_capex'   => 'required|string',
-                'budget_type'    => 'required|string',
-                'startup'        => 'required|string',
-                'expected_completed'    => 'required|string',
-                'wbs_number'    => 'required|string',
-                'cip_number'    => 'required|string',
+                'requester' => 'required|string|max:255',
+                'capex_number' => 'required|string|max:255',
+                'amount_budget' => 'required|numeric',
+                'status_capex' => 'required|string',
+                'budget_type' => 'required|string',
+                'startup' => 'required|string',
+                'expected_completed' => 'required|string',
+                'wbs_number' => 'required|string',
+                'cip_number' => 'required|string',
                 'file_pdf' => 'required_if:status_capex,Close,flag,update|file|mimes:pdf|max:2048',
-
+                'capdate' => 'required_if:status_capex,Close,flag,update|string',
+                'capdoc' => 'required_if:status_capex,Close,flag,update|string|max:255',
+                'noasset' => 'required_if:status_capex,Close,flag,update|string|max:255',
             ]);
+
             // Perbarui data yang sudah ada
             $capex = Capex::find($validated['id_capex']); // Cari data berdasarkan id_capex
+
             if ($capex) {
                 $capex->project_desc = $validated['project_desc'];
                 $capex->wbs_capex = $validated['wbs_capex'];
@@ -167,16 +172,26 @@ class CapexController extends Controller
                 $capex->wbs_number = $validated['wbs_number'];
                 $capex->cip_number = $validated['cip_number'];
                 $capex->category = $validated['category'];
+
                 // Handle file upload for Close status
                 if ($validated['status_capex'] === 'Close' && $request->hasFile('file_pdf')) {
-
-                    // Ambil file yang diunggah
                     $file = $request->file('file_pdf');
                     $originalFileName = $file->getClientOriginalName();
                     $filePath = $file->storeAs('public/uploads/capexFiles', $originalFileName);
                     $capex->file_pdf = str_replace('public/', '', $filePath);
                 }
 
+                // Update or create ReportTax record
+                $reportTax = ReportTax::updateOrCreate(
+                    ['id_capex' => $validated['id_capex']], // Cek apakah ada ReportTax yang sudah ada
+                    [
+                        'cap_date' => $validated['capdate'],
+                        'cap_doc' => $validated['capdoc'],
+                        'no_asset' => $validated['noasset'],
+                    ]
+                );
+
+                // Simpan Capex dan CapexStatus
                 $capex->save();
 
                 $capexStatus = new CapexStatus();

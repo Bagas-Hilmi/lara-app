@@ -44,6 +44,9 @@
                                                 <th class="text-center">Settle Doc</th>
                                                 <th class="text-center">Fa Doc</th>
                                                 <th class="text-center">Status Capex</th>
+                                                <th class="text-center">Capitalized Date</th>
+                                                <th class="text-center">Capitalized DOC</th>
+                                                <th class="text-center">NO ASSET</th>
                                             </tr>
                                         </thead>
                                         <tfoot style="background-color: #294822; color: #ffffff; font-weight: bold;">
@@ -51,7 +54,7 @@
                                                 <th colspan="9" class="text-center">Total All Capex</th>
                                                 <th id="total-rp" class="text-center"></th>
                                                 <th id="total-us" class="text-center"></th>
-                                                <th colspan="4" class="text-center"></th>
+                                                <th colspan="7" class="text-center"></th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -163,6 +166,9 @@
                                     {data: 'settle_doc', name:'settle_doc'},
                                     {data: 'fa_doc', name:'fa_doc'},
                                     {data: 'status_capex', name:'status_capex'},
+                                    {data: 'cap_date', name:'cap_date'},
+                                    {data: 'cap_doc', name:'cap_doc'},
+                                    {data: 'no_asset', name:'no_asset'},
                             ],
                             drawCallback: function(settings) {
                                 var api = this.api();
@@ -184,7 +190,7 @@
                                                 subtotal.amount_rp.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                                 '<td style="text-align: right; font-weight: bold;">' + 
                                                 subtotal.amount_us.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
-                                                '<td colspan="4"></td>' +
+                                                '<td colspan="7"></td>' +
                                                 '</tr>'
                                             );
                                         }
@@ -208,7 +214,7 @@
                                         subtotal.amount_rp.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                         '<td style="text-align: right; font-weight: bold;">' + 
                                         subtotal.amount_us.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
-                                        '<td colspan="4"></td>' +
+                                        '<td colspan="7"></td>' +
                                         '</tr>'
                                     );
                                 }

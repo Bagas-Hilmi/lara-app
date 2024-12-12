@@ -129,23 +129,23 @@ class Capex extends Model
     {
         // Buat query untuk memperbarui data Capex
         $query = 'UPDATE t_master_capex 
-                  SET project_desc = ?, 
-                      category = ?, 
-                      wbs_capex = ?, 
-                      remark = ?, 
-                      request_number = ?, 
-                      requester = ?, 
-                      capex_number = ?, 
-                      amount_budget = ?, 
-                      status_capex = ?, 
-                      budget_type = ?, 
-                      startup = ?, 
-                      expected_completed = ?, 
-                      wbs_number = ?, 
-                      cip_number = ?, 
-                      updated_at = ?,
-                      updated_by = ?
-                  WHERE id_capex = ?';
+                    SET project_desc = ?, 
+                        category = ?, 
+                        wbs_capex = ?, 
+                        remark = ?, 
+                        request_number = ?, 
+                        requester = ?, 
+                        capex_number = ?, 
+                        amount_budget = ?, 
+                        status_capex = ?, 
+                        budget_type = ?, 
+                        startup = ?, 
+                        expected_completed = ?, 
+                        wbs_number = ?, 
+                        cip_number = ?, 
+                        updated_at = ?,
+                        updated_by = ?
+                    WHERE id_capex = ?';
 
         // Buat parameter untuk query
         $params = [

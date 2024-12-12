@@ -129,7 +129,6 @@ class Report extends Model
 
         // Proses setiap data yang ditemukan
         foreach ($dataToInsert as $data) {
-            Log::info('Processing asset: ' . $data->asset . ' from head ID: ' . $data->id_head);
 
             // Cari dengan menambahkan '-0' ke asset
             $assetWithSuffix = $data->asset . '-0';
@@ -139,17 +138,6 @@ class Report extends Model
                 ->where('status', 1)
                 ->where('cip_number', $assetWithSuffix)
                 ->first();
-
-            if ($matchingCapex) {
-                Log::info('Found matching CIP:', [
-                    'asset' => $data->asset,
-                    'formatted_asset' => $assetWithSuffix,
-                    'cip_number' => $matchingCapex->cip_number,
-                    'id_capex' => $matchingCapex->id_capex
-                ]);
-            } else {
-                Log::info('No match found for asset: ' . $data->asset . ' (tried: ' . $assetWithSuffix . ')');
-            }
 
             // Cek apakah data sudah ada
             $exists = DB::table('t_report_cip')
@@ -174,10 +162,7 @@ class Report extends Model
                     'created_at' => $data->created_at,
                     'updated_at' => $data->updated_at,
                 ]);
-                Log::info('Inserted new record for asset: ' . $data->asset);
-            } else {
-                Log::info('Record already exists for asset: ' . $data->asset);
-            }
+            } 
         }
     }
 

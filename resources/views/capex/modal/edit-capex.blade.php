@@ -79,11 +79,6 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3" id="fileUploadContainer" style="display: none;">
-                            <label class="form-label font-weight-bold">Upload PDF</label>
-                            <input type="file" class="form-control" name="file_pdf" accept="application/pdf" required>
-                        </div>
-
                         <div class="col-md-3 ">
                             <label for="budget_type_edit" class="form-label font-weight-bold">Status Budget</label>
                             <div class="dropdown">
@@ -125,6 +120,25 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3" id="fileUploadContainer" style="display: none;">
+                            <label class="form-label font-weight-bold">Upload PDF</label>
+                            <input type="file" class="form-control" name="file_pdf" accept="application/pdf" required>
+                        </div>
+                        <div class="col-md-3" id="capdateContainer">
+                            <label for="capdate_edit" class="form-label font-weight-bold">Capitalized Date</label>
+                            <input type="date" class="form-control" id="capdate_edit" name="capdate" style="text-align: center;" required>
+                        </div>
+                        <div class="col-md-3" id="capdocContainer">
+                            <label for="capdate_edit" class="form-label font-weight-bold">Capitalized Doc</label>
+                            <input type="text" class="form-control" id="capdoc_edit" name="capdoc" style="text-align: center;" required>
+                        </div>
+
+                        <div class="col-md-3" id="noassetContainer">
+                            <label for="capdate_edit" class="form-label font-weight-bold">No Asset</label>
+                            <input type="text" class="form-control" id="noasset_edit" name="noasset" style="text-align: center;" required>
+                        </div>                       
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -155,6 +169,9 @@
             var wbs_number = $(this).data('wbs_number');
             var cip_number = $(this).data('cip_number');
             var category = $(this).data('category');
+            var capdate = $(this).data('capdate'); // Ambil capdate
+            var capdoc = $(this).data('capdoc');   // Ambil capdoc
+            var noasset = $(this).data('noasset'); // Ambil noasset
 
             // Isi data ke dalam modal
             $('#project_desc_edit').val(project_desc);
@@ -171,6 +188,10 @@
             $('#wbs_number_edit').val(wbs_number);
             $('#cip_number_edit').val(cip_number);
             $('#category_edit').val(category);
+            $('#capdate_edit').val($(this).data('capdate'));
+            $('#capdoc_edit').val($(this).data('capdoc'));
+            $('#noasset_edit').val($(this).data('noasset'));
+
 
             $('#id_capex_edit').val(id_capex); // Pastikan Anda memiliki input tersembunyi di modal Anda
 
@@ -243,10 +264,13 @@
                 formData.append('cip_number', $('#cip_number_edit').val());
                 formData.append('category', $('#category_edit').val());
                 formData.append('flag', 'update');
-
+                
                 // Tambahkan file jika ada
                 if (status_capex === 'Close') {
                     formData.append('file_pdf', fileInput.get(0).files[0]);
+                    formData.append('capdate', $('#capdate_edit').val());
+                    formData.append('capdoc', $('#capdoc_edit').val());
+                    formData.append('noasset', $('#noasset_edit').val());
                 }
 
                 // Tampilkan konfirmasi
@@ -330,73 +354,129 @@
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
-    const fileUploadContainer = document.getElementById('fileUploadContainer');
-    const fileUploadInput = fileUploadContainer.querySelector('input[type="file"]');
-    const saveEditButton = document.getElementById('save-edit-capex');
-    const statusCapexInput = document.getElementById('status_capex_edit');
-    const statusDropdownButton = document.getElementById('statusDropdownEdit');
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
+        const fileUploadContainer = document.getElementById('fileUploadContainer');
+        const capdateContainer = document.getElementById('capdateContainer');
+        const capdocContainer = document.getElementById('capdocContainer');
+        const noassetContainer = document.getElementById('noassetContainer');
+        const fileUploadInput = fileUploadContainer.querySelector('input[type="file"]');
+        const saveEditButton = document.getElementById('save-edit-capex');
+        const statusCapexInput = document.getElementById('status_capex_edit');
+        const statusDropdownButton = document.getElementById('statusDropdownEdit');
 
-    // Fungsi untuk toggle container file upload
-    function toggleFileUploadContainer(status) {
-        if (status === 'Close') {
-            fileUploadContainer.style.display = 'block';    
-            fileUploadInput.setAttribute('required', 'required'); 
-        } else {
-            fileUploadContainer.style.display = 'none';
-            fileUploadInput.removeAttribute('required'); 
-            fileUploadInput.value = ''; // Reset input
+        // Fungsi untuk toggle semua container
+        function toggleContainers(status) {
+            if (status === 'Close') {
+                // Tampilkan semua container
+                fileUploadContainer.style.display = 'block';
+                capdateContainer.style.display = 'block';
+                capdocContainer.style.display = 'block';
+                noassetContainer.style.display = 'block';
+                
+                // Set required attributes
+                fileUploadInput.setAttribute('required', 'required');
+                document.getElementById('capdate_edit').setAttribute('required', 'required');
+                document.getElementById('capdoc_edit').setAttribute('required', 'required');
+                document.getElementById('noasset_edit').setAttribute('required', 'required');
+            } else {
+                // Sembunyikan semua container
+                fileUploadContainer.style.display = 'none';
+                capdateContainer.style.display = 'none';
+                capdocContainer.style.display = 'none';
+                noassetContainer.style.display = 'none';
+                
+                // Hapus required attributes
+                fileUploadInput.removeAttribute('required');
+                document.getElementById('capdate_edit').removeAttribute('required');
+                document.getElementById('capdoc_edit').removeAttribute('required');
+                document.getElementById('noasset_edit').removeAttribute('required');
+                
+                // Reset nilai
+                fileUploadInput.value = '';
+                document.getElementById('capdate_edit').value = '';
+                document.getElementById('capdoc_edit').value = '';
+                document.getElementById('noasset_edit').value = '';
+            }
         }
-    }
 
-    // Fungsi validasi input file PDF
-    function validatePDFInput(fileInput) {
-        const allowedTypes = ['application/pdf'];
-        const file = fileInput.files[0];
+        // Fungsi validasi semua input required
+        function validateInputs() {
+            if (statusCapexInput.value === 'Close') {
+                const capdate = document.getElementById('capdate_edit').value;
+                const capdoc = document.getElementById('capdoc_edit').value;
+                const noasset = document.getElementById('noasset_edit').value;
+                
+                if (!capdate || !capdoc || !noasset) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Harap isi Capitalized Date, Capitalized Doc, dan No Asset untuk status Close',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return false;
+                }
 
-        if (!file) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Harap unggah file PDF untuk status Close',
-                icon: 'error',
-                confirmButtonText: 'OK'
+                if (!validatePDFInput(fileUploadInput)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Fungsi validasi input file PDF
+        function validatePDFInput(fileInput) {
+            const allowedTypes = ['application/pdf'];
+            const file = fileInput.files[0];
+
+            if (!file) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Harap unggah file PDF untuk status Close',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+
+            if (!allowedTypes.includes(file.type)) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Hanya file PDF yang diperbolehkan',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+
+            return true;
+        }
+
+        // Event listener untuk dropdown status
+        categoryDropdownItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const selectedValue = this.getAttribute('data-value');
+                statusCapexInput.value = selectedValue;
+                statusDropdownButton.textContent = selectedValue;
+
+                toggleContainers(selectedValue);
             });
-            return false;
-        }
-
-        if (!allowedTypes.includes(file.type)) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Hanya file PDF',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            return false;
-        }
-
-        return true;
-    }
-
-    // Event listener untuk dropdown status
-    categoryDropdownItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const selectedValue = this.getAttribute('data-value');
-            statusCapexInput.value = selectedValue;
-            statusDropdownButton.textContent = selectedValue;
-
-            toggleFileUploadContainer(selectedValue);
         });
-    });
 
-    // Event listener untuk tombol save
-    saveEditButton.addEventListener('click', function(event) {
-        const statusValue = statusCapexInput.value;
+        // Event listener untuk perubahan langsung pada select status
+        statusCapexInput.addEventListener('change', function() {
+            toggleContainers(this.value);
+        });
 
-        if (statusValue === 'Close' && !validatePDFInput(fileUploadInput)) {
-            event.preventDefault();
-            return false;
-        }
+        // Event listener untuk tombol save
+        saveEditButton.addEventListener('click', function(event) {
+            if (!validateInputs()) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        // Inisialisasi awal - check status saat halaman dimuat
+        toggleContainers(statusCapexInput.value);
     });
-});
 </script>
