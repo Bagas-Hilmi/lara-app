@@ -27,9 +27,9 @@
             </a>
         </li>
         <li>
-            <a class="dropdown-item d-flex align-items-center text-danger delete-capex" data-id="{{ $row->id_capex }}">
+            <a class="dropdown-item d-flex align-items-center text-danger delete-capex" href="#" data-id="{{ $row->id_capex }}">
                 <i class="fas fa-trash-alt me-2 icon-large"></i> Delete Capex
-            </a>
+            </a>            
         </li>
         @endif
 

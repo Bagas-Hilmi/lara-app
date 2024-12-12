@@ -166,7 +166,12 @@
                                     {data: 'settle_doc', name:'settle_doc'},
                                     {data: 'fa_doc', name:'fa_doc'},
                                     {data: 'status_capex', name:'status_capex'},
-                                    {data: 'cap_date', name:'cap_date'},
+                                    {data: 'cap_date', name: 'cap_date',  render: function(data) {
+                                        if (!data) {
+                                            return ''; 
+                                        }
+                                        return moment(data).format('DD-MM-YYYY'); 
+                                    }},
                                     {data: 'cap_doc', name:'cap_doc'},
                                     {data: 'no_asset', name:'no_asset'},
                             ],

@@ -304,14 +304,22 @@
                                 });
                             },
                             error: function(xhr) {
-                                var errors = xhr.responseJSON.errors;
-                                $.each(errors, function(key, value) {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: value[0],
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
+                                console.error('Error Details:', xhr.responseJSON);
+                                
+                                var errorMessage = 'Terjadi kesalahan';
+                                if (xhr.responseJSON) {
+                                    if (xhr.responseJSON.errors) {
+                                        // Tampilkan detail error validasi
+                                        errorMessage = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                                    } else {
+                                        errorMessage = xhr.responseJSON.message || xhr.responseJSON.error;
+                                    }
+                                }
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: errorMessage,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
                                 });
                             }
                         });

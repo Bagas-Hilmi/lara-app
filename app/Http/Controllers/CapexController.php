@@ -182,14 +182,16 @@ class CapexController extends Controller
                 }
 
                 // Update or create ReportTax record
-                $reportTax = ReportTax::updateOrCreate(
-                    ['id_capex' => $validated['id_capex']], // Cek apakah ada ReportTax yang sudah ada
-                    [
-                        'cap_date' => $validated['capdate'],
-                        'cap_doc' => $validated['capdoc'],
-                        'no_asset' => $validated['noasset'],
-                    ]
-                );
+                if (!empty($validated['capdate']) || !empty($validated['capdoc']) || !empty($validated['noasset'])) {
+                    $reportTax = ReportTax::updateOrCreate(
+                        ['id_capex' => $validated['id_capex']],
+                        array_filter([
+                            'cap_date' => $validated['capdate'] ?? null,
+                            'cap_doc' => $validated['capdoc'] ?? null,
+                            'no_asset' => $validated['noasset'] ?? null,
+                        ])
+                    );
+                }
 
                 // Simpan Capex dan CapexStatus
                 $capex->save();
@@ -479,8 +481,6 @@ class CapexController extends Controller
         return response()->json(['error' => 'Invalid flag specified.'], 400);
     }
 
-
-
     /**
      * Display the specified resource.
      */
@@ -490,6 +490,9 @@ class CapexController extends Controller
         $flag = $request->input('flag');
 
         if ($flag === 'budget') {
+            
+            $capex = Capex::findOrFail($id);
+
             if ($request->ajax()) {
 
                 $status = $request->get('status', 1);
@@ -507,6 +510,9 @@ class CapexController extends Controller
                     ->rawColumns(['action'])
                     ->make(true);
             }
+            return view('capex-budget', [
+                'capex' => $capex
+            ]);
         } else if ($flag === 'progress') {
 
             if ($request->ajax()) {
@@ -598,8 +604,6 @@ class CapexController extends Controller
 
         return response()->json(['error' => 'Flag tidak valid'], 400);
     }
-
-
 
     /**
      * Show the form for editing the specified resource.

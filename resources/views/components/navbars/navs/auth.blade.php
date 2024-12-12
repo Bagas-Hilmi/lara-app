@@ -4,9 +4,9 @@
     navbar-scroll="true">
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                <img src="{{ asset('assets') }}/img/log1.png" style="width: 250px; height: auto;">
-            </ol>
+            <li class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                <img src="{{ asset('assets') }}/img/log1.png" alt="Logo perusahaan" style="width: 250px; height: auto;">
+            </li>
             <h6 class="font-weight-bolder mb-0">{{ $titlePage }}</h6>
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
