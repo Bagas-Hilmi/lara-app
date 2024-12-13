@@ -296,21 +296,13 @@ class CapexController extends Controller
                 'po_release' => 'required|numeric|min:0',
             ]);
 
-            // Simpan PO Release
-            $poreleaseId = DB::table('t_capex_porelease')->insertGetId([
-                'id_capex' => $request->id_capex,
-                'description' => $request->description,
-                'po_release' => $request->po_release,
-                'created_at' => now(),
-                'updated_at' => now(),
+            $porelease = CapexPOrelease::addPORelease($request->all());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Description successfully added.',
+                'data' => $porelease,
             ]);
-
-            // Update foreign key di t_capex_pocommitment_tail
-            DB::table('t_capex_pocommitment_tail')
-                ->whereNull('id_capex_porelease')
-                ->update(['id_capex_porelease' => $poreleaseId]);
-
-            return response()->json(['message' => 'PO Release berhasil ditambahkan']);
         } else if ($flag === 'edit-porelease') {
 
             $request->validate([
@@ -490,11 +482,11 @@ class CapexController extends Controller
         $flag = $request->input('flag');
 
         if ($flag === 'budget') {
-            
+
             $capex = Capex::findOrFail($id);
+            $canViewBtn = $capex->status_capex !== 'Close';
 
             if ($request->ajax()) {
-
                 $status = $request->get('status', 1);
 
                 $query = CapexBudget::query()
@@ -504,19 +496,20 @@ class CapexController extends Controller
                 $query = CapexBudget::getStatus($id, $status);
 
                 return DataTables::of($query)
+                    ->with('meta', [
+                        'canViewBtn' => $canViewBtn
+                    ])
                     ->addColumn('action', function ($row) {
                         return view('capex/datatables/actionbtnbudget', ['row' => $row]);
                     })
                     ->rawColumns(['action'])
                     ->make(true);
             }
-            return view('capex-budget', [
-                'capex' => $capex
-            ]);
         } else if ($flag === 'progress') {
+            $capex = Capex::findOrFail($id);
+            $canViewBtn = $capex->status_capex !== 'Close';
 
             if ($request->ajax()) {
-
                 $status = $request->get('status', 1);
 
                 $query = CapexProgress::query()
@@ -526,44 +519,66 @@ class CapexController extends Controller
                 $query = CapexProgress::getStatus($id, $status);
 
                 return DataTables::of($query)
+                    ->with('meta', [
+                        'canViewBtn' => $canViewBtn
+                    ])
                     ->addColumn('action', function ($row) {
                         return view('capex/datatables/actionbtnprogress', ['row' => $row]);
                     })
                     ->rawColumns(['action'])
                     ->make(true);
             }
+
+            return view('capex.budget-capex', compact('capex', 'canCreateBudget'));  // Pastikan compact mengirimkan canCreateBudget ke view
+
         } else if ($flag === 'porelease') {
+            $capex = Capex::findOrFail($id);
+            $canViewBtn = $capex->status_capex !== 'Close';
 
-            $status = $request->get('status', 1);
+            if ($request->ajax()) {
+                $status = $request->get('status', 1);
 
-            $query = CapexPOrelease::query()
-                ->where('id_capex', $id)
-                ->where('status', $status);
+                $query = CapexPOrelease::query()
+                    ->where('id_capex', $id)
+                    ->where('status', $status);
 
-            $query = CapexPOrelease::getStatus($id, $status);
+                $query = CapexPOrelease::getStatus($id, $status);
 
-            return DataTables::of($query)
-                ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtnporelease', ['row' => $row]);
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+                return DataTables::of($query)
+                    ->with('meta', [
+                        'canViewBtn' => $canViewBtn
+                    ])
+
+                    ->addColumn('action', function ($row) {
+                        return view('capex/datatables/actionbtnporelease', ['row' => $row]);
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
         } else if ($flag === 'completion') {
+            $capex = Capex::findOrFail($id);
+            $canViewBtn = $capex->status_capex !== 'Close';
 
-            $status = $request->get('status', 1);
+            if ($request->ajax()) {
+                $status = $request->get('status', 1);
 
-            $query = CapexCompletion::query()
-                ->where('id_capex', $id)
-                ->where('status', $status);
+                $query = CapexCompletion::query()
+                    ->where('id_capex', $id)
+                    ->where('status', $status);
 
-            $query = CapexCompletion::getStatus($id, $status);
+                $query = CapexCompletion::getStatus($id, $status);
 
-            return DataTables::of($query)
-                ->addColumn('action', function ($row) {
-                    return view('capex/datatables/actionbtncompletion', ['row' => $row]);
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+                return DataTables::of($query)
+
+                    ->with('meta', [
+                        'canViewBtn' => $canViewBtn
+                    ])
+                    ->addColumn('action', function ($row) {
+                        return view('capex/datatables/actionbtncompletion', ['row' => $row]);
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
         } else if ($flag === 'status') {
 
             $query = CapexStatus::query()->where('id_capex', $id);

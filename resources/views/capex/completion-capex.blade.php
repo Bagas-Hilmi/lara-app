@@ -40,8 +40,12 @@
      $(document).ready(function() {
         // Event saat modal dibuka
         $('#completion-modal').on('shown.bs.modal', function (e) {
-            var idCapex = $(e.relatedTarget).data('id'); // Ambil ID Capex dari data-id
-            $('#new-completion-btn').data('id', idCapex); // Set data-id untuk tombol NEW BUDGET
+            var idCapex = $(e.relatedTarget).data('id');
+            $('#new-completion-btn').data('id', idCapex); 
+
+            function handleBudgetVisibility(response){
+                $('#new-completion-btn').toggle(response.meta && response.meta.canViewBtn !== false);
+            }
 
             // Inisialisasi DataTables
             $('#completion-table').DataTable({
@@ -53,8 +57,10 @@
                     url: '/capex/' + idCapex, // Menggunakan metode show dari Route::resource
                     type: 'GET',
                     data: {
-                        flag: 'completion' // Kirim flag untuk identifikasi request
-                    },
+                        flag: 'completion'},
+                        complete: function(xhr) {
+                        handleBudgetVisibility(xhr.responseJSON);
+                    }
                 },
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },

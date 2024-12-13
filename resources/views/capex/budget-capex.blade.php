@@ -6,16 +6,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-        
+               
                 <div class="mb-3">
-                   <!-- Tombol NEW BUDGET -->
-                    <button type="button" class="btn btn-primary view-budget-btn"
-                        style="background-color: #09170a; border-color: #09170a;"
-                        id="new-budget-btn"
-                        data-bs-toggle="modal"
-                        data-bs-target="#new-budget-modal">
-                        <i class="fas fa-plus"></i> NEW BUDGET
-                    </button>
+                    <!-- Tombol NEW BUDGET -->
+                        <button type="button" class="btn btn-primary view-budget-btn"
+                                style="background-color: #09170a; border-color: #09170a;"
+                                id="new-budget-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#new-budget-modal">
+                            <i class="fas fa-plus"></i> NEW BUDGET
+                        </button>
                 </div>
                 <div class="table-responsive p-0">
                     <table id="budget-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
@@ -44,7 +44,10 @@
         $('#budget-modal').on('shown.bs.modal', function (e) {
             var idCapex = $(e.relatedTarget).data('id'); // Ambil ID Capex dari data-id
             $('#new-budget-btn').data('id', idCapex); // Set data-id untuk tombol NEW BUDGET
-    
+            
+            function handleBudgetVisibility(response) {
+                $('#new-budget-btn').toggle(response.meta && response.meta.canViewBtn !== false);
+            }
             // Inisialisasi DataTables
             $('#budget-table').DataTable({
                 processing: true,
@@ -54,7 +57,10 @@
                 ajax: {
                     url: '/capex/' + idCapex, // Mengarah ke function show dengan id_capex
                     type: 'GET',
-                    data: { flag: 'budget' }
+                    data: { flag: 'budget' },
+                    complete: function(xhr) {
+                        handleBudgetVisibility(xhr.responseJSON);
+                    }
                 },
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},
@@ -114,13 +120,13 @@
                         flag: 'budget' // Kirim flag untuk menentukan apakah yang dihapus budget
                     },
                     success: function(response) {
-                     if (response.success) {
+                    if (response.success) {
                              // SweetAlert success notification
                                 Swal.fire(
                                 'Deleted!',
                                 'Budget has been deleted.',
                                 'success'
-                             );
+                            );
 
                             // Reload the DataTable
                             $('#capex-table').DataTable().ajax.reload();
@@ -150,17 +156,17 @@
 <style>
     /* Gaya untuk sel tabel */
     #budget-table tbody td {
-       padding: 8px; /* Padding untuk sel */
-       border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
-       color: #2c2626;
-   }
+        padding: 8px; /* Padding untuk sel */
+        border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+        color: #2c2626;
+    }
 
    /* Hover effect untuk baris tabel */
-   #budget-table tbody tr:hover {
+    #budget-table tbody tr:hover {
        background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
-   }
-   #budget-table th, #budget-table td {
-       padding: 8px;
-       text-align: center;
-   }
+    }
+    #budget-table th, #budget-table td {
+        padding: 8px;
+        text-align: center;
+    }
 </style>

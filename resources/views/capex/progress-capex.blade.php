@@ -43,7 +43,10 @@
         $('#progress-modal').on('shown.bs.modal', function (e) {
             var idCapex = $(e.relatedTarget).data('id'); // Ambil ID Capex dari data-id
             $('#new-progress-btn').data('id', idCapex); // Set data-id untuk tombol NEW BUDGET
-
+            
+            function handleBudgetVisibility(response) {
+                $('#new-progress-btn').toggle(response.meta && response.meta.canViewBtn !== false);
+            }
             // Inisialisasi DataTables
             $('#progress-table').DataTable({
                 processing: true,
@@ -54,8 +57,10 @@
                     url: '/capex/' + idCapex, // Menggunakan metode show dari Route::resource
                     type: 'GET',
                     data: {
-                        flag: 'progress' // Kirim flag untuk identifikasi request
-                    },
+                        flag: 'progress'},
+                        complete: function(xhr) {
+                        handleBudgetVisibility(xhr.responseJSON);
+                    }
                 },
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },

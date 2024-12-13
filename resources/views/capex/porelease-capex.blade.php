@@ -8,7 +8,7 @@
             <div class="modal-body">
         
                 <div class="mb-3">
-                   <!-- Tombol NEW PO RELEASE -->
+                    <!-- Tombol NEW PO RELEASE -->
                     <button type="button" class="btn btn-primary view-porelease-btn"
                         style="background-color: #09170a; border-color: #09170a;"
                         id="new-porelease-btn"
@@ -45,6 +45,9 @@
             var idCapex = $(e.relatedTarget).data('id'); // Ambil ID Capex dari data-id
             $('#new-porelease-btn').data('id', idCapex); // Set data-id untuk tombol NEW BUDGET
 
+            function handleBudgetVisibility(response){
+                $('#new-porelease-btn').toggle(response.meta && response.meta.canViewBtn !== false);
+            }
 
             $('#porelease-table').DataTable({
                 processing: true,
@@ -54,7 +57,10 @@
                 ajax: {
                     url: '/capex/' + idCapex, // Mengarah ke function show dengan id_capex
                     type: 'GET',
-                    data: { flag: 'porelease' }
+                    data: { flag: 'porelease' },
+                    complete: function(xhr) {
+                        handleBudgetVisibility(xhr.responseJSON);
+                    }
                 },
                 columns: [
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'},

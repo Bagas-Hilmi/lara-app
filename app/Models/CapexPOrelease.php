@@ -72,8 +72,18 @@ class CapexPOrelease extends Model
                 'updated_at' => now()
             ]);
 
-        // Mengembalikan data yang baru ditambahkan
-        return DB::table('t_capex_porelease')->where('id_capex_porelease', $poreleaseId)->first();
+        // Update foreign key di t_capex_pocommitment_tail
+            DB::table('t_capex_pocommitment_tail')
+            ->whereNull('id_capex_porelease')
+            ->update(['id_capex_porelease' => $poreleaseId]);
+
+        // Kembalikan data yang baru ditambahkan
+        $newPORelease = DB::table('t_capex_porelease')->where('id_capex_porelease', $poreleaseId)->first();
+
+        return [
+            'success' => true,
+            'data' => $newPORelease
+        ];
     }
 
     public static function editPORelease($id, $data)
