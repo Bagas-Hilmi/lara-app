@@ -260,7 +260,7 @@
                                         $(td).css('text-align', 'right');
                                     },
                                     render: function(data, type, row) {
-                                        if (data === '' || data === null || data === undefined) {
+                                        if (data === '' ) {
                                             data = null;
                                         }
                                         if (data !== null) {

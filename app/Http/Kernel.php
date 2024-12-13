@@ -68,6 +68,8 @@ class Kernel extends HttpKernel
         'role' => \App\Http\Middleware\CheckRole::class,
         'permission' => \Laratrust\Middleware\Permission::class,
         'ability' => \Laratrust\Middleware\Ability::class,
+        'check.role' => \App\Http\Middleware\CheckRole::class,
+
     ];
     
 }

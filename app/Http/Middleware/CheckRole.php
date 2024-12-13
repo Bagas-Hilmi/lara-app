@@ -17,9 +17,10 @@ class CheckRole
      */
     public function handle($request, Closure $next, $role)
     {
-        $user = Auth::user();
-        if (!$user || !$user->roles->contains('name', $role)) {
-            return redirect()->route('home')->with('error', 'You do not have access to this resource.');
+        // Cek apakah pengguna sudah login dan memiliki peran yang diminta
+        if (!Auth::check() || !Auth::user()->hasRole($role)) {
+            // Jika tidak sesuai, tampilkan pesan 403 Forbidden
+            abort(403, 'Unauthorized');
         }
 
         return $next($request);
