@@ -49,6 +49,9 @@ class ReportTax extends Model
                 't_master_capex.wbs_number',
                 't_master_capex.total_budget',
                 't_master_capex.status_capex',
+                't_master_capex.cap_date',
+                't_master_capex.cap_doc',
+                't_master_capex.no_asset',
                 't_report_cip.material',
                 't_report_cip.description',
                 't_report_cip.qty',
@@ -58,9 +61,7 @@ class ReportTax extends Model
                 't_report_cip.date',
                 't_report_cip.settle_doc',
                 't_report_cip.fa_doc',
-                't_report_tax.cap_date',
-                't_report_tax.cap_doc',
-                't_report_tax.no_asset',
+                
             )
             ->where('t_master_capex.status', 1) // Opsional: filter hanya data aktif
             ->get();
@@ -92,6 +93,9 @@ class ReportTax extends Model
                         'settle_doc' => $data->settle_doc,
                         'fa_doc' => $data->fa_doc,
                         'status_capex' => $data->status_capex,
+                        'cap_date' => $data->cap_date,
+                        'cap_doc' => $data->cap_doc,
+                        'no_asset' => $data->no_asset,
                     ]);
             } else {
                 // Jika belum ada, lakukan insert
@@ -113,6 +117,9 @@ class ReportTax extends Model
                         'settle_doc' => $data->settle_doc,
                         'fa_doc' => $data->fa_doc,
                         'status_capex' => $data->status_capex,
+                        'cap_date' => $data->cap_date,
+                        'cap_doc' => $data->cap_doc,
+                        'no_asset' => $data->no_asset,
                     ]);
             }
         }

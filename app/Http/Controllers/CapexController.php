@@ -25,7 +25,7 @@ class CapexController extends Controller
     public function index(Request $request)
     {
         if (!Auth::check()) {
-            return redirect()->route('login'); // Arahkan ke halaman login
+            return redirect()->route('login'); 
         }
 
         // Memanggil metode
@@ -183,14 +183,9 @@ class CapexController extends Controller
 
                 // Update or create ReportTax record
                 if (!empty($validated['capdate']) || !empty($validated['capdoc']) || !empty($validated['noasset'])) {
-                    $reportTax = ReportTax::updateOrCreate(
-                        ['id_capex' => $validated['id_capex']],
-                        array_filter([
-                            'cap_date' => $validated['capdate'] ?? null,
-                            'cap_doc' => $validated['capdoc'] ?? null,
-                            'no_asset' => $validated['noasset'] ?? null,
-                        ])
-                    );
+                    $capex->cap_date = $validated['capdate'] ?? null;
+                    $capex->cap_doc = $validated['capdoc'] ?? null;
+                    $capex->no_asset = $validated['noasset'] ?? null;
                 }
 
                 // Simpan Capex dan CapexStatus
@@ -712,7 +707,7 @@ class CapexController extends Controller
     {
         $flag = 'ZFM_GET_CJE3';
         $sapClient = 'Client=PRD-300';
-        $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?'; //anggap ada
+        $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?'; 
         $sapFm = '&FM=' . $flag;
         $input_1 = '&PSPHI=P-1525-01';
         $eobUrl = $sapReqUrl . $sapClient . $sapFm . $input_1;
