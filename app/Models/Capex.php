@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Attributes\Auth;
-use Carbon\Carbon; // Pastikan Anda menggunakan Carbon
+use Carbon\Carbon; 
 
 class Capex extends Model
 {
     use HasFactory;
     protected $table = 't_master_capex'; // Nama tabel
     protected $primaryKey = 'id_capex'; // Atur primary key jika bukan 'id'
-    public $timestamps = true; // J
+    public $timestamps = true; 
 
     protected $fillable = [
         'project_desc',

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
@@ -15,10 +16,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@material.com',
-            'password' => ('secret')
+        $this->call([
+            AddRoleSeeder::class,
+            
         ]);
     }
 }
