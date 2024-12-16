@@ -4,76 +4,91 @@
 @endphp
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-xl fixed-start "
     id="sidenav-main">
+        <div class="sidenav-header">
+            <i class="fas fa-bars p-3 cursor-pointer" id="iconSidenav"
+                style="color: black; opacity: 1; font-size: 20px; position: absolute; top: 0; right: 0;"></i>
 
-    <div class="sidenav-header">
-        <i class="fas fa-bars p-3 cursor-pointer" id="iconSidenav"
-            style="color: black; opacity: 1; font-size: 20px; position: absolute; top: 0; right: 0;"></i>
-
-        <a class="navbar-brand" href="{{ route('dashboard') }}">
-            <img src="{{ asset('assets') }}/img/log1.png" class="logo" alt="Logo"
-                style="max-height:90px; width: auto;">
-        </a>
-    </div>
+            <a class="navbar-brand" href="{{ route('dashboard') }}">
+                <img src="{{ asset('assets') }}/img/log1.png" class="logo" alt="Logo"
+                    style="max-height:90px; width: auto;">
+            </a>
+        </div>
 
     <hr class="horizontal light mt-0 mb-3">
     <div class="collapse navbar-collapse  w-auto" id="sidenav-collapse-main">
         <ul class="navbar-nav">
+            @if(auth()->user()->hasRole('admin'))
+                <li class="nav-item mt-3">
+                    <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Laravel</h6>
+                </li>
+        
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ $activePage == 'user-profile' ? 'active bg-gradient-success' : '' }} "
+                        href="{{ route('user-profile') }}">
+                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1.2rem;" class="fas fa-user-circle ps-2 pe-2 text-center"></i>
+                        </div>
+                        <span class="nav-link-text ms-1 font-weight-bold custom-text-color">User Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ $activePage == 'user-management' ? ' active bg-gradient-success' : '' }} "
+                        href="{{ route('user-management') }}">
+                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"></i>
+                        </div>
+                        <span class="nav-link-text ms-1 font-weight-bold custom-text-color">User Management</span>
+                    </a>
+                </li>
 
+                <li class="nav-item mt-3">
+                    <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Pages</h6>
+                </li>
+            
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ $activePage == 'capex' ? ' active bg-gradient-success' : '' }} "
+                        href="{{ route('capex.index') }}">
+                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                        </div>
+                        <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Master Capex</span>
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ $activePage == 'Cip Cumulative Balance' ? ' active bg-gradient-success' : '' }}"
+                        href="{{ route('cipcumbal.index') }}">
+                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1.2rem;" class="fas fa-dollar-sign ps-2 pe-2 text-center"></i>
+                        </div>
+                        <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Cip Cumulative Balance</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ $activePage == 'UPDOC' ? ' active bg-gradient-success' : '' }} "
+                        href="{{ route('faglb.index') }}">
+                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1.2rem;" class="fas fa-file-import ps-2 pe-2 text-center"></i>
+                        </div>
+                        <span class="nav-link-text ms-1 font-weight-bold custom-text-color">UP-Doc FGLB + ZLIS1</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ $activePage == 'Approve' ? ' active bg-gradient-success' : '' }} "
+                        href="{{ route('approve.index') }}">
+                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1.2rem;" class="fas fa-file-signature ps-2 pe-2 text-center"></i>
+                        </div>
+                        <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Approval Report</span>
+                    </a>
+                </li>
+            @endif
+            
             <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Laravel</h6>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'user-profile' ? 'active bg-gradient-success' : '' }} "
-                    href="{{ route('user-profile') }}">
-                    <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1.2rem;" class="fas fa-user-circle ps-2 pe-2 text-center"></i>
-                    </div>
-                    <span class="nav-link-text ms-1 font-weight-bold custom-text-color">User Profile</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'user-management' ? ' active bg-gradient-success' : '' }} "
-                    href="{{ route('user-management') }}">
-                    <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"></i>
-                    </div>
-                    <span class="nav-link-text ms-1 font-weight-bold custom-text-color">User Management</span>
-                </a>
-            </li>
-
-            <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Pages</h6>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'capex' ? ' active bg-gradient-success' : '' }} "
-                    href="{{ route('capex.index') }}">
-                    <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
-                    </div>
-                    <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Master Capex</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'Cip Cumulative Balance' ? ' active bg-gradient-success' : '' }}"
-                    href="{{ route('cipcumbal.index') }}">
-                    <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1.2rem;" class="fas fa-dollar-sign ps-2 pe-2 text-center"></i>
-                    </div>
-                    <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Cip Cumulative Balance</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'UPDOC' ? ' active bg-gradient-success' : '' }} "
-                    href="{{ route('faglb.index') }}">
-                    <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1.2rem;" class="fas fa-file-excel ps-2 pe-2 text-center"></i>
-                    </div>
-                    <span class="nav-link-text ms-1 font-weight-bold custom-text-color">UP-Doc FGLB + ZLIS1</span>
-                </a>
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Report Pages</h6>
             </li>
 
             <li class="nav-item">
