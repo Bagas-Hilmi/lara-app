@@ -26,7 +26,8 @@
                                             <tr>
                                                 <th class="text-center">Action</th>
                                                 <th class="text-center">ID</th>
-                                                <th class="text-center">Comment </th>
+                                                <th class="text-center">Requester </th>
+                                                <th class="text-center">Project Description </th>
                                                 <th class="text-center">Status Capex</th>
                                                 <th class="text-center">Created At</th>
                                                 <th class="text-center">Updated At</th>
@@ -40,6 +41,10 @@
                 </div>
                 <x-footers.auth></x-footers.auth>
             </div>
+
+            @include('approve.modal.upload-pdf')
+            @include('approve.modal.approve-pdf')
+
 
             @push('css')
             <link href="{{ asset('assets/datatables/dataTables.min.css') }}" rel="stylesheet">
@@ -74,9 +79,34 @@
                         columns: [
                             {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center',width: '15%'},
                             {data: 'id_capex', name:'id_capex' },  
-                            {data: 'comments', name: 'comments', className: 'text-center',width: '15%'},
-                            { data: 'status_capex', name: 'status_capex', orderable: false, searchable: false, className: 'text-center', width: '20%'},
-                            {
+                            {data: 'requester', name: 'requester', className: 'text-center',width: '15%'},
+                            {data: 'project_desc', name: 'project_desc', className: 'text-center',width: '15%'},
+                            {data: 'status_capex', name: 'status_capex', className: 'text-start',
+                                        render: function(data, type, row) {
+                                            if (type === 'display') {
+                                                let badgeClass = '';
+                                                switch(data) {
+                                                    case 'Canceled':
+                                                        badgeClass = 'bg-danger';
+                                                        break;
+                                                    case 'Close':
+                                                        badgeClass = 'bg-secondary';
+                                                          break;
+                                                    case 'On Progress':
+                                                        badgeClass = 'bg-success';
+                                                        break;
+                                                    case 'To Opex':
+                                                        badgeClass = 'bg-info';
+                                                        break;
+                                                    default:
+                                                        return data;
+                                                }
+
+                                                return `<span class="badge ${badgeClass}">${data}</span>`;
+                                            }
+                                            return data;
+                                        }
+                                    },                            {
                                 data: 'created_at', 
                                 name: 'created_at', 
                                 className: 'text-center', width: '25%',
@@ -201,6 +231,22 @@
 
     th.sorting_desc::after {
         content: '▼'; /* Panah ke bawah untuk urutan turun */
+    }
+
+    .form-control {
+        border: 1px solid #ccc;
+        /* Customize the border */
+        box-shadow: none;
+        /* Remove shadow */
+        border-radius: 4px;
+        /* Tambahkan sudut melengkung */
+    }
+
+    .form-control:focus {
+        border-color: #42bd37;
+        /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);
+        /* Menambah efek shadow saat fokus */
     }
 </style>
 
