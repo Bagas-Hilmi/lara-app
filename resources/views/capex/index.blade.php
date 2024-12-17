@@ -254,7 +254,6 @@
                                                     default:
                                                         return data;
                                                 }
-
                                                 // Jika status adalah Close, tambahkan icon mata
                                                 if (data === 'Close') {
                                                     return `

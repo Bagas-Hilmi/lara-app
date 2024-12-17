@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\CipCumBalController;
 use App\Http\Controllers\FaglbController;
 use App\Http\Controllers\CapexController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ApproveController;
+use App\Http\Controllers\UnauthorizedController;
+
 // Default route
 Route::get('/', function () {
     return view('auth.login');
@@ -26,6 +28,13 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::resource('report', ReportController::class);
 });
+
+Route::middleware('auth')->group(function () {
+    Route::resource('approve', ApproveController::class);
+});
+
+Route::get('/unauthorized', [UnauthorizedController::class, 'index'])
+    ->name('unauthorized');
 
 
 // Include template routes

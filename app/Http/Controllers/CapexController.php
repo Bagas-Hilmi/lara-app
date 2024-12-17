@@ -25,7 +25,7 @@ class CapexController extends Controller
     public function index(Request $request)
     {
         if (!Auth::check()) {
-            return redirect()->route('login'); 
+            return redirect()->route('login');
         }
 
         // Memanggil metode
@@ -611,7 +611,6 @@ class CapexController extends Controller
             return response()->file($path);
         }
 
-
         return response()->json(['error' => 'Flag tidak valid'], 400);
     }
 
@@ -707,7 +706,7 @@ class CapexController extends Controller
     {
         $flag = 'ZFM_GET_CJE3';
         $sapClient = 'Client=PRD-300';
-        $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?'; 
+        $sapReqUrl = 'http://eows.ecogreenoleo.co.id/general.php?';
         $sapFm = '&FM=' . $flag;
         $input_1 = '&PSPHI=P-1525-01';
         $eobUrl = $sapReqUrl . $sapClient . $sapFm . $input_1;

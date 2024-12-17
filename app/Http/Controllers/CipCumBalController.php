@@ -117,17 +117,17 @@ class CipCumBalController extends Controller
 
             // Kembalikan respons JSON untuk update
             return response()->json($result);
-        } elseif ($flag == 'update-btn'){
-             $ccbId = $request->input('id_ccb');
-             $newStatus = $request->input('status');
+        } elseif ($flag == 'update-btn') {
+            $ccbId = $request->input('id_ccb');
+            $newStatus = $request->input('status');
 
-             $report = CCB::where('id_ccb', $ccbId)->first();
+            $report = CCB::where('id_ccb', $ccbId)->first();
 
-             if ($report){
-                if ($report->report_status ==1){
+            if ($report) {
+                if ($report->report_status == 1) {
                     return response()->json([
-                        'success'=> false,
-                        'message'=> 'Report sudah released'
+                        'success' => false,
+                        'message' => 'Report sudah released'
                     ]);
                 }
 
@@ -135,17 +135,16 @@ class CipCumBalController extends Controller
                 $report->save();
 
                 return response()->json([
-                    'success'=> true,
-                    'message'=> 'Status berhasil diperbarui'
+                    'success' => true,
+                    'message' => 'Status berhasil diperbarui'
                 ]);
-             }else {
+            } else {
                 return response()->json([
                     'success' => false,
                     'message' => 'Report dengan id_head tidak ditemukan'
                 ]);
             }
-
-        }else {
+        } else {
             throw new \Exception('Flag yang diberikan tidak valid.'); // Tangani flag tidak valid
         }
     }
