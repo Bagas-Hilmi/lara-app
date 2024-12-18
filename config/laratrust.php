@@ -121,7 +121,7 @@ return [
         /**
          * Will be used only if the teams functionality is enabled.
          */
-        'team' => \App\Models\Team::class,
+        // 'team' => \App\Models\Team::class,
     ],
 
     /*
@@ -192,7 +192,7 @@ return [
         /**
          * Define if the laratrust middleware are registered automatically in the service provider.
          */
-        'register' => false,
+        'register' => true,
 
         /**
          * Method to be called in the middleware return case.

@@ -2,20 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laratrust\Contracts\LaratrustUser;
-use Laravel\Sanctum\HasApiTokens;
 use Laratrust\Traits\HasRolesAndPermissions;
-use Laratrust\Traits\DynamicUserRelationshipCalls;
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements LaratrustUser
 {
-    use HasApiTokens;
-    use Notifiable;
-    use DynamicUserRelationshipCalls;
     use HasRolesAndPermissions;
 
     /**
@@ -43,4 +35,10 @@ class User extends Authenticatable implements LaratrustUser
         'password',
         'remember_token',
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+    
+
 }

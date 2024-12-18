@@ -7,31 +7,27 @@ use App\Http\Controllers\CapexController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ApproveController;
 use App\Http\Controllers\UnauthorizedController;
+use Laratrust\LaratrustFacade as Laratrust; // Jika menggunakan Laratrust
 
 // Default route
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('cipcumbal', CipCumBalController::class);
-});
-
-Route::middleware('auth')->group(function () {
     Route::resource('faglb', FaglbController::class);
-});
-
-Route::middleware('auth')->group(function () {
     Route::resource('capex', CapexController::class);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:user|admin|engineer'])->group(function () {
     Route::resource('report', ReportController::class);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:user|admin|engineer'])->group(function () {
     Route::resource('approve', ApproveController::class);
 });
+
 
 Route::get('/unauthorized', [UnauthorizedController::class, 'index'])
     ->name('unauthorized');

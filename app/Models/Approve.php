@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class Approve extends Model
 {
@@ -23,8 +24,10 @@ class Approve extends Model
 
     public static function getData()
     {
-        // Ambil data dari t_master_capex
-        $masterData = DB::table('t_master_capex')
+        $user = Auth::user(); // Ambil data pengguna yang sedang login
+
+        // Mulai query untuk mengambil data dari t_master_capex
+        $query = DB::table('t_master_capex')
             ->leftJoin('t_approval_report', 't_master_capex.id_capex', '=', 't_approval_report.id_capex') // Menyambungkan tabel
             ->where('t_master_capex.status_capex', 'On Progress')
             ->where('t_master_capex.status', 1) // Ambil data yang aktif saja 
@@ -34,11 +37,17 @@ class Approve extends Model
                 't_master_capex.requester',
                 't_master_capex.project_desc',
                 't_approval_report.file_pdf', // Alihkan nama kolom untuk menghindari duplikasi
-                't_master_capex.created_at',
-                't_master_capex.updated_at'
-            )
-            ->get();
+                't_approval_report.upload_date' // Alihkan nama kolom untuk menghindari duplikasi
+            );
 
+        // Jika pengguna bukan admin, tambahkan filter berdasarkan requester
+        if (!$user->hasRole(['admin', 'engineer'])) {
+            $query->where('t_master_capex.requester', $user->name); // Filter data untuk user biasa
+        }
+
+        $masterData = $query->get(); // Eksekusi query untuk mengambil data
+
+        // Perulangan untuk sinkronisasi data ke tabel t_approval_report
         foreach ($masterData as $data) {
             // Cek apakah data sudah ada di t_approval_report
             $existingRecord = DB::table('t_approval_report')
@@ -53,7 +62,6 @@ class Approve extends Model
                         'project_desc' => $data->project_desc,
                         'status_capex' => $data->status_capex,
                         'requester' => $data->requester,
-                        'updated_at' => now(),
                     ]);
             } else {
                 // Jika data belum ada, lakukan insert
@@ -62,12 +70,10 @@ class Approve extends Model
                     'project_desc' => $data->project_desc,
                     'status_capex' => $data->status_capex,
                     'requester' => $data->requester,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ]);
             }
         }
 
-        return $masterData;
+        return $masterData; // Kembalikan hasil query
     }
 }
