@@ -1,36 +1,26 @@
-<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+<!-- Modal Upload PDF -->
+<div class="modal fade" id="uploadPDF" tabindex="-1" aria-labelledby="uploadPDFLabel">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
-                <h5 class="modal-title" id="approveModalLabel" style="color: white;">Approve dan Tanda Tangan</h5>
+                <h5 class="modal-title" id="uploadPDFLabel" style="color: white;">Upload PDF</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="approveForm" action="{{ route('capex.store') }}" method="POST"
-                    enctype="multipart/form-data">
+                <form id="uploadFormPDF" action="{{ route('approve.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT')
-                    <input type="hidden" id="capexId" name="id_capex" value="">
-                    <input type="hidden" name="flag" value="upload-pdf"> 
-
-                    <div class="form-group">
-                        <label for="signature">Tanda Tangan:</label>
-                        <input type="text" id="signature" name="signature" class="form-control" required
-                            placeholder="Masukkan tanda tangan Anda">
+                    <!-- Input Hidden untuk id_capex -->
+                    <input type="hidden" id="hidden-id-capex" name="id_capex" value="">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label" for="bast">File PDF</label>
+                                <input type="file" class="form-control" id="bast" name="file_pdf" accept="application/pdf" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group mt-3">
-                        <label for="comment">Komentar:</label>
-                        <textarea id="comment" name="comment" class="form-control" placeholder="Masukkan komentar"></textarea>
-                    </div>
-
-                    <!-- Form untuk mengunggah PDF -->
-                    <div class="form-group mt-3">
-                        <label for="file_pdf">File PDF:</label>
-                        <input type="file" name="file_pdf" id="file_pdf" class="form-control" accept=".pdf">
-                    </div>
-
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-success">Approve dan Tandatangani</button>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn bg-gradient-success" id="uploadFile">Upload</button>
                     </div>
                 </form>
             </div>
@@ -41,27 +31,27 @@
 
 <script>
     $(document).ready(function() {
-        // Set ID capex untuk modal approve
-        $('#approveModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Tombol yang memicu modal
-            var capexId = button.data('id'); // Ambil ID capex dari tombol
-            $('#capexId').val(capexId); // Set ID capex ke input tersembunyi
+        // Saat modal upload dibuka, set value id_capex
+        $('#uploadPDF').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Mengambil elemen yang memicu modal
+            var idCapex = button.data('id'); // Mengambil id_capex dari tombol
+            $('#hidden-id-capex').val(idCapex); // Menetapkan id_capex ke input hidden
         });
 
-        // Mengirim form approve
-        $('#approveForm').on('submit', function(e) {
+        // Handle form submit
+        $('#uploadFormPDF').on('submit', function(e) {
             e.preventDefault();
-            var formData = new FormData(this);
+            let formData = new FormData(this);
 
             $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
+                url: "{{ route('approve.store') }}", // Pastikan route sudah sesuai
+                type: "POST",
                 data: formData,
                 contentType: false,
                 processData: false,
                 beforeSend: function() {
                     Swal.fire({
-                        title: 'Menandatangani...',
+                        title: 'Uploading...',
                         text: 'Silakan tunggu...',
                         allowOutsideClick: false,
                         didOpen: () => {
@@ -72,17 +62,17 @@
                 success: function(response) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'File telah disetujui dan ditandatangani.',
+                        title: 'Sukses!',
+                        text: response.success,
                         timer: 2000,
                         timerProgressBar: true
                     }).then(() => {
-                        location.reload(); // Refresh halaman
+                        location
+                    .reload(); // Reload halaman untuk menampilkan data terbaru
                     });
                 },
                 error: function(xhr) {
-                    var errorMessage = xhr.responseJSON.error ||
-                    'Gagal menandatangani file';
+                    let errorMessage = xhr.responseJSON.error || 'File PDF gagal diunggah';
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
