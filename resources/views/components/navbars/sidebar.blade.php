@@ -21,7 +21,7 @@
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Laravel</h6>
                 </li>
-        
+                
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'user-profile' ? 'active bg-gradient-success' : '' }} "
                         href="{{ route('user-profile') }}">
@@ -75,7 +75,7 @@
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">UP-Doc FGLB + ZLIS1</span>
                     </a>
                 </li>
-
+                @endif
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'Approve' ? ' active bg-gradient-success' : '' }} "
                         href="{{ route('approve.index') }}">
@@ -85,7 +85,7 @@
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Progress Report</span>
                     </a>
                 </li>
-            @endif
+        
             
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Report Pages</h6>
