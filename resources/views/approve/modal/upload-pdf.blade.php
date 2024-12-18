@@ -11,6 +11,8 @@
                     @csrf
                     <!-- Input Hidden untuk id_capex -->
                     <input type="hidden" id="hidden-id-capex" name="id_capex" value="">
+                    <input type="hidden" name="flag" id="flag" value="upload-pdf">
+
                     <div class="container-fluid">
                         <div class="row mb-3">
                             <div class="col-md-12">
@@ -42,6 +44,8 @@
         $('#uploadFormPDF').on('submit', function(e) {
             e.preventDefault();
             let formData = new FormData(this);
+
+            formData.append('flag', 'upload-pdf');
 
             $.ajax({
                 url: "{{ route('approve.store') }}", // Pastikan route sudah sesuai

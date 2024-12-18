@@ -29,8 +29,7 @@
                                                 <th class="text-center">Requester </th>
                                                 <th class="text-center">Project Description </th>
                                                 <th class="text-center">Status Capex</th>
-                                                <th class="text-center">Created At</th>
-                                                <th class="text-center">Updated At</th>
+                                                <th class="text-center">Upload Date</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -81,7 +80,7 @@
                             {data: 'id_capex', name:'id_capex' },  
                             {data: 'requester', name: 'requester', className: 'text-center',width: '15%'},
                             {data: 'project_desc', name: 'project_desc', className: 'text-center',width: '15%'},
-                            {data: 'status_capex', name: 'status_capex', className: 'text-start',
+                            {data: 'status_capex', name: 'status_capex', className: 'text-center',
                                         render: function(data, type, row) {
                                             if (type === 'display') {
                                                 let badgeClass = '';
@@ -106,22 +105,8 @@
                                             }
                                             return data;
                                         }
-                                    },                            {
-                                data: 'created_at', 
-                                name: 'created_at', 
-                                className: 'text-center', width: '25%',
-                                render: function(data) {
-                                    return moment(data).format('YYYY-MM-DD ');
-                                }
-                            },
-                            {
-                                data: 'updated_at', 
-                                name: 'updated_at', 
-                                className: 'text-center', width: '25%',
-                                render: function(data) {
-                                    return moment(data).format('YYYY-MM-DD ');
-                                }
-                            }
+                                    },
+                            {data: 'upload_date', name:'upload_date' },  
                         ]
                     });
                 });

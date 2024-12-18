@@ -5,10 +5,13 @@
         <i class="fa fa-file-arrow-up" style="font-size: 1.2rem;"></i>
     </a>
 
-    <a href="{{ route('approve.show', $row->id_capex) }}" class="btn bg-gradient-warning">
+    <a href="{{ route('approve.show', $row->id_capex) }}?v={{ time() }}" class="btn bg-gradient-warning">
         <i class="fa fa-eye" style="font-size: 1.2rem;"></i>
     </a>
 
-    
+    <a href="#" class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#signatureModal"
+        data-id="{{ $row->id_capex }}">
+        <i class="fa fa-signature" style="font-size: 1.2rem;"></i>
+    </a>
 
 </div>
