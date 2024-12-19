@@ -71,6 +71,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
+                        order: [[1 , 'desc']],
                         ajax: {
                             url: "{{ route('approve.index') }}",
                             type:'GET'

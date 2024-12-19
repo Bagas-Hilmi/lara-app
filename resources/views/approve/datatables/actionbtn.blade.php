@@ -10,7 +10,10 @@
     </a>
 
     <a href="#" class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#signatureModal"
-        data-id="{{ $row->id_capex }}">
+        data-id="{{ $row->id_capex }}" 
+        data-status1="{{ $row->status_approve_1}}"
+        data-status2="{{ $row->status_approve_2}}"
+        data-status3="{{ $row->status_approve_3}}">
         <i class="fa fa-signature" style="font-size: 1.2rem;"></i>
     </a>
 

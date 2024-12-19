@@ -36,8 +36,12 @@ class Approve extends Model
                 't_master_capex.status_capex',
                 't_master_capex.requester',
                 't_master_capex.project_desc',
-                't_approval_report.file_pdf', // Alihkan nama kolom untuk menghindari duplikasi
-                't_approval_report.upload_date' // Alihkan nama kolom untuk menghindari duplikasi
+                't_approval_report.file_pdf', 
+                't_approval_report.signature_file', 
+                't_approval_report.upload_date', 
+                't_approval_report.status_approve_1', 
+                't_approval_report.status_approve_2', 
+                't_approval_report.status_approve_3' // Alihkan nama kolom untuk menghindari duplikasi
             );
 
         // Jika pengguna bukan admin, tambahkan filter berdasarkan requester

@@ -33,8 +33,16 @@ class ApproveController extends Controller
 
             return DataTables::of($query)
                 ->addColumn('action', function ($row) {
-                    return view('approve/datatables/actionbtn', ['row' => $row]);
+                    // Membuat URL untuk file PDF
+                    $pdfUrl = Storage::url('uploads/approvalFiles/' . $row->file_pdf);
+
+                    // Return view action button dengan data-view yang berisi URL PDF
+                    return view('approve/datatables/actionbtn', [
+                        'row' => $row,
+                        'pdfUrl' => $pdfUrl
+                    ]);
                 })
+
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -101,77 +109,119 @@ class ApproveController extends Controller
 
             return response()->json(['error' => 'File PDF tidak ditemukan'], 400);
         } else if ($flag === 'signature') {
+            $userRole = auth::user()->roles->first()->name;
+
+            // Validasi sesuai role
+            $statusField = 'status_approve_1';
+            if ($userRole === 'user') {
+                $statusField = 'status_approve_2';
+            } else if ($userRole === 'engineer') {
+                $statusField = 'status_approve_3';
+            }
+
             $request->validate([
                 'id_capex' => 'required|exists:t_master_capex,id_capex',
+                $statusField => 'required|in:1,2',
             ]);
 
             $idCapex = $request->input('id_capex');
+            $statusApprove = $request->input($statusField);
 
-            // Cari data pada t_approval_report
             $approve = DB::table('t_approval_report')->where('id_capex', $idCapex)->first();
 
             if (!$approve) {
                 return response()->json(['error' => 'Data capex tidak ditemukan di approval report'], 404);
             }
 
-            try {
-                // Path file PDF yang sudah ada
-                $pdfPath = storage_path('app/public/uploads/approvalFiles/' . $approve->file_pdf);  // Use dynamic file name
+            // Validasi alur approval
+            if ($userRole === 'user' && $approve->status_approve_1 != 1) {
+                return response()->json(['error' => 'Menunggu approval dari admin'], 403);
+            }
+            if ($userRole === 'engineer' && ($approve->status_approve_1 != 1 || $approve->status_approve_2 != 1)) {
+                return response()->json(['error' => 'Menunggu approval sebelumnya'], 403);
+            }
 
-                // Cek apakah file PDF ada
-                if (!file_exists($pdfPath)) {
-                    return response()->json(['error' => 'File PDF tidak ditemukan'], 404);
+            try {
+                $updateData = [
+                    'updated_at' => now(),
+                ];
+
+                // Set data update sesuai role
+                if ($userRole === 'admin') {
+                    $updateData['approved_by'] = auth::user()->name;
+                    $updateData['approved_at'] = now();
+                    $updateData['status_approve_1'] = $statusApprove;
+
+                    // Reset approval selanjutnya jika disapprove
+                    if ($statusApprove == 2) {
+                        $updateData['status_approve_2'] = 0;
+                        $updateData['status_approve_3'] = 0;
+                        $updateData['approved_by_user'] = null;
+                        $updateData['approved_by_engineer'] = null;
+                    }
+                } else if ($userRole === 'user') {
+                    $updateData['approved_by_user'] = auth::user()->name;
+                    $updateData['approved_at_user'] = now();
+                    $updateData['status_approve_2'] = $statusApprove;
+
+                    if ($statusApprove == 2) {
+                        $updateData['status_approve_3'] = 0;
+                        $updateData['approved_by_engineer'] = null;
+                    }
+                } else if ($userRole === 'engineer') {
+                    $updateData['approved_by_engineer'] = auth::user()->name;
+                    $updateData['approved_at_engineer'] = now();
+                    $updateData['status_approve_3'] = $statusApprove;
                 }
 
-                // Buat instance FPDI (yang sudah mengimport FPDF)
-                $pdf = new Fpdi();
+                // Jika approve, proses PDF
+                if ($statusApprove == 1) {
+                    $pdfPath = storage_path('app/public/uploads/approvalFiles/' . $approve->file_pdf);
 
-                // Tentukan file yang akan dimodifikasi (file PDF yang sudah ada)
-                $pageCount = $pdf->setSourceFile($pdfPath);  // Memuat PDF yang sudah ada
+                    if (!file_exists($pdfPath)) {
+                        return response()->json(['error' => 'File PDF tidak ditemukan'], 404);
+                    }
 
-                // Pilih halaman pertama (bisa disesuaikan jika lebih dari satu halaman)
-                $templateId = $pdf->importPage(1);
-                $pdf->addPage();
+                    $pdf = new Fpdi();
+                    $pageCount = $pdf->setSourceFile($pdfPath);
 
-                // Gunakan halaman yang diimpor
-                $pdf->useTemplate($templateId);
+                    for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                        $templateId = $pdf->importPage($pageNo);
+                        $pdf->addPage();
+                        $pdf->useTemplate($templateId);
+                    }
 
-                // Set font untuk tanda tangan
-                $pdf->SetFont('Times', '', 9);
+                    // Set posisi tanda tangan sesuai role
+                    $yPosition = 250; // Admin
+                    if ($userRole === 'user') {
+                        $yPosition = 270;
+                    } else if ($userRole === 'engineer') {
+                        $yPosition = 290;
+                    }
 
-                // Tentukan posisi tanda tangan
-                $pdf->SetXY(20, 250);  // Sesuaikan dengan posisi yang diinginkan dalam PDF
+                    $pdf->SetFont('Times', '', 9);
+                    $pdf->SetXY(20, $yPosition);
+                    $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (' . ucfirst($userRole) . ')', 0, 1);
+                    $pdf->SetX(20);
+                    $pdf->Cell(0, 5, 'Date: ' . now()->format('Y-m-d H:i:s'), 0, 1);
 
-                // Tambahkan teks tanda tangan
-                $pdf->Cell(0, 5, 'Approved by: ' . Auth::user()->name, 0, 1); // Baris pertama
+                    $signatureFileName = ($approve->signature_file) ? $approve->signature_file : 'signed_' . $approve->file_pdf . '.pdf';
+                    $signatureFilePath = storage_path('app/public/uploads/signatures/' . $signatureFileName);
 
-                // Pindahkan posisi vertikal ke bawah secara manual
-                $pdf->SetX(20); // Tetap di posisi horizontal yang sama
-                $pdf->Cell(0, 5, 'Date: ' . now()->format('Y-m-d H:i:s'), 0, 1); // Baris kedua
+                    $pdf->Output('F', $signatureFilePath);
+                    $updateData['signature_file'] = $signatureFileName;
+                }
 
-                // Generate nama file tanda tangan
-                $signatureFileName = 'signed_' . $approve->file_pdf . '.pdf';
-                $signatureFilePath = storage_path('app/public/uploads/signatures/' . $signatureFileName);
-
-                // Simpan file PDF yang sudah dimodifikasi
-                $pdf->Output('F', $signatureFilePath);
-
-                // Update database dengan nama file yang baru
                 DB::table('t_approval_report')
                     ->where('id_capex', $idCapex)
-                    ->update([
-                        'signature_file' => $signatureFileName,
-                        'approved_by' => Auth::user()->name,
-                        'approved_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                    ->update($updateData);
 
                 return response()->json([
-                    'success' => 'Digital signature has been added successfully'
+                    'success' => ($statusApprove == 1 ? 'Digital signature has been added successfully' : 'Document has been disapproved successfully')
                 ]);
             } catch (\Exception $e) {
                 return response()->json([
-                    'error' => 'Failed to add signature: ' . $e->getMessage()
+                    'error' => 'Failed to process document: ' . $e->getMessage()
                 ], 500);
             }
         }
