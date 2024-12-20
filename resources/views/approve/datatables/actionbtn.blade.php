@@ -13,7 +13,12 @@
         data-id="{{ $row->id_capex }}" 
         data-status1="{{ $row->status_approve_1}}"
         data-status2="{{ $row->status_approve_2}}"
-        data-status3="{{ $row->status_approve_3}}">
+        data-status3="{{ $row->status_approve_3}}"
+        data-wbs="{{ $row->wbs_capex}}"
+        data-apv_admin="{{ $row->approved_by_admin}}"
+        data-apv_at_admin="{{ $row->approved_at_admin}}"
+        data-apv_user="{{ $row->approved_by_user}}"
+        data-apv_engineer="{{ $row->approved_by_engineer}}">
         <i class="fa fa-signature" style="font-size: 1.2rem;"></i>
     </a>
 

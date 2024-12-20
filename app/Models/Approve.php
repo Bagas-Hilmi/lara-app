@@ -36,18 +36,34 @@ class Approve extends Model
                 't_master_capex.status_capex',
                 't_master_capex.requester',
                 't_master_capex.project_desc',
-                't_approval_report.file_pdf', 
-                't_approval_report.signature_file', 
-                't_approval_report.upload_date', 
-                't_approval_report.status_approve_1', 
-                't_approval_report.status_approve_2', 
-                't_approval_report.status_approve_3' // Alihkan nama kolom untuk menghindari duplikasi
+                't_master_capex.wbs_capex',
+                't_approval_report.file_pdf',
+                't_approval_report.signature_file',
+                't_approval_report.upload_date',
+                't_approval_report.status_approve_1',
+                't_approval_report.status_approve_2',
+                't_approval_report.status_approve_3', 
+                't_approval_report.approved_by_admin', 
+                't_approval_report.approved_at_admin', 
+                't_approval_report.approved_by_user', 
+                't_approval_report.approved_at_user', 
+                't_approval_report.approved_by_engineer', 
+                't_approval_report.approved_at_engineer', // Alihkan nama kolom untuk menghindari duplikasi
             );
 
         // Jika pengguna bukan admin, tambahkan filter berdasarkan requester
-        if (!$user->hasRole(['admin', 'engineer'])) {
-            $query->where('t_master_capex.requester', $user->name); // Filter data untuk user biasa
+        if ($user->hasRole('admin')) {
+            // Admin bisa melihat semua data tanpa filter
+            $query;
+        } elseif ($user->hasRole('user')) {
+            // User hanya dapat melihat data berdasarkan kolom requester yang sesuai dengan nama mereka
+            $query->where('t_master_capex.requester', $user->name);
+        } elseif ($user->hasRole('engineer')) {
+            // Engineer dapat melihat semua data, tetapi hanya dengan wbs_capex yang bernilai 'Project'
+            $query->where('t_master_capex.wbs_capex', 'Project');
         }
+
+
 
         $masterData = $query->get(); // Eksekusi query untuk mengambil data
 
@@ -66,6 +82,7 @@ class Approve extends Model
                         'project_desc' => $data->project_desc,
                         'status_capex' => $data->status_capex,
                         'requester' => $data->requester,
+                        'wbs_capex' => $data->wbs_capex,
                     ]);
             } else {
                 // Jika data belum ada, lakukan insert
@@ -74,6 +91,7 @@ class Approve extends Model
                     'project_desc' => $data->project_desc,
                     'status_capex' => $data->status_capex,
                     'requester' => $data->requester,
+                    'wbs_capex' => $data->wbs_capex,
                 ]);
             }
         }

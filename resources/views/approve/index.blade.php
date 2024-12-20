@@ -28,6 +28,7 @@
                                                 <th class="text-center">ID</th>
                                                 <th class="text-center">Requester </th>
                                                 <th class="text-center">Project Description </th>
+                                                <th class="text-center">WBS Capex </th>
                                                 <th class="text-center">Status Capex</th>
                                                 <th class="text-center">Upload Date</th>
                                             </tr>
@@ -77,10 +78,31 @@
                             type:'GET'
                         },
                         columns: [
-                            {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center',width: '15%'},
+                            {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center'},
                             {data: 'id_capex', name:'id_capex' },  
-                            {data: 'requester', name: 'requester', className: 'text-center',width: '15%'},
-                            {data: 'project_desc', name: 'project_desc', className: 'text-center',width: '15%'},
+                            {data: 'requester', name: 'requester', 
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align','left');
+                                        }},
+                            {data: 'project_desc', name: 'project_desc', 
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align','left');
+                                        }},
+                            {data: 'wbs_capex', name: 'wbs_capex', 
+                                    createdCell: function(td, cellData, rowData, rowIndex, colIndex){
+                                            $(td).css('text-align','left');
+                                        },
+                                    render: function(data, type, row) {
+                                        if (type === 'display') {
+                                            if (data === 'Project') {
+                                                return '<span class="badge bg-info">Project</span>';
+                                            } else if (data === 'Non Project') {
+                                                return '<span class="badge bg-warning">Non Project</span>';
+                                            }
+                                            return data; // Untuk nilai lain tampilkan apa adanya
+                                        }
+                                        return data;
+                                    }},
                             {data: 'status_capex', name: 'status_capex', className: 'text-center',
                                         render: function(data, type, row) {
                                             if (type === 'display') {
@@ -108,7 +130,7 @@
                                         }
                                     },
                             {data: 'upload_date', name:'upload_date' },  
-                        ]
+                        ],   
                     });
                 });
             </script>

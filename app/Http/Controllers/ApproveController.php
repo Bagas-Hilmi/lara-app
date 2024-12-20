@@ -32,14 +32,9 @@ class ApproveController extends Controller
             $query = Approve::getData();  // Ganti dengan query yang sesuai
 
             return DataTables::of($query)
-                ->addColumn('action', function ($row) {
-                    // Membuat URL untuk file PDF
-                    $pdfUrl = Storage::url('uploads/approvalFiles/' . $row->file_pdf);
-
-                    // Return view action button dengan data-view yang berisi URL PDF
+                ->addColumn('action', function ($row) {                   
                     return view('approve/datatables/actionbtn', [
                         'row' => $row,
-                        'pdfUrl' => $pdfUrl
                     ]);
                 })
 
@@ -148,8 +143,8 @@ class ApproveController extends Controller
 
                 // Set data update sesuai role
                 if ($userRole === 'admin') {
-                    $updateData['approved_by'] = auth::user()->name;
-                    $updateData['approved_at'] = now();
+                    $updateData['approved_by_admin'] = auth::user()->name;
+                    $updateData['approved_at_admin'] = now();
                     $updateData['status_approve_1'] = $statusApprove;
 
                     // Reset approval selanjutnya jika disapprove
@@ -176,36 +171,59 @@ class ApproveController extends Controller
 
                 // Jika approve, proses PDF
                 if ($statusApprove == 1) {
-                    $pdfPath = storage_path('app/public/uploads/approvalFiles/' . $approve->file_pdf);
+                    // Tentukan path file yang akan digunakan
+                    $baseFilePath = storage_path('app/public/uploads/approvalFiles/' . $approve->file_pdf);
+                    $signatureFilePath = storage_path('app/public/uploads/signatures/' . ($approve->signature_file ?? 'signed_' . $approve->file_pdf));
 
-                    if (!file_exists($pdfPath)) {
+                    // Gunakan file yang sudah ditandatangani jika ada, jika tidak gunakan file asli
+                    $sourcePath = file_exists($signatureFilePath) ? $signatureFilePath : $baseFilePath;
+
+                    if (!file_exists($sourcePath)) {
                         return response()->json(['error' => 'File PDF tidak ditemukan'], 404);
                     }
 
                     $pdf = new Fpdi();
-                    $pageCount = $pdf->setSourceFile($pdfPath);
+                    $pageCount = $pdf->setSourceFile($sourcePath);
 
+                    // Salin semua halaman dari file yang ada
                     for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
                         $templateId = $pdf->importPage($pageNo);
                         $pdf->addPage();
                         $pdf->useTemplate($templateId);
+
+                        // Hanya tambahkan tanda tangan di halaman terakhir
+                        if ($pageNo == $pageCount) {
+                            // Atur posisi X untuk tanda tangan (berjejer)
+                            $positions = [
+                                'admin' => 20,  // Admin di kiri
+                                'user' => 90,   // User di tengah
+                                'engineer' => 160 // Engineer di kanan
+                            ];
+
+                            $pdf->SetFont('Times', '', 9);
+
+                            // Hanya tambahkan tanda tangan untuk role yang belum menandatangani
+                            if ($userRole === 'admin' && (!$approve->approved_by_admin || $approve->status_approve_1 != 1)) {
+                                $pdf->SetXY($positions['admin'], 250);
+                                $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (Admin)', 0, 1);
+                                $pdf->SetXY($positions['admin'], 255);
+                                $pdf->Cell(0, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'), 0, 1);
+                            } else if ($userRole === 'user' && (!$approve->approved_by_user || $approve->status_approve_2 != 1)) {
+                                $pdf->SetXY($positions['user'], 250);
+                                $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (User)', 0, 1);
+                                $pdf->SetXY($positions['user'], 255);
+                                $pdf->Cell(0, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'), 0, 1);
+                            } else if ($userRole === 'engineer' && (!$approve->approved_by_engineer || $approve->status_approve_3 != 1)) {
+                                $pdf->SetXY($positions['engineer'], 250);
+                                $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (Engineer)', 0, 1);
+                                $pdf->SetXY($positions['engineer'], 255);
+                                $pdf->Cell(0, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'), 0, 1);
+                            }
+                        }
                     }
 
-                    // Set posisi tanda tangan sesuai role
-                    $yPosition = 250; // Admin
-                    if ($userRole === 'user') {
-                        $yPosition = 270;
-                    } else if ($userRole === 'engineer') {
-                        $yPosition = 290;
-                    }
-
-                    $pdf->SetFont('Times', '', 9);
-                    $pdf->SetXY(20, $yPosition);
-                    $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (' . ucfirst($userRole) . ')', 0, 1);
-                    $pdf->SetX(20);
-                    $pdf->Cell(0, 5, 'Date: ' . now()->format('Y-m-d H:i:s'), 0, 1);
-
-                    $signatureFileName = ($approve->signature_file) ? $approve->signature_file : 'signed_' . $approve->file_pdf . '.pdf';
+                    // Simpan PDF dengan tanda tangan
+                    $signatureFileName = 'signed_' . $approve->file_pdf;
                     $signatureFilePath = storage_path('app/public/uploads/signatures/' . $signatureFileName);
 
                     $pdf->Output('F', $signatureFilePath);
@@ -233,8 +251,8 @@ class ApproveController extends Controller
     {
         $approve = Approve::where('id_capex', $id)->firstOrFail();
 
-        $filename = $approve->file_pdf;
-        $path = storage_path('app/public/uploads/approvalFiles/' . $filename);
+        $filename = $approve->signature_file;
+        $path = storage_path('app/public/uploads/signatures/' . $filename);
 
         if (!file_exists($path)) {
             abort(404, 'File not found.');
