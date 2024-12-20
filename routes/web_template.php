@@ -7,7 +7,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 // Include routing roles
-require base_path('routes/web_role.php');
 
 // Authentication routes
 Auth::routes();

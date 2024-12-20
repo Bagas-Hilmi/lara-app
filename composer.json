@@ -7,12 +7,15 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.0",
+        "codedge/laravel-fpdf": "^1.12",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5",
         "maatwebsite/excel": "^3.1",
         "santigarcor/laratrust": "^8.3",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2.6",
         "yajra/laravel-datatables-oracle": "^11.1"
     },
     "require-dev": {
