@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Fpdi;
 
+
 class ApproveController extends Controller
 {
 
@@ -32,7 +33,7 @@ class ApproveController extends Controller
             $query = Approve::getData();  // Ganti dengan query yang sesuai
 
             return DataTables::of($query)
-                ->addColumn('action', function ($row) {                   
+                ->addColumn('action', function ($row) {
                     return view('approve/datatables/actionbtn', [
                         'row' => $row,
                     ]);
@@ -91,7 +92,7 @@ class ApproveController extends Controller
                     ->where('id_capex', $idCapex)
                     ->update([
                         'file_pdf' => $PDFfileName,
-                        'approved_by' => Auth::user()->name,
+                        'upload_by' => Auth::user()->name,
                         'upload_date' => now(),
                         'updated_at' => now(),
                     ]);
@@ -105,6 +106,7 @@ class ApproveController extends Controller
             return response()->json(['error' => 'File PDF tidak ditemukan'], 400);
         } else if ($flag === 'signature') {
             $userRole = auth::user()->roles->first()->name;
+            $userId = auth::id();
 
             // Validasi sesuai role
             $statusField = 'status_approve_1';
@@ -112,7 +114,10 @@ class ApproveController extends Controller
                 $statusField = 'status_approve_2';
             } else if ($userRole === 'engineer') {
                 $statusField = 'status_approve_3';
+            } else if ($userRole === 'admin' && $userId === 4) {
+                $statusField = 'status_approve_4';
             }
+
 
             $request->validate([
                 'id_capex' => 'required|exists:t_master_capex,id_capex',
@@ -128,11 +133,14 @@ class ApproveController extends Controller
                 return response()->json(['error' => 'Data capex tidak ditemukan di approval report'], 404);
             }
 
-            // Validasi alur approval
-            if ($userRole === 'user' && $approve->status_approve_1 != 1) {
-                return response()->json(['error' => 'Menunggu approval dari admin'], 403);
+            if ($userRole === 'admin' && $userId == 4 && $approve->status_approve_1 != 1) {
+                return response()->json(['error' => 'Menunggu approval dari admin 1'], 403);
             }
-            if ($userRole === 'engineer' && ($approve->status_approve_1 != 1 || $approve->status_approve_2 != 1)) {
+
+            if ($userRole === 'user' && ($approve->status_approve_1 != 1 || $approve->status_approve_4 != 1)) {
+                return response()->json(['error' => 'Menunggu approval dari admin 2'], 403);
+            }
+            if ($userRole === 'engineer' && ($approve->status_approve_1 != 1 || $approve->status_approve_2 != 1 || $approve->status_approve_4 != 1)) {
                 return response()->json(['error' => 'Menunggu approval sebelumnya'], 403);
             }
 
@@ -143,9 +151,15 @@ class ApproveController extends Controller
 
                 // Set data update sesuai role
                 if ($userRole === 'admin') {
-                    $updateData['approved_by_admin'] = auth::user()->name;
-                    $updateData['approved_at_admin'] = now();
-                    $updateData['status_approve_1'] = $statusApprove;
+                    if ($userId == 3) {
+                        $updateData['approved_by_admin_1'] = auth::user()->name;
+                        $updateData['approved_at_admin_1'] = now();
+                        $updateData['status_approve_1'] = $statusApprove;
+                    } else if ($userId == 4) {
+                        $updateData['approved_by_admin_2'] = auth::user()->name;
+                        $updateData['approved_at_admin_2'] = now();
+                        $updateData['status_approve_4'] = $statusApprove;
+                    }
 
                     // Reset approval selanjutnya jika disapprove
                     if ($statusApprove == 2) {
@@ -186,41 +200,63 @@ class ApproveController extends Controller
                     $pageCount = $pdf->setSourceFile($sourcePath);
 
                     // Salin semua halaman dari file yang ada
+                    // Salin semua halaman dari file yang ada
                     for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
                         $templateId = $pdf->importPage($pageNo);
                         $pdf->addPage();
                         $pdf->useTemplate($templateId);
 
-                        // Hanya tambahkan tanda tangan di halaman terakhir
+                        // Tambahkan tanda tangan hanya di halaman terakhir
                         if ($pageNo == $pageCount) {
-                            // Atur posisi X untuk tanda tangan (berjejer)
+                            // Posisi X untuk setiap tanda tangan (berjejer)
                             $positions = [
-                                'admin' => 20,  // Admin di kiri
-                                'user' => 90,   // User di tengah
-                                'engineer' => 160 // Engineer di kanan
+                                'admin_1' => 20,  // Admin pertama di kiri
+                                'admin_2' => 60,  // Admin kedua di tengah
+                                'user' => 100,    // User di kanan
+                                'engineer' => 140 // Engineer di ujung kanan
                             ];
 
-                            $pdf->SetFont('Times', '', 9);
+                            $pdf->SetFont('Times', '', 10); // Atur font untuk teks
 
-                            // Hanya tambahkan tanda tangan untuk role yang belum menandatangani
-                            if ($userRole === 'admin' && (!$approve->approved_by_admin || $approve->status_approve_1 != 1)) {
-                                $pdf->SetXY($positions['admin'], 250);
-                                $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (Admin)', 0, 1);
-                                $pdf->SetXY($positions['admin'], 255);
-                                $pdf->Cell(0, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'), 0, 1);
-                            } else if ($userRole === 'user' && (!$approve->approved_by_user || $approve->status_approve_2 != 1)) {
-                                $pdf->SetXY($positions['user'], 250);
-                                $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (User)', 0, 1);
-                                $pdf->SetXY($positions['user'], 255);
-                                $pdf->Cell(0, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'), 0, 1);
-                            } else if ($userRole === 'engineer' && (!$approve->approved_by_engineer || $approve->status_approve_3 != 1)) {
-                                $pdf->SetXY($positions['engineer'], 250);
-                                $pdf->Cell(0, 5, 'Approved by: ' . auth::user()->name . ' (Engineer)', 0, 1);
-                                $pdf->SetXY($positions['engineer'], 255);
-                                $pdf->Cell(0, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'), 0, 1);
+                            // Contoh menambahkan tanda tangan sesuai role
+                            if ($userId == 3 && (!$approve->approved_by_admin_1 || $approve->status_approve_1 != 1)) {
+                                $pdf->SetXY($positions['admin_1'], 230);
+                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->SetXY($positions['admin_1'], 235);
+                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->SetXY($positions['admin_1'], 240);
+                                $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
+                            }
+                            // Admin 2
+                            else if ($userId == 4 && (!$approve->approved_by_admin_2 || $approve->status_approve_4 != 1)) {
+                                $pdf->SetXY($positions['admin_2'], 230);
+                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->SetXY($positions['admin_2'], 235);
+                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->SetXY($positions['admin_2'], 240);
+                                $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
+                            }
+                            // User
+                            else if ($userRole === 'user' && (!$approve->approved_by_user || $approve->status_approve_2 != 1)) {
+                                $pdf->SetXY($positions['user'], 230);
+                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->SetXY($positions['user'], 235);
+                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->SetXY($positions['user'], 240);
+                                $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
+                            }
+                            // Engineer
+                            else if ($userRole === 'engineer' && (!$approve->approved_by_engineer || $approve->status_approve_3 != 1)) {
+                                $pdf->SetXY($positions['engineer'], 230);
+                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->SetXY($positions['engineer'], 235);
+                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->SetXY($positions['engineer'], 240);
+                                $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
                             }
                         }
                     }
+
 
                     // Simpan PDF dengan tanda tangan
                     $signatureFileName = 'signed_' . $approve->file_pdf;

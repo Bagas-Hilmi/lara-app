@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #17a2b8;">
-                <h5 class="modal-title" id="signatureModalLabel" style="color: white;">Tanda Tangan Digital</h5>
+                <h5 class="modal-title" id="signatureModalLabel" style="color: white;">Tanda Tangan BAST</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
             </div>
             <div class="modal-body">
@@ -18,8 +18,20 @@
                                 <h6>Persetujuan Admin</h6>
                                 <div class="signature-block p-2 border rounded">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span id="adminSignature">Belum ditandatangani</span>
-                                        <span id="adminStatus" class="badge bg-secondary">Menunggu</span>
+                                        <span id="admin1_Signature">Belum ditandatangani</span>
+                                        <span id="admin1_Status" class="badge bg-secondary">Menunggu</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6>Persetujuan Manager OC</h6>
+                                <div class="signature-block p-2 border rounded">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span id="admin2_Signature">Belum ditandatangani</span>
+                                        <span id="admin2_Status" class="badge bg-secondary">Menunggu</span>
                                     </div>
                                 </div>
                             </div>
@@ -61,6 +73,14 @@
 
                             </div>
                         </div>
+
+                        <a 
+                            id="viewPdfButton" 
+                            href="#" 
+                            class="btn btn-primary" 
+                            target="_blank">
+                            <i class="fa fa-file-pdf"></i> Lihat PDF
+                        </a>
                     </div>
 
                     <div class="modal-footer">
@@ -79,15 +99,23 @@
         $('#signatureModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var idCapex = button.data('id');
-            var statusApprove1 = button.data('status1'); // Status Admin
+            var statusApprove1 = button.data('status1'); // Status Admin 1
             var statusApprove2 = button.data('status2'); // Status User
             var statusApprove3 = button.data('status3'); // Status Engineer
+            var statusApprove4 = button.data('status4'); // Status Admin 2
             var wbs_capex = button.data('wbs');
-            var apv_admin = button.data('apv_admin');
-            var apv_at_admin = button.data('apv_at_admin');
+            var apv_admin1 = button.data('apv_admin1');
+            var apv_at_admin1 = button.data('apv_at_admin1');
+            var apv_admin2 = button.data('apv_admin2');
+            var apv_at_admin2 = button.data('apv_at_admin2');
             var apv_user = button.data('apv_user');
+            var apv_at_user = button.data('apv_at_user');
             var apv_engineer = button.data('apv_engineer');
+            var apv_at_engineer = button.data('apv_at_engineer');
             var userRole = "{{ auth()->user()->roles->first()->name }}"; // Role Pengguna
+            var userId = "{{ auth()->user()->id }}"; // Get current user ID
+            var id_admin_1 = 3; // ID Admin 1
+            var id_admin_2 = 4; // ID Admin 2  
 
             $('#signature-id-capex').val(idCapex);
 
@@ -96,37 +124,56 @@
 
             // Tentukan status berdasarkan role pengguna
             if (userRole === 'admin') {
-                currentStatus = statusApprove1;
-                canSign = true; // Admin bisa menyetujui tanpa syarat
+                if (userId == id_admin_1) {
+                    currentStatus = statusApprove1;
+                    canSign = true; // Admin 1 bisa sign kapan saja
+                } else if (userId == id_admin_2) {
+                    currentStatus = statusApprove4;
+                    canSign = statusApprove1 == 1; // Admin 2 hanya bisa sign jika Admin 1 sudah approve
+                }
             } else if (userRole === 'user') {
                 currentStatus = statusApprove2;
-                canSign = statusApprove1 == 1; // User hanya bisa sign jika Admin sudah approve
+                canSign = statusApprove1 == 1 && statusApprove4 ==
+                    1; // User bisa sign jika Admin 1 dan Admin 2 sudah approve
             } else if (userRole === 'engineer') {
                 currentStatus = statusApprove3;
-                canSign = statusApprove1 == 1 && statusApprove2 ==
-                    1; // Engineer hanya bisa sign jika Admin dan User sudah approve
+                canSign = statusApprove1 == 1 && statusApprove4 == 1 && statusApprove2 ==
+                    1; // Engineer bisa sign jika Admin 1, Admin 2 dan User sudah approve
             }
-            // Tambahkan ini setelah deklarasi variabel dan sebelum pengecekan canSign
-            // Cek status Admin
+
             if (statusApprove1 == 1) {
-                $('#adminSignature').text('Approved By ' + apv_admin + ' at' + apv_at_admin);
-                $('#adminStatus').text('Disetujui').removeClass('bg-gradient-secondary').addClass(
+                $('#admin1_Signature').text('Prepared by ' + apv_admin1 + ' at ' + apv_at_admin1);
+                $('#admin1_Status').text('Disetujui').removeClass('bg-gradient-secondary').addClass(
                     'bg-success');
             } else if (statusApprove1 == 2) {
-                $('#adminSignature').text('Ditolak');
-                $('#adminStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
+                $('#admin1_Signature').text('Ditolak');
+                $('#admin1_Status').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
             } else {
-                $('#adminSignature').text('Belum ditandatangani');
-                $('#adminStatus').text('Menunggu').removeClass('bg-success bg-danger').addClass(
+                $('#admin1_Signature').text('Belum ditandatangani');
+                $('#admin1_Status').text('Menunggu').removeClass('bg-success bg-danger').addClass(
+                    'bg-secondary');
+            }
+
+            // Display logic untuk Admin 2
+            if (statusApprove4 == 1) {
+                $('#admin2_Signature').text('Reviewed by ' + apv_admin2 + ' at ' + apv_at_admin2);
+                $('#admin2_Status').text('Disetujui').removeClass('bg-gradient-secondary').addClass(
+                    'bg-success');
+            } else if (statusApprove4 == 2) {
+                $('#admin2_Signature').text('Ditolak');
+                $('#admin2_Status').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
+            } else {
+                $('#admin2_Signature').text('Belum ditandatangani');
+                $('#admin2_Status').text('Menunggu').removeClass('bg-success bg-danger').addClass(
                     'bg-secondary');
             }
 
             // Cek status User
             if (statusApprove2 == 1) {
-                $('#userSignature').text('Ditandatangani oleh : ' + apv_user);
+                $('#userSignature').text('Approved by ' + apv_user + ' at ' + apv_at_user);
                 $('#userStatus').text('Disetujui').removeClass('bg-secondary').addClass('bg-success');
             } else if (statusApprove2 == 2) {
-                $('#userSignature').text('Ditolak');
+                $('#userSignature').text('Ditolak ' + apv_user + ' at ' + apv_at_userd);
                 $('#userStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
             } else {
                 $('#userSignature').text('Belum ditandatangani');
@@ -137,12 +184,12 @@
             // Cek status Engineer
             if (wbs_capex === 'Project') {
                 if (statusApprove3 == 1) {
-                    $('#engineerSignature').text('Ditandatangani ' + apv_engineer);
+                    $('#engineerSignature').text('Approved by ' + apv_engineer + ' at ' + apv_at_engineer);
                     $('#engineerStatus').text('Disetujui').removeClass('bg-secondary').addClass(
                         'bg-success');
                     $('#engineerName').text('Persetujuan Engineer');
                 } else if (statusApprove3 == 2) {
-                    $('#engineerSignature').text('Ditolak');
+                    $('#engineerSignature').text('Ditolak ' + apv_engineer + ' at ' + apv_at_engineer);
                     $('#engineerStatus').text('Ditolak').removeClass('bg-secondary').addClass(
                         'bg-danger');
                     $('#engineerName').text('Persetujuan Engineer');
@@ -163,19 +210,25 @@
             }
 
 
-            if (userRole === 'user' && !canSign) {
-                $('#saveSignature')
-                    .text('Menunggu Persetujuan Admin')
-                    .prop('disabled', true)
-                    .show();
-                return;
-            } else if (userRole === 'engineer' && !canSign) {
-                $('#saveSignature')
-                    .text('Menunggu Persetujuan User')
-                    .prop('disabled', true)
-                    .show();
-
-                return;
+            if (userRole === 'admin' && userId == id_admin_2 && !canSign) { 
+                    $('#saveSignature')
+                        .text('Menunggu Persetujuan Admin 1')
+                        .prop('disabled', true)
+                        .show();
+                    return;
+                }
+                else if (userRole === 'user' && !canSign) {
+                    $('#saveSignature')
+                        .text('Menunggu Persetujuan Admin')
+                        .prop('disabled', true)
+                        .show();
+                    return;
+                } else if (userRole === 'engineer' && !canSign) {
+                    $('#saveSignature')
+                        .text('Menunggu Persetujuan User')
+                        .prop('disabled', true)
+                        .show();
+                    return;
             }
 
 
@@ -190,55 +243,58 @@
 
             } else if (currentStatus == 1) {
                 if (userRole === 'admin') {
-                    // Admin menandatangani
-                    $('#saveSignature')
-                        .hide();
-
+                    if (userId == id_admin_1) {
+                        // Admin 1 menandatangani
+                        $('#saveSignature').hide();
+                        $('#admin1_Signature').text('Prepared By ' + apv_admin1 + ' at ' +
+                            apv_at_admin1);
+                        $('#admin1_Status').text('Disetujui').removeClass('bg-secondary').addClass(
+                            'bg-success');
+                    } else if (userId == id_admin_2) {
+                        // Admin 2 menandatangani
+                        $('#saveSignature').hide();
+                        $('#admin2_Signature').text('Approved By ' + apv_admin2 + ' at ' +
+                            apv_at_admin2);
+                        $('#admin2_Status').text('Disetujui').removeClass('bg-secondary').addClass(
+                            'bg-success');
+                    }
                 } else if (userRole === 'user') {
-                    // User menandatangani
-                    $('#saveSignature')
-                        .hide();
+                    $('#saveSignature').hide();
                 } else if (userRole === 'engineer') {
-                    // Engineer menandatangani
-                    $('#saveSignature')
-                        .hide();
+                    $('#saveSignature').hide();
                 }
             } else if (currentStatus == 2) {
                 if (userRole === 'admin') {
-                    // Admin menolak
-                    $('#saveSignature')
-                        .text('Ditolak')
-                        .removeClass('bg-gradient-warning btn-success')
-                        .addClass('btn-danger')
-                        .prop('disabled', true);
+                    if (userId == id_admin_1) {
+                        // Admin 1 menolak
+                        $('#saveSignature').hide();
 
-                    // Update status untuk Admin
-                    $('#adminSignature').text('Ditolak');
-                    $('#adminStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
+                        $('#admin1_Signature').text('Ditolak');
+                        $('#admin1_Status').text('Ditolak').removeClass('bg-secondary').addClass(
+                            'bg-danger');
+                    } else if (userId == id_admin_2) {
+                        // Admin 2 menolak
+                        $('#saveSignature').hide();
+
+                        $('#admin2_Signature').text('Ditolak');
+                        $('#admin2_Status').text('Ditolak').removeClass('bg-secondary').addClass(
+                            'bg-danger');
+                    }
                 } else if (userRole === 'user') {
                     // User menolak
-                    $('#saveSignature')
-                        .text('Ditolak')
-                        .removeClass('bg-gradient-warning btn-success')
-                        .addClass('btn-danger')
-                        .prop('disabled', true);
+                    $('#saveSignature').hide();
 
-                    // Update status untuk User
                     $('#userSignature').text('Ditolak');
                     $('#userStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
                 } else if (userRole === 'engineer') {
                     // Engineer menolak
-                    $('#saveSignature')
-                        .text('Ditolak')
-                        .removeClass('bg-gradient-warning btn-success')
-                        .addClass('btn-danger')
-                        .prop('disabled', true);
+                    $('#saveSignature').hide();
 
-                    // Update status untuk Engineer
                     $('#engineerSignature').text('Ditolak');
                     $('#engineerStatus').text('Ditolak').removeClass('bg-secondary').addClass(
                         'bg-danger');
                 }
+
             }
         });
 
@@ -246,34 +302,40 @@
         $('#saveSignature').on('click', function(e) {
             e.preventDefault();
 
-            if ($(this).text() === 'Menunggu Persetujuan') {
-                Swal.fire({
-                    title: 'Konfirmasi Persetujuan',
-                    text: 'Apakah Anda ingin melakukan persetujuan?',
-                    icon: 'question',
-                    showDenyButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Persetujuan',
-                    denyButtonText: 'Penolakan',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed || result.isDenied) {
-                        let formData = new FormData($('#signatureForm')[0]);
-                        let userRole = "{{ auth()->user()->roles->first()->name }}";
+            // Hapus pengecekan teks tombol
+            Swal.fire({
+                title: 'Konfirmasi Persetujuan',
+                text: 'Apakah Anda ingin melakukan persetujuan?',
+                icon: 'question',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Setuju',
+                denyButtonText: 'Tolak',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed || result.isDenied) {
+                    let formData = new FormData($('#signatureForm')[0]);
+                    let userRole = "{{ auth()->user()->roles->first()->name }}";
+                    var userId = "{{ auth()->user()->id }}";
+                    var id_admin_1 = 3;
+                    var id_admin_2 = 4;
 
-                        // Tentukan status berdasarkan role
-                        if (userRole === 'admin') {
+                    // Tentukan status berdasarkan role
+                    if (userRole === 'admin') {
+                        if (userId == id_admin_1) {
                             formData.append('status_approve_1', result.isConfirmed ? 1 : 2);
-                        } else if (userRole === 'user') {
-                            formData.append('status_approve_2', result.isConfirmed ? 1 : 2);
-                        } else if (userRole === 'engineer') {
-                            formData.append('status_approve_3', result.isConfirmed ? 1 : 2);
+                        } else if (userId == id_admin_2) {
+                            formData.append('status_approve_4', result.isConfirmed ? 1 : 2);
                         }
-
-                        submitForm(formData);
+                    } else if (userRole === 'user') {
+                        formData.append('status_approve_2', result.isConfirmed ? 1 : 2);
+                    } else if (userRole === 'engineer') {
+                        formData.append('status_approve_3', result.isConfirmed ? 1 : 2);
                     }
-                });
-            }
+
+                    submitForm(formData);
+                }
+            });
         });
 
         // Fungsi untuk mengirim data form melalui AJAX
@@ -307,14 +369,32 @@
                     });
                 },
                 error: function(xhr) {
-                    let errorMessage = xhr.responseJSON.error || 'Gagal menyimpan tanda tangan';
+                    // Handling errors from the AJAX request
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error!',
-                        text: errorMessage
+                        title: 'Terjadi Kesalahan!',
+                        text: xhr.responseJSON.message || 'Mohon coba lagi.',
+                        timerProgressBar: true
                     });
                 }
             });
         }
+
+        $('#signatureModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var idCapex = button.data('id'); 
+
+            // Ambil data signature_file (pastikan signature_file dikirim dari server)
+            var signatureFile = button.data('signature-file'); 
+
+            // Atur href tombol "View PDF"
+            if (signatureFile) {
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}".replace(':id', idCapex);
+                $('#viewPdfButton').attr('href', viewPdfUrl).show(); // Tampilkan tombol jika file ada
+            } else {
+                $('#viewPdfButton').hide(); // Sembunyikan tombol jika file kosong
+            }
+        });
+
     });
 </script>

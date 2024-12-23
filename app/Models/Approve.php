@@ -43,12 +43,15 @@ class Approve extends Model
                 't_approval_report.status_approve_1',
                 't_approval_report.status_approve_2',
                 't_approval_report.status_approve_3', 
-                't_approval_report.approved_by_admin', 
-                't_approval_report.approved_at_admin', 
+                't_approval_report.status_approve_4', 
+                't_approval_report.approved_by_admin_1', 
+                't_approval_report.approved_at_admin_1', 
+                't_approval_report.approved_by_admin_2', 
+                't_approval_report.approved_at_admin_2', 
                 't_approval_report.approved_by_user', 
                 't_approval_report.approved_at_user', 
                 't_approval_report.approved_by_engineer', 
-                't_approval_report.approved_at_engineer', // Alihkan nama kolom untuk menghindari duplikasi
+                't_approval_report.approved_at_engineer', 
             );
 
         // Jika pengguna bukan admin, tambahkan filter berdasarkan requester
