@@ -74,11 +74,7 @@
                             </div>
                         </div>
 
-                        <a 
-                            id="viewPdfButton" 
-                            href="#" 
-                            class="btn btn-primary" 
-                            target="_blank">
+                        <a id="viewPdfButton" href="#" class="btn btn-primary" target="_blank">
                             <i class="fa fa-file-pdf"></i> Lihat PDF
                         </a>
                     </div>
@@ -184,7 +180,8 @@
             // Cek status Engineer
             if (wbs_capex === 'Project') {
                 if (statusApprove3 == 1) {
-                    $('#engineerSignature').text('Approved by ' + apv_engineer + ' at ' + apv_at_engineer);
+                    $('#engineerSignature').text('Approved by ' + apv_engineer + ' at ' +
+                        apv_at_engineer);
                     $('#engineerStatus').text('Disetujui').removeClass('bg-secondary').addClass(
                         'bg-success');
                     $('#engineerName').text('Persetujuan Engineer');
@@ -210,25 +207,24 @@
             }
 
 
-            if (userRole === 'admin' && userId == id_admin_2 && !canSign) { 
-                    $('#saveSignature')
-                        .text('Menunggu Persetujuan Admin 1')
-                        .prop('disabled', true)
-                        .show();
-                    return;
-                }
-                else if (userRole === 'user' && !canSign) {
-                    $('#saveSignature')
-                        .text('Menunggu Persetujuan Admin')
-                        .prop('disabled', true)
-                        .show();
-                    return;
-                } else if (userRole === 'engineer' && !canSign) {
-                    $('#saveSignature')
-                        .text('Menunggu Persetujuan User')
-                        .prop('disabled', true)
-                        .show();
-                    return;
+            if (userRole === 'admin' && userId == id_admin_2 && !canSign) {
+                $('#saveSignature')
+                    .text('Menunggu Persetujuan Admin 1')
+                    .prop('disabled', true)
+                    .show();
+                return;
+            } else if (userRole === 'user' && !canSign) {
+                $('#saveSignature')
+                    .text('Menunggu Persetujuan Admin')
+                    .prop('disabled', true)
+                    .show();
+                return;
+            } else if (userRole === 'engineer' && !canSign) {
+                $('#saveSignature')
+                    .text('Menunggu Persetujuan User')
+                    .prop('disabled', true)
+                    .show();
+                return;
             }
 
 
@@ -380,21 +376,25 @@
             });
         }
 
-        $('#signatureModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var idCapex = button.data('id'); 
+        $('#signatureModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Tombol yang membuka modal
+            var idCapex = button.data('id'); // Ambil ID Capex
 
             // Ambil data signature_file (pastikan signature_file dikirim dari server)
-            var signatureFile = button.data('signature-file'); 
+            var signatureFile = button.data('signature-file');
 
             // Atur href tombol "View PDF"
             if (signatureFile) {
-                var viewPdfUrl = "{{ route('approve.show', ':id') }}".replace(':id', idCapex);
+                // Membuat URL dengan menambahkan flag sebagai query string
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}?flag=show-pdf";
+                viewPdfUrl = viewPdfUrl.replace(':id', idCapex);
+
                 $('#viewPdfButton').attr('href', viewPdfUrl).show(); // Tampilkan tombol jika file ada
             } else {
                 $('#viewPdfButton').hide(); // Sembunyikan tombol jika file kosong
             }
         });
+
 
     });
 </script>
