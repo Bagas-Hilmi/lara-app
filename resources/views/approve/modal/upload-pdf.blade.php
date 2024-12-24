@@ -46,6 +46,12 @@
                                     <strong>WBS-P</strong>
                                     <div class="ms-4">
                                         <div class="form-check">
+                                            <label for="date" class="form-label font-weight-bold">Date
+                                                Upload</label>
+                                            <input type="date" class="form-control" id="date" name="date"
+                                                required>
+                                        </div>
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="engineering">
                                             <label class="form-check-label" for="engineering">Engineering &
                                                 Production</label>
@@ -167,6 +173,7 @@
 
             formData.append('flag', 'upload-pdf');
             formData.append('wbs_type', selectedWBS);
+            formData.append('date', $('#date').val());
 
             // Mengubah nilai checkbox menjadi string "true" atau "false"
             const checkboxes = {
@@ -185,6 +192,7 @@
             Object.entries(checkboxes).forEach(([key, element]) => {
                 formData.append(key, element.is(':checked') ? "1" : "0");
             });
+
 
             $.ajax({
                 url: "{{ route('approve.store') }}",

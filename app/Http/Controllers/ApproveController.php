@@ -13,7 +13,9 @@ use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Fpdi;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ApprovalNotification;
+use App\Models\User;
 
 class ApproveController extends Controller
 {
@@ -55,6 +57,41 @@ class ApproveController extends Controller
         //
     }
 
+    private function sendEmailToNextApprover($capexData, $currentRole, $currentStatus)
+    {
+        try {
+            if ($currentRole === 'admin' && auth::id() == 3 && $currentStatus == 1) {
+                $nextUser = User::find(4);
+                if ($nextUser) {
+                    Mail::to($nextUser->email)->send(new ApprovalNotification($capexData, $nextUser));
+                }
+            } else if ($currentRole === 'admin' && auth::id() == 4 && $currentStatus == 1) {
+                $nextUser = User::whereHas('roles', function ($query) {
+                    $query->where('name', 'user');
+                })->first();
+
+                if ($nextUser) {
+                    Mail::to($nextUser->email)->send(new ApprovalNotification($capexData, $nextUser));
+                }
+            } else if ($currentRole === 'user' && $currentStatus == 1) {
+                // Jika user approve dan WBS adalah Project, kirim ke engineer
+                if ($capexData->wbs_capex === 'Project') {
+                    // Menggunakan Laratrust untuk mencari user dengan role 'engineer'
+                    $nextUser = User::whereHas('roles', function ($query) {
+                        $query->where('name', 'engineer');
+                    })->first();
+
+                    if ($nextUser) {
+                        Mail::to($nextUser->email)->send(new ApprovalNotification($capexData, $nextUser));
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error sending email: ' . $e->getMessage());
+            throw $e; // Re-throw exception agar bisa ditangkap di controller utama
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -68,6 +105,29 @@ class ApproveController extends Controller
             $request->validate([
                 'id_capex' => 'required|exists:t_master_capex,id_capex',
                 'file_pdf' => 'required|file|mimes:pdf|max:2048',
+                'date' => 'required',
+                'wbs_type' => 'required|in:WBS-P,WBS-A',
+                'engineering' => 'required|in:0,1',
+                'maintenance' => 'required|in:0,1',
+                'outstanding_inventory' => 'required|in:0,1',
+                'material' => 'required|in:0,1',
+                'jasa' => 'required|in:0,1',
+                'etc' => 'required|in:0,1',
+                'warehouse' => 'required|in:0,1',
+                'user' => 'required|in:0,1',
+                'berita_acara' => 'required|in:0,1',
+            ], [
+                'wbs_type.required' => 'WBS Type harus dipilih',
+                'wbs_type.in' => 'WBS Type harus WBS-P atau WBS-A',
+                'engineering.in' => 'Nilai Engineering harus berupa checkbox',
+                'maintenance.in' => 'Nilai Maintenance harus berupa checkbox',
+                'outstanding_inventory.in' => 'Nilai Outstanding Inventory harus berupa checkbox',
+                'material.in' => 'Nilai Material harus berupa checkbox',
+                'jasa.in' => 'Nilai Jasa harus berupa checkbox',
+                'etc.in' => 'Nilai Etc harus berupa checkbox',
+                'warehouse.in' => 'Nilai Warehouse harus berupa checkbox',
+                'user.in' => 'Nilai User harus berupa checkbox',
+                'berita_acara.in' => 'Nilai Berita Acara harus berupa checkbox',
             ]);
 
             $idCapex = $request->input('id_capex');
@@ -83,19 +143,39 @@ class ApproveController extends Controller
             if ($request->hasFile('file_pdf')) {
                 $PDFfile = $request->file('file_pdf');
                 $PDFfileName = $PDFfile->getClientOriginalName();
+                
+                // Cek apakah nama file sudah ada di database
+                $fileExists = DB::table('t_approval_report')->where('file_pdf', $PDFfileName)->exists();
 
+                if ($fileExists) {
+                    return response()->json(['error' => 'Nama file sudah digunakan. Harap gunakan nama file yang berbeda.'], 400);
+                }
                 // Simpan file original
                 $PDFfile->storeAs('uploads/approvalFiles', $PDFfileName, 'public');
 
                 // Update database
+                $updateData = [
+                    'file_pdf' => $PDFfileName,
+                    'upload_by' => Auth::user()->name,
+                    'upload_date' => now(),
+                    'updated_at' => now(),
+                    'date' => $request->input('date'),
+                    'wbs_type' => $request->input('wbs_type'),
+                    'engineering_production' => $request->boolean('engineering'),
+                    'maintenance' => $request->boolean('maintenance'),
+                    'outstanding_inventory' => $request->boolean('outstanding_inventory'),
+                    'material' => $request->boolean('material'),
+                    'jasa' => $request->boolean('jasa'),
+                    'etc' => $request->boolean('etc'),
+                    'warehouse_received' => $request->boolean('warehouse'),
+                    'user_received' => $request->boolean('user'),
+                    'berita_acara' => $request->boolean('berita_acara'),
+                ];
+
+                // Update database
                 DB::table('t_approval_report')
                     ->where('id_capex', $idCapex)
-                    ->update([
-                        'file_pdf' => $PDFfileName,
-                        'upload_by' => Auth::user()->name,
-                        'upload_date' => now(),
-                        'updated_at' => now(),
-                    ]);
+                    ->update($updateData);
 
                 return response()->json([
                     'success' => 'File PDF berhasil diunggah dan ditandatangani',
@@ -221,7 +301,7 @@ class ApproveController extends Controller
                             // Contoh menambahkan tanda tangan sesuai role
                             if ($userId == 3 && (!$approve->approved_by_admin_1 || $approve->status_approve_1 != 1)) {
                                 $pdf->SetXY($positions['admin_1'], 230);
-                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(40, 5, 'Prepared by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['admin_1'], 235);
                                 $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
                                 $pdf->SetXY($positions['admin_1'], 240);
@@ -230,7 +310,7 @@ class ApproveController extends Controller
                             // Admin 2
                             else if ($userId == 4 && (!$approve->approved_by_admin_2 || $approve->status_approve_4 != 1)) {
                                 $pdf->SetXY($positions['admin_2'], 230);
-                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(40, 5, 'Approved by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['admin_2'], 235);
                                 $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
                                 $pdf->SetXY($positions['admin_2'], 240);
@@ -239,7 +319,7 @@ class ApproveController extends Controller
                             // User
                             else if ($userRole === 'user' && (!$approve->approved_by_user || $approve->status_approve_2 != 1)) {
                                 $pdf->SetXY($positions['user'], 230);
-                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(40, 5, 'Approved by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['user'], 235);
                                 $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
                                 $pdf->SetXY($positions['user'], 240);
@@ -248,7 +328,7 @@ class ApproveController extends Controller
                             // Engineer
                             else if ($userRole === 'engineer' && (!$approve->approved_by_engineer || $approve->status_approve_3 != 1)) {
                                 $pdf->SetXY($positions['engineer'], 230);
-                                $pdf->Cell(40, 5, 'Signed by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(40, 5, 'Approved by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['engineer'], 235);
                                 $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
                                 $pdf->SetXY($positions['engineer'], 240);
@@ -270,6 +350,10 @@ class ApproveController extends Controller
                     ->where('id_capex', $idCapex)
                     ->update($updateData);
 
+                $capexData = DB::table('t_approval_report')
+                    ->where('id_capex', $idCapex)
+                    ->first();
+                $this->sendEmailToNextApprover($capexData, $userRole, $statusApprove);
                 return response()->json([
                     'success' => ($statusApprove == 1 ? 'Digital signature has been added successfully' : 'Document has been disapproved successfully')
                 ]);
@@ -283,18 +367,35 @@ class ApproveController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        $approve = Approve::where('id_capex', $id)->firstOrFail();
 
-        $filename = $approve->signature_file;
-        $path = storage_path('app/public/uploads/signatures/' . $filename);
+        $flag = $request->input('flag');
+        if ($flag === 'show-pdf') {
+            $approve = Approve::where('id_capex', $id)->firstOrFail();
 
-        if (!file_exists($path)) {
-            abort(404, 'File not found.');
+            $filename = $approve->signature_file;
+            $path = storage_path('app/public/uploads/signatures/' . $filename);
+
+            if (!file_exists($path)) {
+                abort(404, 'File not found.');
+            }
+
+            return response()->file($path);
+        } else if ($flag ==='show-form') {
+            $project = Approve::where('id_capex', $id)->first(); // Gunakan where untuk mencari id_capex
+
+            // Cek apakah project ditemukan
+            if (!$project) {
+                return response()->json(['error' => 'Project not found'], 404);
+            }
+    
+            // Kembalikan data project sebagai respons JSON
+            return response()->json($project);
         }
-
-        return response()->file($path);
+    
+        // Kembalikan response jika flag tidak sesuai
+        return response()->json(['error' => 'Invalid flag'], 400);
     }
 
     /**

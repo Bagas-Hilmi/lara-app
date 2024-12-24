@@ -148,7 +148,7 @@ class CapexController extends Controller
                 'expected_completed' => 'required|string',
                 'wbs_number' => 'required|string',
                 'cip_number' => 'required|string',
-                'file_pdf' => 'required_if:status_capex,Close,flag,update|file|mimes:pdf|max:2048',
+                'file_pdf' => 'required_if:status_capex,Close,flag,update|file|mimes:pdf',
                 'capdate' => 'required_if:status_capex,Close,flag,update|string',
                 'capdoc' => 'required_if:status_capex,Close,flag,update|string|max:255',
                 'noasset' => 'required_if:status_capex,Close,flag,update|string|max:255',
