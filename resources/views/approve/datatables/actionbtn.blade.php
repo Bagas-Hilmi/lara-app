@@ -4,11 +4,14 @@
             data-id="{{ $row->id_capex }}">
             <i class="fa fa-file-arrow-up" style="font-size: 1.2rem;"></i>
         </a>
-
+        
+        @if (!empty($row->wbs_type))
         <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#formModal"
             data-id="{{ $row->id_capex }}">
             <i class="fa fa-list" style="font-size: 1.2rem;"></i>
         </a>
+        @endif
+
     @endif
 
     @if (!empty($row->file_pdf))

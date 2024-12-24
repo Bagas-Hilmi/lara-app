@@ -377,24 +377,19 @@
         }
 
         $('#signatureModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Tombol yang membuka modal
-            var idCapex = button.data('id'); // Ambil ID Capex
-
-            // Ambil data signature_file (pastikan signature_file dikirim dari server)
+            var button = $(event.relatedTarget);
+            var idCapex = button.data('id');
             var signatureFile = button.data('signature-file');
 
-            // Atur href tombol "View PDF"
             if (signatureFile) {
-                // Membuat URL dengan menambahkan flag sebagai query string
-                var viewPdfUrl = "{{ route('approve.show', ':id') }}?flag=show-pdf";
-                viewPdfUrl = viewPdfUrl.replace(':id', idCapex);
-
+                // Tambahkan flag ke URL
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}".replace(':id', idCapex) +
+                    "?flag=show-pdf";
                 $('#viewPdfButton').attr('href', viewPdfUrl).show(); // Tampilkan tombol jika file ada
             } else {
                 $('#viewPdfButton').hide(); // Sembunyikan tombol jika file kosong
             }
         });
-
 
     });
 </script>

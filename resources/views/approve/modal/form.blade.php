@@ -1,5 +1,5 @@
 <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-l modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #17a2b8;">
                 <h5 class="modal-title" id="formModalLabel" style="color: white;">FORM PROJECT ACCEPTANCE CHECKLIST</h5>
@@ -46,9 +46,44 @@
                         <div class="row mb-3">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label><strong>WBS Type:</strong></label>
-                                    <span>${response.wbs_type}</span>
+                                    <h5><span>WBS Type: </span>${response.wbs_type}</h5>
                                 </div>
+
+                                <div class="info-row">
+        <div class="label">CAPEX</div>
+        <div class="colon">:</div>
+        <div class="value">${response.capex_number}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">Project Title</div>
+        <div class="colon">:</div>
+        <div class="value">${response.project_desc}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">SAP Asset Number</div>
+        <div class="colon">:</div>
+        <div class="value">${response.cip_number}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">WBS Number</div>
+        <div class="colon">:</div>
+        <div class="value">${response.wbs_number}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">Date</div>
+        <div class="colon">:</div>
+        <div class="value">${response.startup}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">Expected Completed</div>
+        <div class="colon">:</div>
+        <div class="value">${response.expected_completed}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">Actual Completed</div>
+        <div class="colon">:</div>
+        <div class="value">${response.date}</div>
+    </div>
 
                                 <!-- BERITA ACARA PENYELESAIAN CAPEX -->
                                 <div class="row mb-3">
@@ -61,7 +96,7 @@
                                             <div class="ms-4">
                                                 <div class="form-check d-flex justify-content-between">
                                                     <label for="engineering">Engineering & Production</label>
-                                                    <input type="checkbox" id="engineering" ${response.engineering ? 'checked' : ''} disabled>
+                                                    <input type="checkbox" id="engineering" ${response.engineering_production ? 'checked' : ''} disabled>
                                                 </div>
                                                 <div class="form-check d-flex justify-content-between">
                                                     <label for="maintenance">Maintenance & ............</label>
@@ -173,5 +208,35 @@
     .form-check input[type="checkbox"]:focus {
         outline: none;
         box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+    }
+</style>
+
+<style>
+    .info-container {
+        font-family: Arial, sans-serif;
+        width: 100%;
+        max-width: 500px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        margin: 20px auto;
+    }
+
+    .info-row {
+        display: flex;
+        margin-bottom: 8px;
+        line-height: 1.5;
+    }
+
+    .label {
+        min-width: 160px;
+        font-weight: bold;
+    }
+
+    .value {
+        flex: 1;
+    }
+
+    .colon {
+        margin: 0 10px;
     }
 </style>

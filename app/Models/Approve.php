@@ -37,7 +37,14 @@ class Approve extends Model
                 't_master_capex.requester',
                 't_master_capex.project_desc',
                 't_master_capex.wbs_capex',
+                't_master_capex.capex_number',
+                't_master_capex.wbs_number',
+                't_master_capex.expected_completed',
+                't_master_capex.startup',
+                't_master_capex.cip_number',
                 't_approval_report.file_pdf',
+                't_approval_report.wbs_type',
+                't_approval_report.date',
                 't_approval_report.signature_file',
                 't_approval_report.upload_date',
                 't_approval_report.status_approve_1',
@@ -86,6 +93,11 @@ class Approve extends Model
                         'status_capex' => $data->status_capex,
                         'requester' => $data->requester,
                         'wbs_capex' => $data->wbs_capex,
+                        'capex_number' => $data->capex_number,
+                        'wbs_number' => $data->wbs_number,
+                        'expected_completed' => $data->expected_completed,
+                        'startup' => $data->startup,
+                        'cip_number' => $data->cip_number,
                     ]);
             } else {
                 // Jika data belum ada, lakukan insert
@@ -95,6 +107,12 @@ class Approve extends Model
                     'status_capex' => $data->status_capex,
                     'requester' => $data->requester,
                     'wbs_capex' => $data->wbs_capex,
+                    'capex_number' => $data->capex_number,
+                    'wbs_number' => $data->wbs_number,
+                    'expected_completed' => $data->expected_completed,
+                    'startup' => $data->startup,
+                    'cip_number' => $data->cip_number,
+
                 ]);
             }
         }
