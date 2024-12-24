@@ -4,6 +4,11 @@
             data-id="{{ $row->id_capex }}">
             <i class="fa fa-file-arrow-up" style="font-size: 1.2rem;"></i>
         </a>
+
+        <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#formModal"
+            data-id="{{ $row->id_capex }}">
+            <i class="fa fa-list" style="font-size: 1.2rem;"></i>
+        </a>
     @endif
 
     @if (!empty($row->file_pdf))
@@ -11,6 +16,7 @@
         <a href="#" class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#signatureModal"
             data-id="{{ $row->id_capex }}"
             data-signature-file="{{ $row->signature_file }}"
+            data-flag="show-pdf"
             data-status1="{{ $row->status_approve_1}}"
             data-status2="{{ $row->status_approve_2}}"
             data-status3="{{ $row->status_approve_3}}"

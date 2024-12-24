@@ -7,7 +7,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="uploadFormPDF" action="{{ route('approve.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="uploadFormPDF" action="{{ route('approve.store') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <!-- Input Hidden untuk id_capex -->
                     <input type="hidden" id="hidden-id-capex" name="id_capex" value="">
@@ -16,13 +17,108 @@
                     <div class="container-fluid">
                         <div class="row mb-3">
                             <div class="col-md-12">
-                                <label class="form-label" for="bast">File PDF</label>
-                                <input type="file" class="form-control" id="bast" name="file_pdf" accept="application/pdf" required>
+                                <label class="form-label" for="bast">Upload PDF</label>
+                                <input type="file" class="form-control" id="bast" name="file_pdf"
+                                    accept="application/pdf" required>
+                            </div>
+                        </div>
+
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle"
+                                style="background-color: #09170a; border-color: #09170a;" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Select
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <button class="dropdown-item" type="button">WBS-P</button>
+                                <button class="dropdown-item" type="button">WBS-A</button>
+
+                            </ul>
+                        </div>
+
+                        <!-- BERITA ACARA PENYELESAIAN CAPEX -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <h5 class="mb-3">BERITA ACARA PENYELESAIAN CAPEX</h5>
+
+                                <!-- WBS-P Section -->
+                                <div class="mb-2">
+                                    <strong>WBS-P</strong>
+                                    <div class="ms-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="engineering">
+                                            <label class="form-check-label" for="engineering">Engineering &
+                                                Production</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="maintenance">
+                                            <label class="form-check-label" for="maintenance">Maintenance &
+                                                ............</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Outstanding Section -->
+                                <div class="mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="outstandingInventory">
+                                        <label class="form-check-label" for="outstandingInventory">Outstanding
+                                            Inventory</label>
+                                    </div>
+                                </div>
+
+                                <!-- Outstanding PO Section -->
+                                <div class="mb-2">
+                                    <strong>Outstanding PO</strong>
+                                    <div class="ms-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="material">
+                                            <label class="form-check-label" for="material">Material</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="jasa">
+                                            <label class="form-check-label" for="jasa">Jasa</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="etc">
+                                            <label class="form-check-label" for="etc">Etc</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BERITA ACARA PENERIMAAN BARANG -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="mb-3">BERITA ACARA PENERIMAAN BARANG</h5>
+
+                                <!-- WBS-A Section -->
+                                <div class="mb-2">
+                                    <strong>WBS-A</strong>
+                                    <div class="ms-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="warehouse">
+                                            <label class="form-check-label" for="warehouse">Barang diterima oleh
+                                                Warehouse</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="user">
+                                            <label class="form-check-label" for="user">Barang diterima oleh
+                                                User</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="beritaAcara">
+                                            <label class="form-check-label" for="beritaAcara">Berita Acara</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="submit" class="btn bg-gradient-success" id="uploadFile">Upload</button>
+                        <button type="submit" class="btn bg-gradient-success" id="uploadFile">Save</button>
                     </div>
                 </form>
             </div>
@@ -33,22 +129,65 @@
 
 <script>
     $(document).ready(function() {
-        // Saat modal upload dibuka, set value id_capex
-        $('#uploadPDF').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Mengambil elemen yang memicu modal
-            var idCapex = button.data('id'); // Mengambil id_capex dari tombol
-            $('#hidden-id-capex').val(idCapex); // Menetapkan id_capex ke input hidden
+        // Variable untuk menyimpan WBS yang dipilih
+        let selectedWBS = 'Select';
+
+        // Handle klik item dropdown
+        $('.dropdown-item').click(function() {
+            selectedWBS = $(this).text().trim(); // Pastikan tidak ada spasi ekstra
+            $('.dropdown-toggle').text(selectedWBS);
         });
 
-        // Handle form submit
+        // Saat modal upload dibuka
+        $('#uploadPDF').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var idCapex = button.data('id');
+            $('#hidden-id-capex').val(idCapex);
+
+            // Reset dropdown ke default
+            $('.dropdown-toggle').text('Select');
+            selectedWBS = 'Select';
+        });
+
+        // Handle submit form
         $('#uploadFormPDF').on('submit', function(e) {
             e.preventDefault();
+
+            // Validasi WBS
+            if (selectedWBS === 'Select') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Silakan pilih WBS type terlebih dahulu'
+                });
+                return;
+            }
+
             let formData = new FormData(this);
 
             formData.append('flag', 'upload-pdf');
+            formData.append('wbs_type', selectedWBS);
+
+            // Mengubah nilai checkbox menjadi string "true" atau "false"
+            const checkboxes = {
+                'engineering': $('#engineering'),
+                'maintenance': $('#maintenance'),
+                'outstanding_inventory': $('#outstandingInventory'),
+                'material': $('#material'),
+                'jasa': $('#jasa'),
+                'etc': $('#etc'),
+                'warehouse': $('#warehouse'),
+                'user': $('#user'),
+                'berita_acara': $('#beritaAcara')
+            };
+
+            // Append setiap nilai checkbox
+            Object.entries(checkboxes).forEach(([key, element]) => {
+                formData.append(key, element.is(':checked') ? "1" : "0");
+            });
 
             $.ajax({
-                url: "{{ route('approve.store') }}", // Pastikan route sudah sesuai
+                url: "{{ route('approve.store') }}",
                 type: "POST",
                 data: formData,
                 contentType: false,
@@ -71,12 +210,19 @@
                         timer: 2000,
                         timerProgressBar: true
                     }).then(() => {
-                        location
-                    .reload(); // Reload halaman untuk menampilkan data terbaru
+                        location.reload();
                     });
                 },
                 error: function(xhr) {
-                    let errorMessage = xhr.responseJSON.error || 'File PDF gagal diunggah';
+                    let errorMessage = '';
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        // Gabungkan semua pesan error
+                        errorMessage = Object.values(xhr.responseJSON.errors)
+                            .flat()
+                            .join('\n');
+                    } else {
+                        errorMessage = xhr.responseJSON.error || 'File PDF gagal diunggah';
+                    }
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -87,3 +233,20 @@
         });
     });
 </script>
+
+<style>
+    .form-check {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .form-check-input {
+        order: 1;
+        /* Memastikan checkbox muncul di sebelah kanan */
+    }
+
+    .form-check-label {
+        order: 0;
+        /* Memastikan label muncul di sebelah kiri */
+    }
+</style>
