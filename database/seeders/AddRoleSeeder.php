@@ -15,10 +15,8 @@ class AddRoleSeeder extends Seeder
     public function run(): void
     {
         // Ambil user dan role
-        $user = User::find(4); 
-        $adminRole = Role::where('name', 'admin')->first();
-
+        $user = User::find(8); 
         // Atau gunakan Laratrust Helper:
-        $user->addRole('admin');
+        $user->addRole('user');
     }
 }

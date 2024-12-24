@@ -18,20 +18,14 @@ class UserSeeder extends Seeder
     {
         // Buat user admin
         $adminUser = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password')
+            'name' => 'Santo Wijaya',
+            'email' => 'santowijaya@example.com',
+            'password' => bcrypt('12345678')
         ]);
-        $adminRole = Role::where('name', 'admin')->first();
-        $adminUser->addRole($adminRole);
+        $userRole = Role::where('name', 'user')->first();
+        $adminUser->addRole($userRole);
 
-        // Buat user viewer
-        $viewerUser = User::create([
-            'name' => 'Viewer User',
-            'email' => 'viewer@example.com',
-            'password' => bcrypt('password')
-        ]);
-        $viewerRole = Role::where('name', 'viewer')->first();
-        $viewerUser->addRole($viewerRole);
+       
+        
     }
 }

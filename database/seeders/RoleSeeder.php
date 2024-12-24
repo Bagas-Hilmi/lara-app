@@ -9,16 +9,21 @@ class RoleSeeder extends Seeder
 {
     public function run()
     {
-        Role::create([
+        $adminRole = Role::create([
             'name' => 'admin',
-            'display_name' => 'Administrator',
+            'display_name' => 'Admin',
             'description' => 'Admin Staff OC',
         ]);
 
-        Role::create([
-            'name' => 'viewer',
-            'display_name' => 'Viewer',
-            'description' => 'User with read-only access to the system',
+        $userRole = Role::create([
+            'name' => 'user',
+            'display_name' => 'User', 
+            'description' => 'User Non Staff OC',
+        ]);
+        $engineerRole = Role::create([
+            'name' => 'engineer',
+            'display_name' => 'engineering', 
+            'description' => 'Staff Engineer',
         ]);
     }
 }
