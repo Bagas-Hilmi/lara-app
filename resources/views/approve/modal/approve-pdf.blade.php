@@ -382,12 +382,16 @@
             var signatureFile = button.data('signature-file');
 
             if (signatureFile) {
-                // Tambahkan flag ke URL
-                var viewPdfUrl = "{{ route('approve.show', ':id') }}".replace(':id', idCapex) +
-                    "?flag=show-pdf";
-                $('#viewPdfButton').attr('href', viewPdfUrl).show(); // Tampilkan tombol jika file ada
+                // Tambahkan timestamp ke URL untuk mencegah caching
+                var timestamp = new Date().getTime();
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}"
+                    .replace(':id', idCapex) +
+                    "?flag=show-pdf&t=" + timestamp;
+
+                // Update URL PDF viewer
+                $('#viewPdfButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewPdfButton').hide(); // Sembunyikan tombol jika file kosong
+                $('#viewPdfButton').hide();
             }
         });
 

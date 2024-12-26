@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Notifikasi Persetujuan CAPEX</title>
+    <title>Approval Notification</title>
 </head>
 <body>
-    <h2>Permintaan Persetujuan CAPEX</h2>
-    <p>Halo {{ $nextApprover->name }},</p>
-    <p>Ada dokumen CAPEX yang membutuhkan persetujuan Anda.</p>
-    
-    <h3>Detail CAPEX:</h3>
-    <ul>
-        <li>ID CAPEX: {{ $capexData->id_capex }}</li>
-        <li>WBS: {{ $capexData->wbs_capex }}</li>
-    </ul>
-    
-    <p>Silakan login ke sistem untuk melakukan review dan persetujuan.</p>
-    
-    <br>
-    <p>Terima kasih,</p>
-    <p>Tim Sistem CAPEX</p>
+    <p>Dear Pak {{ $nextApprover->name }},</p>
+
+    <p>
+        Mohon bantuan approvalnya untuk lampiran form closing 
+        <strong>{{ $capexData->capex_number }}</strong> 
+        {{ $capexData->project_desc }}.
+    </p>
+
+    <p>Silahkan klik tombol Approve pada aplikasi untuk melakukan e-sign.</p>
+
+    <p>Terima Kasih.</p>
+
+    <p>Regards,<br>
+    {{ $user->name }}</p>
 </body>
 </html>

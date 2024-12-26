@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 
 class ApprovalNotification extends Mailable
 {
@@ -33,8 +34,14 @@ class ApprovalNotification extends Mailable
     {
         return new Content(
             view: 'emails.approval-notification',
+            with: [
+                'capexData' => $this->capexData,
+                'nextApprover' => $this->nextApprover,
+                'user' => Auth::user(),
+            ]
         );
     }
+
 
     public function attachments(): array
     {

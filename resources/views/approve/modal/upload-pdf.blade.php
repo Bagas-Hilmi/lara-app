@@ -48,7 +48,7 @@
                                         <div class="form-check">
                                             <label for="date" class="form-label font-weight-bold">Date
                                                 Upload</label>
-                                            <input type="date" class="form-control" id="date" name="date"
+                                            <input type="date" style="text-align: center;" class="form-control" id="date" name="date"
                                                 required>
                                         </div>
                                         <div class="form-check">
