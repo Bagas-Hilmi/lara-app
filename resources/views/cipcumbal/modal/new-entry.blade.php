@@ -101,7 +101,8 @@
                         processData: false,
                         contentType: false,
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
                         },
                         success: function(data) {
                             if (data.success) {
@@ -146,6 +147,43 @@
         }
     });
 </script>
+
+<script>
+    // Function to format input numbers with commas and periods
+    function formatNumber(input) {
+        // Remove non-numeric characters, except for the period
+        let value = input.value.replace(/[^0-9.]/g, '');
+
+        // Format the value to include commas as thousand separators
+        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+        // Display the formatted value in the input field
+        input.value = value;
+    }
+
+    // Function to handle form submission (remove commas and periods for storage)
+    function handleFormSubmit(event) {
+        const inputs = document.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            // Remove commas and periods before submitting
+            input.value = input.value.replace(/,/g, '').replace(/\./g, '');
+        });
+    }
+
+    // Attach format function to the inputs
+    document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('input', function() {
+            formatNumber(input);
+        });
+    });
+
+    // Attach form submit handler
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+</script>
+
 
 <style>
     /* Container for month input */
