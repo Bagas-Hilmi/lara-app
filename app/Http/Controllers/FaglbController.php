@@ -145,34 +145,56 @@ class FaglbController extends Controller
             $faglbHead = Faglb::findOrFail($id);
 
             // Update FAGLB file jika ada
+            // Proses unggah dan import FAGLB file
             if ($request->hasFile('faglb')) {
                 $faglbFile = $request->file('faglb');
                 $faglbFileName = $faglbFile->getClientOriginalName();
+
+                // Cek apakah nama file sudah ada di database
+                $exists = Faglb::where('faglb_filename', $faglbFileName)
+                    ->orWhere('zlis1_filename', $faglbFileName)
+                    ->exists();
+
+                if ($exists) {
+                    return response()->json(['success' => false, 'message' => "File dengan nama '$faglbFileName' sudah ada di sistem."]);
+                }
+
                 $faglbFilePath = $faglbFile->storeAs('uploads/faglb', $faglbFileName);
                 $faglbHead->faglb_filename = $faglbFileName;
 
                 try {
-                    $this->importFaglb($faglbFilePath, $id); // Import file
+                    $this->importFaglb($faglbFilePath, $faglbHead->id_head); // Import ke database
                 } catch (\Exception $e) {
                     Storage::delete($faglbFilePath); // Hapus file jika ada error
                     throw new \Exception('Gagal mengimpor file FAGLB: ' . $e->getMessage());
                 }
             }
 
-            // Update ZLIS1 file jika ada
+            // Proses unggah dan import ZLIS1 file
             if ($request->hasFile('zlis1')) {
                 $zlis1File = $request->file('zlis1');
                 $zlis1FileName = $zlis1File->getClientOriginalName();
+
+                // Cek apakah nama file sudah ada di database
+                $exists = Faglb::where('faglb_filename', $zlis1FileName)
+                    ->orWhere('zlis1_filename', $zlis1FileName)
+                    ->exists();
+
+                if ($exists) {
+                    return response()->json(['success' => false, 'message' => "File dengan nama '$zlis1FileName' sudah ada di sistem."]);
+                }
+
                 $zlis1FilePath = $zlis1File->storeAs('uploads/zlis1', $zlis1FileName);
                 $faglbHead->zlis1_filename = $zlis1FileName;
 
                 try {
-                    $this->importZlis1($zlis1FilePath, $id); // Import file
+                    $this->importZlis1($zlis1FilePath, $faglbHead->id_head); // Import ke database
                 } catch (\Exception $e) {
                     Storage::delete($zlis1FilePath); // Hapus file jika ada error
                     throw new \Exception('Gagal mengimpor file ZLIS1: ' . $e->getMessage());
                 }
             }
+
 
             $faglbHead->updated_by = Auth::id();
 
