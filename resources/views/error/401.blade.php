@@ -14,8 +14,8 @@
         <div class="container text-center">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 class="title text-light">403</h1>
-                    <h2 class="text-light">Forbidden </h2>
+                    <h1 class="title text-light">401</h1>
+                    <h2 class="text-light">Page not found </h2>
                     <h4 class="text-light">Ooooups! Looks like you got lost.</h4>
                 </div>
             </div>

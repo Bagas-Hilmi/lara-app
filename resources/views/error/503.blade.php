@@ -14,9 +14,9 @@
         <div class="container text-center">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 class="title text-light">403</h1>
-                    <h2 class="text-light">Forbidden </h2>
-                    <h4 class="text-light">Ooooups! Looks like you got lost.</h4>
+                    <h1 class="title text-light">Service Unavailable</h1>
+                    <h2 class="text-light">Server Error </h2>
+                    <h4 class="text-light">Ooooups! Looks like the service is unavailable</h4>
                 </div>
             </div>
         </div>
