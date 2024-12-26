@@ -296,43 +296,92 @@ class ApproveController extends Controller
                                 'engineer' => 140 // Engineer di ujung kanan
                             ];
 
-                            $pdf->SetFont('Times', '', 10); // Atur font untuk teks
+                            $pdf->SetFont('Arial', '', 8); // Atur font untuk teks
 
                             // Contoh menambahkan tanda tangan sesuai role
                             if ($userId == 3 && (!$approve->approved_by_admin_1 || $approve->status_approve_1 != 1)) {
+                                $pdf->SetFont('Arial', '', 10);
+                                $pdf->SetXY($positions['admin_1'], 220);
+                                $pdf->Cell(60, 5, 'Prepared by,', 0, 1);
+
+                                $pdf->SetFont('Arial', '', 8);
                                 $pdf->SetXY($positions['admin_1'], 230);
-                                $pdf->Cell(40, 5, 'Prepared by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(60, 5, 'Digitally signed', 0, 1);
                                 $pdf->SetXY($positions['admin_1'], 235);
-                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->Cell(60, 5, 'by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['admin_1'], 240);
+                                $pdf->Cell(60, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y.m.d'), 0, 1);
+                                $pdf->SetXY($positions['admin_1'], 245);
                                 $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
+
+                                // Nama di bawah
+                                $pdf->SetFont('Arial', 'B', 11);
+                                $pdf->SetXY($positions['admin_1'], 255);
+                                $pdf->Cell(40, 5, auth::user()->name, 0, 1);
                             }
                             // Admin 2
                             else if ($userId == 4 && (!$approve->approved_by_admin_2 || $approve->status_approve_4 != 1)) {
+                                // Set font untuk "Prepared by"
+                                $pdf->SetFont('Arial', '', 10);
+                                $pdf->SetXY($positions['admin_2'], 220);
+                                $pdf->Cell(60, 5, 'Reviewed by,', 0, 1);
+
+                                $pdf->SetFont('Arial', '', 8);
                                 $pdf->SetXY($positions['admin_2'], 230);
-                                $pdf->Cell(40, 5, 'Approved by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(60, 5, 'Digitally signed', 0, 1);
                                 $pdf->SetXY($positions['admin_2'], 235);
-                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->Cell(60, 5, 'by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['admin_2'], 240);
+                                $pdf->Cell(60, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y.m.d'), 0, 1);
+                                $pdf->SetXY($positions['admin_2'], 245);
                                 $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
+
+                                // Nama di bawah
+                                $pdf->SetFont('Arial', 'B', 11);
+                                $pdf->SetXY($positions['admin_2'], 255);
+                                $pdf->Cell(40, 5, auth::user()->name, 0, 1);
                             }
                             // User
                             else if ($userRole === 'user' && (!$approve->approved_by_user || $approve->status_approve_2 != 1)) {
+                                $pdf->SetFont('Arial', '', 10);
+                                $pdf->SetXY($positions['user'], 220);
+                                $pdf->Cell(60, 5, 'Approved by,', 0, 1);
+
+                                $pdf->SetFont('Arial', '', 8);
                                 $pdf->SetXY($positions['user'], 230);
-                                $pdf->Cell(40, 5, 'Approved by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(60, 5, 'Digitally signed', 0, 1);
                                 $pdf->SetXY($positions['user'], 235);
-                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->Cell(60, 5, 'by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['user'], 240);
+                                $pdf->Cell(60, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y.m.d'), 0, 1);
+                                $pdf->SetXY($positions['user'], 245);
                                 $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
+
+                                // Nama di bawah
+                                $pdf->SetFont('Arial', 'B', 11);
+                                $pdf->SetXY($positions['user'], 255);
+                                $pdf->Cell(40, 5, auth::user()->name, 0, 1);
                             }
                             // Engineer
                             else if ($userRole === 'engineer' && (!$approve->approved_by_engineer || $approve->status_approve_3 != 1)) {
+                                $pdf->SetFont('Arial', '', 10);
+                                $pdf->SetXY($positions['engineer'], 220);
+                                $pdf->Cell(60, 5, 'Approved by,', 0, 1);
+
+                                $pdf->SetFont('Arial', '', 8);
                                 $pdf->SetXY($positions['engineer'], 230);
-                                $pdf->Cell(40, 5, 'Approved by ' . auth::user()->name, 0, 1);
+                                $pdf->Cell(60, 5, 'Digitally signed', 0, 1);
                                 $pdf->SetXY($positions['engineer'], 235);
-                                $pdf->Cell(40, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y-m-d'), 0, 1);
+                                $pdf->Cell(60, 5, 'by ' . auth::user()->name, 0, 1);
                                 $pdf->SetXY($positions['engineer'], 240);
+                                $pdf->Cell(60, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y.m.d'), 0, 1);
+                                $pdf->SetXY($positions['engineer'], 245);
                                 $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
+
+                                // Nama di bawah
+                                $pdf->SetFont('Arial', 'B', 11);
+                                $pdf->SetXY($positions['engineer'], 255);
+                                $pdf->Cell(40, 5, auth::user()->name, 0, 1);
                             }
                         }
                     }
