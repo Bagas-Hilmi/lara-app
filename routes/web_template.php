@@ -33,10 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::post('user-profile', [ProfileController::class, 'update']);
 });
 
-Route::get('user-management', function () {
-    return view('pages.laravel-examples.user-management');
-})->name('user-management');
+
 
 Route::get('user-profile', function () {
-    return view('pages.laravel-examples.user-profile');
+    return view('pages.user-profile');
 })->name('user-profile');

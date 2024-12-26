@@ -10,6 +10,7 @@ use App\Http\Controllers\UnauthorizedController;
 use App\Mail\MyTestMail;
 use Laratrust\LaratrustFacade as Laratrust; // Jika menggunakan Laratrust
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\UserController;
 
 // Default route
 Route::get('/', function () {
@@ -53,5 +54,8 @@ route::get('/send-welcome-mail', function() {
     Mail::to('abc@gmail.com')->send(new MyTestMail);
 
 });
+
+Route::resource('user-management', UserController::class);
+
 // Include template routes
 require base_path('routes/web_template.php');
