@@ -99,7 +99,7 @@
                                 showConfirmButton: false,
                                 timer: 1000
                             }).then(() => {
-                                $('#addDocFormModal').modal('hide'); 
+                                $('#addDocFormModal').modal('hide');
                                 $('#faglb-table').DataTable().ajax.reload();
                             });
                         } else {
@@ -150,7 +150,7 @@
         });
     });
 
-    $(document).on("click", ".dropdown-item", function() {
+    $(document).on("click", "#periodList .dropdown-item", function() {
         var selectedPeriod = $(this).data("period");
         var selectedIdCcb = $(this).data("id");
 
@@ -159,6 +159,7 @@
 
         $("#periodDropdown").text(selectedPeriod + " / " + selectedIdCcb);
     });
+
 
     // Jika Anda ingin menampilkan modal untuk mengganti file
     $(document).on("click", '[data-bs-target="#replaceDocFormModal"]', function() {
