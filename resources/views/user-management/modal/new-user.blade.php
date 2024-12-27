@@ -6,41 +6,43 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="userForm" action="{{ route('user-management.store') }}"method="POST">
+                <form id="userForm" action="{{ route('user-management.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="flag" value="new-user">
 
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Name:</strong>
-                                <input type="text" name="name" placeholder="Name" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Email:</strong>
-                                <input type="email" name="email" placeholder="Email" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Password:</strong>
-                                <input type="password" name="password" placeholder="Password" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Confirm Password:</strong>
-                                <input type="password" name="confirm-password" placeholder="Confirm Password"
-                                    class="form-control">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button"
-                                class="btn bg-gradient-secondary"data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn bg-gradient-success" id="saveUser">Submit</button>
-                        </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label"><strong>Name:</strong></label>
+                        <input type="text" name="name" id="name" placeholder="Name" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label"><strong>Email:</strong></label>
+                        <input type="email" name="email" id="email" placeholder="Email" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label"><strong>Password:</strong></label>
+                        <input type="password" name="password" id="password" placeholder="Password" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirm-password" class="form-label"><strong>Confirm Password:</strong></label>
+                        <input type="password" name="confirm-password" id="confirm-password" placeholder="Confirm Password" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="role" class="form-label"><strong>Role:</strong></label>
+                        <select name="role" id="role" class="form-control" required>
+                            <option value="">Pilih Role</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" id="saveUser">Submit</button>
                     </div>
                 </form>
             </div>

@@ -5,6 +5,7 @@
         data-name="{{ $row->name}}"
         data-email="{{ $row->email}}"
         data-bs-toggle="tooltip"
+        data-role="{{ $row->roles->first()->id }}"
         data-bs-placement="top" title="Edit This Entry">
         <i class="fa fa-edit " style="font-size: 1rem;"></i>
     </button>

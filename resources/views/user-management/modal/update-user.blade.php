@@ -12,37 +12,39 @@
                     <input type="hidden" name="id" id="userId">
 
 
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Name:</strong>
-                                <input type="text" name="name" placeholder="Name" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Email:</strong>
-                                <input type="email" name="email" placeholder="Email" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Password:</strong>
-                                <input type="password" name="password" placeholder="Password" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <strong>Confirm Password:</strong>
-                                <input type="password" name="confirm-password" placeholder="Confirm Password"
-                                    class="form-control">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button"
-                                class="btn bg-gradient-secondary"data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn bg-gradient-success">Submit</button>
-                        </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label"><strong>Name:</strong></label>
+                        <input type="text" name="name" placeholder="Name" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label"><strong>Email:</strong></label>
+                        <input type="email" name="email" placeholder="Email" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label"><strong>Password:</strong></label>
+                        <input type="password" name="password" placeholder="Password" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirm-password" class="form-label"><strong>Confirm Password:</strong></label>
+                        <input type="password" name="confirm-password" placeholder="Confirm Password"
+                            class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="role" class="form-label"><strong>Role:</strong></label>
+                        <select name="role" class="form-control">
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn bg-gradient-secondary"data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn bg-gradient-success">Submit</button>
                     </div>
                 </form>
             </div>
@@ -55,18 +57,21 @@
         const userId = $(this).data('id');
         const userName = $(this).data('name');
         const userEmail = $(this).data('email');
+        const userRole = $(this).data('role'); // Ambil data role
 
         // Isi data ke dalam form di modal
         $('#update-form').find('input[name="name"]').val(userName);
         $('#update-form').find('input[name="email"]').val(userEmail);
-        $('#update-form').find('input[name="password"]').val(''); 
-        $('#update-form').find('input[name="confirm-password"]').val(''); 
+        $('#update-form').find('input[name="password"]').val('');
+        $('#update-form').find('input[name="confirm-password"]').val('');
         $('#update-form').append(`<input type="hidden" name="id" value="${userId}">`);
+        $('#update-form').find('select[name="role"]').val(userRole); // Set role yang sudah dipilih
+
 
         // Tampilkan modal
         $('#update-user').modal('show');
         $('#update-form').on('submit', function(e) {
-            e.preventDefault(); 
+            e.preventDefault();
 
             const form = $(this);
             const formData = new FormData(this);
@@ -101,7 +106,7 @@
                                     timer: 1500
                                 });
                                 $('#user-table').DataTable().ajax
-                            .reload(); // Reload DataTable
+                                    .reload(); // Reload DataTable
                                 $('#update-user').modal('hide'); // Tutup modal
                             } else {
                                 Swal.fire('Gagal!', response.message ||

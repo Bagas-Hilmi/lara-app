@@ -28,6 +28,7 @@
                                                 <th class="text-center">Action</th>
                                                 <th class="text-center">Name</th>
                                                 <th class="text-center">Email</th>
+                                                <th class="text-center">Role</th>
                                                 <th class="text-center">Created At</th>
                                             </tr>
                                         </thead>
@@ -83,6 +84,11 @@
                             {
                                 data: 'email',
                                 name: 'email',
+                                className: 'text-start',
+                            },
+                            {
+                                data: 'role',
+                                name: 'role',
                                 className: 'text-start',
                             },
                             {
