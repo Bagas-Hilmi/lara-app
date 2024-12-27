@@ -1,7 +1,7 @@
 @if ($row->report_status == 0)
     <div class="btn-group" role="group" aria-label="Basic example">
 
-        <button type="button" class="btn bg-gradient-secondary  update-btn" 
+        <button type="button" class="btn bg-gradient-info  update-btn" 
             data-id="{{ $row->id_ccb }}"
             data-period="{{ $row->period_cip }}" 
             data-bal-usd="{{ $row->bal_usd }}" 

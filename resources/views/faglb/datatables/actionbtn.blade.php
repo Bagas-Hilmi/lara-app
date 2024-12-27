@@ -1,6 +1,6 @@
 <div class="btn-group" role="group" aria-label="Basic example">
     @if ($row->report_status == 0)
-            <button class="view btn bg-gradient-secondary btn-sm action-btn" data-id="{{ $row->id_head }}"
+            <button class="view btn bg-gradient-warning btn-sm action-btn" data-id="{{ $row->id_head }}"
                 data-bs-toggle="modal" data-bs-target="#replaceDocFormModal"
                 data-bs-toggle="tooltip"
                 data-bs-placement="right" 
