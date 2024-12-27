@@ -240,16 +240,19 @@
                                                 let badgeClass = '';
                                                 switch(data) {
                                                     case 'Canceled':
-                                                        badgeClass = 'bg-danger';
+                                                        badgeClass = 'bg-gradient-danger';
                                                         break;
                                                     case 'Close':
-                                                        badgeClass = 'bg-secondary';
+                                                        badgeClass = 'bg-gradient-secondary';
                                                         break;
                                                     case 'On Progress':
-                                                        badgeClass = 'bg-success';
+                                                        badgeClass = 'bg-gradient-success';
                                                         break;
                                                     case 'To Opex':
-                                                        badgeClass = 'bg-info';
+                                                        badgeClass = 'bg-gradient-info';
+                                                        break;
+                                                    case 'Waiting Approval':
+                                                        badgeClass = 'bg-gradient-warning';
                                                         break;
                                                     default:
                                                         return data;
@@ -259,7 +262,7 @@
                                                     return `
                                                         <span class="badge ${badgeClass} me-2">${data}</span>
                                                         <div class="dropdown d-inline">
-                                                            <a class="badge bg-info dropdown-toggle" href="#" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <a class="badge bg-gradient-info dropdown-toggle" href="#" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                                             </a>
                                                             <ul class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton">
                                                                 <li class="mb-2">
@@ -276,11 +279,6 @@
                                                                     <div>
                                                                         <strong>No Asset:</strong> <span class="text-muted">${row.no_asset}</span>
                                                                     </div>
-                                                                </li>
-                                                                <li>
-                                                                    <a class="dropdown-item view-pdf" href="#" data-file="${row.file_pdf}" data-id="${row.id_capex}">
-                                                                        <i class="fas fa-eye text-info"></i> View PDF
-                                                                    </a>
                                                                 </li>
                                                             </ul>
                                                         </div>

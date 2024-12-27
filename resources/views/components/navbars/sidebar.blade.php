@@ -101,6 +101,8 @@
                 </a>
                 <ul class="collapse list-unstyled {{ in_array($activePage, ['reportCip', 'reportCategory', 'reportSummary', 'reportTax']) ? 'show' : '' }}" id="submenu1">
                     <li class="nav-item">
+
+
                         <a class="nav-link text-white {{ $activePage == 'reportCip' ? 'active bg-gradient-success' : '' }}"
                             href="{{ route('report.index', ['flag' => 'cip']) }}" style="padding-left: 40px;">
                             <div class="custom-icon-color text-center me-1">
@@ -108,27 +110,29 @@
                             </div>
                             <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report CIP</span>
                         </a>
-                        <a class="nav-link text-white {{ $activePage == 'reportCategory' ? 'active bg-gradient-success' : '' }}"
-                            href="{{ route('report.index', ['flag' => 'category']) }}" style="padding-left: 40px;">
-                            <div class="custom-icon-color text-center me-1">
-                                <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
-                            </div>
-                            <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Category</span>
-                        </a>
-                        <a class="nav-link text-white {{ $activePage == 'reportSummary' ? 'active bg-gradient-success' : '' }}"
-                            href="{{ route('report.index', ['flag' => 'summary']) }}" style="padding-left: 40px;">
-                            <div class="custom-icon-color text-center me-1">
-                                <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
-                            </div>
-                            <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Summary</span>
-                        </a>
-                        <a class="nav-link text-white {{ $activePage == 'reportTax' ? 'active bg-gradient-success' : '' }}"
-                            href="{{ route('report.index', ['flag' => 'tax']) }}" style="padding-left: 40px;">
-                            <div class="custom-icon-color text-center me-1">
-                                <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
-                            </div>
-                            <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Tax</span>
-                        </a>
+                        @if(auth()->user()->hasRole('admin'))
+                            <a class="nav-link text-white {{ $activePage == 'reportCategory' ? 'active bg-gradient-success' : '' }}"
+                                href="{{ route('report.index', ['flag' => 'category']) }}" style="padding-left: 40px;">
+                                <div class="custom-icon-color text-center me-1">
+                                    <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                                </div>
+                                <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Category</span>
+                            </a>
+                            <a class="nav-link text-white {{ $activePage == 'reportSummary' ? 'active bg-gradient-success' : '' }}"
+                                href="{{ route('report.index', ['flag' => 'summary']) }}" style="padding-left: 40px;">
+                                <div class="custom-icon-color text-center me-1">
+                                    <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                                </div>
+                                <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Summary</span>
+                            </a>
+                            <a class="nav-link text-white {{ $activePage == 'reportTax' ? 'active bg-gradient-success' : '' }}"
+                                href="{{ route('report.index', ['flag' => 'tax']) }}" style="padding-left: 40px;">
+                                <div class="custom-icon-color text-center me-1">
+                                    <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                                </div>
+                                <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Tax</span>
+                            </a>
+                        @endif
                     </li>
                 </ul>
             </li>

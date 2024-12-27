@@ -74,6 +74,7 @@
                                     <li><a class="dropdown-item" href="#" data-value="Close">Close</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="On Progress">On Progress</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="To Opex">To Opex</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Waiting Approval">Waiting Approval</a></li>
                                 </ul>
                                 <input type="hidden" id="status_capex_edit" name="status_capex" style="text-align: center;" required>
                             </div>
@@ -121,10 +122,6 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-3" id="fileUploadContainer" style="display: none;">
-                            <label class="form-label font-weight-bold">Upload PDF</label>
-                            <input type="file" class="form-control" name="file_pdf" accept="application/pdf" required>
-                        </div>
                         <div class="col-md-3" id="capdateContainer">
                             <label for="capdate_edit" class="form-label font-weight-bold">Capitalized Date</label>
                             <input type="date" class="form-control" id="capdate_edit" name="capdate" style="text-align: center;" required>
@@ -214,35 +211,6 @@
                 // Ambil status capex
                 var status_capex = $('#status_capex_edit').val();
                 
-                // Cek jika status Close
-                if (status_capex === 'Close') {
-                    var fileInput = $('input[name="file_pdf"]');
-                    
-                    // Validasi file
-                    if (fileInput.get(0).files.length === 0) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Harap unggah file PDF untuk status Close',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                        return; // Hentikan proses
-                    }
-
-                    // Validasi tipe file
-                    var file = fileInput.get(0).files[0];
-                    var allowedTypes = ['application/pdf'];
-                    
-                    if (!allowedTypes.includes(file.type)) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Hanya file PDF',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                        return; // Hentikan proses
-                    }
-                }
 
                 // Buat FormData untuk mendukung upload file
                 var formData = new FormData();
@@ -267,7 +235,6 @@
                 
                 // Tambahkan file jika ada
                 if (status_capex === 'Close') {
-                    formData.append('file_pdf', fileInput.get(0).files[0]);
                     formData.append('capdate', $('#capdate_edit').val());
                     formData.append('capdoc', $('#capdoc_edit').val());
                     formData.append('noasset', $('#noasset_edit').val());
@@ -364,11 +331,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
-        const fileUploadContainer = document.getElementById('fileUploadContainer');
         const capdateContainer = document.getElementById('capdateContainer');
         const capdocContainer = document.getElementById('capdocContainer');
         const noassetContainer = document.getElementById('noassetContainer');
-        const fileUploadInput = fileUploadContainer.querySelector('input[type="file"]');
         const saveEditButton = document.getElementById('save-edit-capex');
         const statusCapexInput = document.getElementById('status_capex_edit');
         const statusDropdownButton = document.getElementById('statusDropdownEdit');
@@ -377,31 +342,26 @@
         function toggleContainers(status) {
             if (status === 'Close') {
                 // Tampilkan semua container
-                fileUploadContainer.style.display = 'block';
                 capdateContainer.style.display = 'block';
                 capdocContainer.style.display = 'block';
                 noassetContainer.style.display = 'block';
                 
                 // Set required attributes
-                fileUploadInput.setAttribute('required', 'required');
                 document.getElementById('capdate_edit').setAttribute('required', 'required');
                 document.getElementById('capdoc_edit').setAttribute('required', 'required');
                 document.getElementById('noasset_edit').setAttribute('required', 'required');
             } else {
                 // Sembunyikan semua container
-                fileUploadContainer.style.display = 'none';
                 capdateContainer.style.display = 'none';
                 capdocContainer.style.display = 'none';
                 noassetContainer.style.display = 'none';
                 
                 // Hapus required attributes
-                fileUploadInput.removeAttribute('required');
                 document.getElementById('capdate_edit').removeAttribute('required');
                 document.getElementById('capdoc_edit').removeAttribute('required');
                 document.getElementById('noasset_edit').removeAttribute('required');
                 
                 // Reset nilai
-                fileUploadInput.value = '';
                 document.getElementById('capdate_edit').value = '';
                 document.getElementById('capdoc_edit').value = '';
                 document.getElementById('noasset_edit').value = '';
@@ -429,34 +389,6 @@
                     return false;
                 }
             }
-            return true;
-        }
-
-        // Fungsi validasi input file PDF
-        function validatePDFInput(fileInput) {
-            const allowedTypes = ['application/pdf'];
-            const file = fileInput.files[0];
-
-            if (!file) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Harap unggah file PDF untuk status Close',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-                return false;
-            }
-
-            if (!allowedTypes.includes(file.type)) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Hanya file PDF yang diperbolehkan',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-                return false;
-            }
-
             return true;
         }
 
