@@ -44,7 +44,7 @@
 
             @include('approve.modal.upload-pdf')
             @include('approve.modal.approve-pdf')
-            @include('approve.modal.form')
+            @include('approve.modal.form-acceptance')
 
 
             @push('css')
@@ -114,12 +114,15 @@
                                                         break;
                                                     case 'Close':
                                                         badgeClass = 'bg-secondary';
-                                                          break;
+                                                        break;
                                                     case 'On Progress':
-                                                        badgeClass = 'bg-success';
+                                                        badgeClass = 'bg-gradient-success';
                                                         break;
                                                     case 'To Opex':
                                                         badgeClass = 'bg-info';
+                                                        break;
+                                                    case 'Waiting Approval':
+                                                        badgeClass = 'bg-gradient-secondary';
                                                         break;
                                                     default:
                                                         return data;

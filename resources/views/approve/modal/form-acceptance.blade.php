@@ -25,7 +25,7 @@
 
             // Lakukan Ajax request untuk mendapatkan data berdasarkan id_capex
             $.ajax({
-                url: '/approve/' + idCapex, // Ganti dengan rute yang sesuai
+                url: '/approve/' + idCapex, // Ganti dengan rute yang   sesuai
                 method: 'GET',
                 data: {
                     flag: 'show-form' // Menambahkan flag untuk menunjukkan ini adalah permintaan untuk menampilkan form
@@ -50,40 +50,40 @@
                                 </div>
 
                                 <div class="info-row">
-        <div class="label">CAPEX</div>
-        <div class="colon">:</div>
-        <div class="value">${response.capex_number}</div>
-    </div>
-    <div class="info-row">
-        <div class="label">Project Title</div>
-        <div class="colon">:</div>
-        <div class="value">${response.project_desc}</div>
-    </div>
-    <div class="info-row">
-        <div class="label">SAP Asset Number</div>
-        <div class="colon">:</div>
-        <div class="value">${response.cip_number}</div>
-    </div>
-    <div class="info-row">
-        <div class="label">WBS Number</div>
-        <div class="colon">:</div>
-        <div class="value">${response.wbs_number}</div>
-    </div>
-    <div class="info-row">
-        <div class="label">Date</div>
-        <div class="colon">:</div>
-        <div class="value">${response.startup}</div>
-    </div>
-    <div class="info-row">
-        <div class="label">Expected Completed</div>
-        <div class="colon">:</div>
-        <div class="value">${response.expected_completed}</div>
-    </div>
-    <div class="info-row">
-        <div class="label">Actual Completed</div>
-        <div class="colon">:</div>
-        <div class="value">${response.date}</div>
-    </div>
+                                        <div class="label">CAPEX</div>
+                                        <div class="colon">:</div>
+                                        <div class="value">${response.capex_number}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="label">Project Title</div>
+                                        <div class="colon">:</div>
+                                        <div class="value">${response.project_desc}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="label">SAP Asset Number</div>
+                                        <div class="colon">:</div>
+                                        <div class="value">${response.cip_number}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="label">WBS Number</div>
+                                        <div class="colon">:</div>
+                                        <div class="value">${response.wbs_number}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="label">Date</div>
+                                        <div class="colon">:</div>
+                                        <div class="value">${response.startup}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="label">Expected Completed</div>
+                                        <div class="colon">:</div>
+                                        <div class="value">${response.expected_completed}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="label">Actual Completed</div>
+                                        <div class="colon">:</div>
+                                        <div class="value">${response.date}</div>
+                                    </div>
 
                                 <!-- BERITA ACARA PENYELESAIAN CAPEX -->
                                 <div class="row mb-3">

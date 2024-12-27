@@ -74,7 +74,10 @@
                             </div>
                         </div>
 
-                        <a id="viewPdfButton" href="#" class="btn btn-primary" target="_blank">
+                        <a id="viewDetailButton" href="#" class="btn btn-primary" target="_blank">
+                            <i class="fa fa-file-pdf"></i> Lihat PDF
+                        </a>
+                        <a id="viewClosingButton" href="#" class="btn btn-primary" target="_blank">
                             <i class="fa fa-file-pdf"></i> Lihat PDF
                         </a>
                     </div>
@@ -108,8 +111,8 @@
             var apv_at_user = button.data('apv_at_user');
             var apv_engineer = button.data('apv_engineer');
             var apv_at_engineer = button.data('apv_at_engineer');
-            var userRole = "{{ auth()->user()->roles->first()->name }}"; // Role Pengguna
-            var userId = "{{ auth()->user()->id }}"; // Get current user ID
+            var userRole = "{{ auth()->user()->roles->first()->name }}"; // Role user
+            var userId = "{{ auth()->user()->id }}"; 
             var id_admin_1 = 3; // ID Admin 1
             var id_admin_2 = 4; // ID Admin 2  
 
@@ -118,23 +121,22 @@
             let currentStatus;
             let canSign = false;
 
-            // Tentukan status berdasarkan role pengguna
             if (userRole === 'admin') {
                 if (userId == id_admin_1) {
                     currentStatus = statusApprove1;
-                    canSign = true; // Admin 1 bisa sign kapan saja
+                    canSign = true; 
                 } else if (userId == id_admin_2) {
                     currentStatus = statusApprove4;
-                    canSign = statusApprove1 == 1; // Admin 2 hanya bisa sign jika Admin 1 sudah approve
+                    canSign = statusApprove1 == 1; 
                 }
             } else if (userRole === 'user') {
                 currentStatus = statusApprove2;
                 canSign = statusApprove1 == 1 && statusApprove4 ==
-                    1; // User bisa sign jika Admin 1 dan Admin 2 sudah approve
+                    1; 
             } else if (userRole === 'engineer') {
                 currentStatus = statusApprove3;
                 canSign = statusApprove1 == 1 && statusApprove4 == 1 && statusApprove2 ==
-                    1; // Engineer bisa sign jika Admin 1, Admin 2 dan User sudah approve
+                    1; 
             }
 
             if (statusApprove1 == 1) {
@@ -379,21 +381,34 @@
         $('#signatureModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var idCapex = button.data('id');
-            var signatureFile = button.data('signature-file');
+            var signatureDetailFile = button.data('signature-detail-file');
+            var signatureClosingFile = button.data('signature-closing-file');
 
-            if (signatureFile) {
-                // Tambahkan timestamp ke URL untuk mencegah caching
-                var timestamp = new Date().getTime();
+            var timestamp = new Date().getTime(); // Tambahkan timestamp untuk mencegah caching
+
+            // Cek apakah ada signature detail file
+            if (signatureDetailFile) {
                 var viewPdfUrl = "{{ route('approve.show', ':id') }}"
                     .replace(':id', idCapex) +
-                    "?flag=show-pdf&t=" + timestamp;
+                    "?flag=show-form-detail&t=" + timestamp;
 
-                // Update URL PDF viewer
-                $('#viewPdfButton').attr('href', viewPdfUrl).show();
+                // Update URL PDF viewer untuk signature-detail
+                $('#viewDetailButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewPdfButton').hide();
+                $('#viewDetailButton').hide(); // Sembunyikan tombol jika tidak ada file
+            }
+
+            // Cek apakah ada signature closing file
+            if (signatureClosingFile) {
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}"
+                    .replace(':id', idCapex) +
+                    "?flag=show-form-closing&t=" + timestamp;
+
+                // Update URL PDF viewer untuk signature-closing
+                $('#viewClosingButton').attr('href', viewPdfUrl).show();
+            } else {
+                $('#viewClosingButton').hide(); // Sembunyikan tombol jika tidak ada file
             }
         });
-
     });
 </script>
