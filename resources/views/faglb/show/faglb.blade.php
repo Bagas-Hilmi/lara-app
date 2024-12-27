@@ -90,11 +90,20 @@
             scrollX: true,
             columnDefs: [
                 {
+                    targets: 0, 
+                    data: null,
+                    orderable: false, 
+                    searchable: false, 
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // Menghasilkan nomor urut
+                    }
+                },
+                {
                     targets: 3, // Kolom tanggal
                     render: function (data, type, row) {
                         if (data && type === 'display') {
                             // Tetap tampilkan dalam format DD/MM/YYYY
-                            var parts = data.split('-'); // Jika format input YYYY-MM-DD
+                            var parts = data.split('-');
                             if (parts.length === 3) {
                                 return parts[2] + '/' + parts[1] + '/' + parts[0];
                             }
@@ -106,8 +115,8 @@
                     },
                 },
             ],
-            order: [[3, 'asc']], // Urutkan berdasarkan kolom tanggal
-            pageLength: 10, // Jumlah data per halaman
+            order: [[3, 'asc']], 
+            pageLength: 10, 
         });
     });
     </script>
@@ -116,23 +125,16 @@
 
 <style>
     table {
-        table-layout: auto;
-        /* Kolom menyesuaikan dengan isi */
-        width: 100%;
-        /* Tabel menggunakan seluruh lebar kontainer */
+        table-layout: auto; 
+        width: 100%; /* Tabel menggunakan seluruh lebar kontainer */
     }
 
     table td,
     table th {
-        height: 50px;
-        /* Mengatur tinggi baris */
-       
-        /* Konten vertikal di tengah */
-        white-space: nowrap;
-        /* Mencegah teks turun ke baris berikutnya */
-        overflow: hidden;
-        /* Memotong teks yang terlalu panjang */
-        text-overflow: ellipsis;
-        /* Menambahkan elipsis (...) jika teks terlalu panjang */
+        height: 50px; /* Mengatur tinggi baris */
+        vertical-align: middle; /* Konten vertikal di tengah */
+        white-space: nowrap; /* Mencegah teks turun ke baris berikutnya */
+        overflow: hidden; /* Memotong teks yang terlalu panjang */
+        text-overflow: ellipsis; /* Menambahkan elipsis (...) jika teks terlalu panjang */
     }
 </style>
