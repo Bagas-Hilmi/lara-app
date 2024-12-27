@@ -210,19 +210,21 @@ class ApproveController extends Controller
             $approve = DB::table('t_approval_report')->where('id_capex', $idCapex)->first();
 
             if (!$approve) {
-                return response()->json(['error' => 'Data capex tidak ditemukan di approval report'], 404);
+                abort(404, 'Data capex tidak ditemukan di approval report');
             }
-
+            
             if ($userRole === 'admin' && $userId == 4 && $approve->status_approve_1 != 1) {
-                return response()->json(['error' => 'Menunggu approval dari admin 1'], 403);
+                abort(403, 'Menunggu approval dari admin 1');
             }
-
+            
             if ($userRole === 'user' && ($approve->status_approve_1 != 1 || $approve->status_approve_4 != 1)) {
-                return response()->json(['error' => 'Menunggu approval dari admin 2'], 403);
+                abort(403, 'Menunggu approval dari admin 2');
             }
+            
             if ($userRole === 'engineer' && ($approve->status_approve_1 != 1 || $approve->status_approve_2 != 1 || $approve->status_approve_4 != 1)) {
-                return response()->json(['error' => 'Menunggu approval sebelumnya'], 403);
+                abort(403, 'Menunggu approval sebelumnya');
             }
+            
 
             try {
                 $updateData = [

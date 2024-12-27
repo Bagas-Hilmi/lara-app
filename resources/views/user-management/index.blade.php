@@ -17,7 +17,7 @@
                                 <div class="d-flex mb-2">
                                     <button href="#" class="btn btn-sm btn-primary"
                                         style="background-color: #09170a; border-color: #09170a;" data-bs-toggle="modal"
-                                        data-bs-target="#new-form">New User
+                                        data-bs-target="#new-user">New User
                                     </button>
                                 </div>
                                 <div class="table-responsive p-0">
@@ -28,9 +28,7 @@
                                                 <th class="text-center">Action</th>
                                                 <th class="text-center">Name</th>
                                                 <th class="text-center">Email</th>
-                                                <th class="text-center">Roles</th>
                                                 <th class="text-center">Created At</th>
-                                                <th class="text-center">Updated At</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -41,6 +39,10 @@
                 </div>
             </div>
             <x-footers.auth></x-footers.auth>
+
+            @include('user-management.modal.new-user')
+            @include('user-management.modal.update-user')
+            
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
             <script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
@@ -60,9 +62,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
-                        order: [
-                            [1, 'desc']
-                        ],
+                        order: [[3, 'desc']],
                         ajax: {
                             url: "{{ route('user-management.index') }}",
                             type: 'GET',
@@ -75,19 +75,15 @@
                                 className: 'text-center'
                             },
                             {
-                                data: 'id',
-                                name: 'id'
-                            },
-                            {
                                 data: 'name',
                                 name: 'name',
-                                className: 'text-center'
+                                className: 'text-start'
                             },
 
                             {
                                 data: 'email',
                                 name: 'email',
-                                className: 'text-right',
+                                className: 'text-start',
                             },
                             {
                                 data: 'created_at',
@@ -101,15 +97,6 @@
                                     return `${year}-${month}-${day}`;
                                 }
                             },
-                            {
-                                data: 'updated_at',
-                                name: 'updated_at',
-                                className: 'text-center',
-                                render: function(data) {
-                                    return moment(data).format(
-                                        'YYYY-MM-DD'); // jika menggunakan moment.js
-                                }
-                            }
                         ]
 
                     });
@@ -158,9 +145,71 @@
         }
 
         /* Mengatur lebar tabel agar responsif */
-        #faglb-table {
+        #user-table {
             width: 100%;
             /* Memastikan tabel mengambil 100% lebar */
         }
+    }
+
+    .rounded-table {
+        border-radius: 12px;
+        /* Adjust the radius as needed */
+        overflow: hidden;
+        /* Ensures child elements respect the border radius */
+    }
+
+    .rounded-table th,
+    .rounded-table td {
+        border: none;
+        /* Remove default borders to maintain rounded appearance */
+    }
+
+    #user-table thead th {
+    background-color: #3cb210; /* Warna latar belakang header */
+    color: #ffffff; /* Warna teks header */
+    }
+    
+    /* Gaya untuk baris tabel */
+    #user-table tbody tr {
+        transition: background-color 0.3s ease; /* Efek transisi untuk warna latar belakang */
+        color: #2c2626;
+    }   
+
+    /* Gaya untuk sel tabel */
+    #user-table tbody td {
+        padding: 8px; /* Padding untuk sel */
+        border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
+        color: #2c2626;
+    }
+
+    /* Hover effect untuk baris tabel */
+    #user-table tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
+    }
+    #user-table th, #user-table td {
+        padding: 8px;
+        text-align: center;
+    }
+    .form-select {
+        width: auto; /* Ubah sesuai kebutuhan */
+        border-radius: 4px; /* Tambahkan sudut melengkung */
+        border: 1px solid #ccc; /* Warna border */
+        box-shadow: none; /* Hilangkan shadow default */
+        background-color: #f9f9f9; /* Warna latar belakang */
+        font-size: 15px; /* Ukuran teks */
+    }
+    /* Fokus pada dropdown */
+    .form-select:focus {
+        border-color: #42bd37; /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Efek shadow saat fokus */
+    }
+    .form-control {
+        border: 1px solid #ccc; /* Customize the border */
+        box-shadow: none; /* Remove shadow */
+        border-radius: 4px; /* Tambahkan sudut melengkung */
+    }
+    .form-control:focus {
+        border-color: #42bd37; /* Warna border saat fokus */
+        box-shadow: 0 0 5px rgba(66, 189, 55, 0.5); /* Menambah efek shadow saat fokus */
     }
 </style>
