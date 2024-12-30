@@ -18,6 +18,7 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('user-management', UserController::class);
     Route::resource('cipcumbal', CipCumBalController::class);
     Route::resource('faglb', FaglbController::class);
     Route::resource('capex', CapexController::class);
@@ -55,7 +56,6 @@ route::get('/send-welcome-mail', function() {
 
 });
 
-Route::resource('user-management', UserController::class);
 
 // Include template routes
 require base_path('routes/web_template.php');

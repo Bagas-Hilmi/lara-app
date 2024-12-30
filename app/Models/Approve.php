@@ -60,6 +60,7 @@ class Approve extends Model
                 't_master_capex.expected_completed',
                 't_master_capex.startup',
                 't_master_capex.cip_number',
+                't_master_capex.total_budget',
                 't_approval_report.file_pdf',
                 't_approval_report.wbs_type',
                 't_approval_report.date',
@@ -127,6 +128,7 @@ class Approve extends Model
                         'expected_completed' => $data->expected_completed,
                         'startup' => $data->startup,
                         'cip_number' => $data->cip_number,
+                        'total_budget' => $data->total_budget,
                     ]);
             } else {
                 // Jika data belum ada, lakukan insert
@@ -141,6 +143,7 @@ class Approve extends Model
                     'expected_completed' => $data->expected_completed,
                     'startup' => $data->startup,
                     'cip_number' => $data->cip_number,
+                    'total_budget' => $data->total_budget,
 
                 ]);
             }

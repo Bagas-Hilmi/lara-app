@@ -77,7 +77,7 @@ class ApproveController extends Controller
                 }
             } else if ($currentRole === 'user' && $currentStatus == 1) {
                 // Jika user approve dan WBS adalah Project, kirim ke engineer
-                if ($capexData->wbs_capex === 'Project') {
+                if ($capexData['wbs_capex'] === 'Project') {
                     // Menggunakan Laratrust untuk mencari user dengan role 'engineer'
                     $nextUser = User::whereHas('roles', function ($query) {
                         $query->where('name', 'engineer');
@@ -293,7 +293,9 @@ class ApproveController extends Controller
         // Render view ke HTML
         $html = view(
             'approve.form.' .
-                ($type === 'closing' ? 'form-closing' : ($type === 'detail' ? 'form-detail' : ($type === 'acceptance' ? 'form-accept' : 'unknown-form'))),
+                ($type === 'closing' ? 'form-closing' : 
+                ($type === 'detail' ? 'form-detail' : 
+                ($type === 'acceptance' ? 'form-accept' : 'unknown-form'))),
             $data
         )->render();
 

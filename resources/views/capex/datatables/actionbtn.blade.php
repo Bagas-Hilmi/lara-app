@@ -3,7 +3,7 @@
         <i class="fas fa-cog me-1"></i> Actions
     </button>
     <ul class="dropdown-menu" aria-labelledby="actionDropdown_{{ $row->id }}">
-        @if ($row->status_capex == 'Canceled' || $row->status_capex == 'To Opex' || $row->status_capex == 'On Progress')
+        @if ($row->status_capex == 'Canceled' || $row->status_capex == 'To Opex' || $row->status_capex == 'On Progress' || $row->status_capex == 'Waiting Approval' )
         <li>
             <a class="dropdown-item d-flex align-items-center" href="#" id="edit-button" 
                 data-id="{{ $row->id_capex }}" 

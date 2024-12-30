@@ -8,8 +8,8 @@
 
     <p>
         Mohon bantuan approvalnya untuk lampiran form closing 
-        <strong>{{ $capexData->capex_number }}</strong> 
-        {{ $capexData->project_desc }}.
+        <strong>{{ $capexData['capex_number'] }}</strong> 
+        {{ $capexData['project_desc'] }}
     </p>
 
     <p>Silahkan klik tombol Approve pada aplikasi untuk melakukan e-sign.</p>
