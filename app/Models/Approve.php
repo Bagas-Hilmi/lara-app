@@ -17,9 +17,27 @@ class Approve extends Model
     protected $fillable = [
         'id_capex',
         'project_desc',
+        'wbs_capex',
         'status_capex',
         'requester',
-        'file_pdf'
+        'file_pdf',
+        'capex_number',
+        'project_desc',
+        'cip_number',
+        'wbs_number',
+        'startup',
+        'expected_completed',
+        'date',
+        'wbs_type',
+        'engineering_production',
+        'maintenance',
+        'outstanding_inventory',
+        'material',
+        'jasa',
+        'etc',
+        'warehouse_received',
+        'user_received',
+        'berita_acara'
     ];
 
     public static function getData()
@@ -45,8 +63,18 @@ class Approve extends Model
                 't_approval_report.file_pdf',
                 't_approval_report.wbs_type',
                 't_approval_report.date',
+                't_approval_report.engineering_production',
+                't_approval_report.maintenance',
+                't_approval_report.outstanding_inventory',
+                't_approval_report.material',
+                't_approval_report.jasa',
+                't_approval_report.etc',
+                't_approval_report.warehouse_received',
+                't_approval_report.user_received',
+                't_approval_report.berita_acara',
                 't_approval_report.signature_detail_file',
                 't_approval_report.signature_closing_file',
+                't_approval_report.signature_acceptance',
                 't_approval_report.upload_date',
                 't_approval_report.status_approve_1',
                 't_approval_report.status_approve_2',
@@ -119,5 +147,10 @@ class Approve extends Model
         }
 
         return $masterData; // Kembalikan hasil query
+    }
+
+    public function capex()
+    {
+        return $this->belongsTo(Capex::class, 'id_capex');
     }
 }

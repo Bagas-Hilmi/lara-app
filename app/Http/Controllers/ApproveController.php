@@ -105,7 +105,7 @@ class ApproveController extends Controller
         if ($flag === 'upload-pdf') {
             // Validasi input
             $request->validate([
-                'id_capex' => 'required|exists:t_master_capex,id_capex',
+                'id_capex' => 'required|exists:t_approval_report,id_capex',
                 'file_pdf' => 'required|file|mimes:pdf|max:2048',
                 'date' => 'required',
                 'wbs_type' => 'required|in:WBS-P,WBS-A',
@@ -187,104 +187,116 @@ class ApproveController extends Controller
 
             return response()->json(['error' => 'File PDF tidak ditemukan'], 400);
         } else if ($flag === 'signature') {
-            if ($request->flag === 'signature') {
-                if ($request->flag === 'signature') {
-                    $userRole = auth::user()->roles->first()->name;
-                    $userId = auth::id();
+            $userRole = auth::user()->roles->first()->name;
+            $userId = auth::id();
 
-                    // Validasi sesuai role
-                    $statusField = 'status_approve_1';
-                    if ($userRole === 'user') {
-                        $statusField = 'status_approve_2';
-                    } else if ($userRole === 'engineer') {
-                        $statusField = 'status_approve_3';
-                    } else if ($userRole === 'admin' && $userId === 4) {
-                        $statusField = 'status_approve_4';
+            // Validasi sesuai role
+            $statusField = 'status_approve_1';
+            if ($userRole === 'user') {
+                $statusField = 'status_approve_2';
+            } else if ($userRole === 'engineer') {
+                $statusField = 'status_approve_3';
+            } else if ($userRole === 'admin' && $userId === 4) {
+                $statusField = 'status_approve_4';
+            }
+
+            $request->validate([
+                'id_capex' => 'required|exists:t_approval_report,id_capex',
+                $statusField => 'required|in:1,2',
+            ]);
+
+            try {
+                $idCapex = $request->input('id_capex');
+                $statusApprove = $request->input($statusField);
+
+                // Tambahkan logika approval berdasarkan role
+                $updateData = [];
+                if ($userRole === 'admin') {
+                    if ($userId == 3) {
+                        $updateData['approved_by_admin_1'] = auth::user()->name;
+                        $updateData['approved_at_admin_1'] = now();
+                        $updateData['status_approve_1'] = $statusApprove;
+                    } else if ($userId == 4) {
+                        $updateData['approved_by_admin_2'] = auth::user()->name;
+                        $updateData['approved_at_admin_2'] = now();
+                        $updateData['status_approve_4'] = $statusApprove;
                     }
 
-                    $request->validate([
-                        'id_capex' => 'required|exists:t_master_capex,id_capex',
-                        $statusField => 'required|in:1,2',
-                    ]);
-
-                    try {
-                        $idCapex = $request->input('id_capex');
-                        $statusApprove = $request->input($statusField);
-
-                        // Tambahkan logika approval berdasarkan role
-                        $updateData = [];
-                        if ($userRole === 'admin') {
-                            if ($userId == 3) {
-                                $updateData['approved_by_admin_1'] = auth::user()->name;
-                                $updateData['approved_at_admin_1'] = now();
-                                $updateData['status_approve_1'] = $statusApprove;
-                            } else if ($userId == 4) {
-                                $updateData['approved_by_admin_2'] = auth::user()->name;
-                                $updateData['approved_at_admin_2'] = now();
-                                $updateData['status_approve_4'] = $statusApprove;
-                            }
-
-                            // Reset approval berikutnya jika disapprove
-                            if ($statusApprove == 2) {
-                                $updateData['status_approve_2'] = 0;
-                                $updateData['status_approve_3'] = 0;
-                                $updateData['approved_by_user'] = null;
-                                $updateData['approved_by_engineer'] = null;
-                            }
-                        } else if ($userRole === 'user') {
-                            $updateData['approved_by_user'] = auth::user()->name;
-                            $updateData['approved_at_user'] = now();
-                            $updateData['status_approve_2'] = $statusApprove;
-
-                            if ($statusApprove == 2) {
-                                $updateData['status_approve_3'] = 0;
-                                $updateData['approved_by_engineer'] = null;
-                            }
-                        } else if ($userRole === 'engineer') {
-                            $updateData['approved_by_engineer'] = auth::user()->name;
-                            $updateData['approved_at_engineer'] = now();
-                            $updateData['status_approve_3'] = $statusApprove;
-                        }
-
-                        // Proses tanda tangan jika approve
-                        if ($statusApprove == 1) {
-                            $data = $this->getCapexData($idCapex);
-
-                            // Generate form detail
-                            $detailFile = $this->generateFromTemplate('detail', $data);
-                            $signedDetail = $this->addSignature($detailFile, $userRole, $userId, 'detail');
-
-                            // Generate form closing
-                            $closingFile = $this->generateFromTemplate('closing', $data);
-                            $signedClosing = $this->addSignature($closingFile, $userRole, $userId, 'closing');
-
-                            // Update data dengan nama file yang sudah ditandatangani
-                            $updateData['signature_detail_file'] = $signedDetail;
-                            $updateData['signature_closing_file'] = $signedClosing;
-                        }
-
-                        // Update database
-                        DB::table('t_approval_report')
-                            ->where('id_capex', $idCapex)
-                            ->update($updateData);
-
-                        return response()->json([
-                            'success' => 'Digital signature has been added successfully'
-                        ]);
-                    } catch (\Exception $e) {
-                        return response()->json([
-                            'error' => 'Failed to process document: ' . $e->getMessage()
-                        ], 500);
+                    // Reset approval berikutnya jika disapprove
+                    if ($statusApprove == 2) {
+                        $updateData['status_approve_2'] = 0;
+                        $updateData['status_approve_3'] = 0;
+                        $updateData['approved_by_user'] = null;
+                        $updateData['approved_by_engineer'] = null;
                     }
+                } else if ($userRole === 'user') {
+                    $updateData['approved_by_user'] = auth::user()->name;
+                    $updateData['approved_at_user'] = now();
+                    $updateData['status_approve_2'] = $statusApprove;
+
+                    if ($statusApprove == 2) {
+                        $updateData['status_approve_3'] = 0;
+                        $updateData['approved_by_engineer'] = null;
+                    }
+                } else if ($userRole === 'engineer') {
+                    $updateData['approved_by_engineer'] = auth::user()->name;
+                    $updateData['approved_at_engineer'] = now();
+                    $updateData['status_approve_3'] = $statusApprove;
                 }
+
+                // Proses tanda tangan jika approve
+                if ($statusApprove == 1) {
+                    $approvalReport = Approve::with('capex')
+                        ->where('id_capex', $idCapex)
+                        ->first();
+
+                    $data = $approvalReport->toArray();
+
+                    // Generate form detail
+                    $detailFile = $this->generateFromTemplate('detail', $data);
+                    $signedDetail = $this->addSignature($detailFile, $userRole, $userId, 'detail');
+
+                    // Generate form closing
+                    $closingFile = $this->generateFromTemplate('closing', $data);
+                    $signedClosing = $this->addSignature($closingFile, $userRole, $userId, 'closing');
+
+                    $acceptanceFile = $this->generateFromTemplate('acceptance', $data);
+                    $signedAcceptance = $this->addSignature($acceptanceFile, $userRole, $userId, 'acceptance');
+
+                    // Update data dengan nama file yang sudah ditandatangani
+                    $updateData['signature_detail_file'] = $signedDetail;
+                    $updateData['signature_closing_file'] = $signedClosing;
+                    $updateData['signature_acceptance'] = $signedAcceptance;
+
+                    $this->sendEmailToNextApprover($data, $userRole, $statusApprove);
+                }
+
+                // Update database
+                DB::table('t_approval_report')
+                    ->where('id_capex', $idCapex)
+                    ->update($updateData);
+
+                return response()->json([
+                    'success' => 'Digital signature has been added successfully'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'Failed to process document: ' . $e->getMessage()
+                ], 500);
             }
         }
     }
 
+
     private function generateFromTemplate($type, $data)
     {
         // Render view ke HTML
-        $html = view('approve.modal.' . ($type === 'closing' ? 'form-closing' : 'form-detail'), $data)->render();
+        $html = view(
+            'approve.form.' .
+                ($type === 'closing' ? 'form-closing' : ($type === 'detail' ? 'form-detail' : ($type === 'acceptance' ? 'form-accept' : 'unknown-form'))),
+            $data
+        )->render();
+
 
         // Setup Dompdf
         $options = new Options();
@@ -310,15 +322,53 @@ class ApproveController extends Controller
 
     private function addSignature($sourcePath, $userRole, $userId, $type)
     {
+        // Ambil id_capex dari t_approval_report berdasarkan current user
+        $approvalReport = DB::table('t_approval_report')
+            ->where(function ($query) use ($userRole, $userId) {
+                if ($userRole === 'admin') {
+                    if ($userId == 3) {
+                        $query->whereNull('approved_by_admin_1');
+                    } else if ($userId == 4) {
+                        $query->whereNull('approved_by_admin_2');
+                    }
+                } else if ($userRole === 'user') {
+                    $query->whereNull('approved_by_user');
+                } else if ($userRole === 'engineer') {
+                    $query->whereNull('approved_by_engineer');
+                }
+            })
+            ->first();
+
+        if (!$approvalReport) {
+            throw new \Exception('Data approval tidak ditemukan');
+        }
+
+        $idCapex = $approvalReport->id_capex;
+
+        // Siapkan direktori penyimpanan
+        $signedBasePath = storage_path('app/public/uploads/signatures/');
+        $signedSubPath = $signedBasePath . ($type === 'detail' ? 'signature-detail/' : ($type === 'closing' ? 'signature-closing/' : ($type === 'acceptance' ? 'signature-acceptance/' : 'unknown-type/')));
+
+        if (!file_exists($signedSubPath)) {
+            mkdir($signedSubPath, 0777, true);
+        }
+
+        // Nama file berdasarkan id_capex
+        $signedFileName = 'signed_' . $type . '_' . $idCapex . '.pdf';
+        $existingFilePath = $signedSubPath . $signedFileName;
+
+        // Gunakan file yang sudah ada atau source file baru
+        $sourceFile = file_exists($existingFilePath) ? $existingFilePath : $sourcePath;
+
         $pdf = new Fpdi();
-        $pageCount = $pdf->setSourceFile($sourcePath);
+        $pageCount = $pdf->setSourceFile($sourceFile);
 
         // Posisi tanda tangan
         $positions = [
-            'admin_1' => 20,
-            'admin_2' => 60,
-            'user' => 100,
-            'engineer' => 140
+            'admin_1' => 20,  // Prepared by
+            'admin_2' => 60,  // Reviewed by
+            'user' => 100,    // Approved by
+            'engineer' => 140 // Approved by
         ];
 
         // Salin semua halaman
@@ -327,41 +377,82 @@ class ApproveController extends Controller
             $pdf->addPage();
             $pdf->useTemplate($templateId);
 
-            // Tambah tanda tangan hanya di halaman terakhir
+            // Tambah semua tanda tangan di halaman terakhir
             if ($pageNo == $pageCount) {
                 $y = 220; // Posisi Y untuk tanda tangan
 
-                if ($userRole === 'admin') {
-                    if ($userId == 3) { // Admin 1
-                        $this->drawSignature($pdf, $positions['admin_1'], $y, 'Prepared by');
-                    } else if ($userId == 4) { // Admin 2
-                        $this->drawSignature($pdf, $positions['admin_2'], $y, 'Reviewed by');
+                // Ambil data tanda tangan yang sudah ada
+                $existingSignatures = DB::table('t_approval_report')
+                    ->where('id_capex', $idCapex)
+                    ->first();
+
+                // Gambar tanda tangan yang sudah ada
+                if ($existingSignatures) {
+                    if ($existingSignatures->approved_by_admin_1) {
+                        $this->drawSignature(
+                            $pdf,
+                            $positions['admin_1'],
+                            $y,
+                            'Prepared by',
+                            $existingSignatures->approved_by_admin_1,
+                            $existingSignatures->approved_at_admin_1
+                        );
                     }
-                } else if ($userRole === 'user') {
-                    $this->drawSignature($pdf, $positions['user'], $y, 'Approved by');
-                } else if ($userRole === 'engineer') {
-                    $this->drawSignature($pdf, $positions['engineer'], $y, 'Approved by');
+                    if ($existingSignatures->approved_by_admin_2) {
+                        $this->drawSignature(
+                            $pdf,
+                            $positions['admin_2'],
+                            $y,
+                            'Reviewed by',
+                            $existingSignatures->approved_by_admin_2,
+                            $existingSignatures->approved_at_admin_2
+                        );
+                    }
+                    if ($existingSignatures->approved_by_user) {
+                        $this->drawSignature(
+                            $pdf,
+                            $positions['user'],
+                            $y,
+                            'Approved by',
+                            $existingSignatures->approved_by_user,
+                            $existingSignatures->approved_at_user
+                        );
+                    }
+                    if ($existingSignatures->approved_by_engineer) {
+                        $this->drawSignature(
+                            $pdf,
+                            $positions['engineer'],
+                            $y,
+                            'Approved by',
+                            $existingSignatures->approved_by_engineer,
+                            $existingSignatures->approved_at_engineer
+                        );
+                    }
+                }
+
+                // Tambah tanda tangan baru
+                if ($userRole === 'admin') {
+                    if ($userId == 3 && !$existingSignatures->approved_by_admin_1) {
+                        $this->drawSignature($pdf, $positions['admin_1'], $y, 'Prepared by', Auth::user()->name, now());
+                    } else if ($userId == 4 && !$existingSignatures->approved_by_admin_2) {
+                        $this->drawSignature($pdf, $positions['admin_2'], $y, 'Reviewed by', Auth::user()->name, now());
+                    }
+                } else if ($userRole === 'user' && !$existingSignatures->approved_by_user) {
+                    $this->drawSignature($pdf, $positions['user'], $y, 'Approved by', Auth::user()->name, now());
+                } else if ($userRole === 'engineer' && !$existingSignatures->approved_by_engineer) {
+                    $this->drawSignature($pdf, $positions['engineer'], $y, 'Approved by', Auth::user()->name, now());
                 }
             }
         }
 
-        $signedBasePath = storage_path('app/public/uploads/signatures/');
-        $signedSubPath = $signedBasePath . ($type === 'detail' ? 'signature-detail/' : 'signature-closing/');
-        
-        // Cek dan buat folder jika belum ada
-        if (!file_exists($signedSubPath)) {
-            mkdir($signedSubPath, 0777, true);
+        // Simpan file
+        $pdf->Output('F', $existingFilePath);
+
+        // Hapus file sementara jika berbeda
+        if ($sourcePath !== $existingFilePath) {
+            unlink($sourcePath);
         }
-        
-        // Tentukan nama dan path file yang akan disimpan
-        $signedFileName = 'signed_' . $type . '_' . time() . '.pdf';
-        $signedFilePath = $signedSubPath . $signedFileName;
-        
-        // Simpan file yang sudah ditandatangani
-        $pdf->Output('F', $signedFilePath);
-        
-        // Hapus file sementara
-        unlink($sourcePath);
+
         return $signedFileName;
     }
 
@@ -386,14 +477,6 @@ class ApproveController extends Controller
         $pdf->Cell(40, 5, auth::user()->name, 0, 1);
     }
 
-    private function getCapexData($idCapex)
-    {
-        $data = DB::table('t_master_capex')
-            ->where('id_capex', $idCapex)
-            ->first(); // Menghasilkan stdClass
-
-        return (array) $data; // Konversi ke array
-    }
     /**
      * Display the specified resource.
      */
@@ -423,20 +506,32 @@ class ApproveController extends Controller
             }
 
             return response()->file($path);
-        } else if ($flag === 'show-form') {
-            $project = Approve::where('id_capex', $id)->first(); // Gunakan where untuk mencari id_capex
+        } else if ($flag === 'show-form-acceptance') {
+            $approve = Approve::where('id_capex', $id)->firstOrFail();
 
-            // Cek apakah project ditemukan
-            if (!$project) {
-                return response()->json(['error' => 'Project not found'], 404);
+            $filename = $approve->signature_acceptance;
+            $path = storage_path('app/public/uploads/signatures/signature-acceptance/' . $filename);
+
+            if (!file_exists($path)) {
+                abort(404, 'File not found.');
             }
 
-            // Kembalikan data project sebagai respons JSON
-            return response()->json($project);
+            return response()->file($path);
+        } else if ($flag === 'show-pdf') {
+            $approve = Approve::where('id_capex', $id)->firstOrFail();
+
+            $filename = $approve->file_pdf;
+            $path = storage_path('app/public/uploads/approvalFiles/' . $filename);
+
+            if (!file_exists($path)) {
+                abort(404, 'File not found.');
+            }
+
+            return response()->file($path);
         }
         // Kembalikan response jika flag tidak sesuai
         return response()->json(['error' => 'Invalid flag'], 400);
-    }  
+    }
 
     /**
      * Show the form for editing the specified resource.

@@ -8,13 +8,6 @@
             </a>
         @endif
 
-        @if (!empty($row->wbs_type))
-            <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#formModal"
-                data-id="{{ $row->id_capex }}">
-                <i class="fa fa-list" style="font-size: 1.2rem;"></i>
-            </a>
-        @endif
-
     @endif
 
     @if (!empty($row->file_pdf))
@@ -23,8 +16,12 @@
             data-id="{{ $row->id_capex }}"
             data-signature-detail-file="{{ $row->signature_detail_file }}"
             data-signature-closing-file="{{ $row->signature_closing_file }}"
+            data-signature-acceptance-file="{{ $row->signature_acceptance }}"
+            data-show-pdf="{{ $row->file_pdf }}"
             data-flag="show-form-detail"
             data-flag="show-form-closing"
+            data-flag="show-form-acceptance"
+            data-flag="show-pdf"
             data-status1="{{ $row->status_approve_1}}"
             data-status2="{{ $row->status_approve_2}}"
             data-status3="{{ $row->status_approve_3}}"

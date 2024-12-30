@@ -74,11 +74,17 @@
                             </div>
                         </div>
 
-                        <a id="viewDetailButton" href="#" class="btn btn-primary" target="_blank">
-                            <i class="fa fa-file-pdf"></i> Lihat PDF
+                        <a id="viewUploadButton" href="#" class="btn btn-primary" target="_blank">
+                            <i class="fa fa-file-pdf"></i> PDF Upload
                         </a>
-                        <a id="viewClosingButton" href="#" class="btn btn-primary" target="_blank">
-                            <i class="fa fa-file-pdf"></i> Lihat PDF
+                        <a id="viewDetailButton" href="#" class="btn btn-info" target="_blank">
+                            <i class="fa fa-file-pdf"></i> PDF Form Detail
+                        </a>
+                        <a id="viewClosingButton" href="#" class="btn btn-warning" target="_blank">
+                            <i class="fa fa-file-pdf"></i> PDF Form Closing
+                        </a>
+                        <a id="viewAcceptButton" href="#" class="btn btn-secondary" target="_blank">
+                            <i class="fa fa-file-pdf"></i> PDF Form Acceptance
                         </a>
                     </div>
 
@@ -383,31 +389,49 @@
             var idCapex = button.data('id');
             var signatureDetailFile = button.data('signature-detail-file');
             var signatureClosingFile = button.data('signature-closing-file');
+            var signatureAcceptance = button.data('signature-acceptance-file');
+            var showPdf = button.data('show-pdf');
 
-            var timestamp = new Date().getTime(); // Tambahkan timestamp untuk mencegah caching
+            var timestamp = new Date().getTime(); 
 
-            // Cek apakah ada signature detail file
             if (signatureDetailFile) {
                 var viewPdfUrl = "{{ route('approve.show', ':id') }}"
                     .replace(':id', idCapex) +
                     "?flag=show-form-detail&t=" + timestamp;
 
-                // Update URL PDF viewer untuk signature-detail
                 $('#viewDetailButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewDetailButton').hide(); // Sembunyikan tombol jika tidak ada file
+                $('#viewDetailButton').hide(); 
             }
 
-            // Cek apakah ada signature closing file
             if (signatureClosingFile) {
                 var viewPdfUrl = "{{ route('approve.show', ':id') }}"
                     .replace(':id', idCapex) +
                     "?flag=show-form-closing&t=" + timestamp;
 
-                // Update URL PDF viewer untuk signature-closing
                 $('#viewClosingButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewClosingButton').hide(); // Sembunyikan tombol jika tidak ada file
+                $('#viewClosingButton').hide(); 
+            }
+
+            if (showPdf) {
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}"
+                    .replace(':id', idCapex) +
+                    "?flag=show-pdf&t=" + timestamp;
+
+                $('#viewUploadButton').attr('href', viewPdfUrl).show();
+            } else {
+                $('#viewUploadButton').hide(); 
+            }
+
+            if (signatureAcceptance) {
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}"
+                    .replace(':id', idCapex) +
+                    "?flag=show-form-acceptance&t=" + timestamp;
+
+                $('#viewAcceptButton').attr('href', viewPdfUrl).show();
+            } else {
+                $('#viewAcceptButton').hide(); 
             }
         });
     });
