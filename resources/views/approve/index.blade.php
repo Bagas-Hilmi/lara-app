@@ -17,7 +17,12 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="d-flex mb-2">
-                                                        
+                                    @if(auth()->user()->hasRole('admin'))
+                                        <button class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#progressAPV"> 
+                                            Approval Progress
+                                        </button>    
+                                    @endif    
+                                        
                                 </div>
 
                                 <div class="table-responsive p-0">
@@ -44,6 +49,7 @@
 
             @include('approve.modal.upload-pdf')
             @include('approve.modal.approve-pdf')
+            @include('approve.modal.approval-progress')
 
 
             @push('css')

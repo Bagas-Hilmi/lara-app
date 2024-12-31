@@ -33,18 +33,43 @@ class ApproveController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            // Gunakan query builder untuk mengambil data
-            $query = Approve::getData();  // Ganti dengan query yang sesuai
-
-            return DataTables::of($query)
-                ->addColumn('action', function ($row) {
-                    return view('approve/datatables/actionbtn', [
-                        'row' => $row,
+            // Cek tipe data yang diminta dari parameter
+            if ($request->type === 'progress') {
+                // Query untuk data progress approval
+                $query = DB::table('t_approval_report')
+                    ->select([
+                        'id_capex',
+                        'project_desc',
+                        'wbs_capex',
+                        'upload_by',
+                        'status_capex',
+                        'status_approve_1',
+                        'status_approve_2',
+                        'status_approve_3',
+                        'status_approve_4',
+                        'upload_date',
                     ]);
-                })
 
-                ->rawColumns(['action'])
-                ->make(true);
+                return DataTables::of($query)
+                    ->addIndexColumn()
+                    ->addColumn('actions', function ($row) {
+                        return '<button class="btn btn-sm btn-info">View</button>';
+                    })
+                    ->rawColumns(['actions'])
+                    ->make(true);
+            } else {
+                // Query untuk data approve yang sudah ada sebelumnya
+                $query = Approve::getData();
+
+                return DataTables::of($query)
+                    ->addColumn('action', function ($row) {
+                        return view('approve/datatables/actionbtn', [
+                            'row' => $row,
+                        ]);
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
         }
 
         return view('approve.index');
@@ -256,14 +281,14 @@ class ApproveController extends Controller
 
                     // Generate form detail
                     $detailFile = $this->generateFromTemplate('detail', $data);
-                    $signedDetail = $this->addSignature($detailFile, $userRole, $userId, 'detail',$idCapex);
+                    $signedDetail = $this->addSignature($detailFile, $userRole, $userId, 'detail', $idCapex);
 
                     // Generate form closing
                     $closingFile = $this->generateFromTemplate('closing', $data);
-                    $signedClosing = $this->addSignature($closingFile, $userRole, $userId, 'closing',$idCapex);
+                    $signedClosing = $this->addSignature($closingFile, $userRole, $userId, 'closing', $idCapex);
 
                     $acceptanceFile = $this->generateFromTemplate('acceptance', $data);
-                    $signedAcceptance = $this->addSignature($acceptanceFile, $userRole, $userId, 'acceptance',$idCapex);
+                    $signedAcceptance = $this->addSignature($acceptanceFile, $userRole, $userId, 'acceptance', $idCapex);
 
                     // Update data dengan nama file yang sudah ditandatangani
                     $updateData['signature_detail_file'] = $signedDetail;
@@ -296,8 +321,8 @@ class ApproveController extends Controller
     {
 
         $reports = DB::table('t_report_cip')
-        ->where('id_capex', $data['id_capex']) // Pastikan ID capex sesuai dengan data yang dikirimkan
-        ->get();
+            ->where('id_capex', $data['id_capex']) // Pastikan ID capex sesuai dengan data yang dikirimkan
+            ->get();
 
         // Hitung total amount
         $totals = [
@@ -308,13 +333,11 @@ class ApproveController extends Controller
         // Gabungkan data tambahan dengan data lainnya
         $data['reports'] = $reports;
         $data['totals'] = $totals;
-        
+
         // Render view ke HTML
         $html = view(
             'approve.form.' .
-                ($type === 'closing' ? 'form-closing' : 
-                ($type === 'detail' ? 'form-detail' : 
-                ($type === 'acceptance' ? 'form-accept' : 'unknown-form'))),
+                ($type === 'closing' ? 'form-closing' : ($type === 'detail' ? 'form-detail' : ($type === 'acceptance' ? 'form-accept' : 'unknown-form'))),
             $data
         )->render();
 
@@ -345,8 +368,8 @@ class ApproveController extends Controller
     {
         // Ambil id_capex dari t_approval_report berdasarkan current user
         $approvalReport = DB::table('t_approval_report')
-        ->where('id_capex', $idCapex)  
-        ->first();
+            ->where('id_capex', $idCapex)
+            ->first();
 
 
         if (!$approvalReport) {
@@ -408,7 +431,7 @@ class ApproveController extends Controller
                             $existingSignatures->approved_at_admin_1   // Gunakan waktu dari database
                         );
                     }
-                    
+
                     if ($existingSignatures->approved_by_admin_2 && $userId != 4) {  // Tambah pengecekan userId
                         $this->drawSignature(
                             $pdf,
@@ -538,7 +561,9 @@ class ApproveController extends Controller
             }
 
             return response()->file($path);
+        } else if ($flag === 'show-progress') {
         }
+
         // Kembalikan response jika flag tidak sesuai
         return response()->json(['error' => 'Invalid flag'], 400);
     }
