@@ -148,17 +148,17 @@
                                         render: function(data, type, row) {
                                         if (type === 'display') {
                                             if (data === 'General Operation') {
-                                                return '<span class="badge bg-secondary">General Operation</span>';
+                                                return '<span class="badge bg-gradient-secondary">General Operation</span>';
                                             } else if (data === 'IT') {
-                                                return '<span class="badge bg-secondary">IT</span>';
+                                                return '<span class="badge bg-gradient-secondary">IT</span>';
                                             } else if (data === 'Environment') {
-                                                return '<span class="badge bg-secondary">Environment</span>';
+                                                return '<span class="badge bg-gradient-secondary">Environment</span>';
                                             } else if (data === 'Safety') {
-                                                return '<span class="badge bg-secondary">Safety</span>';
+                                                return '<span class="badge bg-gradient-secondary">Safety</span>';
                                             } else if (data === 'Improvement Plant efficiency') {
-                                                return '<span class="badge bg-secondary">Improvement Plant efficiency</span>';
+                                                return '<span class="badge bg-gradient-secondary">Improvement Plant efficiency</span>';
                                             } else if (data === 'Invesment') {
-                                                return '<span class="badge bg-secondary">Invesment</span>';
+                                                return '<span class="badge bg-gradient-secondary">Invesment</span>';
                                             }
                                             return data; // Untuk nilai lain tampilkan apa adanya
                                         }
@@ -171,9 +171,9 @@
                                     render: function(data, type, row) {
                                         if (type === 'display') {
                                             if (data === 'Project') {
-                                                return '<span class="badge bg-info">Project</span>';
+                                                return '<span class="badge bg-gradient-info">Project</span>';
                                             } else if (data === 'Non Project') {
-                                                return '<span class="badge bg-warning">Non Project</span>';
+                                                return '<span class="badge bg-gradient-warning">Non Project</span>';
                                             }
                                             return data; // Untuk nilai lain tampilkan apa adanya
                                         }
