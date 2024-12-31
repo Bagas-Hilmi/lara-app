@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class Report extends Model
 {
@@ -31,7 +32,11 @@ class Report extends Model
 
     public static function getActiveCapexDescriptions()
     {
-        return DB::table('t_report_cip')
+        // Ambil user yang sedang login
+        $user = Auth::user();
+
+        // Mulai query dasar
+        $query = DB::table('t_report_cip')
             ->join('t_master_capex', 't_report_cip.id_capex', '=', 't_master_capex.id_capex')
             ->select(
                 't_report_cip.id_capex as report_id_capex',
@@ -46,14 +51,25 @@ class Report extends Model
                 't_master_capex.wbs_capex',
                 't_master_capex.requester',
                 't_master_capex.status_capex'
-
             )
             ->distinct('id_capex')
-            ->where('t_report_cip.status', 1) // Anda bisa tambahkan kondisi di sini sesuai kebutuhan
-            ->where('t_master_capex.status', 1) // Tambahkan kondisi status pada t_master_capex
+            ->where('t_report_cip.status', 1) // Kondisi status pada t_report_cip
+            ->where('t_master_capex.status', 1); // Kondisi status pada t_master_capex
 
-            ->get();
+        // Cek role pengguna dan filter query sesuai role
+        if ($user->hasRole('admin')) {
+            // Admin bisa melihat semua data
+        } elseif ($user->hasRole('user')) {
+            // User hanya bisa melihat data berdasarkan requester
+            $query->where('t_master_capex.requester', $user->name);
+        } elseif ($user->hasRole('engineer')) {
+            // Engineer tidak bisa melihat data sama sekali, filter dengan ID null
+            $query->whereNull('t_master_capex.id_capex');
+        }
+
+        return $query->get();
     }
+
 
     public static function getEngineersForProjects()
     {
@@ -69,7 +85,7 @@ class Report extends Model
             ->select([
                 'id_report_cip',
                 'id_capex',
-                'id_head', 
+                'id_head',
                 'fa_doc',
                 'date',
                 'settle_doc',
@@ -82,13 +98,13 @@ class Report extends Model
                 'created_at',
                 'updated_at'
             ])
-            ->orderBy('date', 'asc') 
+            ->orderBy('date', 'asc')
             ->get();
     }
 
     public static function insertReportCip()
     {
-        
+
         $releasedHeads = DB::table('t_faglb_head')
             ->where('report_status', 1)
             ->pluck('id_head');
@@ -162,7 +178,7 @@ class Report extends Model
                     'created_at' => $data->created_at,
                     'updated_at' => $data->updated_at,
                 ]);
-            } 
+            }
         }
     }
 

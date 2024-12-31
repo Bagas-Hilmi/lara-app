@@ -36,6 +36,7 @@ class ReportController extends Controller
 
                 if ($request->has('capex_id') && $request->input('capex_id') != '') {
                     $query->where('t_report_cip.id_capex', $request->input('capex_id'));
+                    
                 } elseif ($request->has('status_capex') && $request->input('status_capex') != '') {
                     $query->where('t_master_capex.status_capex', $request->input('status_capex'));
                 }

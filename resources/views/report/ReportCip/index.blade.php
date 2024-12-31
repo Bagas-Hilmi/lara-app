@@ -210,7 +210,7 @@
                                     createdCell: function(td, cellData, rowData, rowIndex, colIndex){
                                         $(td).css('text-align','left');
                                     }
-                                   
+                                
                                 },
                                 {
                                     data: 'qty',
