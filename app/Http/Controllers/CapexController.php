@@ -149,6 +149,7 @@ class CapexController extends Controller
                 'expected_completed' => 'required|string',
                 'wbs_number' => 'required|string',
                 'cip_number' => 'required|string',
+                'file_pdf' => 'required_if:status_capex,Close,flag,update|file|mimes:pdf',
                 'capdate' => 'required_if:status_capex,Close,flag,update|string',
                 'capdoc' => 'required_if:status_capex,Close,flag,update|string|max:255',
                 'noasset' => 'required_if:status_capex,Close,flag,update|string|max:255',
@@ -195,6 +196,14 @@ class CapexController extends Controller
                 $capex->wbs_number = $validated['wbs_number'];
                 $capex->cip_number = $validated['cip_number'];
                 $capex->category = $validated['category'];
+
+                // Handle file upload for Close status
+                if ($validated['status_capex'] === 'Close' && $request->hasFile('file_pdf')) {
+                    $file = $request->file('file_pdf');
+                    $originalFileName = $file->getClientOriginalName();
+                    $filePath = $file->storeAs('public/uploads/sapFiles', $originalFileName);
+                    $capex->file_pdf = str_replace('public/', '', $filePath);
+                }
 
                 // Update or create ReportTax record
                 if (!empty($validated['capdate']) || !empty($validated['capdoc']) || !empty($validated['noasset'])) {
@@ -647,7 +656,7 @@ class CapexController extends Controller
             $capex = Capex::findOrFail($id);
 
             $filename = $capex->file_pdf;
-            $path = storage_path('app/public/uploads/capexFiles/' . $filename);
+            $path = storage_path('app/public/uploads/sapFiles/' . $filename);
 
             // Jika file tidak ditemukan, kembalikan 404
             if (!file_exists($path)) {
