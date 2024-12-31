@@ -98,6 +98,11 @@
                         <td>:</td>
                         <td colspan="2">{{ $date }}</td>
                     </tr>
+                    <tr>
+                        <td>Remark</td>
+                        <td>:</td>
+                        <td colspan="2">{{ $remark }}</td>
+                    </tr>
                 </table>
             </td>
         </tr>
@@ -111,54 +116,54 @@
         </tr>
         <tr>
             <td>WBS-P Engineering & Production</td>
-            <td align="center"><span class="checkbox">{{ $engineering_production == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $engineering_production == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $engineering_production == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $engineering_production == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td>Maintenance</td>
-            <td align="center"><span class="checkbox">{{ $maintenance == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $maintenance == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $maintenance == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $maintenance == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td>Outstanding Inventory</td>
-            <td align="center"><span class="checkbox">{{ $outstanding_inventory == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $outstanding_inventory == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $outstanding_inventory == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $outstanding_inventory == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td colspan="3"><strong>Outstanding PO</strong></td>
         </tr>
         <tr>
             <td style="padding-left: 20px;">Material</td>
-            <td align="center"><span class="checkbox">{{ $material == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $material == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $material == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $material == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td style="padding-left: 20px;">Jasa</td>
-            <td align="center"><span class="checkbox">{{ $jasa == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $jasa == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $jasa == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $jasa == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td style="padding-left: 20px;">Etc</td>
-            <td align="center"><span class="checkbox">{{ $etc == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $etc == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $etc == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $etc == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td colspan="3"><strong>BERITA ACARA PENERIMAAN BARANG</strong></td>
         </tr>
         <tr>
             <td style="padding-left: 20px;">Barang diterima oleh Warehouse</td>
-            <td align="center"><span class="checkbox">{{ $warehouse_received == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $warehouse_received == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $warehouse_received == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $warehouse_received == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td style="padding-left: 20px;">Barang diterima oleh User</td>
-            <td align="center"><span class="checkbox">{{ $user_received == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $user_received == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $user_received == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $user_received == 0 ? 'X' : '' }}</span></td>
         </tr>
         <tr>
             <td style="padding-left: 20px;">Berita Acara</td>
-            <td align="center"><span class="checkbox">{{ $berita_acara == 1 ? '✓' : '' }}</span></td>
-            <td align="center"><span class="checkbox">{{ $berita_acara == 0 ? '✓' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $berita_acara == 1 ? 'X' : '' }}</span></td>
+            <td align="center"><span class="checkbox">{{ $berita_acara == 0 ? 'X' : '' }}</span></td>
         </tr>
     </table>
 </body>

@@ -98,9 +98,9 @@
                     <td>{{ $expected_completed ?? '' }}</td>
                     <td>{{ $total_budget ?? '' }}</td>
                     <td>60,000.00</td>
-                    <td>91</td>
-                    <td>Yes</td>
-                    <td></td>
+                    <td>{{ $days_late ?? '' }}</td>
+                    <td>-</td>
+                    <td>-</td>
                 </tr>
             </tbody>
         </table>

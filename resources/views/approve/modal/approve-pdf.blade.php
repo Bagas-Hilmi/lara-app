@@ -75,7 +75,7 @@
                         </div>
 
                         <a id="viewUploadButton" href="#" class="btn btn-primary" target="_blank">
-                            <i class="fa fa-file-pdf"></i> PDF Upload
+                            <i class="fa fa-file-pdf"></i> Lihat PDF Upload
                         </a>
                         <a id="viewDetailButton" href="#" class="btn btn-info" target="_blank">
                             <i class="fa fa-file-pdf"></i> PDF Form Detail
@@ -118,7 +118,7 @@
             var apv_engineer = button.data('apv_engineer');
             var apv_at_engineer = button.data('apv_at_engineer');
             var userRole = "{{ auth()->user()->roles->first()->name }}"; // Role user
-            var userId = "{{ auth()->user()->id }}"; 
+            var userId = "{{ auth()->user()->id }}";
             var id_admin_1 = 3; // ID Admin 1
             var id_admin_2 = 4; // ID Admin 2  
 
@@ -130,19 +130,19 @@
             if (userRole === 'admin') {
                 if (userId == id_admin_1) {
                     currentStatus = statusApprove1;
-                    canSign = true; 
+                    canSign = true;
                 } else if (userId == id_admin_2) {
                     currentStatus = statusApprove4;
-                    canSign = statusApprove1 == 1; 
+                    canSign = statusApprove1 == 1;
                 }
             } else if (userRole === 'user') {
                 currentStatus = statusApprove2;
                 canSign = statusApprove1 == 1 && statusApprove4 ==
-                    1; 
-            } else if (userRole === 'engineer') {
+                    1;
+            } else if (userRole === 'engineering') {
                 currentStatus = statusApprove3;
                 canSign = statusApprove1 == 1 && statusApprove4 == 1 && statusApprove2 ==
-                    1; 
+                    1;
             }
 
             if (statusApprove1 == 1) {
@@ -227,7 +227,7 @@
                     .prop('disabled', true)
                     .show();
                 return;
-            } else if (userRole === 'engineer' && !canSign) {
+            } else if (userRole === 'engineering' && !canSign) {
                 $('#saveSignature')
                     .text('Menunggu Persetujuan User')
                     .prop('disabled', true)
@@ -264,7 +264,7 @@
                     }
                 } else if (userRole === 'user') {
                     $('#saveSignature').hide();
-                } else if (userRole === 'engineer') {
+                } else if (userRole === 'engineering') {
                     $('#saveSignature').hide();
                 }
             } else if (currentStatus == 2) {
@@ -290,7 +290,7 @@
 
                     $('#userSignature').text('Ditolak');
                     $('#userStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
-                } else if (userRole === 'engineer') {
+                } else if (userRole === 'engineering') {
                     // Engineer menolak
                     $('#saveSignature').hide();
 
@@ -306,7 +306,6 @@
         $('#saveSignature').on('click', function(e) {
             e.preventDefault();
 
-            // Hapus pengecekan teks tombol
             Swal.fire({
                 title: 'Konfirmasi Persetujuan',
                 text: 'Apakah Anda ingin melakukan persetujuan?',
@@ -317,29 +316,66 @@
                 denyButtonText: 'Tolak',
                 cancelButtonText: 'Batal'
             }).then((result) => {
-                if (result.isConfirmed || result.isDenied) {
-                    let formData = new FormData($('#signatureForm')[0]);
-                    let userRole = "{{ auth()->user()->roles->first()->name }}";
-                    var userId = "{{ auth()->user()->id }}";
-                    var id_admin_1 = 3;
-                    var id_admin_2 = 4;
-
-                    // Tentukan status berdasarkan role
-                    if (userRole === 'admin') {
-                        if (userId == id_admin_1) {
-                            formData.append('status_approve_1', result.isConfirmed ? 1 : 2);
-                        } else if (userId == id_admin_2) {
-                            formData.append('status_approve_4', result.isConfirmed ? 1 : 2);
+                if (result.isConfirmed) {
+                    // Langsung proses jika setuju
+                    processForm(result.isConfirmed);
+                } else if (result.isDenied) {
+                    // Tampilkan form reason jika tolak
+                    Swal.fire({
+                        title: 'Alasan Penolakan',
+                        input: 'textarea',
+                        inputLabel: 'Masukkan alasan penolakan',
+                        inputPlaceholder: 'Tuliskan alasan penolakan di sini...',
+                        inputAttributes: {
+                            'aria-label': 'Tuliskan alasan penolakan di sini',
+                            'required': true
+                        },
+                        validationMessage: 'Alasan penolakan harus diisi',
+                        showCancelButton: true,
+                        confirmButtonText: 'Kirim',
+                        cancelButtonText: 'Batal',
+                        preConfirm: (reason) => {
+                            if (!reason) {
+                                Swal.showValidationMessage(
+                                    'Alasan penolakan wajib diisi')
+                            }
+                            return reason;
                         }
-                    } else if (userRole === 'user') {
-                        formData.append('status_approve_2', result.isConfirmed ? 1 : 2);
-                    } else if (userRole === 'engineer') {
-                        formData.append('status_approve_3', result.isConfirmed ? 1 : 2);
-                    }
-
-                    submitForm(formData);
+                    }).then((reasonResult) => {
+                        if (reasonResult.isConfirmed) {
+                            processForm(false, reasonResult.value);
+                        }
+                    });
                 }
             });
+
+            function processForm(isApproved, reason = '') {
+                let formData = new FormData($('#signatureForm')[0]);
+                let userRole = "{{ auth()->user()->roles->first()->name }}";
+                var userId = "{{ auth()->user()->id }}";
+                var id_admin_1 = 3;
+                var id_admin_2 = 4;
+
+                // Tambahkan reason ke formData jika ada
+                if (reason) {
+                    formData.append('reason', reason);
+                }
+
+                // Tentukan status berdasarkan role
+                if (userRole === 'admin') {
+                    if (userId == id_admin_1) {
+                        formData.append('status_approve_1', isApproved ? 1 : 2);
+                    } else if (userId == id_admin_2) {
+                        formData.append('status_approve_4', isApproved ? 1 : 2);
+                    }
+                } else if (userRole === 'user') {
+                    formData.append('status_approve_2', isApproved ? 1 : 2);
+                } else if (userRole === 'engineering') {
+                    formData.append('status_approve_3', isApproved ? 1 : 2);
+                }
+
+                submitForm(formData);
+            }
         });
 
         // Fungsi untuk mengirim data form melalui AJAX
@@ -392,7 +428,7 @@
             var signatureAcceptance = button.data('signature-acceptance-file');
             var showPdf = button.data('show-pdf');
 
-            var timestamp = new Date().getTime(); 
+            var timestamp = new Date().getTime();
 
             if (signatureDetailFile) {
                 var viewPdfUrl = "{{ route('approve.show', ':id') }}"
@@ -401,7 +437,7 @@
 
                 $('#viewDetailButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewDetailButton').hide(); 
+                $('#viewDetailButton').hide();
             }
 
             if (signatureClosingFile) {
@@ -411,7 +447,7 @@
 
                 $('#viewClosingButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewClosingButton').hide(); 
+                $('#viewClosingButton').hide();
             }
 
             if (showPdf) {
@@ -421,7 +457,7 @@
 
                 $('#viewUploadButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewUploadButton').hide(); 
+                $('#viewUploadButton').hide();
             }
 
             if (signatureAcceptance) {
@@ -431,8 +467,14 @@
 
                 $('#viewAcceptButton').attr('href', viewPdfUrl).show();
             } else {
-                $('#viewAcceptButton').hide(); 
+                $('#viewAcceptButton').hide();
             }
         });
     });
 </script>
+
+<style>
+    .swal2-button {
+        pointer-events: auto !important; /* Memastikan tombol dapat diklik */
+    }
+</style>

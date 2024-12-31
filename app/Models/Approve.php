@@ -61,6 +61,10 @@ class Approve extends Model
                 't_master_capex.startup',
                 't_master_capex.cip_number',
                 't_master_capex.total_budget',
+                't_master_capex.amount_budget',
+                't_master_capex.budget_type',
+                't_master_capex.days_late',
+
                 't_approval_report.file_pdf',
                 't_approval_report.wbs_type',
                 't_approval_report.date',
@@ -88,7 +92,7 @@ class Approve extends Model
                 't_approval_report.approved_by_user', 
                 't_approval_report.approved_at_user', 
                 't_approval_report.approved_by_engineer', 
-                't_approval_report.approved_at_engineer', 
+                't_approval_report.approved_at_engineer',
             );
 
         // Jika pengguna bukan admin, tambahkan filter berdasarkan requester
@@ -98,7 +102,7 @@ class Approve extends Model
         } elseif ($user->hasRole('user')) {
             // User hanya dapat melihat data berdasarkan kolom requester yang sesuai dengan nama mereka
             $query->where('t_master_capex.requester', $user->name);
-        } elseif ($user->hasRole('engineer')) {
+        } elseif ($user->hasRole('engineering')) {
             // Engineer dapat melihat semua data, tetapi hanya dengan wbs_capex yang bernilai 'Project'
             $query->where('t_master_capex.wbs_capex', 'Project');
         }
@@ -129,6 +133,9 @@ class Approve extends Model
                         'startup' => $data->startup,
                         'cip_number' => $data->cip_number,
                         'total_budget' => $data->total_budget,
+                        'amount_budget' => $data->amount_budget,
+                        'budget_type' => $data->budget_type,
+                        'days_late' => $data->days_late,
                     ]);
             } else {
                 // Jika data belum ada, lakukan insert
@@ -144,6 +151,9 @@ class Approve extends Model
                     'startup' => $data->startup,
                     'cip_number' => $data->cip_number,
                     'total_budget' => $data->total_budget,
+                    'amount_budget' => $data->amount_budget,
+                    'budget_type' => $data->budget_type,
+                    'days_late' => $data->days_late,
 
                 ]);
             }

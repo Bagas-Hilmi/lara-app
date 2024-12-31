@@ -35,6 +35,16 @@
 
                             </ul>
                         </div>
+                        <div class="row mb-3">
+                            <label for="date" class="form-label font-weight-bold">Date
+                                Upload</label>
+                            <input type="date" style="text-align: center;" class="form-control" id="date" name="date"
+                                required>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="remark" class="form-label font-weight-bold">Remark</label>
+                            <input type="text" style="text-align: center;" class="form-control" id="date" name="remark" placeholder="Jika kosong isi -">
+                        </div>
 
                         <!-- BERITA ACARA PENYELESAIAN CAPEX -->
                         <div class="row mb-3">
@@ -45,12 +55,6 @@
                                 <div class="mb-2">
                                     <strong>WBS-P</strong>
                                     <div class="ms-4">
-                                        <div class="form-check">
-                                            <label for="date" class="form-label font-weight-bold">Date
-                                                Upload</label>
-                                            <input type="date" style="text-align: center;" class="form-control" id="date" name="date"
-                                                required>
-                                        </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="engineering">
                                             <label class="form-check-label" for="engineering">Engineering &

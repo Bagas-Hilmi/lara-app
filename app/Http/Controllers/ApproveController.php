@@ -80,7 +80,7 @@ class ApproveController extends Controller
                 if ($capexData['wbs_capex'] === 'Project') {
                     // Menggunakan Laratrust untuk mencari user dengan role 'engineer'
                     $nextUser = User::whereHas('roles', function ($query) {
-                        $query->where('name', 'engineer');
+                        $query->where('name', 'engineering');
                     })->first();
 
                     if ($nextUser) {
@@ -118,6 +118,7 @@ class ApproveController extends Controller
                 'warehouse' => 'required|in:0,1',
                 'user' => 'required|in:0,1',
                 'berita_acara' => 'required|in:0,1',
+                'remark' => 'required',
             ], [
                 'wbs_type.required' => 'WBS Type harus dipilih',
                 'wbs_type.in' => 'WBS Type harus WBS-P atau WBS-A',
@@ -172,6 +173,7 @@ class ApproveController extends Controller
                     'warehouse_received' => $request->boolean('warehouse'),
                     'user_received' => $request->boolean('user'),
                     'berita_acara' => $request->boolean('berita_acara'),
+                    'remark' => $request->input('remark'),
                 ];
 
                 // Update database
@@ -194,7 +196,7 @@ class ApproveController extends Controller
             $statusField = 'status_approve_1';
             if ($userRole === 'user') {
                 $statusField = 'status_approve_2';
-            } else if ($userRole === 'engineer') {
+            } else if ($userRole === 'engineering') {
                 $statusField = 'status_approve_3';
             } else if ($userRole === 'admin' && $userId === 4) {
                 $statusField = 'status_approve_4';
@@ -238,7 +240,7 @@ class ApproveController extends Controller
                         $updateData['status_approve_3'] = 0;
                         $updateData['approved_by_engineer'] = null;
                     }
-                } else if ($userRole === 'engineer') {
+                } else if ($userRole === 'engineering') {
                     $updateData['approved_by_engineer'] = auth::user()->name;
                     $updateData['approved_at_engineer'] = now();
                     $updateData['status_approve_3'] = $statusApprove;
@@ -254,14 +256,14 @@ class ApproveController extends Controller
 
                     // Generate form detail
                     $detailFile = $this->generateFromTemplate('detail', $data);
-                    $signedDetail = $this->addSignature($detailFile, $userRole, $userId, 'detail');
+                    $signedDetail = $this->addSignature($detailFile, $userRole, $userId, 'detail',$idCapex);
 
                     // Generate form closing
                     $closingFile = $this->generateFromTemplate('closing', $data);
-                    $signedClosing = $this->addSignature($closingFile, $userRole, $userId, 'closing');
+                    $signedClosing = $this->addSignature($closingFile, $userRole, $userId, 'closing',$idCapex);
 
                     $acceptanceFile = $this->generateFromTemplate('acceptance', $data);
-                    $signedAcceptance = $this->addSignature($acceptanceFile, $userRole, $userId, 'acceptance');
+                    $signedAcceptance = $this->addSignature($acceptanceFile, $userRole, $userId, 'acceptance',$idCapex);
 
                     // Update data dengan nama file yang sudah ditandatangani
                     $updateData['signature_detail_file'] = $signedDetail;
@@ -269,6 +271,8 @@ class ApproveController extends Controller
                     $updateData['signature_acceptance'] = $signedAcceptance;
 
                     $this->sendEmailToNextApprover($data, $userRole, $statusApprove);
+                } else if ($statusApprove == 2) {  // Jika status reject
+                    $updateData['reason'] = $request->input('reason');
                 }
 
                 // Update database
@@ -290,6 +294,21 @@ class ApproveController extends Controller
 
     private function generateFromTemplate($type, $data)
     {
+
+        $reports = DB::table('t_report_cip')
+        ->where('id_capex', $data['id_capex']) // Pastikan ID capex sesuai dengan data yang dikirimkan
+        ->get();
+
+        // Hitung total amount
+        $totals = [
+            'amount_rp' => $reports->sum('amount_rp'),
+            'amount_us' => $reports->sum('amount_us')
+        ];
+
+        // Gabungkan data tambahan dengan data lainnya
+        $data['reports'] = $reports;
+        $data['totals'] = $totals;
+        
         // Render view ke HTML
         $html = view(
             'approve.form.' .
@@ -322,24 +341,13 @@ class ApproveController extends Controller
         return $tempFile;
     }
 
-    private function addSignature($sourcePath, $userRole, $userId, $type)
+    private function addSignature($sourcePath, $userRole, $userId, $type, $idCapex)
     {
         // Ambil id_capex dari t_approval_report berdasarkan current user
         $approvalReport = DB::table('t_approval_report')
-            ->where(function ($query) use ($userRole, $userId) {
-                if ($userRole === 'admin') {
-                    if ($userId == 3) {
-                        $query->whereNull('approved_by_admin_1');
-                    } else if ($userId == 4) {
-                        $query->whereNull('approved_by_admin_2');
-                    }
-                } else if ($userRole === 'user') {
-                    $query->whereNull('approved_by_user');
-                } else if ($userRole === 'engineer') {
-                    $query->whereNull('approved_by_engineer');
-                }
-            })
-            ->first();
+        ->where('id_capex', $idCapex)  
+        ->first();
+
 
         if (!$approvalReport) {
             throw new \Exception('Data approval tidak ditemukan');
@@ -360,7 +368,7 @@ class ApproveController extends Controller
         $existingFilePath = $signedSubPath . $signedFileName;
 
         // Gunakan file yang sudah ada atau source file baru
-        $sourceFile = file_exists($existingFilePath) ? $existingFilePath : $sourcePath;
+        $sourceFile = $sourcePath;
 
         $pdf = new Fpdi();
         $pageCount = $pdf->setSourceFile($sourceFile);
@@ -390,24 +398,25 @@ class ApproveController extends Controller
 
                 // Gambar tanda tangan yang sudah ada
                 if ($existingSignatures) {
-                    if ($existingSignatures->approved_by_admin_1) {
+                    if ($existingSignatures->approved_by_admin_1 && $userId != 3) {  // Tambah pengecekan userId
                         $this->drawSignature(
                             $pdf,
                             $positions['admin_1'],
                             $y,
                             'Prepared by',
-                            $existingSignatures->approved_by_admin_1,
-                            $existingSignatures->approved_at_admin_1
+                            $existingSignatures->approved_by_admin_1,  // Gunakan nama dari database
+                            $existingSignatures->approved_at_admin_1   // Gunakan waktu dari database
                         );
                     }
-                    if ($existingSignatures->approved_by_admin_2) {
+                    
+                    if ($existingSignatures->approved_by_admin_2 && $userId != 4) {  // Tambah pengecekan userId
                         $this->drawSignature(
                             $pdf,
                             $positions['admin_2'],
                             $y,
                             'Reviewed by',
-                            $existingSignatures->approved_by_admin_2,
-                            $existingSignatures->approved_at_admin_2
+                            $existingSignatures->approved_by_admin_2,  // Gunakan nama dari database
+                            $existingSignatures->approved_at_admin_2   // Gunakan waktu dari database
                         );
                     }
                     if ($existingSignatures->approved_by_user) {
@@ -441,7 +450,7 @@ class ApproveController extends Controller
                     }
                 } else if ($userRole === 'user' && !$existingSignatures->approved_by_user) {
                     $this->drawSignature($pdf, $positions['user'], $y, 'Approved by', Auth::user()->name, now());
-                } else if ($userRole === 'engineer' && !$existingSignatures->approved_by_engineer) {
+                } else if ($userRole === 'engineering' && !$existingSignatures->approved_by_engineer) {
                     $this->drawSignature($pdf, $positions['engineer'], $y, 'Approved by', Auth::user()->name, now());
                 }
             }
@@ -450,7 +459,6 @@ class ApproveController extends Controller
         // Simpan file
         $pdf->Output('F', $existingFilePath);
 
-        // Hapus file sementara jika berbeda
         if ($sourcePath !== $existingFilePath) {
             unlink($sourcePath);
         }
@@ -458,7 +466,7 @@ class ApproveController extends Controller
         return $signedFileName;
     }
 
-    private function drawSignature($pdf, $x, $y, $title)
+    private function drawSignature($pdf, $x, $y, $title, $name)
     {
         $pdf->SetFont('Arial', '', 10);
         $pdf->SetXY($x, $y);
@@ -468,7 +476,7 @@ class ApproveController extends Controller
         $pdf->SetXY($x, $y + 10);
         $pdf->Cell(60, 5, 'Digitally signed', 0, 1);
         $pdf->SetXY($x, $y + 15);
-        $pdf->Cell(60, 5, 'by ' . auth::user()->name, 0, 1);
+        $pdf->Cell(60, 5, 'by ' . $name, 0, 1);
         $pdf->SetXY($x, $y + 20);
         $pdf->Cell(60, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y.m.d'), 0, 1);
         $pdf->SetXY($x, $y + 25);
@@ -476,7 +484,7 @@ class ApproveController extends Controller
 
         $pdf->SetFont('Arial', 'B', 11);
         $pdf->SetXY($x, $y + 35);
-        $pdf->Cell(40, 5, auth::user()->name, 0, 1);
+        $pdf->Cell(40, 5, $name, 0, 1);
     }
 
     /**
