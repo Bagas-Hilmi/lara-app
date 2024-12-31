@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 10px;
             line-height: 1.4;
             margin: 0;
             padding: 0;
@@ -96,7 +96,7 @@
                     <td>{{ $capex_number ?? '' }}</td>
                     <td>{{ $startup ?? '' }}</td>
                     <td>{{ $expected_completed ?? '' }}</td>
-                    <td>{{ $total_budget ?? '' }}</td>
+                    <td>{{ number_format($total_budget ?? 0, 0, ',', '.') }}</td>
                     <td>60,000.00</td>
                     <td>{{ $days_late ?? '' }}</td>
                     <td>-</td>
