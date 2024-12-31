@@ -62,7 +62,7 @@ class Report extends Model
         } elseif ($user->hasRole('user')) {
             // User hanya bisa melihat data berdasarkan requester
             $query->where('t_master_capex.requester', $user->name);
-        } elseif ($user->hasRole('engineer')) {
+        } elseif ($user->hasRole('engineering')) {
             // Engineer tidak bisa melihat data sama sekali, filter dengan ID null
             $query->whereNull('t_master_capex.id_capex');
         }

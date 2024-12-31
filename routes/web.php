@@ -24,11 +24,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('capex', CapexController::class);
 });
 
-Route::middleware(['auth', 'role:user|admin|engineer'])->group(function () {
+Route::middleware(['auth', 'role:user|admin|engineering'])->group(function () {
     Route::resource('report', ReportController::class);
 });
 
-Route::middleware(['auth', 'role:user|admin|engineer'])->group(function () {
+Route::middleware(['auth', 'role:user|admin|engineering'])->group(function () {
     Route::resource('approve', ApproveController::class);
 });
 

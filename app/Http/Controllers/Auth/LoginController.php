@@ -51,7 +51,7 @@ class LoginController extends Controller
             return redirect('/capex');
         }
 
-        if (Auth::user()->hasRole(['user', 'engineer'])) {
+        if (Auth::user()->hasRole(['user', 'engineering'])) {
             return redirect('/approve');
         }
         
