@@ -16,6 +16,7 @@ use App\Models\CapexEngineer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\ReportTax;
+use App\Models\Approve;
 
 class CapexController extends Controller
 {
@@ -152,6 +153,29 @@ class CapexController extends Controller
                 'capdoc' => 'required_if:status_capex,Close,flag,update|string|max:255',
                 'noasset' => 'required_if:status_capex,Close,flag,update|string|max:255',
             ]);
+
+            if ($validated['status_capex'] === 'Close') {
+                $approval = Approve::where('id_capex', $validated['id_capex'])->first();
+        
+                if (!$approval) {
+                    return response()->json(['error' => 'Data persetujuan tidak ditemukan'], 404);
+                }
+        
+                if ($validated['wbs_capex'] === 'Project') {
+                    if ($approval->status_approve_1 != 1 || 
+                        $approval->status_approve_2 != 1 || 
+                        $approval->status_approve_3 != 1 || 
+                        $approval->status_approve_4 != 1) {
+                        return response()->json(['error' => 'Cannot close. All approvals must be approved for Project.'], 422);
+                    }
+                } elseif ($validated['wbs_capex'] === 'Non Project') {
+                    if ($approval->status_approve_1 != 1 || 
+                        $approval->status_approve_2 != 1 || 
+                        $approval->status_approve_4 != 1) {
+                        return response()->json(['error' => 'Cannot close. Required approvals must be approved for Non Project.'], 422);
+                    }
+                }
+            }
 
             // Perbarui data yang sudah ada
             $capex = Capex::find($validated['id_capex']); // Cari data berdasarkan id_capex
@@ -458,6 +482,38 @@ class CapexController extends Controller
 
         return response()->json(['error' => 'Invalid flag specified.'], 400);
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $approval = Approve::findOrFail($id);
+        $capex = $approval->capex; // Mengambil data dari relasi
+
+        // Logika Validasi
+        if ($capex->wbs_capex === 'Project') {
+            if (
+                $approval->status_approve_1 != 1 ||
+                $approval->status_approve_2 != 1 ||
+                $approval->status_approve_3 != 1 ||
+                $approval->status_approve_4 != 1
+            ) {
+                return redirect()->back()->withErrors(['status' => 'Cannot close. All approval statuses must be approved for Project.']);
+            }
+        } elseif ($capex->wbs_capex === 'Non Project') {
+            if (
+                $approval->status_approve_1 != 1 ||
+                $approval->status_approve_2 != 1 ||
+                $approval->status_approve_4 != 1
+            ) {
+                return redirect()->back()->withErrors(['status' => 'Cannot close. Required approval statuses must be approved for Non Project.']);
+            }
+        }
+
+        // Update Status to Close
+        $approval->update(['status_capex' => 'close']);
+
+        return redirect()->back()->with('success', 'Status updated to Close successfully.');
+    }
+
 
     /**
      * Display the specified resource.

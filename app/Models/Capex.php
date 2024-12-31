@@ -310,6 +310,11 @@ class Capex extends Model
         return $this->hasMany(ReportSummary::class,'id_capex');
     }
 
+    public function ReportTax()
+    {
+        return $this->hasMany(ReportTax::class,'id_capex');
+    }
+
     public function approvalReports()
     {
         return $this->hasMany(Approve::class, 'id_capex');
