@@ -13,12 +13,8 @@
                                     <th>No</th>
                                     <th>Project Title</th>
                                     <th>Project Type</th>
-                                    <th>Assigned To</th>
-                                    <th>Status Capex</th>
-                                    <th>Approval Admin</th>
-                                    <th>Approval Manager</th>
-                                    <th>Approval User</th>
-                                    <th>Approval Engineering</th>
+                                    <th>Percentage</th>
+                                    <th>Upload By</th>
                                     <th>Upload Date</th>
                                 </tr>
                             </thead>
@@ -58,212 +54,147 @@
                     },
                     {
                         data: 'project_desc',
-                        name: 'project_desc'
+                        name: 'project_desc',
+                        createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                            $(td).css('text-align', 'left');
+                        },
                     },
                     {
                         data: 'wbs_capex',
-                        name: 'wbs_capex'
+                        name: 'wbs_capex',
+                        createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                            $(td).css('text-align', 'left');
+                        },
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                if (data === 'Project') {
+                                    return '<span class="badge bg-gradient-info">Project</span>';
+                                } else if (data === 'Non Project') {
+                                    return '<span class="badge bg-gradient-warning">Non Project</span>';
+                                }
+                                return data; // Untuk nilai lain tampilkan apa adanya
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        data: null,
+                        name: 'percentage',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            // Tentukan jumlah status yang harus dihitung berdasarkan wbs_capex
+                            let statusesToCheck;
+                            if (row.wbs_capex === "Project") {
+                                // Untuk Project, gunakan semua 4 status
+                                statusesToCheck = [row.status_approve_1, row.status_approve_2, row
+                                    .status_approve_3, row.status_approve_4
+                                ];
+                            } else if (row.wbs_capex === "Non Project") {
+                                // Untuk Non Project, gunakan hanya 3 status
+                                statusesToCheck = [row.status_approve_1, row.status_approve_2, row
+                                    .status_approve_4
+                                ];
+                            } else {
+                                // Jika tipe tidak dikenali, anggap 0%
+                                statusesToCheck = [];
+                            }
+
+                            // Hitung jumlah yang disetujui
+                            let approvedCount = 0;
+                            statusesToCheck.forEach(status => {
+                                if (status == 1) approvedCount++; // 1 berarti disetujui
+                            });
+
+                            // Hitung persentase berdasarkan jumlah status yang diperiksa
+                            let percentage = (approvedCount / statusesToCheck.length) * 100;
+
+                            // Tentukan warna badge berdasarkan persentase
+                            let badgeClass = percentage === 100 ?
+                                'bg-gradient-success' // Hijau untuk 100%
+                                :
+                                'bg-gradient-info'; // Kuning untuk yang lain
+
+                            return `<span class="badge ${badgeClass}">${percentage.toFixed(0)}%</span>`;
+                        }
                     },
                     {
                         data: 'upload_by',
-                        name: 'upload_by'
-                    },
-                    {
-                        data: 'status_capex',
-                        name: 'status_capex',
-                        render: function(data, type, row) {
-                            let badgeClass = '';
-                            switch (data) {
-                                case 'On Progress':
-                                    badgeClass = 'bg-gradient-info';
-                                    break;
-                                case 'Waiting Approval':
-                                    badgeClass = 'bg-gradient-secondary';
-                                    break;
-                                default:
-                                    return data;
-                            }
-                            return `<span class="badge ${badgeClass}">${data}</span>`;
-                        }
-                    },
-                    {
-                        data: 'status_approve_1',
-                        name: 'status_approve_1',
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                let statusText = '';
-                                let badgeClass = '';
-
-                                // Tentukan nilai status berdasarkan data
-                                switch (data) {
-                                    case 0:
-                                        statusText = 'Pending';
-                                        badgeClass =
-                                        'bg-gradient-warning'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 1:
-                                        statusText = 'Approve';
-                                        badgeClass =
-                                        'bg-gradient-success'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 2:
-                                        statusText = 'Disapprove';
-                                        badgeClass =
-                                        'bg-danger'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                }
-
-                                // Kembalikan HTML dengan badge
-                                return `<span class="badge ${badgeClass}">${statusText}</span>`;
-                            }
-                            return data;
-                        }
+                        name: 'upload_by',
+                        createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
+                            $(td).css('text-align', 'left');
+                        },
                     },
 
-                    {
-                        data: 'status_approve_4',
-                        name: 'status_approve_4',
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                let statusText = '';
-                                let badgeClass = '';
-
-                                // Tentukan nilai status berdasarkan data
-                                switch (data) {
-                                    case 0:
-                                        statusText = 'Pending';
-                                        badgeClass =
-                                        'bg-gradient-warning'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 1:
-                                        statusText = 'Approve';
-                                        badgeClass =
-                                        'bg-gradient-success'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 2:
-                                        statusText = 'Disapprove';
-                                        badgeClass =
-                                        'bg-danger'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                }
-
-                                // Kembalikan HTML dengan badge
-                                return `<span class="badge ${badgeClass}">${statusText}</span>`;
-                            }
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'status_approve_3',
-                        name: 'status_approve_3',
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                let statusText = '';
-                                let badgeClass = '';
-
-                                // Tentukan nilai status berdasarkan data
-                                switch (data) {
-                                    case 0:
-                                        statusText = 'Pending';
-                                        badgeClass =
-                                        'bg-gradient-warning'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 1:
-                                        statusText = 'Approve';
-                                        badgeClass =
-                                        'bg-gradient-success'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 2:
-                                        statusText = 'Disapprove';
-                                        badgeClass =
-                                        'bg-danger'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                }
-
-                                // Kembalikan HTML dengan badge
-                                return `<span class="badge ${badgeClass}">${statusText}</span>`;
-                            }
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'status_approve_2',
-                        name: 'status_approve_2',
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                let statusText = '';
-                                let badgeClass = '';
-
-                                // Tentukan nilai status berdasarkan data
-                                switch (data) {
-                                    case 0:
-                                        statusText = 'Pending';
-                                        badgeClass =
-                                        'bg-gradient-warning'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 1:
-                                        statusText = 'Approve';
-                                        badgeClass =
-                                        'bg-gradient-success'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                    case 2:
-                                        statusText = 'Disapprove';
-                                        badgeClass =
-                                        'bg-danger'; // Ganti dengan kelas badge yang sesuai
-                                        break;
-                                }
-
-                                // Kembalikan HTML dengan badge
-                                return `<span class="badge ${badgeClass}">${statusText}</span>`;
-                            }
-                            return data;
-                        }
-                    },
                     {
                         data: 'upload_date',
                         name: 'upload_date',
-                        render: function(data) {
-                            return moment(data).format('DD/MM/YYYY');
-                        }
                     },
-
+                
                 ],
                 order: [
-                    [9, 'desc']
+                    [4, 'desc']
                 ]
             });
+
+            function statusBadge(status) {
+                let statusText = '';
+                let badgeClass = '';
+                switch (status) {
+                    case 0:
+                        statusText = 'Pending';
+                        badgeClass = 'bg-gradient-warning';
+                        break;
+                    case 1:
+                        statusText = 'Approve';
+                        badgeClass = 'bg-gradient-success';
+                        break;
+                    case 2:
+                        statusText = 'Disapprove';
+                        badgeClass = 'bg-gradient-danger';
+                        break;
+                }
+                return `<span class="badge ${badgeClass}">${statusText}</span>`;
+            }
         });
     </script>
 
 
-<style>
+    <style>
+        #approvalTable thead th {
+            background-color: #3cb210;
+            /* Warna latar belakang header */
+            color: #ffffff;
+            /* Warna teks header */
+            width: auto;
+            /* Atur lebar kolom header secara otomatis */
+        }
 
-    #approvalTable thead th {
-        background-color: #3cb210; /* Warna latar belakang header */
-        color: #ffffff; /* Warna teks header */
-        width: auto; /* Atur lebar kolom header secara otomatis */
-    }
+        /* Gaya untuk baris tabel */
+        #approvalTable tbody tr {
+            transition: background-color 0.3s ease;
+            /* Efek transisi untuk warna latar belakang */
+            color: #2c2626;
+        }
 
-    /* Gaya untuk baris tabel */
-    #approvalTable tbody tr {
-        transition: background-color  0.3s ease; /* Efek transisi untuk warna latar belakang */
-        color: #2c2626;
-    }
+        /* Gaya untuk sel tabel */
+        #approvalTable tbody td {
+            padding: 10px;
+            /* Padding untuk sel */
+            border-bottom: 1px solid #dee2e6;
+            /* Garis bawah sel */
+            color: #2c2626;
+        }
 
-    /* Gaya untuk sel tabel */
-    #approvalTable tbody td {
-        padding: 10px; /* Padding untuk sel */
-        border-bottom: 1px solid #dee2e6; /* Garis bawah sel */
-        color: #2c2626;
-    }
+        /* Hover effect untuk baris tabel */
+        #approvalTable tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            /* Warna latar belakang saat hover */
+        }
 
-    /* Hover effect untuk baris tabel */
-    #approvalTable tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.1); /* Warna latar belakang saat hover */
-    }
-
-    #approvalTable th, #approvalTable td {
-        padding: 8px;
-        text-align: center;
-    }
-</style>
+        #approvalTable th,
+        #approvalTable td {
+            padding: 8px;
+            text-align: center;
+        }
+    </style>

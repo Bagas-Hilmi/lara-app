@@ -74,16 +74,16 @@
                             </div>
                         </div>
 
-                        <a id="viewUploadButton" href="#" class="btn btn-primary" target="_blank">
+                        <a id="viewUploadButton" href="#" class="btn bg-gradient-primary" target="_blank">
                             <i class="fa fa-file-pdf"></i> Lihat PDF Upload
                         </a>
-                        <a id="viewDetailButton" href="#" class="btn btn-info" target="_blank">
+                        <a id="viewDetailButton" href="#" class="btn bg-gradient-info" target="_blank">
                             <i class="fa fa-file-pdf"></i> PDF Form Detail
                         </a>
-                        <a id="viewClosingButton" href="#" class="btn btn-warning" target="_blank">
+                        <a id="viewClosingButton" href="#" class="btn bg-gradient-warning" target="_blank">
                             <i class="fa fa-file-pdf"></i> PDF Form Closing
                         </a>
-                        <a id="viewAcceptButton" href="#" class="btn btn-secondary" target="_blank">
+                        <a id="viewAcceptButton" href="#" class="btn bg-gradient-secondary" target="_blank">
                             <i class="fa fa-file-pdf"></i> PDF Form Acceptance
                         </a>
                     </div>

@@ -18,7 +18,7 @@
                             <div class="card-body p-3">
                                 <div class="d-flex mb-2">
                                     @if(auth()->user()->hasRole('admin'))
-                                        <button class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#progressAPV"> 
+                                        <button class="btn btn-primary" style="background-color: #2c2626" data-bs-toggle="modal" data-bs-target="#progressAPV"> 
                                             Approval Progress
                                         </button>    
                                     @endif    
@@ -78,7 +78,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
-                        order: [[1 , 'desc']],
+                        order: [[6 , 'desc']],
                         ajax: {
                             url: "{{ route('approve.index') }}",
                             type:'GET'
@@ -101,9 +101,9 @@
                                     render: function(data, type, row) {
                                         if (type === 'display') {
                                             if (data === 'Project') {
-                                                return '<span class="badge bg-info">Project</span>';
+                                                return '<span class="badge bg-gradient-info">Project</span>';
                                             } else if (data === 'Non Project') {
-                                                return '<span class="badge bg-warning">Non Project</span>';
+                                                return '<span class="badge bg-gradient-warning">Non Project</span>';
                                             }
                                             return data; // Untuk nilai lain tampilkan apa adanya
                                         }

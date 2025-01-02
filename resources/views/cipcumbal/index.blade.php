@@ -40,6 +40,8 @@
                                             @endforeach
                                         </ul>
                                     </div>
+                                    <input type="hidden" id="periodFilter" name="period" value="">
+
                                     <div class="dropdown ms-2">
                                         <button class="btn btn-secondary dropdown-toggle"
                                             style="background-color: #09170a; border-color: #09170a;" type="button"
@@ -55,6 +57,7 @@
                                         </ul>
                                     </div>
                                 </div>
+
                                 <div class="info-box-container">        
                                     <div class="info-box">
                                         <div class="info-box-label">Jumlah Release Tahun <span id="releaseYear"></div>
@@ -127,6 +130,7 @@
                         data: function(d) {
                             d.status = 1;
                             d.year = $('#yearFilter').val();
+                            d.period = $('#periodFilter').val(); // Nilai periode dari dropdown
                         }
                     },
                     columns: [{
@@ -268,18 +272,24 @@
                 document.querySelectorAll('.dropdown-item').forEach(item => {
                     item.addEventListener('click', function(e) {
                         e.preventDefault();
-                        const period = this.dataset.period;
-                        const total = this.dataset.total;
+                        const period = this.dataset.period; // Ambil nilai periode
+                        const total = this.dataset.total;   // Ambil nilai total
 
-                        // Update dropdown text
+                        // Update teks dropdown dengan periode yang dipilih
                         document.querySelector('#periodDropdown span').textContent = period;
 
+                        // Update elemen informasi di box
                         document.querySelector('#releaseYear').textContent = period;
-
-                        // Update info box value
                         document.querySelector('#totalReleaseValue').textContent = total;
+
+                        // Set periode ke input tersembunyi (opsional jika Anda menggunakannya di AJAX)
+                        document.querySelector('#periodFilter').value = period;
+
+                        // Reload tabel dengan data baru
+                        table.ajax.reload();
                     });
                 });
+
 
                 $('#cipCumBalTable').on('click', '.delete-btn', function() {
                     var id = $(this).data('id');
