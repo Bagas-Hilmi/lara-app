@@ -75,7 +75,7 @@
                 <td class="text-right">
                     <i>{{ $totals['amount_us'] ? number_format($totals['amount_us'], 2, ',', '.') : '-' }}</i>
                 </td>
-            </tr>   
+            </tr>
         </tfoot>
 
         @php
@@ -90,17 +90,109 @@
         @endphp
 
     </table>
-    {{-- <div class="signature-section-left">
-        <p>Released By</p>
-        <p class="spacing">
-            <span>{{ Auth::user()->name ?? 'User' }}</span> | 
-            <span>{{ now()->format('d-m-Y') }}</span>
-        </p>
+    @php
+        $isProject = $wbs_capex && $wbs_capex->wbs_capex === 'Project';
+    @endphp
+    <div class="signature-container" style="margin-top: 10px; padding: 20px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <!-- Kolom 1 - Prepared by (Admin 1) -->
+                <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
+                    <div style="margin-bottom: 10px;">Prepared by,</div>
+                    <p style="margin-bottom: 0;">Digitally Signed</p>
+                    <strong style="margin-top: 0;"> by
+                        @if ($userRole === 'admin' && $userId == 3)
+                            {{ $userName }}
+                        @else
+                            {{ $approved_by_admin_1 ?? '' }}
+                        @endif
+                    </strong>
+                    <div style="margin-top: 0;">
+                        @formatDateTime($approved_at_admin_1)
+                    </div>
+                    <div style="margin-top: 5px; font-weight: bold;">
+                        @if ($userRole === 'admin' && $userId == 3)
+                            {{ $userName }}
+                        @else
+                            {{ $approved_by_admin_1 ?? '' }}
+                        @endif
+                    </div>
+                </td>
+
+                <!-- Kolom 2 - Reviewed by (Admin 2) -->
+                <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
+                    <div style="margin-bottom: 10px;">Reviewed by,</div>
+                    <p style="margin-bottom: 0;">Digitally Signed</p>
+                    <strong style="margin-top: 0;"> by
+                        @if ($userRole === 'admin' && $userId == 4)
+                            {{ $userName }}
+                        @else
+                            {{ $approved_by_admin_2 ?? '' }}
+                        @endif
+                    </strong>
+                    <div style="margin-top: 0;">
+                        @formatDateTime($approved_at_admin_2)
+                    </div>
+                    <div style="margin-top: 5px; font-weight: bold;">
+                        @if ($userRole === 'admin' && $userId == 4)
+                            {{ $userName }}
+                        @else
+                            {{ $approved_by_admin_2 ?? '' }}
+                        @endif
+                    </div>
+                </td>
+
+                <!-- Kolom 3 - Approved by (User) -->
+                <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
+                    <div style="margin-bottom: 10px;">Approved by,</div>
+                    <p style="margin-bottom: 0;">Digitally Signed</p>
+                    <strong style="margin-top: 0;"> by
+                        @if ($userRole === 'user')
+                            {{ $userName }}
+                        @else
+                            {{ $approved_by_user ?? '' }}
+                        @endif
+                    </strong>
+                    <div style="margin-top: 0;">
+                        @formatDateTime($approved_at_user)
+                    </div>
+                    <div style="margin-top: 5px; font-weight: bold;">
+                        @if ($userRole === 'user')
+                            {{ $userName }}
+                        @else
+                            {{ $approved_by_user ?? '' }}
+                        @endif
+                    </div>
+                </td>
+
+                @if ($isProject)
+                    <!-- Kolom 4 - Approved by (Engineer) -->
+                    <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
+                        <div style="margin-bottom: 10px;">Approved by,</div>
+                        <p style="margin-bottom: 0;">Digitally Signed</p>
+                        <strong style="margin-top: 0;"> by
+                            @if ($userRole === 'engineering')
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_engineer ?? '' }}
+                            @endif
+                        </strong>
+                        <div style="margin-top: 0;">
+                            @formatDateTime($approved_at_engineer)
+                        </div>
+                        <div style="margin-top: 5px; font-weight: bold;">
+                            @if ($userRole === 'engineering')
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_engineer ?? '' }}
+                            @endif
+                        </div>
+                    </td>
+                @endif
+            </tr>
+        </table>
     </div>
-    <div class="signature-section">
-        <p>Acknowledged by</p>
-        <p class="spacing">{{ $capexData->requester ?? '-' }}</p>
-    </div> --}}
+
 </body>
 
 </html>
@@ -108,6 +200,11 @@
 <style>
     body {
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif font-size: 8px;
+    }
+
+    .signature-container {
+        font-family: Arial, sans-serif;
+        font-size: 8px;
     }
 
     .header-section {
@@ -186,17 +283,5 @@
     .spacing span {
         margin-right: 8x;
         /* Tambahkan jarak antar elemen */
-    }
-    .signature-section {
-        text-align: center;
-        margin-top: 20px; /* Jarak dari tabel */
-        float: right; /* Mengapung ke kanan */
-        font-size: 9pt
-    }
-    .signature-section-left {
-        text-align: center;
-        margin-top: 20px; /* Jarak dari tabel */
-        float: left; 
-        font-size: 9pt
     }
 </style>

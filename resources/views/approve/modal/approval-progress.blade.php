@@ -86,17 +86,14 @@
                             // Tentukan jumlah status yang harus dihitung berdasarkan wbs_capex
                             let statusesToCheck;
                             if (row.wbs_capex === "Project") {
-                                // Untuk Project, gunakan semua 4 status
                                 statusesToCheck = [row.status_approve_1, row.status_approve_2, row
                                     .status_approve_3, row.status_approve_4
                                 ];
                             } else if (row.wbs_capex === "Non Project") {
-                                // Untuk Non Project, gunakan hanya 3 status
                                 statusesToCheck = [row.status_approve_1, row.status_approve_2, row
                                     .status_approve_4
                                 ];
                             } else {
-                                // Jika tipe tidak dikenali, anggap 0%
                                 statusesToCheck = [];
                             }
 
@@ -113,7 +110,7 @@
                             let badgeClass = percentage === 100 ?
                                 'bg-gradient-success' // Hijau untuk 100%
                                 :
-                                'bg-gradient-info'; // Kuning untuk yang lain
+                                'bg-gradient-secondary'; // Kuning untuk yang lain
 
                             return `<span class="badge ${badgeClass}">${percentage.toFixed(0)}%</span>`;
                         }

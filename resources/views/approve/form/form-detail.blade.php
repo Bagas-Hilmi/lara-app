@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,8 @@
             margin: 20px;
         }
 
-        h1, p {
+        h1,
+        p {
             margin: 0;
             padding: 0;
         }
@@ -38,7 +40,8 @@
             margin-top: 10px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid black;
             padding: 5px;
             text-align: center;
@@ -53,6 +56,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -97,7 +101,7 @@
                     <td>{{ $startup ?? '' }}</td>
                     <td>{{ $expected_completed ?? '' }}</td>
                     <td>{{ number_format($total_budget ?? 0, 0, ',', '.') }}</td>
-                    <td>60,000.00</td>
+                    <td>{{ number_format($recost_usd, 2, ',', '.') }}</td>
                     <td>{{ $days_late ?? '' }}</td>
                     <td>-</td>
                     <td>-</td>
@@ -108,6 +112,83 @@
         <div class="footer">
             <p>Please return to F&A upon completion</p>
         </div>
+
+        <div class="signature-container" style="margin-top: 10px; padding: 20px;">
+            <table style="width: 75%; border-collapse: collapse; margin: 0 auto;">
+                <tr>
+                    <!-- Kolom 1 - Prepared by (Admin 1) -->
+                    <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
+                        <div style="margin-bottom: 10px;">Prepared by,</div>
+                        <p style="margin-bottom: 0;">Digitally Signed</p>
+                        <strong style="margin-top: 0;"> by
+                            @if ($userRole === 'admin' && $userId == 3)
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_admin_1 ?? '' }}
+                            @endif
+                        </strong>
+                        <div style="margin-top: 0;">
+                            @formatDateTime($approved_at_admin_1)
+                        </div>
+                        <div style="margin-top: 5px; font-weight: bold;">
+                            @if ($userRole === 'admin' && $userId == 3)
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_admin_1 ?? '' }}
+                            @endif
+                        </div>
+                    </td>
+
+                    <!-- Kolom 2 - Reviewed by (Admin 2) -->
+                    <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
+                        <div style="margin-bottom: 10px;">Reviewed by,</div>
+                        <p style="margin-bottom: 0;">Digitally Signed</p>
+                        <strong style="margin-top: 0;"> by
+                            @if ($userRole === 'admin' && $userId == 4)
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_admin_2 ?? '' }}
+                            @endif
+                        </strong>
+                        <div style="margin-top: 0;">
+                            @formatDateTime($approved_at_admin_2)
+                        </div>
+                        <div style="margin-top: 5px; font-weight: bold;">
+                            @if ($userRole === 'admin' && $userId == 4)
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_admin_2 ?? '' }}
+                            @endif
+                        </div>
+                    </td>
+
+                    <!-- Kolom 3 - Approved by (User) -->
+                    <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
+                        <div style="margin-bottom: 10px;">Acknowledged by,</div>
+                        <p style="margin-bottom: 0;">Digitally Signed</p>
+                        <strong style="margin-top: 0;"> by
+                            @if ($userRole === 'user')
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_user ?? '' }}
+                            @endif
+                        </strong>
+                        <div style="margin-top: 0;">
+                            @formatDateTime($approved_at_user)
+                        </div>
+                        <div style="margin-top: 5px; font-weight: bold;">
+                            @if ($userRole === 'user')
+                                {{ $userName }}
+                            @else
+                                {{ $approved_by_user ?? '' }}
+                            @endif
+                        </div>
+                    </td>
+
+                </tr>
+            </table>
+        </div>
     </div>
 </body>
+
 </html>

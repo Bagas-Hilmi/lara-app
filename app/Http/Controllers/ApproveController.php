@@ -8,16 +8,13 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Approve;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use App\Models\Capex;
-use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use setasign\Fpdi\Fpdi;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ApprovalNotification;
 use App\Models\User;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Support\Carbon;
 
 class ApproveController extends Controller
 {
@@ -35,6 +32,8 @@ class ApproveController extends Controller
         if ($request->ajax()) {
             // Cek tipe data yang diminta dari parameter
             if ($request->type === 'progress') {
+                $status = $request->get('status', 1);
+            
                 // Query untuk data progress approval
                 $query = DB::table('t_approval_report')
                     ->select([
@@ -48,14 +47,11 @@ class ApproveController extends Controller
                         'status_approve_3',
                         'status_approve_4',
                         'upload_date',
-                    ]);
+                    ])
+                    ->where('status', $status); // Menambahkan filter status
 
                 return DataTables::of($query)
                     ->addIndexColumn()
-                    ->addColumn('actions', function ($row) {
-                        return '<button class="btn btn-sm btn-info">View</button>';
-                    })
-                    ->rawColumns(['actions'])
                     ->make(true);
             } else {
                 // Query untuk data approve yang sudah ada sebelumnya
@@ -281,19 +277,17 @@ class ApproveController extends Controller
 
                     // Generate form detail
                     $detailFile = $this->generateFromTemplate('detail', $data);
-                    $signedDetail = $this->addSignature($detailFile, $userRole, $userId, 'detail', $idCapex);
 
                     // Generate form closing
                     $closingFile = $this->generateFromTemplate('closing', $data);
-                    $signedClosing = $this->addSignature($closingFile, $userRole, $userId, 'closing', $idCapex);
 
+                    // Generate form acceptance
                     $acceptanceFile = $this->generateFromTemplate('acceptance', $data);
-                    $signedAcceptance = $this->addSignature($acceptanceFile, $userRole, $userId, 'acceptance', $idCapex);
 
-                    // Update data dengan nama file yang sudah ditandatangani
-                    $updateData['signature_detail_file'] = $signedDetail;
-                    $updateData['signature_closing_file'] = $signedClosing;
-                    $updateData['signature_acceptance'] = $signedAcceptance;
+                    // Update nama file PDF
+                    $updateData['signature_detail_file'] = basename($detailFile);
+                    $updateData['signature_closing_file'] = basename($closingFile);
+                    $updateData['signature_acceptance'] = basename($acceptanceFile);
 
                     $this->sendEmailToNextApprover($data, $userRole, $statusApprove);
                 } else if ($statusApprove == 2) {  // Jika status reject
@@ -317,11 +311,10 @@ class ApproveController extends Controller
     }
 
 
-    private function generateFromTemplate($type, $data)
+    private function generateFromTemplate($type, $data,)
     {
-
         $reports = DB::table('t_report_cip')
-            ->where('id_capex', $data['id_capex']) // Pastikan ID capex sesuai dengan data yang dikirimkan
+            ->where('id_capex', $data['id_capex'])
             ->get();
 
         // Hitung total amount
@@ -330,9 +323,63 @@ class ApproveController extends Controller
             'amount_us' => $reports->sum('amount_us')
         ];
 
+        $existingApproval = DB::table('t_approval_report')
+            ->where('id_capex', $data['id_capex'])
+            ->first();
+
+        $wbs_capex = DB::table('t_approval_report')
+            ->where('id_capex', $data['id_capex'])  // Tambahkan where clause untuk id_capex
+            ->first();
+
+        $recost_usd = DB::table('t_report_summary')
+            ->where('id_capex', $data['id_capex'])  // Tambahkan where clause untuk id_capex
+            ->value('recost_usd'); // Use value() to get specific column
+
+        $userRole = auth::user()->roles->first()->name;
+        $userId = auth::id();
+        $userName = auth::user()->name;
+
         // Gabungkan data tambahan dengan data lainnya
         $data['reports'] = $reports;
         $data['totals'] = $totals;
+        $data['userRole'] = $userRole;
+        $data['userId'] = $userId;
+        $data['userName'] = $userName;
+        $data['wbs_capex'] = $wbs_capex;
+        $data['recost_usd'] = $recost_usd;
+
+        if ($userId == 3 && $userRole === 'admin') {
+            $data['approved_by_admin_1'] = $userName;
+            $data['approved_at_admin_1'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+        } else {
+            $data['approved_by_admin_1'] = $existingApproval->approved_by_admin_1 ?? '';
+            $data['approved_at_admin_1'] = $existingApproval->approved_at_admin_1 ? Carbon::parse($existingApproval->approved_at_admin_1)->format('Y.m.d H:i:s') : '';
+        }
+
+        // Set data admin 2
+        if ($userId == 4 && $userRole === 'admin') {
+            $data['approved_by_admin_2'] = $userName;
+            $data['approved_at_admin_2'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+        } else {
+            $data['approved_by_admin_2'] = $existingApproval->approved_by_admin_2 ?? '';
+            $data['approved_at_admin_2'] = $existingApproval->approved_at_admin_2 ? Carbon::parse($existingApproval->approved_at_admin_2)->format('Y.m.d H:i:s') : '';
+        }
+
+        if ($userRole === 'user') {
+            $data['approved_by_user'] = $userName;
+            $data['approved_at_user'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+        } else {
+            $data['approved_by_user'] = $existingApproval->approved_by_user ?? '';
+            $data['approved_at_user'] = $existingApproval->approved_at_user ? Carbon::parse($existingApproval->approved_at_user)->format('Y.m.d H:i:s') : '';
+        }
+
+        if ($userRole === 'engineering') {
+            $data['approved_by_engineer'] = $userName;
+            $data['approved_at_engineer'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+        } else {
+            $data['approved_by_engineer'] = $existingApproval->approved_by_engineer ?? '';
+            $data['approved_at_engineer'] = $existingApproval->approved_at_engineer ? Carbon::parse($existingApproval->approved_at_engineer)->format('Y.m.d H:i:s') : '';
+        }
 
         // Render view ke HTML
         $html = view(
@@ -340,7 +387,6 @@ class ApproveController extends Controller
                 ($type === 'closing' ? 'form-closing' : ($type === 'detail' ? 'form-detail' : ($type === 'acceptance' ? 'form-accept' : 'unknown-form'))),
             $data
         )->render();
-
 
         // Setup Dompdf
         $options = new Options();
@@ -352,162 +398,30 @@ class ApproveController extends Controller
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        // Simpan PDF temporary
-        $tempPath = storage_path('app/public/temp/');
-        if (!file_exists($tempPath)) {
-            mkdir($tempPath, 0777, true);
-        }
-
-        $tempFile = $tempPath . uniqid() . '.pdf';
-        file_put_contents($tempFile, $dompdf->output());
-
-        return $tempFile;
-    }
-
-    private function addSignature($sourcePath, $userRole, $userId, $type, $idCapex)
-    {
-        // Ambil id_capex dari t_approval_report berdasarkan current user
-        $approvalReport = DB::table('t_approval_report')
-            ->where('id_capex', $idCapex)
-            ->first();
-
-
-        if (!$approvalReport) {
-            throw new \Exception('Data approval tidak ditemukan');
-        }
-
-        $idCapex = $approvalReport->id_capex;
-
-        // Siapkan direktori penyimpanan
+        // Gunakan path yang sudah ada
         $signedBasePath = storage_path('app/public/uploads/signatures/');
-        $signedSubPath = $signedBasePath . ($type === 'detail' ? 'signature-detail/' : ($type === 'closing' ? 'signature-closing/' : ($type === 'acceptance' ? 'signature-acceptance/' : 'unknown-type/')));
+        $signedSubPath = $signedBasePath .
+            ($type === 'detail' ? 'signature-detail/' : ($type === 'closing' ? 'signature-closing/' : ($type === 'acceptance' ? 'signature-acceptance/' : 'unknown-type/')));
 
+        // Pastikan subfolder ada
         if (!file_exists($signedSubPath)) {
             mkdir($signedSubPath, 0777, true);
         }
 
-        // Nama file berdasarkan id_capex
-        $signedFileName = 'signed_' . $type . '_' . $idCapex . '.pdf';
-        $existingFilePath = $signedSubPath . $signedFileName;
+        // Tentukan nama file
+        $fileName = $type . '_' . Carbon::now('Asia/Jakarta')->format('Y.m.d') . '_' . $data['requester'] . '.pdf';
+        $filePath = $signedSubPath . $fileName;
 
-        // Gunakan file yang sudah ada atau source file baru
-        $sourceFile = $sourcePath;
-
-        $pdf = new Fpdi();
-        $pageCount = $pdf->setSourceFile($sourceFile);
-
-        // Posisi tanda tangan
-        $positions = [
-            'admin_1' => 20,  // Prepared by
-            'admin_2' => 60,  // Reviewed by
-            'user' => 100,    // Approved by
-            'engineer' => 140 // Approved by
-        ];
-
-        // Salin semua halaman
-        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-            $templateId = $pdf->importPage($pageNo);
-            $pdf->addPage();
-            $pdf->useTemplate($templateId);
-
-            // Tambah semua tanda tangan di halaman terakhir
-            if ($pageNo == $pageCount) {
-                $y = 220; // Posisi Y untuk tanda tangan
-
-                // Ambil data tanda tangan yang sudah ada
-                $existingSignatures = DB::table('t_approval_report')
-                    ->where('id_capex', $idCapex)
-                    ->first();
-
-                // Gambar tanda tangan yang sudah ada
-                if ($existingSignatures) {
-                    if ($existingSignatures->approved_by_admin_1 && $userId != 3) {  // Tambah pengecekan userId
-                        $this->drawSignature(
-                            $pdf,
-                            $positions['admin_1'],
-                            $y,
-                            'Prepared by',
-                            $existingSignatures->approved_by_admin_1,  // Gunakan nama dari database
-                            $existingSignatures->approved_at_admin_1   // Gunakan waktu dari database
-                        );
-                    }
-
-                    if ($existingSignatures->approved_by_admin_2 && $userId != 4) {  // Tambah pengecekan userId
-                        $this->drawSignature(
-                            $pdf,
-                            $positions['admin_2'],
-                            $y,
-                            'Reviewed by',
-                            $existingSignatures->approved_by_admin_2,  // Gunakan nama dari database
-                            $existingSignatures->approved_at_admin_2   // Gunakan waktu dari database
-                        );
-                    }
-                    if ($existingSignatures->approved_by_user) {
-                        $this->drawSignature(
-                            $pdf,
-                            $positions['user'],
-                            $y,
-                            'Approved by',
-                            $existingSignatures->approved_by_user,
-                            $existingSignatures->approved_at_user
-                        );
-                    }
-                    if ($existingSignatures->approved_by_engineer) {
-                        $this->drawSignature(
-                            $pdf,
-                            $positions['engineer'],
-                            $y,
-                            'Approved by',
-                            $existingSignatures->approved_by_engineer,
-                            $existingSignatures->approved_at_engineer
-                        );
-                    }
-                }
-
-                // Tambah tanda tangan baru
-                if ($userRole === 'admin') {
-                    if ($userId == 3 && !$existingSignatures->approved_by_admin_1) {
-                        $this->drawSignature($pdf, $positions['admin_1'], $y, 'Prepared by', Auth::user()->name, now());
-                    } else if ($userId == 4 && !$existingSignatures->approved_by_admin_2) {
-                        $this->drawSignature($pdf, $positions['admin_2'], $y, 'Reviewed by', Auth::user()->name, now());
-                    }
-                } else if ($userRole === 'user' && !$existingSignatures->approved_by_user) {
-                    $this->drawSignature($pdf, $positions['user'], $y, 'Approved by', Auth::user()->name, now());
-                } else if ($userRole === 'engineering' && !$existingSignatures->approved_by_engineer) {
-                    $this->drawSignature($pdf, $positions['engineer'], $y, 'Approved by', Auth::user()->name, now());
-                }
-            }
+        // Cek apakah file sudah ada
+        if (file_exists($filePath)) {
+            // Jika file ada, perbarui kontennya
+            file_put_contents($filePath, $dompdf->output());
+        } else {
+            // Jika file belum ada, buat file baru
+            file_put_contents($filePath, $dompdf->output());
         }
 
-        // Simpan file
-        $pdf->Output('F', $existingFilePath);
-
-        if ($sourcePath !== $existingFilePath) {
-            unlink($sourcePath);
-        }
-
-        return $signedFileName;
-    }
-
-    private function drawSignature($pdf, $x, $y, $title, $name)
-    {
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetXY($x, $y);
-        $pdf->Cell(60, 5, $title, 0, 1);
-
-        $pdf->SetFont('Arial', '', 8);
-        $pdf->SetXY($x, $y + 10);
-        $pdf->Cell(60, 5, 'Digitally signed', 0, 1);
-        $pdf->SetXY($x, $y + 15);
-        $pdf->Cell(60, 5, 'by ' . $name, 0, 1);
-        $pdf->SetXY($x, $y + 20);
-        $pdf->Cell(60, 5, 'Date: ' . now()->setTimezone('Asia/Jakarta')->format('Y.m.d'), 0, 1);
-        $pdf->SetXY($x, $y + 25);
-        $pdf->Cell(40, 5, now()->setTimezone('Asia/Jakarta')->format('H:i:s'), 0, 1);
-
-        $pdf->SetFont('Arial', 'B', 11);
-        $pdf->SetXY($x, $y + 35);
-        $pdf->Cell(40, 5, $name, 0, 1);
+        return $fileName;
     }
 
     /**
