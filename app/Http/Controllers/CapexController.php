@@ -44,9 +44,7 @@ class CapexController extends Controller
         }
 
         if ($request->ajax()) {
-            $status = $request->get('status', 1);
-            // Buat query untuk mengambil semua data 
-            $query = Capex::query()->where('status', $status);
+            $query = Capex::query()->whereIn('status', [1, 2]);
 
             if ($request->has('year') && !empty($request->year)) {
                 $query->where('created_at', 'LIKE', $request->year . '-%');
@@ -169,12 +167,18 @@ class CapexController extends Controller
                         $approval->status_approve_4 != 1) {
                         return response()->json(['error' => 'Cannot close. All approvals must be approved for Project.'], 422);
                     }
-                } elseif ($validated['wbs_capex'] === 'Non Project') {
+                } else if ($validated['wbs_capex'] === 'Non Project') {
                     if ($approval->status_approve_1 != 1 || 
                         $approval->status_approve_2 != 1 || 
                         $approval->status_approve_4 != 1) {
                         return response()->json(['error' => 'Cannot close. Required approvals must be approved for Non Project.'], 422);
                     }
+                }
+
+                $capex = Capex::find($validated['id_capex']);
+                if ($capex) {
+                    $capex->status = 2; // Change status to 2
+                    $capex->save();
                 }
             }
 
