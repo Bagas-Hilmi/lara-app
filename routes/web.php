@@ -26,10 +26,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:user|admin|engineering'])->group(function () {
     Route::resource('report', ReportController::class);
-});
-
-Route::middleware(['auth', 'role:user|admin|engineering'])->group(function () {
     Route::resource('approve', ApproveController::class);
+
 });
 
 
