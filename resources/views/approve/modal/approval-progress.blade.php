@@ -1,11 +1,39 @@
     <div class="modal fade" id="progressAPV" tabindex="-1" aria-labelledby="progressAPVLabel">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered custom-modal">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #42bd37;">
                     <h5 class="modal-title" id="progressAPVLabel" style="color: white;">Progress Approval</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="row mb-4" style="justify-content: center;">
+                        
+                        <div class="col-md-3">
+                            <div class="card bg-gradient-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Total Capex</h6>
+                                    <h3 class="mb-0" id="totalProjects">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-gradient-success text-white">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Completed</h6>
+                                    <h3 class="mb-0" id="completedProjects">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-gradient-warning">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">In Progress</h6>
+                                    <h3 class="mb-0" id="inProgressProjects">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-responsive"> <!-- Tambahkan div ini untuk responsivitas -->
                         <table id="approvalTable" class="table table-striped">
                             <thead>
@@ -80,39 +108,33 @@
                     {
                         data: null,
                         name: 'percentage',
-                        orderable: false,
-                        searchable: false,
                         render: function(data, type, row) {
-                            // Tentukan jumlah status yang harus dihitung berdasarkan wbs_capex
                             let statusesToCheck;
                             if (row.wbs_capex === "Project") {
-                                statusesToCheck = [row.status_approve_1, row.status_approve_2, row
-                                    .status_approve_3, row.status_approve_4
-                                ];
-                            } else if (row.wbs_capex === "Non Project") {
-                                statusesToCheck = [row.status_approve_1, row.status_approve_2, row
-                                    .status_approve_4
-                                ];
+                                statusesToCheck = [row.status_approve_1, row.status_approve_2, row.status_approve_3, row.status_approve_4];
                             } else {
-                                statusesToCheck = [];
+                                statusesToCheck = [row.status_approve_1, row.status_approve_2, row.status_approve_4];
                             }
 
-                            // Hitung jumlah yang disetujui
-                            let approvedCount = 0;
-                            statusesToCheck.forEach(status => {
-                                if (status == 1) approvedCount++; // 1 berarti disetujui
-                            });
-
-                            // Hitung persentase berdasarkan jumlah status yang diperiksa
+                            let approvedCount = statusesToCheck.filter(status => status == 1).length;
                             let percentage = (approvedCount / statusesToCheck.length) * 100;
-
-                            // Tentukan warna badge berdasarkan persentase
-                            let badgeClass = percentage === 100 ?
-                                'bg-gradient-success' // Hijau untuk 100%
-                                :
-                                'bg-gradient-secondary'; // Kuning untuk yang lain
-
-                            return `<span class="badge ${badgeClass}">${percentage.toFixed(0)}%</span>`;
+                            
+                            // Progress bar dengan warna berdasarkan persentase
+                            let color = percentage === 100 ? '#42bd37' : 
+                                    percentage >= 75 ? '#17a2b8' :
+                                    percentage >= 50 ? '#ffc107' : '#6c757d';
+                                    
+                            return `
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar" role="progressbar" 
+                                                style="width: ${percentage}%; background-color: ${color}" 
+                                                aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <span class="ms-2 badge" style="background-color: ${color}">${percentage.toFixed(0)}%</span>
+                                    </div>
+                            `;
                         }
                     },
                     {
@@ -153,7 +175,21 @@
                 }
                 return `<span class="badge ${badgeClass}">${statusText}</span>`;
             }
+
+            function updateSummary() {
+                $.get("{{ route('approve.index') }}", { type: 'summary' }, function(data) {
+                    $('#totalProjects').text(data.total);
+                    $('#completedProjects').text(data.completed);
+                    $('#inProgressProjects').text(data.in_progress);
+                });
+            }
+
+            // Panggil saat modal dibuka
+            $('#progressAPV').on('shown.bs.modal', function() {
+                updateSummary();
+            });
         });
+        
     </script>
 
 
@@ -194,4 +230,45 @@
             padding: 8px;
             text-align: center;
         }
+
+                /* Tambahkan di style yang sudah ada */
+        .approval-timeline .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .progress {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        #approvalTable tbody tr {
+            cursor: pointer;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+        }
+
+        .custom-modal {
+            max-width:50%; /* Mengatur lebar modal menjadi 90% dari lebar viewport */
+        }
+
     </style>

@@ -58,10 +58,8 @@
 
             @push('js')
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-            <script src="assets/js/moment.min.js"></script>
             <script src="assets/js/plugins/sweetalert.min.js"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
-            <script src="{{ asset('/js/tooltip.js') }}"></script>
 
         
             <script>

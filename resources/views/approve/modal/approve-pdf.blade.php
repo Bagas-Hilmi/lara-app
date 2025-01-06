@@ -473,8 +473,3 @@
     });
 </script>
 
-<style>
-    .swal2-button {
-        pointer-events: auto !important; /* Memastikan tombol dapat diklik */
-    }
-</style>

@@ -30,11 +30,8 @@ class ApproveController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            // Cek tipe data yang diminta dari parameter
+            // Progress modal data
             if ($request->type === 'progress') {
-                $status = $request->get('status', 1);
-            
-                // Query untuk data progress approval
                 $query = DB::table('t_approval_report')
                     ->select([
                         'id_capex',
@@ -48,15 +45,37 @@ class ApproveController extends Controller
                         'status_approve_4',
                         'upload_date',
                     ])
-                    ->where('status', $status); // Menambahkan filter status
+                    ->where('status', 1);
 
                 return DataTables::of($query)
                     ->addIndexColumn()
                     ->make(true);
-            } else {
-                // Query untuk data approve yang sudah ada sebelumnya
-                $query = Approve::getData();
+            }
+            // Summary data for progress modal
+            elseif ($request->type === 'summary') {
+                $data = DB::table('t_approval_report')
+                    ->select(
+                        DB::raw('COUNT(*) as total'),
+                        DB::raw('SUM(CASE 
+                        WHEN wbs_capex = "Project" AND status_approve_1 = 1 AND status_approve_2 = 1 AND status_approve_3 = 1 AND status_approve_4 = 1 THEN 1
+                        WHEN wbs_capex = "Non Project" AND status_approve_1 = 1 AND status_approve_2 = 1 AND status_approve_4 = 1 THEN 1
+                        ELSE 0 END) as completed'),
+                        DB::raw('SUM(CASE 
+                        WHEN wbs_capex = "Project" AND (status_approve_1 = 0 OR status_approve_2 = 0 OR status_approve_3 = 0 OR status_approve_4 = 0) THEN 1
+                        WHEN wbs_capex = "Non Project" AND (status_approve_1 = 0 OR status_approve_2 = 0 OR status_approve_4 = 0) THEN 1
+                        ELSE 0 END) as in_progress')
+                    )
+                    ->first();
 
+                return response()->json([
+                    'total' => $data->total,
+                    'completed' => $data->completed,
+                    'in_progress' => $data->in_progress,
+                ]);
+            }
+            // Main approval table data
+            else {
+                $query = Approve::getData();
                 return DataTables::of($query)
                     ->addColumn('action', function ($row) {
                         return view('approve/datatables/actionbtn', [
