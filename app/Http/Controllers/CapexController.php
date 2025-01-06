@@ -175,11 +175,6 @@ class CapexController extends Controller
                     }
                 }
 
-                $capex = Capex::find($validated['id_capex']);
-                if ($capex) {
-                    $capex->status = 2; // Change status to 2
-                    $capex->save();
-                }
             }
 
             // Perbarui data yang sudah ada

@@ -91,16 +91,16 @@ class CCB extends Model
     {
         // Query untuk memperbarui data
         $query = 'UPDATE t_cip_cum_bal
-                      SET period_cip = ?,
-                          bal_usd = ?,
-                          bal_rp = ?,
-                          cumbal_usd = ?,
-                          cumbal_rp = ?,
-                          report_status = ?,
-                          status = ?,
-                          updated_by = ?,
-                          updated_at = ?
-                      WHERE id_ccb = ?';
+                        SET period_cip = ?,
+                            bal_usd = ?,
+                            bal_rp = ?,
+                            cumbal_usd = ?,
+                            cumbal_rp = ?,
+                            report_status = ?,
+                            status = ?,
+                            updated_by = ?,
+                            updated_at = ?
+                        WHERE id_ccb = ?';
 
         $params = [
             $period_cip,

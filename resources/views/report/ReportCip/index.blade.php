@@ -50,12 +50,6 @@
                                             @endforeach
                                         </select>
 
-
-                                        <button class="btn btn-secondary"
-                                            style="background-color: #09170a; border-color: #09170a;">
-                                            <span id="wbscapexText">WBS Type</span>
-                                        </button>
-
                                         <!-- Button to open the modal -->
                                         <button onclick="downloadFilteredPDF()" class="btn btn-secondary"
                                             style="background-color: #bd1f20;">
@@ -64,6 +58,10 @@
 
                                         {{-- isi dari box container --}}
                                         <div class="info-box-container">
+                                            <div class="info-box">
+                                                <div class="info-box-label">WBS Type</div>
+                                                <div class="info-box-value" id="wbscapexText">-</div>
+                                            </div>
                                             <div class="info-box">
                                                 <div class="info-box-label">CIP Number</div>
                                                 <div class="info-box-value" id="cipText">-</div>
@@ -577,13 +575,6 @@
     }
 
     #report-table thead th {
-        background-color: #3cb210;
-        /* Warna latar belakang header */
-        color: #ffffff;
-        /* Warna teks header */
-    }
-
-    #budget-table thead th {
         background-color: #3cb210;
         /* Warna latar belakang header */
         color: #ffffff;

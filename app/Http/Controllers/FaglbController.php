@@ -94,6 +94,7 @@ class FaglbController extends Controller
             $faglbHead->period = $request->input('period');
             $faglbHead->id_ccb = $request->input('id_ccb');
             $faglbHead->created_by = Auth::id();
+            $faglbHead->created_at = now();
             $faglbHead->save();
 
             // Proses unggah dan import FAGLB file
@@ -143,9 +144,10 @@ class FaglbController extends Controller
 
             $id = $request->input('id_head');
             $faglbHead = Faglb::findOrFail($id);
+            $faglbHead->updated_by = Auth::id();
+            $faglbHead->updated_at = now();
 
-            // Update FAGLB file jika ada
-            // Proses unggah dan import FAGLB file
+            // Proses unggah dan import FAGLB file 
             if ($request->hasFile('faglb')) {
                 $faglbFile = $request->file('faglb');
                 $faglbFileName = $faglbFile->getClientOriginalName();

@@ -272,7 +272,7 @@
 
                             statusSelect.on('select2:unselect', function (e) {
                                 table.ajax.url('{{ route('report.index') }}').load();
-                            })
+                        })
                     });
                 </script>
             @endpush

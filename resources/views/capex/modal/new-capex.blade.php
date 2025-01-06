@@ -20,7 +20,7 @@
                         <div class="col-md-3">
                             <label for="wbs_capex" class="form-label font-weight-bold">WBS Capex</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="wbsCapexDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button" id="wbsCapexDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select WBS Type
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="wbsCapexDropdown">
@@ -65,7 +65,7 @@
                         <div class="col-md-4 d-flex flex-column align-items-center">
                             <label for="status_capex" class="form-label font-weight-bold">Type Capex</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="statusDropdown">
@@ -80,7 +80,7 @@
                         <div class="col-md-4 d-flex flex-column align-items-center">
                             <label for="budget_type" class="form-label font-weight-bold">Status Budget</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="budgetTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button" id="budgetTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status Budget
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="budgetTypeDropdown">
@@ -104,7 +104,7 @@
                         <div class="col-md-4">
                             <label for="category" class="form-label font-weight-bold">Category</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Category
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="categoryDropdown">

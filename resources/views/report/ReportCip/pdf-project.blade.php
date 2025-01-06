@@ -72,10 +72,10 @@
             <tr>
                 <td colspan="8" class="text-center">Total:</td>
                 <td class="text-right">
-                   <i> {{ formatNumber($totals['amount_rp']) }} </i>
+                    <i> {{ formatNumber($totals['amount_rp']) }} </i>
                 </td>
                 <td class="text-right">
-                   <i> {{ $totals['amount_us'] ? formatNumber($totals['amount_us'], 2) : '-' }}</i>
+                    <i> {{ $totals['amount_us'] ? formatNumber($totals['amount_us'], 2) : '-' }}</i>
                 </td>
                 
             </tr>
