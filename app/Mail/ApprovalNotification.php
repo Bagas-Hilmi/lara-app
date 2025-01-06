@@ -26,7 +26,7 @@ class ApprovalNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Permintaan Persetujuan CAPEX Baru',
+            subject: 'Permintaan Persetujuan CAPEX ', //subjek email
         );
     }
 
