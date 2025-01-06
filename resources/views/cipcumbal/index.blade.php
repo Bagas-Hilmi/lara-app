@@ -31,7 +31,7 @@
                                         <ul class="dropdown-menu" aria-labelledby="periodDropdown">
                                             @foreach ($periodRelease as $period)
                                                 <li>
-                                                    <a class="dropdown-item" href="#"
+                                                    <a class="dropdown-item dropdown-period" href="#"
                                                         data-period="{{ $period->period_cip }}"
                                                         data-total="{{ $period->total_release }}">
                                                         {{ $period->period_cip }}
@@ -49,10 +49,11 @@
                                             <span id="yearText"></span>
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="yearDropdown">
-                                            </li>
                                             @foreach ($availableYears as $year)
-                                                <li><a class="dropdown-item" href="#"
-                                                        data-value="{{ $year }}">{{ $year }}</a></li>
+                                                <li>
+                                                    <a class="dropdown-item dropdown-year" href="#"
+                                                        data-value="{{ $year }}">{{ $year }}</a>
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -131,6 +132,10 @@
                             d.status = 1;
                             d.year = $('#yearFilter').val();
                             d.period = $('#periodFilter').val(); // Nilai periode dari dropdown
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', error);
+                            console.error(xhr.responseText); // Cek respons error
                         }
                     },
                     columns: [{
@@ -255,34 +260,36 @@
                 });
 
                 // Event listener untuk filter tahun
-                $('.dropdown-item').click(function() {
-                    var year = $(this).data('value'); // Ambil nilai tahun
-                    $('#yearFilter').val(year); // Set nilai tahun ke input tersembunyi
+                document.querySelectorAll('.dropdown-year').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const year = this.dataset.value; // Ambil nilai tahun
 
-                    // Ubah teks tombol untuk menampilkan tahun yang dipilih
-                    if (year) {
-                        $('#yearDropdown').text(year); // Jika ada tahun yang dipilih
-                    } else {
-                        $('#yearDropdown').text('Pilih Tahun'); // Jika semua tahun dipilih
-                    }
+                        // Update teks dropdown tahun
+                        document.querySelector('#yearDropdown span').textContent = year || 'Pilih Tahun';
 
-                    table.ajax.reload(); 
+                        // Set nilai tahun ke input tersembunyi
+                        document.querySelector('#yearFilter').value = year;
+
+                        // Reload tabel dengan data baru
+                        table.ajax.reload();
+                    });
                 });
 
-                document.querySelectorAll('.dropdown-item').forEach(item => {
+                document.querySelectorAll('.dropdown-period').forEach(item => {
                     item.addEventListener('click', function(e) {
                         e.preventDefault();
                         const period = this.dataset.period; // Ambil nilai periode
                         const total = this.dataset.total;   // Ambil nilai total
 
-                        // Update teks dropdown dengan periode yang dipilih
+                        // Update teks dropdown periode
                         document.querySelector('#periodDropdown span').textContent = period;
 
-                        // Update elemen informasi di box
+                        // Update elemen informasi tambahan
                         document.querySelector('#releaseYear').textContent = period;
                         document.querySelector('#totalReleaseValue').textContent = total;
 
-                        // Set periode ke input tersembunyi (opsional jika Anda menggunakannya di AJAX)
+                        // Set periode ke input tersembunyi
                         document.querySelector('#periodFilter').value = period;
 
                         // Reload tabel dengan data baru
