@@ -47,7 +47,7 @@ class Approve extends Model
         // Mulai query untuk mengambil data dari t_master_capex
         $query = DB::table('t_master_capex')
             ->leftJoin('t_approval_report', 't_master_capex.id_capex', '=', 't_approval_report.id_capex') // Menyambungkan tabel
-            ->whereIn('t_master_capex.status_capex', ['Waiting Approval', 'On Progress'])
+            ->whereIn('t_master_capex.status_capex', ['Waiting Approval'])
             ->where('t_master_capex.status', 1) 
             ->select(
                 't_master_capex.id_capex',

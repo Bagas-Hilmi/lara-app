@@ -1,12 +1,10 @@
 <div class="btn-group" role="group" aria-label="Basic example">
     @if(auth()->user()->hasRole(['admin','user']))
         
-        @if ($row->status_capex !== 'On Progress')
             <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadPDF"
                 data-id="{{ $row->id_capex }}">
                 <i class="fa fa-file-arrow-up" style="font-size: 1.2rem;"></i>
             </a>
-        @endif
 
     @endif
 
