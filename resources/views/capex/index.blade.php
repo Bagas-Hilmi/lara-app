@@ -24,13 +24,6 @@
                                         New capex
                                     </button>
 
-                                    <button href="#" class="btn btn-sm btn-primary ms-2" 
-                                        style="background-color: #09170a; border-color: #09170a;"  
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#engineer-form">
-                                        Engineering
-                                    </button>
-                                    
                                     
                                     <div class="dropdown ms-2">
                                         <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -93,7 +86,6 @@
             @include('capex.completion-capex')
             @include('capex.status-capex')
             @include('capex.modal.view-commitment')
-            @include('capex.engineering-capex')
 
                     @push('js')
                     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
