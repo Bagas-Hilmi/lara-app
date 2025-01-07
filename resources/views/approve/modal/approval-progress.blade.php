@@ -8,30 +8,31 @@
                 <div class="modal-body">
                     <div class="row mb-4" style="justify-content: center;">
                         
-                        <div class="col-md-3">
-                            <div class="card bg-gradient-light">
+                        <div class="col-md-4">
+                            <div class="card project-card bg-gradient-light">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">Total Capex</h6>
                                     <h3 class="mb-0" id="totalProjects">0</h3>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-gradient-success text-white">
+                        <div class="col-md-4">
+                            <div class="card project-card bg-gradient-success text-white">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">Completed</h6>
                                     <h3 class="mb-0" id="completedProjects">0</h3>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-gradient-warning">
+                        <div class="col-md-4">
+                            <div class="card project-card bg-gradient-warning">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">In Progress</h6>
                                     <h3 class="mb-0" id="inProgressProjects">0</h3>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
 
                     <div class="table-responsive"> <!-- Tambahkan div ini untuk responsivitas -->
@@ -231,36 +232,20 @@
             text-align: center;
         }
 
-                /* Tambahkan di style yang sudah ada */
-        .approval-timeline .step-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
         .progress {
             background-color: #e9ecef;
             border-radius: 10px;
             overflow: hidden;
         }
 
-        .card {
+        .project-card {
             border-radius: 10px;
-            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             transition: transform 0.2s;
         }
 
-        .card:hover {
+        .project-card:hover {
             transform: translateY(-2px);
-        }
-
-        #approvalTable tbody tr {
-            cursor: pointer;
         }
 
         .modal-content {
