@@ -656,7 +656,7 @@
     }
 
     .info-box {
-        background: #040404;
+        background: #c0b8b8;
         /* Tetap menggunakan warna latar belakang hitam */
         border-radius: 12px;
         /* Membuat sudut lebih melengkung untuk tampilan card */
@@ -686,20 +686,19 @@
     }
 
     .info-box-label {
-        color: #f1f5f0;
-        font-size: 0.875rem;
+        color: #000000;
+        font-size: 1rem;
         margin-bottom: 8px;
         /* Sedikit lebih besar margin bottom */
         text-transform: uppercase;
         letter-spacing: 0.75px;
         /* Sedikit lebih besar letter spacing */
-        font-weight: bold;
-        opacity: 0.9;
+        font-weight: 600;
         /* Sedikit transparent untuk kontras */
     }
 
     .info-box-value {
-        color: white;
+        color: rgb(0, 0, 0);
         font-size: 1.125rem;
         /* Sedikit lebih besar ukuran font */
         font-weight: 600;

@@ -29,13 +29,15 @@
                                 <label class="form-label" for="faglb">FAGLB</label>
                                 <input type="file" class="form-control custom-file-input" id="faglb"
                                     name="faglb" accept=".xlsx,.xls,.csv" required>
-                            </div>
+                                <label>Allowed file : xlsx, xls, csv</label>
+                                </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label" for="zlis1">ZLIS1</label>
                                 <input type="file" class="form-control custom-file-input" id="zlis1"
                                     name="zlis1" accept=".xlsx,.xls,.csv" required>
+                                <label>Allowed file : xlsx, xls, csv</label>
                             </div>
                         </div>
                     </div>

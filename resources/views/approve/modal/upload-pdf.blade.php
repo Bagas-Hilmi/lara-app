@@ -20,6 +20,7 @@
                                 <label class="form-label" for="bast">Upload PDF</label>
                                 <input type="file" class="form-control" id="bast" name="file_pdf"
                                     accept="application/pdf" required>
+                                    <label>Allowed file : PDF</label>
                             </div>
                         </div>
 

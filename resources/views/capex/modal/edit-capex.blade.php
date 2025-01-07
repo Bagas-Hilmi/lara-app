@@ -171,6 +171,7 @@
                             <label class="form-label font-weight-bold">Upload PDF</label>
                             <input type="file" class="form-control" name="file_pdf" accept="application/pdf"
                                 required>
+                            <label class="form-label">Allowed file : PDF</label>
                         </div>
                     </div>
                 </form>
