@@ -42,11 +42,11 @@
             display: inline-block;
             text-align: center;
             /* Meratakan "X" secara horizontal */
-            line-height: 11px;
+            line-height: 13px;
             /* Mengurangi line-height agar "X" lebih ke atas */
             font-weight: bold;
             /* Membuat "X" lebih tebal (opsional) */
-            font-size: 12px;
+            font-size: 14px;
             /* Ukuran font untuk membuat "X" pas dalam kotak */
             padding-top: 3px;
             /* Memberi sedikit jarak atas agar "X" lebih naik */
