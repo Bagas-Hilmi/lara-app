@@ -19,42 +19,44 @@
                             <div class="card-body p-3">
                                 <div class="mb-2">
                                     <div>
-                                        <select id="descriptionSelect" class="form-control" style="width: 20%;">
-                                            <option value="" selected>Pilih Capex</option>
-                                            @foreach ($descriptions as $desc)
-                                                <option value="{{ $desc->id_capex }}" data-cip="{{ $desc->cip_number }}"
-                                                    data-wbs="{{ $desc->wbs_number }}"
-                                                    data-project_desc="{{ $desc->project_desc }}"
-                                                    data-budget_type="{{ $desc->budget_type }}"
-                                                    data-amount_budget="{{ $desc->amount_budget }}"
-                                                    data-wbs_capex="{{ $desc->wbs_capex }}"
-                                                    data-requester="{{ $desc->requester }}"
-                                                    data-status_capex="{{ $desc->status_capex }}">
-                                                    {{ $desc->capex_number }} - {{ $desc->project_desc }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <div class="d-flex mb-2" style="gap: 10px;">
+                                            <select id="descriptionSelect" class="form-control" style="width: 20%;">
+                                                <option value="" selected>Pilih Capex</option>
+                                                @foreach ($descriptions as $desc)
+                                                    <option value="{{ $desc->id_capex }}" data-cip="{{ $desc->cip_number }}"
+                                                        data-wbs="{{ $desc->wbs_number }}"
+                                                        data-project_desc="{{ $desc->project_desc }}"
+                                                        data-budget_type="{{ $desc->budget_type }}"
+                                                        data-amount_budget="{{ $desc->amount_budget }}"
+                                                        data-wbs_capex="{{ $desc->wbs_capex }}"
+                                                        data-requester="{{ $desc->requester }}"
+                                                        data-status_capex="{{ $desc->status_capex }}">
+                                                        {{ $desc->capex_number }} - {{ $desc->project_desc }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
 
-                                        <!-- Dropdown untuk memilih Status Capex -->
-                                        <select id="statusSelect" class="form-control" style="width: 20%;">
-                                            <option value="" selected>Pilih Status Capex</option>
-                                            @php
-                                                $uniqueStatuses = $descriptions
-                                                    ->pluck('status_capex')
-                                                    ->unique()
-                                                    ->values();
-                                            @endphp
+                                            <!-- Dropdown untuk memilih Status Capex -->
+                                            <select id="statusSelect" class="form-control" style="width: 15%;">
+                                                <option value="" selected>Pilih Status Capex</option>
+                                                @php
+                                                    $uniqueStatuses = $descriptions
+                                                        ->pluck('status_capex')
+                                                        ->unique()
+                                                        ->values();
+                                                @endphp
 
-                                            @foreach ($uniqueStatuses as $status)
-                                                <option value="{{ $status }}">{{ $status }}</option>
-                                            @endforeach
-                                        </select>
+                                                @foreach ($uniqueStatuses as $status)
+                                                    <option value="{{ $status }}">{{ $status }}</option>
+                                                @endforeach
+                                            </select>
 
-                                        <!-- Button to open the modal -->
-                                        <button onclick="downloadFilteredPDF()" class="btn btn-secondary"
-                                            style="background-color: #bd1f20;">
-                                            <i class="fas fa-file-pdf"></i> Download PDF
-                                        </button>
+                                            <!-- Button to open the modal -->
+                                            <button onclick="downloadFilteredPDF()" class="btn btn-secondary"
+                                                style="background-color: #bd1f20;">
+                                                <i class="fas fa-file-pdf"></i> Download PDF
+                                            </button>
+                                        </div>
 
                                         {{-- isi dari box container --}}
                                         <div class="info-box-container">

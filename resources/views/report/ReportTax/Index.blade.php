@@ -18,7 +18,7 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="mb-2">
-                                    <select id="statusSelect" class="form-control" style="width: 20%;">
+                                    <select id="statusSelect" class="form-control" style="width: 15%;">
                                         <option value="" selected>Pilih Status</option>
                                         @foreach ($status as $stat)
                                             <option value="{{ $stat }}">{{ $stat }}</option>

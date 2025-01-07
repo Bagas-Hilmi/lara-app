@@ -648,70 +648,100 @@
         /* Menambah efek shadow saat fokus */
     }
 
+    .filter-container {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    /* Styling untuk filter dropdown container */
+    .filter-dropdown {
+        position: relative;
+        display: block;
+        margin-bottom: 15px;
+        width: 300px;
+    }
+
+    /* Base styling untuk semua select dalam filter */
+    .filter-dropdown select,
+    .filter-select,
+    #filterTypeSelect {
+        width: 100%;
+        height: 50px;
+        padding: 10px 15px;
+        font-size: 11pt;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    /* Hover state untuk select */
+    .filter-dropdown select:hover,
+    .filter-select:hover,
+    #filterTypeSelect:hover {
+        border-color: #66afe9;
+    }
+
+    /* Focus state untuk select */
+    .filter-dropdown select:focus,
+    .filter-select:focus,
+    #filterTypeSelect:focus {
+        outline: none;
+        border-color: #3cff00;
+        box-shadow: 0 0 8px rgba(60, 255, 0, 0.3);
+    }
+
+    /* Container untuk select2 */
+    .select2-container {
+        width: 300px !important;
+        margin-bottom: 15px;
+    }
+
+    /* Styling khusus untuk select2 single selection */
+    .select2-container .select2-selection--single {
+        height: 50px;
+        padding: 10px 15px;
+        font-size: 11pt;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    /* Menyelaraskan teks di dalam select2 */
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 30px;
+        padding-left: 0;
+        color: #000000;
+    }
+
+    /* Styling untuk tombol clear di select2 */
+    .select2-container .select2-selection--single .select2-selection__clear {
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-right: 0;
+        font-size: 16px;
+        color: #999;
+    }
+
+    /* Styling untuk arrow dropdown di select2 */
+    .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 48px;
+        right: 10px;
+    }
+
+    /* Menyembunyikan elemen dengan class hidden */
     .hidden {
         display: none !important;
     }
-    .filter-container {
-            margin-bottom: 10px;
-    }
-    #filterTypeSelect,
-    .filter-select {
-        width: 250px;
-        margin-bottom: 10px;
-        border-radius: 12px;
-        border: 1px solid #ddd;
-        background-color: #f9f9f9;
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    
 
-    .filter-dropdown {
-    position: relative;
-    display: inline-block;
-    width: 300px;
-    font-family: Arial, sans-serif;
-    
+    /* Container untuk filter-select */
+    .filter-select-container {
+        margin-bottom: 15px;
+        width: 300px;
     }
-
-    .filter-dropdown select {
-    width: 100%;
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    font-size: 11pt;
-    }
-
-    .filter-dropdown select:focus {
-    outline: none;
-    border-color: #66afe9;
-    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
-    }
-
-    .select2-container .select2-selection--single {
-        height: 50px; /* Menyesuaikan tinggi agar lebih proporsional */
-        padding-inline: 10px; /* Padding kiri dan kanan otomatis menyesuaikan dengan teks */
-        font-size: 11pt; /* Ukuran font lebih besar untuk keterbacaan */
-        border-radius: 8px; /* Membuat sudut lebih halus */
-        border: 1px solid #ccc; /* Border abu-abu muda untuk kesan elegan */
-        background-color: #ffffff; /* Latar belakang putih agar bersih */
-        color: #000000; /* Warna teks abu-abu gelap untuk kontras yang baik */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan halus di sekitar dropdown */
-        transition: all 0.3s ease; /* Menambahkan transisi halus saat berinteraksi */
-        display: flex; /* Menjadikan container flex */
-        align-items: center; /* Menyelaraskan teks di tengah secara vertikal */
-        justify-content: space-between; /* Memastikan tombol x berada di sisi kanan */
-    }
-
-    /* Efek fokus pada select2 */
-    .select2-container .select2-selection--single:focus {
-        border-color: #3cff00; /* Mengubah border menjadi biru saat fokus */
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Menambahkan bayangan biru saat fokus */
-        outline: none; /* Menghilangkan outline default */
-    }
-        .select2-container .select2-selection__clear {
-        position: absolute;
-        right: 10px; /* Menempatkan tombol "x" di sisi kanan */
-    }   
 </style>

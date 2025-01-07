@@ -18,13 +18,13 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="d-flex mb-2" style="gap: 10px;">
-                                    <select id="categorySelect" class="form-control" style="width: 20%;">
+                                    <select id="categorySelect" class="form-control" style="width: 15%;">
                                         <option value="" selected>Pilih Category</option>
                                         @foreach ($categories as $category)
                                             <option value="{{ $category }}">{{ $category }}</option>
                                         @endforeach
                                     </select>
-                                    <select id="yearSelect" class="form-control" style="width: 20%;">
+                                    <select id="yearSelect" class="form-control" style="width: 15%;">
                                         <option value="" selected>Pilih Tahun</option>
                                         @foreach ($years as $year)
                                             <option value="{{ $year }}">{{ $year }}</option>
