@@ -17,11 +17,17 @@
                                 <h3 class="text-white text-capitalize ps-3">Report Category</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="mb-2">
+                                <div class="d-flex mb-2" style="gap: 10px;">
                                     <select id="categorySelect" class="form-control" style="width: 20%;">
                                         <option value="" selected>Pilih Category</option>
                                         @foreach ($categories as $category)
                                             <option value="{{ $category }}">{{ $category }}</option>
+                                        @endforeach
+                                    </select>
+                                    <select id="yearSelect" class="form-control" style="width: 20%;">
+                                        <option value="" selected>Pilih Tahun</option>
+                                        @foreach ($years as $year)
+                                            <option value="{{ $year }}">{{ $year }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -90,6 +96,10 @@
                                 var categoryValue = $('#categorySelect').val();
                                 if (categoryValue) {
                                     d.category = categoryValue;
+                                }
+                                var yearValue = $('#yearSelect').val();
+                                if (yearValue){
+                                    d.year = yearValue;
                                 }
                             }
                             },
@@ -296,7 +306,7 @@
                         });
 
                         // Inisialisasi Select2 untuk kategori
-                        var categorySelect = $('#categorySelect');
+                            var categorySelect = $('#categorySelect');
                             if (categorySelect.length) {
                                 categorySelect.select2({
                                     placeholder: 'Cari Kategori',
@@ -316,6 +326,31 @@
                                 }
                             });
                             categorySelect.on('select2:unselect', function (e) {
+                                table.ajax.url('{{ route('report.index') }}').load();
+                            });
+
+                            var yearSelect = $('#yearSelect');
+                            if (yearSelect.length) {
+                                yearSelect.select2({
+                                    placeholder: 'Cari Tahun',
+                                    allowClear: true,
+                                });
+                            }
+
+                            yearSelect.on('select2:select', function (e) {
+                                const selectedOption = $(this).find(':selected');
+                                const yearValue = selectedOption.val();
+
+                                console.log('Tahun dipilih:', yearValue);
+    
+                                if (yearValue) {
+                                    table.ajax.url('{{ route('report.index') }}?year=' + yearValue).load();
+                                } else {
+                                    table.ajax.url('{{ route('report.index') }}').load();
+                                }
+                            });
+
+                            yearSelect.on('select2:unselect', function (e) {
                                 table.ajax.url('{{ route('report.index') }}').load();
                             });
 

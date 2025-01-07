@@ -28,6 +28,21 @@ class ReportCategory extends Model
         'balance',
     ];
 
+    public static function getAvailableYears() 
+    {
+        return DB::table('t_report_category')
+            ->where('status', 1)
+            ->get()
+            ->map(function($item) {
+                preg_match('/\d{4}$/', $item->number, $matches);
+                return $matches[0] ?? null;
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+    }
+
     public static function getReportCategoryData()
     {
         $categories = DB::table('t_master_capex')

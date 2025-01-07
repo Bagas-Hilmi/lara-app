@@ -51,6 +51,7 @@ class ReportController extends Controller
 
             // Mendapatkan kategori untuk dropdown
             $categories = ReportCategory::getCategory();
+            $years = ReportCategory::getAvailableYears();
 
             if ($request->ajax()) {
                 // Memanggil method dari model untuk mendapatkan query builder
@@ -59,6 +60,13 @@ class ReportController extends Controller
                 // Jika ada kategori yang dipilih, filter berdasarkan kategori
                 if ($request->has('category') && $request->category != '') {
                     $query->where('category', $request->category);
+                }
+
+                if (request()->has('year') && request()->year != '') {
+                    $year = request()->year;
+                    $query->where(function($q) use ($year) {
+                        $q->whereRaw("RIGHT(number, 4) = ?", [$year]);
+                    });
                 }
 
                 // Ambil data yang sudah difilter
@@ -71,7 +79,7 @@ class ReportController extends Controller
             }
 
             // Kembalikan tampilan dengan kategori
-            return view('report.reportCategory.index', compact('categories'));
+            return view('report.reportCategory.index', compact('categories', 'years'));
         } else if ($flag === 'summary') {
             $categories = ReportSummary::getCategory();
             $status = ReportSummary::getStatusCapex();
