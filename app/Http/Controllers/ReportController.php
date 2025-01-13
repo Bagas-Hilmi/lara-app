@@ -84,35 +84,18 @@ class ReportController extends Controller
             $categories = ReportSummary::getCategory();
             $status = ReportSummary::getStatusCapex();
             $budgets = ReportSummary::getBudget();
+            $years = ReportSummary::getAvailableYears();
 
             
             if ($request->ajax()) {
+                $data = ReportSummary::getMasterdata($request);
                 
-                $data = ReportSummary::getMasterdata();
-
-                
-                if ($request->has('category') && $request->category != '') {
-                    $data = $data->where('category', $request->category);
-                }
-
-                if ($request->has('status_capex') && $request->status_capex != '') {
-                    $data = $data->where('status_capex', $request->status_capex);
-                }
-
-                if ($request->has('budget_type') && $request->budget_type != '') {
-                    $data = $data->where('budget_type', $request->budget_type);
-                }
-
-                if ($request->has('filter_type') && $request->has('filter_option')) {
-                    $data = $data->where($request->filter_type, $request->filter_option);
-                }
-
                 return DataTables::of($data)
                     ->addIndexColumn() 
                     ->make(true); 
             }
 
-            return view('report.reportSummary.index', compact('categories', 'status', 'budgets'));
+            return view('report.reportSummary.index', compact('categories', 'status', 'budgets', 'years'));
         } else if ($flag === 'tax') {
             $status = ReportTax::getStatus();
  

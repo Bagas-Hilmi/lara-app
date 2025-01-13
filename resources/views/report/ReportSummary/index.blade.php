@@ -17,10 +17,9 @@
                                 <h3 class="text-white text-capitalize ps-3">Report Summary</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="mb-2">
-                                    <div class="filter-container">
-                                        <div class="filter-dropdown">
-                                            <select id="filterTypeSelect" class="form-control">
+                                <div class="d-flex mb-2" style="gap: 10px;">
+                                        <div class="filter-dropdown ">
+                                            <select id="filterTypeSelect" class="form-control" >
                                                 <option value="">Pilih Jenis Filter</option>
                                                 <option value="category">Filter Category</option>
                                                 <option value="status">Filter Status</option>
@@ -28,7 +27,6 @@
                                             </select>
                                         </div>
                                 
-                                        <!-- Existing Filters (initially hidden) -->
                                         <div class="filter-select-container">
                                             <select id="categorySelect" class="filter-select form-control hidden">
                                                 <option value="" selected>Pilih Category</option>
@@ -55,7 +53,13 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>
+                                        
+                                        <select id="yearSelect" class="form-control" style="width: 15%;">
+                                            <option value="" selected>Pilih Tahun</option>
+                                            @foreach ($years as $year)
+                                                <option value="{{ $year }}">{{ $year }}</option>
+                                            @endforeach
+                                        </select>
                                 </div>
                                 <div class="table-responsive p-0">
                                     <table id="summary-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
@@ -161,6 +165,11 @@
                                 var budgetValue = $('#budgetSelect').val();
                                 if (budgetValue) {
                                     d.budget_type = budgetValue;  
+                                }
+
+                                var yearValue = $('#yearSelect').val();
+                                if (yearValue){
+                                    d.year = yearValue;
                                 }
                             }},
                             columns: [
@@ -391,6 +400,7 @@
                         var statusSelect = $('#statusSelect');
                         var budgetSelect = $('#budgetSelect');
                         var filterTypeSelect = $('#filterTypeSelect');
+                        var yearSelect = $('#yearSelect');
 
                         // Select2 Initialization
                         if (categorySelect.length) {
@@ -480,6 +490,30 @@
 
                         budgetSelect.on('select2:clear', function (e) {
                             table.ajax.url('{{ route('report.index') }}').load(); // Reload semua data
+                        });
+
+                        if (yearSelect.length) {
+                            yearSelect.select2({
+                                placeholder: 'Cari Tahun',
+                                allowClear: true,
+                            });
+                        }
+
+                        yearSelect.on('select2:select', function(e) {
+                            const selectedOption = $(this).find(':selected');
+                            const yearValue = selectedOption.val();
+
+                            console.log('Tahun dipilih:', yearValue);
+
+                            if (yearValue) {
+                                table.ajax.url('{{ route('report.index') }}?year=' + yearValue).load();
+                            } else {
+                                table.ajax.url('{{ route('report.index') }}').load();
+                            }
+                        });
+
+                        yearSelect.on('select2:unselect', function(e) {
+                            table.ajax.url('{{ route('report.index') }}').load();
                         });
                     });
 

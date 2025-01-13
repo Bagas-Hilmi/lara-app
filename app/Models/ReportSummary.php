@@ -38,14 +38,14 @@ class ReportSummary extends Model
         'cip_number',
     ];
 
-    public static function getMasterdata()
+    public static function getMasterdata($request = null)
     {
         try {
             // Mulai transaksi database untuk memastikan konsistensi data
             DB::beginTransaction();
 
             // Ambil data master capex dengan join ke tabel lain
-            $masterData = DB::table('t_master_capex')
+            $query = DB::table('t_master_capex')
                 ->leftJoin('t_report_summary', 't_master_capex.id_capex', '=', 't_report_summary.id_capex')
                 ->leftJoin('t_report_cip', 't_master_capex.id_capex', '=', 't_report_cip.id_capex')
                 ->select(
@@ -70,6 +70,7 @@ class ReportSummary extends Model
                     't_master_capex.revise_completion_date',
                     't_master_capex.wbs_number',
                     't_master_capex.cip_number',
+                    't_master_capex.status',
                     't_report_summary.realized',
                     DB::raw('SUM(t_report_cip.amount_rp) as recost_rp'),
                     DB::raw('COALESCE(SUM(t_report_cip.amount_us), 0) as recost_usd'),
@@ -99,10 +100,29 @@ class ReportSummary extends Model
                     't_master_capex.revise_completion_date',
                     't_master_capex.wbs_number',
                     't_master_capex.cip_number',
+                    't_master_capex.status',
                     't_report_summary.realized'
                 )
-                ->distinct()
-                ->get();
+                ->distinct();
+                if ($request) {
+                    if ($request->has('category') && $request->category != '') {
+                        $query->where('t_master_capex.category', $request->category);
+                    }
+        
+                    if ($request->has('status_capex') && $request->status_capex != '') {
+                        $query->where('t_master_capex.status_capex', $request->status_capex);
+                    }
+        
+                    if ($request->has('budget_type') && $request->budget_type != '') {
+                        $query->where('t_master_capex.budget_type', $request->budget_type);
+                    }
+        
+                    if ($request->has('year') && $request->year != '') {
+                        $query->whereRaw("RIGHT(t_master_capex.capex_number, 4) = ?", [$request->year]);
+                    }
+                }
+
+                $masterData = $query->get();
 
             // Proses setiap data master
             foreach ($masterData as $data) {
@@ -137,6 +157,7 @@ class ReportSummary extends Model
                     'revise_completion_date' => $data->revise_completion_date,
                     'wbs_number' => $data->wbs_number,
                     'cip_number' => $data->cip_number,
+                    'status' => $data->status,
                     'created_at' => now(), 
                     'updated_at' => now()
                 ];
@@ -204,5 +225,19 @@ class ReportSummary extends Model
         ->toArray();
 
         return $budgets;
+    }
+
+    public static function getAvailableYears() 
+    {
+        return DB::table('t_report_summary')
+            ->get()
+            ->map(function($item) {
+                preg_match('/\d{4}$/', $item->capex_number, $matches);
+                return $matches[0] ?? null;
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
     }
 }
