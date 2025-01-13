@@ -51,7 +51,13 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya, tambahkan!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Tidak',
+                allowOutsideClick: false, // Mencegah klik di luar untuk menutup SweetAlert
+                allowEscapeKey: false, // Mencegah tombol Escape untuk menutup SweetAlert
+                didOpen: () => {
+                    // Fokuskan ke tombol "Ya, tambahkan!" saat SweetAlert terbuka
+                    $('.swal2-confirm').focus();
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Jika pengguna menekan "Ya, tambahkan!", maka lakukan AJAX request
@@ -95,5 +101,19 @@
                 confirmButtonText: 'OK'
             });
         }
+
+        $('#new-progress-modal').on('hidden.bs.modal', function () {
+            // Kosongkan semua input field
+            $('#new-progress-form')[0].reset();
+            // Hapus class is-invalid jika ada
+            $('#new-progress-form').find('input').removeClass('is-invalid');
+        });
+
+        $(document).on('keydown', function(e) {
+            if ($('.swal2-container').length > 0 && e.key === 'Enter') {
+                e.preventDefault();
+                $('.swal2-confirm').click(); // Simulasikan klik tombol konfirmasi
+            }
+        });
     });
 </script>

@@ -35,7 +35,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const numberInputs = document.querySelectorAll('input.new-budget'); // Menggunakan kelas khusus untuk input update
 
         numberInputs.forEach(input => {
@@ -45,8 +45,8 @@
 
                 // Memisahkan bagian integer dan desimal
                 let parts = value.split(',');
-                let integerPart = parts[0].replace(/\./g, ''); // Menghapus titik dari bagian integer
-                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; // Menyimpan bagian desimal maksimum 2 digit
+                let integerPart = parts[0].replace(/\./g,''); // Menghapus titik dari bagian integer
+                let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) :''; // Menyimpan bagian desimal maksimum 2 digit
 
                 // Memformat bagian integer dengan pemisah ribuan
                 let formattedInteger = parseInt(integerPart).toLocaleString('id-ID');
@@ -57,9 +57,10 @@
 
             input.addEventListener('blur', function() {
                 // Format saat fokus hilang (blur)
-                let value = this.value.replace(/\./g, '').replace(/,/g, '.'); // Menghapus titik dan mengubah koma menjadi titik
+                let value = this.value.replace(/\./g, '').replace(/,/g,
+                    '.'); // Menghapus titik dan mengubah koma menjadi titik
                 if (value) {
-                    this.value = parseFloat(value).toString(); 
+                    this.value = parseFloat(value).toString();
                 }
             });
         });
@@ -81,7 +82,7 @@
             if ($(this).val() === '') {
                 isValid = false;
                 $(this).addClass(
-                    'is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
+                'is-invalid'); // Tambahkan kelas invalid untuk menandai field yang kosong
             } else {
                 $(this).removeClass('is-invalid'); // Hapus kelas invalid jika terisi
             }
@@ -106,7 +107,13 @@
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Ya, tambahkan!',
-            cancelButtonText: 'Tidak'
+            cancelButtonText: 'Tidak',
+            allowOutsideClick: false, // Mencegah klik di luar untuk menutup SweetAlert
+            allowEscapeKey: false, // Mencegah tombol Escape untuk menutup SweetAlert
+            didOpen: () => {
+                // Fokuskan ke tombol "Ya, tambahkan!" saat SweetAlert terbuka
+                $('.swal2-confirm').focus();
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 // Kirim data melalui AJAX jika pengguna menekan "Ya"
@@ -125,11 +132,9 @@
                             icon: 'success',
                             showConfirmButton: false,
                             timer: 1000
-                            
                         }).then(() => {
                             // Refresh halaman setelah menutup pesan sukses
-                            $('#capex-table').DataTable().ajax
-                                .reload(); // Reload DataTable
+                            $('#capex-table').DataTable().ajax.reload();
                         });
                     },
                     error: function(xhr) {
@@ -142,6 +147,21 @@
                         });
                     }
                 });
+            }
+        });
+
+        $('#new-budget-modal').on('hidden.bs.modal', function () {
+            // Kosongkan semua input field
+            $('#new-budget-form')[0].reset();
+            // Hapus class is-invalid jika ada
+            $('#new-budget-form').find('input').removeClass('is-invalid');
+        });
+
+        // Tangani tombol Enter di SweetAlert
+        $(document).on('keydown', function(e) {
+            if ($('.swal2-container').length > 0 && e.key === 'Enter') {
+                e.preventDefault();
+                $('.swal2-confirm').click(); // Simulasikan klik tombol konfirmasi
             }
         });
     });

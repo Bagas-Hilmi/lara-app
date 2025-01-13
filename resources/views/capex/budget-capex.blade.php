@@ -53,7 +53,7 @@
                 processing: true,
                 serverSide: true,
                 destroy: true, // Agar inisialisasi ulang setiap kali modal dibuka
-                order: [[1, 'desc']],
+                order: [[3, 'desc']],
                 ajax: {
                     url: '/capex/' + idCapex, // Mengarah ke function show dengan id_capex
                     type: 'GET',

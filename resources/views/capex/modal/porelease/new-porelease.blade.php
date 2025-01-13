@@ -63,7 +63,6 @@
                     success: function(response) {
                         Swal.fire('Berhasil!', response.message, 'success');
                         $('#getSAPData').text('Get SAP Data').attr('disabled', true);
-
                         // Reload tabel t_capex_pocommitment_tail
                         $('#pocommitment-tail-table').DataTable().ajax.reload();
                     },
@@ -115,7 +114,13 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya, tambahkan!',
-                cancelButtonText: 'Tidak'
+                cancelButtonText: 'Tidak',
+                allowOutsideClick: false, // Mencegah klik di luar untuk menutup SweetAlert
+                allowEscapeKey: false, // Mencegah tombol Escape untuk menutup SweetAlert
+                didOpen: () => {
+                    // Fokuskan ke tombol "Ya, tambahkan!" saat SweetAlert terbuka
+                    $('.swal2-confirm').focus();
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -149,6 +154,20 @@
                     });
                 }
             });
+        });
+            $('#new-porelease-modal').on('hidden.bs.modal', function () {
+            // Kosongkan semua input field
+            $('#new-porelease-form')[0].reset();
+            $('#getSAPData').text('Get SAP Data').attr('disabled', false); // Reset tombol
+            // Hapus class is-invalid jika ada
+            $('#new-porelease-form').find('input').removeClass('is-invalid');
+        });
+
+        $(document).on('keydown', function(e) {
+            if ($('.swal2-container').length > 0 && e.key === 'Enter') {
+                e.preventDefault();
+                $('.swal2-confirm').click(); // Simulasikan klik tombol konfirmasi
+            }
         });
     });
 </script>

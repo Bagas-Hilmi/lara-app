@@ -52,7 +52,7 @@
                 processing: true,
                 serverSide: true,
                 destroy: true, // Agar inisialisasi ulang setiap kali modal dibuka
-                order: [[1, 'desc']],
+                order: [[3, 'desc']],
                 ajax: {
                     url: '/capex/' + idCapex, // Menggunakan metode show dari Route::resource
                     type: 'GET',
