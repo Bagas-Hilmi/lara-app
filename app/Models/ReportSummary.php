@@ -126,12 +126,22 @@ class ReportSummary extends Model
 
             // Proses setiap data master
             foreach ($masterData as $data) {
-                // Cek apakah record sudah ada di t_report_summary
-                $existingRecord = DB::table('t_report_summary')
+                // Ambil data CIP terbaru
+                $cipData = DB::table('t_report_cip')
+                    ->select(
+                        DB::raw('COALESCE(SUM(amount_rp), 0) as total_rp'),
+                        DB::raw('COALESCE(SUM(amount_us), 0) as total_usd')
+                    )
                     ->where('id_capex', $data->id_capex)
                     ->first();
-
-                // Data yang akan disimpan/diupdate
+    
+                // Hitung realized percentage
+                $realizedPercentage = 0;
+                if ($data->total_budget > 0) {
+                    $realizedPercentage = round(($cipData->total_usd / $data->total_budget) * 100, 2);
+                }
+    
+                // Data untuk update/insert
                 $reportData = [
                     'id_capex' => $data->id_capex,
                     'project_desc' => $data->project_desc,
@@ -144,10 +154,10 @@ class ReportSummary extends Model
                     'amount_budget' => $data->amount_budget,
                     'budget_cos' => $data->budget_cos,
                     'total_budget' => $data->total_budget,
-                    'recost_rp' => $data->recost_rp ?? 0,
-                    'recost_usd' => $data->recost_usd ?? 0,
+                    'recost_rp' => $cipData->total_rp,
+                    'recost_usd' => $cipData->total_usd,
                     'PO_release' => $data->PO_release,
-                    'realized' => $data->realized_percentage,
+                    'realized' => $realizedPercentage,
                     'budget_type' => $data->budget_type,
                     'status_capex' => $data->status_capex,
                     'startup' => $data->startup,
@@ -158,35 +168,22 @@ class ReportSummary extends Model
                     'wbs_number' => $data->wbs_number,
                     'cip_number' => $data->cip_number,
                     'status' => $data->status,
-                    'created_at' => now(), 
                     'updated_at' => now()
                 ];
-
-                if ($existingRecord) {
-                    // Update record yang sudah ada
-                    DB::table('t_report_summary')
-                        ->where('id_capex', $data->id_capex)
-                        ->update($reportData);
-                } else {
-                    // Insert record baru
-                    DB::table('t_report_summary')
-                        ->insert($reportData);
-                }
+    
+                // Update atau insert menggunakan upsert
+                DB::table('t_report_summary')->updateOrInsert(
+                    ['id_capex' => $data->id_capex], // Kunci untuk mencari record
+                    $reportData // Data yang akan di-update/insert
+                );
             }
-
-            // Commit transaksi jika semua proses berhasil
+    
             DB::commit();
-
-            // Kembalikan data master
             return $masterData;
+    
         } catch (\Exception $e) {
-            // Rollback transaksi jika terjadi kesalahan
             DB::rollBack();
-
-            // Log error
             Log::error('Gagal memproses master data: ' . $e->getMessage());
-
-            // Throw exception atau return false sesuai kebutuhan
             throw new \Exception('Gagal memproses master data: ' . $e->getMessage());
         }
     }

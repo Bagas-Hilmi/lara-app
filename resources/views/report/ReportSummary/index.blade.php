@@ -17,16 +17,30 @@
                                 <h3 class="text-white text-capitalize ps-3">Report Summary</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="d-flex mb-2" style="gap: 10px;">
-                                        <div class="filter-dropdown ">
-                                            <select id="filterTypeSelect" class="form-control" >
+                                <div class="filter-wrapper">
+                                    <div class="filter-top-row">
+                                        <!-- Filter Type dan Year Select dalam satu baris -->
+                                        <div class="filter-dropdown">
+                                            <select id="filterTypeSelect" class="form-control">
                                                 <option value="">Pilih Jenis Filter</option>
                                                 <option value="category">Filter Category</option>
                                                 <option value="status">Filter Status</option>
                                                 <option value="budget">Filter Budget Type</option>
                                             </select>
                                         </div>
-                                
+                                        
+                                        <div class="year-select-container">
+                                            <select id="yearSelect" class="form-control">
+                                                <option value="" selected>Pilih Tahun</option>
+                                                @foreach ($years as $year)
+                                                    <option value="{{ $year }}">{{ $year }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="filter-options-row">
+                                        <!-- Filter options dibawah -->
                                         <div class="filter-select-container">
                                             <select id="categorySelect" class="filter-select form-control hidden">
                                                 <option value="" selected>Pilih Category</option>
@@ -53,13 +67,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        
-                                        <select id="yearSelect" class="form-control" style="width: 15%;">
-                                            <option value="" selected>Pilih Tahun</option>
-                                            @foreach ($years as $year)
-                                                <option value="{{ $year }}">{{ $year }}</option>
-                                            @endforeach
-                                        </select>
+                                    </div>
                                 </div>
                                 <div class="table-responsive p-0">
                                     <table id="summary-table" class="table table-bordered nowrap rounded-table p-0" style="width:100%">
@@ -139,6 +147,8 @@
 
                 <script>
                     $(document).ready(function() {
+                        const currentYear = new Date().getFullYear();
+
                         // Initialize DataTable
                         var table = $('#summary-table').DataTable({
                             processing: true,
@@ -493,13 +503,19 @@
                         });
 
                         if (yearSelect.length) {
+                            // Inisialisasi Select2
                             yearSelect.select2({
                                 placeholder: 'Cari Tahun',
                                 allowClear: true,
                             });
-                        }
 
-                        yearSelect.on('select2:select', function(e) {
+                            yearSelect.val(currentYear).trigger('change');
+
+                            // Muat tabel dengan tahun default setelah inisialisasi
+                            table.ajax.url('{{ route('report.index') }}?year=' + currentYear).load();
+
+                        // Event ketika pengguna memilih tahun
+                        yearSelect.on('select2:select', function (e) {
                             const selectedOption = $(this).find(':selected');
                             const yearValue = selectedOption.val();
 
@@ -512,9 +528,11 @@
                             }
                         });
 
-                        yearSelect.on('select2:unselect', function(e) {
+                        // Event ketika pengguna menghapus pilihan
+                        yearSelect.on('select2:unselect', function (e) {
                             table.ajax.url('{{ route('report.index') }}').load();
                         });
+                    }
                     });
 
                     document.addEventListener('DOMContentLoaded', function() {
@@ -682,23 +700,42 @@
         /* Menambah efek shadow saat fokus */
     }
 
-    .filter-container {
-        margin-bottom: 20px;
+    .filter-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
         width: 100%;
     }
 
-    /* Styling untuk filter dropdown container */
+    /* Baris atas untuk filter type dan year select */
+    .filter-top-row {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    /* Baris bawah untuk opsi filter */
+    .filter-options-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Container untuk filter dropdown */
     .filter-dropdown {
-        position: relative;
-        display: block;
-        margin-bottom: 15px;
         width: 300px;
     }
 
-    /* Base styling untuk semua select dalam filter */
+    /* Container untuk year select */
+    .year-select-container {
+        width: 200px;
+    }
+
+    /* Base styling untuk semua select */
     .filter-dropdown select,
     .filter-select,
-    #filterTypeSelect {
+    #filterTypeSelect,
+    #yearSelect {
         width: 100%;
         height: 50px;
         padding: 10px 15px;
@@ -710,29 +747,34 @@
         transition: all 0.3s ease;
     }
 
+    /* Container untuk filter-select options */
+    .filter-select-container {
+        width: 300px;
+    }
+
     /* Hover state untuk select */
     .filter-dropdown select:hover,
     .filter-select:hover,
-    #filterTypeSelect:hover {
+    #filterTypeSelect:hover,
+    #yearSelect:hover {
         border-color: #66afe9;
     }
 
     /* Focus state untuk select */
     .filter-dropdown select:focus,
     .filter-select:focus,
-    #filterTypeSelect:focus {
+    #filterTypeSelect:focus,
+    #yearSelect:focus {
         outline: none;
         border-color: #3cff00;
         box-shadow: 0 0 8px rgba(60, 255, 0, 0.3);
     }
 
-    /* Container untuk select2 */
+    /* Select2 styling */
     .select2-container {
-        width: 300px !important;
-        margin-bottom: 15px;
+        width: 100% !important;
     }
 
-    /* Styling khusus untuk select2 single selection */
     .select2-container .select2-selection--single {
         height: 50px;
         padding: 10px 15px;
@@ -744,14 +786,12 @@
         transition: all 0.3s ease;
     }
 
-    /* Menyelaraskan teks di dalam select2 */
     .select2-container .select2-selection--single .select2-selection__rendered {
         line-height: 30px;
         padding-left: 0;
         color: #000000;
     }
 
-    /* Styling untuk tombol clear di select2 */
     .select2-container .select2-selection--single .select2-selection__clear {
         position: absolute;
         right: 30px;
@@ -762,20 +802,13 @@
         color: #999;
     }
 
-    /* Styling untuk arrow dropdown di select2 */
     .select2-container .select2-selection--single .select2-selection__arrow {
         height: 48px;
         right: 10px;
     }
 
-    /* Menyembunyikan elemen dengan class hidden */
+    /* Utility class */
     .hidden {
         display: none !important;
-    }
-
-    /* Container untuk filter-select */
-    .filter-select-container {
-        margin-bottom: 15px;
-        width: 300px;
     }
 </style>
