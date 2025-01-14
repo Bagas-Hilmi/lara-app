@@ -25,8 +25,8 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'user-profile' ? 'active bg-gradient-success' : '' }} "
                         href="{{ route('user-profile') }}">
-                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                            <i style="font-size: 1.2rem;" class="fas fa-user-circle ps-2 pe-2 text-center"></i>
+                        <div class="custom-icon-color">
+                            <i style="font-size: 1.2rem;" class="fas fa-user-circle"></i>
                         </div>
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">User Profile</span>
                     </a>
@@ -34,8 +34,8 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'user-management' ? ' active bg-gradient-success' : '' }} "
                         href="{{ route('user-management.index') }}">
-                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                            <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"></i>
+                        <div class="custom-icon-color">
+                            <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul"></i>
                         </div>
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">User Management</span>
                     </a>
@@ -48,8 +48,8 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'capex' ? ' active bg-gradient-success' : '' }} "
                         href="{{ route('capex.index') }}">
-                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                            <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                        <div class="custom-icon-color">
+                            <i style="font-size: 1.2rem;" class="fas fa-table"></i>
                         </div>
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Master Capex</span>
                     </a>
@@ -59,8 +59,8 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'Cip Cumulative Balance' ? ' active bg-gradient-success' : '' }}"
                         href="{{ route('cipcumbal.index') }}">
-                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                            <i style="font-size: 1.2rem;" class="fas fa-dollar-sign ps-2 pe-2 text-center"></i>
+                        <div class="custom-icon-color">
+                            <i style="font-size: 1.2rem;" class="fas fa-file-invoice-dollar"></i>
                         </div>
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Cip Cumulative Balance</span>
                     </a>
@@ -69,8 +69,8 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'UPDOC' ? ' active bg-gradient-success' : '' }} "
                         href="{{ route('faglb.index') }}">
-                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                            <i style="font-size: 1.2rem;" class="fas fa-file-import ps-2 pe-2 text-center"></i>
+                        <div class="custom-icon-color">
+                            <i style="font-size: 1.2rem;" class="fas fa-file-import"></i>
                         </div>
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">UP-Doc FGLB + ZLIS1</span>
                     </a>
@@ -79,8 +79,8 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'Approve' ? ' active bg-gradient-success' : '' }} "
                         href="{{ route('approve.index') }}">
-                        <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                            <i style="font-size: 1.2rem;" class="fas fa-file-signature ps-2 pe-2 text-center"></i>
+                        <div class="custom-icon-color">
+                            <i style="font-size: 1.2rem;" class="fas fa-file-signature"></i>
                         </div>
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Progress Report</span>
                     </a>
@@ -94,8 +94,8 @@
             <li class="nav-item">
                 <a class="nav-link text-white {{ $activePage == '' ? 'active bg-gradient-success' : '' }}"
                     href="#submenu1" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                    <div class="custom-icon-color text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1.2rem;" class="fas fa-table-list ps-2 pe-2 text-center"></i>
+                    <div class="custom-icon-color">
+                        <i style="font-size: 1.2rem;" class="fas fa-table-list"></i>
                     </div>
                     <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Capex</span>
                 </a>
@@ -105,30 +105,30 @@
 
                         <a class="nav-link text-white {{ $activePage == 'reportCip' ? 'active bg-gradient-success' : '' }}"
                             href="{{ route('report.index', ['flag' => 'cip']) }}" style="padding-left: 40px;">
-                            <div class="custom-icon-color text-center me-1">
-                                <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                            <div class="custom-icon-color me-1">
+                                <i style="font-size: 1.2rem;" class="fas fa-table"></i>
                             </div>
                             <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report CIP</span>
                         </a>
                         @if(auth()->user()->hasRole('admin'))
                             <a class="nav-link text-white {{ $activePage == 'reportCategory' ? 'active bg-gradient-success' : '' }}"
                                 href="{{ route('report.index', ['flag' => 'category']) }}" style="padding-left: 40px;">
-                                <div class="custom-icon-color text-center me-1">
-                                    <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                                <div class="custom-icon-color me-1">
+                                    <i style="font-size: 1.2rem;" class="fas fa-table"></i>
                                 </div>
                                 <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Category</span>
                             </a>
                             <a class="nav-link text-white {{ $activePage == 'reportSummary' ? 'active bg-gradient-success' : '' }}"
                                 href="{{ route('report.index', ['flag' => 'summary']) }}" style="padding-left: 40px;">
-                                <div class="custom-icon-color text-center me-1">
-                                    <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                                <div class="custom-icon-color me-1">
+                                    <i style="font-size: 1.2rem;" class="fas fa-table text-center"></i>
                                 </div>
                                 <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Summary</span>
                             </a>
                             <a class="nav-link text-white {{ $activePage == 'reportTax' ? 'active bg-gradient-success' : '' }}"
                                 href="{{ route('report.index', ['flag' => 'tax']) }}" style="padding-left: 40px;">
                                 <div class="custom-icon-color text-center me-1">
-                                    <i style="font-size: 1.2rem;" class="fas fa-table ps-2 pe-2 text-center"></i>
+                                    <i style="font-size: 1.2rem;" class="fas fa-table text-center"></i>
                                 </div>
                                 <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Tax</span>
                             </a>
@@ -209,19 +209,22 @@
 
 
 <style>
-    #sidenav-main, #sidenav-main * {
+    #sidenav-main, 
+    #sidenav-main * {
         box-sizing: border-box;
     }
     :root {
-        --sidebar-width: 250px;
-        --sidebar-mini-width: 80px;
+        --sidebar-width: 260px;
         --header-height: 100px;
+        --primary-color: #0D1E0F;
+        --bg-color: #ffffff;
+        --header-bg: #D5D7D6;
     }
     /* Hover icon sidenav */
     #iconSidenav:hover {
         background-color: rgba(255, 255, 255, 0.2);
         /* Warna latar belakang saat hover */
-        position: absolute;
+        position: relative;
         top: 10px;
         right: 10px;
         font-size: 40px;
@@ -233,26 +236,16 @@
 
     /* Tampilan sidebar */
     .sidenav {
-        min-width: 250px;
-        max-width: 250px;
-        /* Lebar sidebar */
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
         position: fixed;
-        /* Posisi tetap */
-        transition: transform 0.3s ease;
-        /* Efek transisi saat menggeser */
-        z-index: 1050;
-        /* Pastikan sidebar di atas elemen lain */
-        background-color: #ffffff;
-        /* Background default sidebar */
-
         height: 100vh;
+        background-color: var(--bg-color);
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* Membuat header, konten, dan footer berjarak */
-        overflow-y: auto; /* Hanya tampilkan scrollbar vertikal saat dibutuhkan */
-    overflow-x: hidden;/* Sembunyikan scrollbar horizontal */
+        overflow-x: hidden;
+        transition: transform 0.3s ease;
     }
-
     /* Sidebar saat ditutup */
     .sidenav.closed {
         transform: translateX(-95%);
@@ -260,21 +253,13 @@
     }
 
     .sidenav-header {
-        background-color: #D5D7D6;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100px;
-        padding: 0px;
+        background-color: var(--header-bg);
+        height: var(--header-height);
+        padding: 0;
         position: relative;
-    }
-
-    .sidenav-header .navbar-brand {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100%;
-        width: 100%;
     }
 
     /* Warna custom sidebar */
@@ -290,7 +275,12 @@
 
     .custom-icon-color {
         color: #0D1E0F;
-        /* Warna ikon */
+        width: 35px;
+        min-width: 35px; /* Konflik dengan width: 35px */
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;    
     }
 
     /* Media queries untuk layar besar (desktop) */
@@ -344,4 +334,5 @@
     #iconSidenav.active::before {
         content: '\f141'; /* Kode ikon saat aktif */
     }
+    
 </style>
