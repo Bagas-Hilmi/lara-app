@@ -18,10 +18,9 @@
                             <div class="card-body p-3">
                                 <div class="d-flex mb-2">
                                     <!-- Tombol Add Doc Upload -->
-                                    <button href="#" class="btn btn-sm btn-primary"
+                                    <button href="#" class="btn btn-primary"
                                         style="background-color: #09170a; border-color: #09170a;" data-bs-toggle="modal"
-                                        data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}">Upload
-                                        Doc
+                                        data-bs-target="#addDocFormModal" data-url="{{ route('faglb.create') }}"> <i class="fa-solid fa-upload"></i> Upload Doc
                                     </button>
 
                                     <!-- Dropdown untuk filter status -->

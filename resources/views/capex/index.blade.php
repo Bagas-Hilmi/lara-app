@@ -17,10 +17,11 @@
                             <div class="card-body p-3">
                                 <div class="d-flex mb-2">
                                     <!-- Tombol New Capex -->
-                                    <button href="#" class="btn btn-sm btn-primary" 
+                                    <button href="#" class="btn btn-primary" 
                                         style="background-color: #09170a; border-color: #09170a;"  
                                         data-bs-toggle="modal" 
-                                        data-bs-target="#new-form">
+                                        data-bs-target="#new-form"> 
+                                        <i class="fa-solid fa-plus"></i>
                                         New capex
                                     </button>
 
@@ -643,5 +644,11 @@
         text-align: left !important;
         padding: 8px;
     }
+
+    .custom-modal {
+        max-width: 45%; /* Atur lebar modal */
+        width: auto;    /* Sesuaikan otomatis */
+    }
+
 
 </style>

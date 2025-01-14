@@ -17,7 +17,7 @@
                                 <div class="d-flex mb-2">
                                     <button href="#" class="btn btn-primary"
                                         style="background-color: #09170a; border-color: #09170a;" data-bs-toggle="modal"
-                                        data-bs-target="#new-user">New User
+                                        data-bs-target="#new-user"> <i class="fa-solid fa-plus"></i> Add User
                                     </button>
                                 </div>
                                 <div class="table-responsive p-0">
