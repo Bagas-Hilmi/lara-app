@@ -15,7 +15,7 @@
                                 <h3 class="text-white text-capitalize ps-3">Master Capex</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="d-flex mb-2">
+                                <div class="d-flex mb-2" style="gap: 10px;">
                                     <!-- Tombol New Capex -->
                                     <button href="#" class="btn btn-primary" 
                                         style="background-color: #09170a; border-color: #09170a;"  
@@ -26,16 +26,12 @@
                                     </button>
 
                                     
-                                    <div class="dropdown ms-2">
-                                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #09170a; border-color: #09170a;" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span id="yearText"></span> <!-- Placeholder -->
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="yearDropdown">
-                                            @foreach ($availableYears as $year)
-                                                <li><a class="dropdown-item" href="#" data-value="{{ $year }}">{{ $year }}</a></li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
+                                    <select id="yearDropdown" class="form-control js-year-dropdown" style="width: 10%;">
+                                        <option value="">Pilih Tahun</option>
+                                        @foreach ($Years as $year)
+                                            <option value="{{ $year }}">{{ $year }}</option>
+                                        @endforeach
+                                    </select>                                    
                                     
                                 </div>
                                 <input type="hidden" id="yearFilter" name="year" value="">
@@ -94,19 +90,19 @@
                     <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
                     <script src="assets/js/moment.min.js"></script>
                     <script src="{{ asset('/js/tooltip.js') }}"></script>
+                    <script src="{{ asset('assets/js/select2.min.js') }}"></script>
                     
                     <script>
                         $(document).ready(function() {
                             const currentYear = new Date().getFullYear();
-                            $('#yearFilter').val(currentYear);
-                            $('#yearText').text(currentYear);
+                            $('#yearDropdown').val(currentYear).trigger('change'); // Set tahun saat ini di Select2
                             
                             $.ajaxSetup({
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                 }
                             });
-                
+
                             // Initialize DataTable
                             var table = $('#capex-table').DataTable({
                                 responsive: false,
@@ -122,7 +118,7 @@
                                     type: "GET",
                                     data: function (d) {
                                         d.status = 1; // Filter status tetap
-                                        d.year = $('#yearFilter').val(); // Tambahkan filter tahun dari dropdown
+                                        d.year = $('#yearDropdown').val(); // Ambil nilai tahun dari Select2 // Tambahkan filter tahun dari dropdown
                                     }
                                 },
                 
@@ -349,19 +345,25 @@
                                 window.open(fileUrl, '_blank');
                             });
 
-                            $('#yearDropdown').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
-                                var year = $(this).data('value'); // Ambil nilai tahun
-                                $('#yearFilter').val(year); // Set nilai tahun ke input tersembunyi
-                                
-                                // Ubah teks tombol untuk menampilkan tahun yang dipilih
-                                if (year) {
-                                    $('#yearText').text(year); // Jika ada tahun yang dipilih
-                                } else {
-                                    $('#yearText').text('Pilih Tahun'); // Jika semua tahun dipilih
-                                }
+                            $(document).ready(function () {
+                                $('#yearDropdown').select2({
+                                    placeholder: "Pilih Tahun",
+                                    allowClear: true,
+                                    minimumResultsForSearch: Infinity,
+                                    width: 'resolve', // Menyesuaikan lebar otomatis
+                                    dropdownCssClass: 'custom-scroll-dropdown', // Tambahkan kelas untuk styling dropdown
+                                });
 
-                                table.ajax.reload(); // Reload DataTable
+                                // Event listener untuk perubahan pada Select2
+                                $('#yearDropdown').on('change', function () {
+                                    var year = $(this).val(); // Ambil nilai tahun
+                                    $('#yearFilter').val(year); // Set nilai tahun ke input tersembunyi
+
+                                    // Reload DataTable
+                                    table.ajax.reload();
+                                });
                             });
+
                 
                             $(document).on('click', '.delete-capex', function() {
                                 var capexId = $(this).data('id');
@@ -649,6 +651,41 @@
         max-width: 45%; /* Atur lebar modal */
         width: auto;    /* Sesuaikan otomatis */
     }
+
+    .select2-container .select2-selection--single {
+        height: 45px; /* Menyesuaikan tinggi agar lebih proporsional */
+        padding-inline: 10px; /* Padding kiri dan kanan otomatis menyesuaikan dengan teks */
+        font-size: 11pt; /* Ukuran font lebih besar untuk keterbacaan */
+        border-radius: 8px; /* Membuat sudut lebih halus */
+        border: 1px solid #ccc; /* Border abu-abu muda untuk kesan elegan */
+        background-color: #ffffff; /* Latar belakang putih agar bersih */
+        color: #000000; /* Warna teks abu-abu gelap untuk kontras yang baik */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan halus di sekitar dropdown */
+        transition: all 0.3s ease; /* Menambahkan transisi halus saat berinteraksi */
+        display: flex; /* Menjadikan container flex */
+        align-items: center; /* Menyelaraskan teks di tengah secara vertikal */
+        justify-content: space-between; /* Memastikan tombol x berada di sisi kanan */
+    }
+
+    /* Efek fokus pada select2 */
+    .select2-container .select2-selection--single:focus {
+        border-color: #3cff00; /* Mengubah border menjadi biru saat fokus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Menambahkan bayangan biru saat fokus */
+        outline: none; /* Menghilangkan outline default */
+    }
+        .select2-container .select2-selection__clear {
+        position: absolute;
+        right: 10px; /* Menempatkan tombol "x" di sisi kanan */
+    } 
+    
+    /* Tambahkan scroll vertikal ke dropdown Select2 */
+    .custom-scroll-dropdown .select2-results__options {
+        max-height: 150px; /* Tinggi maksimal dropdown */
+        overflow-y: auto; /* Scroll vertikal aktif */
+        border: 1px solid #ccc; /* Opsional: tambahkan border untuk dropdown */
+        background-color: #ffffff; /* Opsional: latar belakang dropdown */
+    }
+
 
 
 </style>

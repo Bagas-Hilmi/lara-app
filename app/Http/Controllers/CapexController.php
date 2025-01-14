@@ -30,7 +30,7 @@ class CapexController extends Controller
         }
 
         // Memanggil metode
-        $availableYears = Capex::getAvailableYears();
+        $Years = Capex::getAvailableYears();
         $totalBudget = Capex::getTotalBudget();
         $daysLate = Capex::getDaysLate();
         $daysRemaining = Capex::getDaysRemaining();
@@ -59,7 +59,7 @@ class CapexController extends Controller
         }
 
         return view('capex.index', [
-            'availableYears' => $availableYears,
+            'Years' => $Years,
             'totalBudget' => $totalBudget,
             'daysLate' => $daysLate,
             'daysRemaining' => $daysRemaining,
