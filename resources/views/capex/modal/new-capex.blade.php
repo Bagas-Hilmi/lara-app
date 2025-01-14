@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div class="modal fade" id="new-form" tabindex="-1" aria-labelledby="newFormLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered"> <!-- Ganti 'modal-lg' dengan 'modal-sm' atau 'modal-fullscreen' sesuai kebutuhan -->
+    <div class="modal-dialog custom-modal modal-dialog-centered"> <!-- Ganti 'modal-lg' dengan 'modal-sm' atau 'modal-fullscreen' sesuai kebutuhan -->
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="newFormLabel" style="color: white;">New Master Capex</h5>

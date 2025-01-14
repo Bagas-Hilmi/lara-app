@@ -1,5 +1,5 @@
 <div class="modal fade" id="edit-form" tabindex="-1" aria-labelledby="editFormLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog custom-modal modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #42bd37;">
                 <h5 class="modal-title" id="editFormLabel" style="color: white;">Edit Master Capex</h5>
@@ -21,7 +21,7 @@
                         <div class="col-md-3">
                             <label for="wbs_capex_edit" class="form-label font-weight-bold">WBS Capex</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button"
                                     id="wbsCapexDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select WBS Type
                                 </button>
@@ -78,7 +78,7 @@
                         <div class="col-md-3">
                             <label for="status_capex_edit" class="form-label font-weight-bold">Type Capex</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button"
                                     id="statusDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status
                                 </button>
@@ -100,7 +100,7 @@
                         <div class="col-md-3 ">
                             <label for="budget_type_edit" class="form-label font-weight-bold">Status Budget</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button"
                                     id="budgetTypeDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Status Budget
                                 </button>
@@ -128,7 +128,7 @@
                         <div class="col-md-4">
                             <label for="category_edit" class="form-label font-weight-bold">Category</label>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                <button class="btn bg-gradient-secondary dropdown-toggle" type="button"
                                     id="categoryDropdownEdit" data-bs-toggle="dropdown" aria-expanded="false">
                                     Select Category
                                 </button>

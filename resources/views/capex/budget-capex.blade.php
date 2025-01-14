@@ -17,7 +17,7 @@
                             <i class="fas fa-plus"></i> NEW BUDGET
                         </button>
                 </div>
-                <div class="table-responsive p-0">
+                <div class="table p-0">
                     <table id="budget-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                         <thead>
                             <tr>

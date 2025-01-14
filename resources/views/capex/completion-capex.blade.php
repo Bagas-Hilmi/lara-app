@@ -17,7 +17,7 @@
                         <i class="fas fa-plus"></i> NEW REV COMPLETION DATE
                     </button>
                 </div>
-                <div class="table-responsive p-0">
+                <div class="table p-0">
                     <table id="completion-table" class="table table-striped nowrap rounded-table p-0" style="width:100%">
                         <thead style="background-color: #3cb210; color: white;">
                             <tr>
