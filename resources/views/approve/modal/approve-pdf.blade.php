@@ -273,7 +273,7 @@
                         // Admin 1 menolak
                         $('#saveSignature').hide();
 
-                        $('#admin1_Signature').text('Ditolak');
+                        $('#admin1_Signature').text('Rejected By ' + apv_admin1 + ' at ' + apv_at_admin1);
                         $('#admin1_Status').text('Ditolak').removeClass('bg-secondary').addClass(
                             'bg-danger');
                     } else if (userId == id_admin_2) {
@@ -305,6 +305,7 @@
         // Menangani klik tombol untuk pending
         $('#saveSignature').on('click', function(e) {
             e.preventDefault();
+            showConfirmationDialog();
 
             Swal.fire({
                 title: 'Konfirmasi Persetujuan',
@@ -320,32 +321,8 @@
                     // Langsung proses jika setuju
                     processForm(result.isConfirmed);
                 } else if (result.isDenied) {
-                    // Tampilkan form reason jika tolak
-                    Swal.fire({
-                        title: 'Alasan Penolakan',
-                        input: 'textarea',
-                        inputLabel: 'Masukkan alasan penolakan',
-                        inputPlaceholder: 'Tuliskan alasan penolakan di sini...',
-                        inputAttributes: {
-                            'aria-label': 'Tuliskan alasan penolakan di sini',
-                            'required': true
-                        },
-                        validationMessage: 'Alasan penolakan harus diisi',
-                        showCancelButton: true,
-                        confirmButtonText: 'Kirim',
-                        cancelButtonText: 'Batal',
-                        preConfirm: (reason) => {
-                            if (!reason) {
-                                Swal.showValidationMessage(
-                                    'Alasan penolakan wajib diisi')
-                            }
-                            return reason;
-                        }
-                    }).then((reasonResult) => {
-                        if (reasonResult.isConfirmed) {
-                            processForm(false, reasonResult.value);
-                        }
-                    });
+                    // Langsung proses jika tolak tanpa alasan
+                    processForm(false);
                 }
             });
 
@@ -377,6 +354,41 @@
                 submitForm(formData);
             }
         });
+
+        $(document).on('keydown', function(e) {
+            // Cek apakah ada SweetAlert yang terbuka
+            if (Swal.isVisible()) {
+                // Jika tombol Enter ditekan (keyCode 13)
+                if (e.keyCode === 13) {
+                    e.preventDefault();
+                    // Klik tombol confirm (Setuju)
+                    Swal.clickConfirm();
+                }
+            }
+        });
+
+        function showConfirmationDialog() {
+            Swal.fire({
+                title: 'Konfirmasi Persetujuan',
+                text: 'Apakah Anda ingin melakukan persetujuan?',
+                icon: 'question',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Setuju',
+                denyButtonText: 'Tolak',
+                cancelButtonText: 'Batal',
+                // Tambahkan fokus ke tombol confirm
+                focusConfirm: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Langsung proses jika setuju
+                    processForm(result.isConfirmed);
+                } else if (result.isDenied) {
+                    // Langsung proses jika tolak tanpa alasan
+                    processForm(false);
+                }
+            });
+        }
 
         // Fungsi untuk mengirim data form melalui AJAX
         function submitForm(formData) {

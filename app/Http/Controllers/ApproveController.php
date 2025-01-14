@@ -310,7 +310,7 @@ class ApproveController extends Controller
 
                     $this->sendEmailToNextApprover($data, $userRole, $statusApprove);
                 } else if ($statusApprove == 2) {  // Jika status reject
-                    $updateData['reason'] = $request->input('reason');
+                    
                 }
 
                 // Update database
