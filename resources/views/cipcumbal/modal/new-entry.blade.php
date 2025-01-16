@@ -145,14 +145,36 @@
                 confirmButtonText: 'OK'
             });
         }
+        $('#new-form').on('hidden.bs.modal', function () {
+            // Kosongkan semua input field
+            $('#entryForm')[0].reset();
+            // Hapus class is-invalid jika ada
+            $('#entryForm').find('input').removeClass('is-invalid');
+        });
+
+        $(document).on('keydown', function(e) {
+            if ($('.swal2-container').length > 0 && e.key === 'Enter') {
+                e.preventDefault();
+                $('.swal2-confirm').click(); // Simulasikan klik tombol konfirmasi
+            }
+        });
     });
 </script>
 
 <script>
     // Function to format input numbers with commas and periods
     function formatNumber(input) {
-        // Remove non-numeric characters, except for the period
-        let value = input.value.replace(/[^0-9.]/g, '');
+        // Save the sign (if any)
+        let value = input.value;
+        let isNegative = value.startsWith('-');
+
+        // Remove non-numeric characters, except for the period and minus sign at the beginning
+        value = value.replace(/[^0-9.-]/g, '');
+        
+        // If the value was negative, restore the minus sign
+        if (isNegative) {
+            value = '-' + value.replace('-', ''); // Remove extra minus if any
+        }
 
         // Format the value to include commas as thousand separators
         value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');

@@ -203,17 +203,105 @@
                 });
             }
         });
+        $('#update-form').on('hidden.bs.modal', function () {
+            // Kosongkan semua input field
+            $('#updateEntryForm')[0].reset();
+            // Hapus class is-invalid jika ada
+            $('#updateEntryForm').find('input').removeClass('is-invalid');
+        });
+
+        $(document).on('keydown', function(e) {
+            if ($('.swal2-container').length > 0 && e.key === 'Enter') {
+                e.preventDefault();
+                $('.swal2-confirm').click(); // Simulasikan klik tombol konfirmasi
+            }
+        });
     });
 </script>
 
 <script>
-    $('#updateEntry').on('click', function() {
-        // Bersihkan setiap input sebelum submit
-        $('#balanceUSDUpdate, #balanceRPUpdate, #cumulativeBalanceUSDUpdate, #cumulativeBalanceRPUpdate').each(
-            function() {
-                let value = $(this).val().replace(/[^0-9.-]/g, ''); 
-                $(this).val(value); 
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fungsi untuk menambahkan pemisah ribuan (koma) dan mendukung desimal
+        function formatNumber(value) {
+            // Hapus semua karakter selain angka dan titik desimal
+            value = value.replace(/[^0-9.]/g, '');
 
+            // Pastikan hanya ada satu titik desimal
+            let decimalParts = value.split('.');
+            if (decimalParts.length > 2) {
+                value = decimalParts[0] + '.' + decimalParts.slice(1).join('');
+            }
+
+            // Pisahkan angka utama dan bagian desimal
+            let parts = value.split('.');
+            let wholePart = parts[0]; // Angka sebelum titik
+            let decimalPart = parts[1] || ''; // Angka setelah titik (jika ada)
+
+            // Format angka utama dengan koma sebagai pemisah ribuan
+            wholePart = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+            // Gabungkan angka utama dan desimal (maksimal 2 digit desimal)
+            if (decimalPart) {
+                decimalPart = decimalPart.slice(0, 2); // Batasi desimal menjadi 2 digit
+                return `${wholePart}.${decimalPart}`;
+            }
+
+            return wholePart;
+        }
+
+        // Fungsi untuk menghapus pemisah ribuan
+        function removeFormat(value) {
+            return value.replace(/,/g, ''); // Hapus semua koma
+        }
+
+        // Daftar input yang akan diformat
+        const numberInputs = [
+            'balanceUSDUpdate',
+            'balanceRPUpdate',
+            'cumulativeBalanceUSDUpdate',
+            'cumulativeBalanceRPUpdate',
+        ];
+
+        // Tambahkan event listener untuk memformat input saat pengguna mengetik
+        numberInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.addEventListener('input', function() {
+                    // Simpan posisi kursor
+                    let cursorPosition = input.selectionStart;
+                    let oldValue = input.value;
+
+                    // Format nilai input
+                    input.value = formatNumber(input.value);
+
+                    // Hitung perubahan posisi kursor akibat pemformatan
+                    let newLength = input.value.length;
+                    let oldLength = oldValue.length;
+                    let lengthDifference = newLength - oldLength;
+                    input.setSelectionRange(cursorPosition + lengthDifference, cursorPosition +
+                        lengthDifference);
+                });
+
+                // Tangani input "paste" secara khusus
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    let pastedValue = (e.clipboardData || window.clipboardData).getData('text');
+                    input.value = formatNumber(pastedValue);
+                });
+            }
+        });
+
+        // Tambahkan event listener pada tombol "Update" untuk menghapus format sebelum pengiriman
+        const updateButton = document.getElementById('updateEntry');
+        if (updateButton) {
+            updateButton.addEventListener('click', function() {
+                numberInputs.forEach(inputId => {
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.value = removeFormat(input.value); // Hapus format angka
+                    }
+                });
+            });
+        }
     });
 </script>

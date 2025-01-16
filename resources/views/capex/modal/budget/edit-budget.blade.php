@@ -105,6 +105,19 @@
                 });
             }
         });
+        $('#edit-budget-modal').on('hidden.bs.modal', function () {
+            // Kosongkan semua input field
+            $('#edit-budget-form')[0].reset();
+            // Hapus class is-invalid jika ada
+            $('#edit-budget-form').find('input').removeClass('is-invalid');
+        });
+
+        $(document).on('keydown', function(e) {
+            if ($('.swal2-container').length > 0 && e.key === 'Enter') {
+                e.preventDefault();
+                $('.swal2-confirm').click(); // Simulasikan klik tombol konfirmasi
+            }
+        });
     });
 </script>
 

@@ -53,7 +53,6 @@
                             });
 
                             $('#faglb-table').DataTable().ajax.reload();
-                            location.reload();
 
                         } else {
                             // SweetAlert for error
