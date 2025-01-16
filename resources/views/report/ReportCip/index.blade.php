@@ -176,7 +176,8 @@
                             columns: [{
                                     data: 'DT_RowIndex',
                                     name: 'DT_RowIndex',
-                                    className: 'text-center'
+                                    orderable: false,
+                                    searchable: false, // Jangan gunakan kolom ini untuk pencarian
                                 },
                                 {
                                     data: 'fa_doc',
@@ -341,7 +342,17 @@
                                 descriptionSelect.select2({
                                     placeholder: 'Cari Capex',
                                     allowClear: true,
-                                    minimumInputLength: 1 // Aktifkan pencarian setelah mengetik 2 karakter
+                                    minimumInputLength: 1,
+                                    maximumResultsForSearch: Infinity, // Tidak membatasi hasil pencarian
+                                    closeOnSelect: true,
+                                    dropdownAutoWidth: true,
+                                    templateResult: function(data) {
+                                        if (!data.element) {
+                                            return data.text;
+                                        }
+                                        return $('<div class="select2-result-item">' + data.text + '</div>');
+                                    },
+                                    dropdownCssClass: 'select2-results-limited',
                                 });
                             }
 
@@ -512,6 +523,14 @@
                                 Swal.close();
                             };
                         });
+
+                        $(document).ready(function() {
+                            // Cek apakah tabel harus di-refresh
+                            if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+                                $('#report-table').DataTable().ajax.reload();
+                            }
+                        });
+
 
                     });
                 </script>
@@ -734,5 +753,19 @@
         position: absolute;
         right: 10px; /* Menempatkan tombol "x" di sisi kanan */
     }   
-    
+
+    .select2-results-limited .select2-results__options {
+        max-height: 150px; /* Tinggi maksimal dropdown */
+        overflow-y: auto; /* Tambahkan scrollbar vertikal */
+    }
+
+    .select2-results__option {
+        padding: 6px 12px;
+    }
+
+    /* Batasi jumlah item yang terlihat sekaligus */
+    .select2-results-limited .select2-results__options .select2-results__option:nth-child(n+5) {
+        margin-top: 0;
+    }
+
 </style>

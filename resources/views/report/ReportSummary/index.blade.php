@@ -507,6 +507,14 @@
                             yearSelect.select2({
                                 placeholder: 'Cari Tahun',
                                 allowClear: true,
+                                closeOnSelect: true,
+                                dropdownCssClass: 'select2-results-limited-year', // Tambahan class untuk styling
+                                templateResult: function(data) {
+                                    if (!data.element) {
+                                        return data.text;
+                                    }
+                                    return $('<div class="select2-result-item">' + data.text + '</div>');
+                                }
                             });
 
                             yearSelect.val(currentYear).trigger('change');
@@ -810,5 +818,26 @@
     /* Utility class */
     .hidden {
         display: none !important;
+    }
+    /* Styling khusus untuk dropdown year select */
+    .select2-results-limited-year .select2-results__options {
+        max-height: 150px; /* Tinggi yang lebih pendek karena hanya 3 item */
+        overflow-y: auto;
+    }
+
+    /* Batasi tampilan menjadi 3 item */
+    .select2-results-limited-year .select2-results__options .select2-results__option:nth-child(n+4) {
+        margin-top: 0;
+    }
+
+    /* Pastikan hanya 3 item yang terlihat tanpa scroll */
+    .select2-container .select2-results-limited-year .select2-results__options {
+        max-height: 150px;
+    }
+
+    /* Optional: styling untuk item di dalam dropdown */
+    .select2-results-limited-year .select2-results__option {
+        padding: 8px 12px;
+        font-size: 13pt;
     }
 </style>
