@@ -106,7 +106,7 @@
                         <td colspan="2">{{ $wbs_number ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td>Date</td>
+                        <td>Start Up</td>
                         <td>:</td>
                         <td colspan="2">{{ $startup }}</td>
                     </tr>

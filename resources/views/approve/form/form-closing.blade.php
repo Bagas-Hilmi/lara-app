@@ -144,7 +144,7 @@
 
                 <!-- Kolom 3 - Approved by (User) -->
                 <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
-                    <div style="margin-bottom: 10px;">Approved by,</div>
+                    <div style="margin-bottom: 10px;">Acknowledged by,</div>
                     <p style="margin-bottom: 0;">Digitally Signed</p>
                     <strong style="margin-top: 0;"> by
                         @if ($userRole === 'user')
@@ -168,7 +168,7 @@
                 @if ($isProject)
                     <!-- Kolom 4 - Approved by (Engineer) -->
                     <td style="width: 25%; padding: 10px; text-align: center; vertical-align: top;">
-                        <div style="margin-bottom: 10px;">Approved by,</div>
+                        <div style="margin-bottom: 10px;">Confirm by,</div>
                         <p style="margin-bottom: 0;">Digitally Signed</p>
                         <strong style="margin-top: 0;"> by
                             @if ($userRole === 'engineering')

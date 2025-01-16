@@ -37,13 +37,25 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 20px;
+        }
+
+        th[rowspan] {
+            border: 1px solid #000;
+            vertical-align: middle; /* Memastikan konten di tengah untuk sel dengan rowspan */
         }
 
         th,
         td {
-            border: 1px solid black;
-            padding: 5px;
+            border: 1px solid #000;
+            padding-top: 5px;
+            /* Jarak atas */
+            padding-bottom: 5px;
+            /* Jarak bawah */
+            padding-left: 5px;
+            /* Jarak kiri */
+            padding-right: 5px;
+            /* Jarak kanan */            
             text-align: center;
         }
 
@@ -63,33 +75,27 @@
             <p><strong>PT. ECOGREEN OLEOCHEMICALS</strong></p>
             <p>To : Department Head Concern</p>
             <p>Kindly confirm the status of the following Capex subjected to Close Out</p>
-            <p>Up to : Nov 2024</p>
+            <p>Up to: {{ \Carbon\Carbon::parse($approved_at_admin_1)->format('M Y') }}</p>
         </div>
 
         <table>
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Project Title</th>
-                    <th>Requisitioner</th>
-                    <th colspan="3">Capital Expenditure Request</th>
-                    <th colspan="2">Budget</th>
-                    <th>Time</th>
-                    <th>Closed</th>
-                    <th>Reason</th>
+                    <th rowspan="2">No</th>
+                    <th rowspan="2" style="width: 70px;">Project Title</th>
+                    <th rowspan="2" style="width: 70px;">Requisitioner</th>
+                    <th colspan="4" >Capital Expenditure Request</th>
+                    <th rowspan="2">Budget Amount</th>
+                    <th rowspan="2">Actual Amount</th>
+                    <th rowspan="2">Time Delay (days)</th>
+                    <th rowspan="2">Closed Yes/No</th>
+                    <th rowspan="2">Reason</th>
                 </tr>
                 <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th>Capex No.</th>
-                    <th>Start Up</th>
-                    <th>Exp. Complet</th>
-                    <th>Amount</th>
-                    <th>Actual Amount</th>
-                    <th>Delay (days)</th>
-                    <th>Yes/No</th>
-                    <th></th>
+                    <th style="width: 80px;">Capex No.</th>
+                    <th style="width: 60px;">Start Up</th>
+                    <th style="width: 60px;">Exp. Completed</th>
+                    <th style="width: 60px;">Closed Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -98,11 +104,12 @@
                     <td>{{ $project_desc ?? '' }}</td>
                     <td>{{ $requester ?? '' }}</td>
                     <td>{{ $capex_number ?? '' }}</td>
-                    <td>{{ $startup ?? '' }}</td>
-                    <td>{{ $expected_completed ?? '' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($startup)->format('d M Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($expected_completed)->format('d M Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($date)->format('d M Y') }}</td>
                     <td>{{ number_format($total_budget ?? 0, 0, ',', '.') }}</td>
                     <td>{{ number_format($recost_usd, 2, ',', '.') }}</td>
-                    <td>{{ $days_late ?? '' }}</td>
+                    <td>{{ $time_delay ?? '' }}</td>
                     <td>-</td>
                     <td>-</td>
                 </tr>
