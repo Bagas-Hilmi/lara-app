@@ -22,48 +22,67 @@ class CapexBudget extends Model
 
     public static function get_dtCapexBudget()
     {
-        $query = DB::table('t_capex_budget')
-            ->select([
-                'id_capex_budget',
-                'id_capex',
-                'description',
-                'budget_cos',
-                'created_at',
-                'updated_at'
-            ])
-            ->where('status', 1) // Tambahkan kondisi untuk status
-            ->get();
+        // Ambil data dari tabel t_capex_budget dengan status = 1
+        $query = DB::select("
+        SELECT 
+            id_capex_budget, 
+            id_capex, 
+            description, 
+            budget_cos, 
+            created_at, 
+            updated_at 
+        FROM t_capex_budget
+        WHERE status = 1
+    ");
 
+        // Iterasi hasil query untuk menghitung total budget_cos
         foreach ($query as $item) {
+            // Hitung total budget_cos untuk id_capex tertentu
+            $totalBudgetcos = DB::selectOne("
+            SELECT SUM(budget_cos) AS total_budget_cos
+            FROM t_capex_budget
+            WHERE id_capex = ? AND status = 1
+        ", [$item->id_capex]);
 
-            $totalBudgetcos = DB::table('t_capex_budget')
-                ->where('id_capex', $item->id_capex)
-                ->where('status', 1) // Pastikan statusnya juga 1
-                ->sum('budget_cos');
-
-
-            DB::table('t_master_capex')
-                ->where('id_capex', $item->id_capex)
-                ->update(['budget_cos' => $totalBudgetcos]);
+            // Update tabel t_master_capex dengan total_budget_cos
+            DB::update("
+            UPDATE t_master_capex
+            SET budget_cos = ?
+            WHERE id_capex = ?
+        ", [$totalBudgetcos->total_budget_cos, $item->id_capex]);
         }
-        return $query; // Mengambil semua data
+
+        return $query; // Mengembalikan hasil data
     }
+
 
     public static function addBudget($capex_id, $description, $budget_cos)
     {
-        $budgetId = DB::table('t_capex_budget')->insertGetId([
-            'id_capex' => $capex_id,
-            'description' => $description,
-            'budget_cos' => $budget_cos,
-            'created_at' => now(),
-            'updated_at' => now(),
+        // Menyusun query SQL untuk insert data
+        $query = "
+        INSERT INTO t_capex_budget (id_capex, description, budget_cos, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?)
+    ";
+
+        // Eksekusi query dan dapatkan ID yang dihasilkan
+        DB::insert($query, [
+            $capex_id,
+            $description,
+            $budget_cos,
+            now(),
+            now(),
         ]);
 
-        
+        // Ambil ID terakhir yang dimasukkan
+        $budgetId = DB::getPdo()->lastInsertId();
+
+        // Memanggil fungsi untuk memperbarui total budget
         self::get_dtCapexBudget();
 
-        return $budgetId; 
+        // Mengembalikan ID budget yang baru ditambahkan
+        return $budgetId;
     }
+
 
     public static function updateBudget($id, $description, $budget_cos, $capex_id)
     {
@@ -96,7 +115,7 @@ class CapexBudget extends Model
         if (!is_null($status)) {
             $query->where('t_capex_budget.status', $status); // Tambahkan filter status jika diberikan
         }
-        
+
         return $query->get();
     }
 

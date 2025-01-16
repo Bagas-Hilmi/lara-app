@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Attributes\Auth;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 
 class Capex extends Model
 {
     use HasFactory;
     protected $table = 't_master_capex'; // Nama tabel
     protected $primaryKey = 'id_capex'; // Atur primary key jika bukan 'id'
-    public $timestamps = true; 
+    public $timestamps = true;
 
     protected $fillable = [
         'project_desc',
@@ -178,8 +178,8 @@ class Capex extends Model
             $id_capex,
             $status_capex,
             $userId,
-            now(), 
-            now()  
+            now(),
+            now()
         ];
 
         DB::insert($statusQuery, $statusParams);
@@ -211,7 +211,7 @@ class Capex extends Model
     public static function getDaysLate()
     {
         // Ambil semua record dari t_master_capex
-        $capexRecords = DB::table('t_master_capex')->get();
+        $capexRecords = DB::select('SELECT * FROM t_master_capex');
 
         foreach ($capexRecords as $record) {
             // Menghitung selisih hari dari tanggal sekarang hingga tanggal expected_completed
@@ -222,25 +222,23 @@ class Capex extends Model
             if ($daysLeft < 0) {
                 // Menghitung berapa banyak hari sudah lewat
                 $daysOverdue = abs($daysLeft); // Ambil nilai absolut dari daysLeft
-                // Update kolom days_late dengan hari yang sudah lewat
-                DB::table('t_master_capex')
-                    ->where('id_capex', $record->id_capex)
-                    ->update(['days_late' => $daysOverdue]);
+
+                // Update kolom days_late dengan hari yang sudah lewat menggunakan RAW SQL
+                DB::statement('UPDATE t_master_capex SET days_late = ? WHERE id_capex = ?', [$daysOverdue, $record->id_capex]);
             } else {
-                // Jika belum lewat, set days_late ke 0
-                DB::table('t_master_capex')
-                    ->where('id_capex', $record->id_capex)
-                    ->update(['days_late' => null]);
+                // Jika belum lewat, set days_late ke 0 menggunakan RAW SQL
+                DB::statement('UPDATE t_master_capex SET days_late = NULL WHERE id_capex = ?', [$record->id_capex]);
             }
         }
 
         return response()->json(['success' => true, 'message' => 'Days late calculated and updated successfully!']);
     }
 
+
     public static function getDaysRemaining()
     {
         // Ambil semua record dari t_master_capex
-        $capexRecords = DB::table('t_master_capex')->get();
+        $capexRecords = DB::select('SELECT * FROM t_master_capex');
 
         foreach ($capexRecords as $record) {
             // Menghitung selisih hari dari tanggal sekarang hingga tanggal expected_completed
@@ -292,27 +290,27 @@ class Capex extends Model
 
     public function CapexEngineer()
     {
-        return $this->hasMany(CapexEngineer::class,'id_capex');
+        return $this->hasMany(CapexEngineer::class, 'id_capex');
     }
 
     public function Report()
     {
-        return $this->hasMany(Report::class,'id_capex');
+        return $this->hasMany(Report::class, 'id_capex');
     }
 
     public function ReportCategory()
     {
-        return $this->hasMany(ReportCategory::class,'id_capex');
+        return $this->hasMany(ReportCategory::class, 'id_capex');
     }
-    
+
     public function ReportSummary()
     {
-        return $this->hasMany(ReportSummary::class,'id_capex');
+        return $this->hasMany(ReportSummary::class, 'id_capex');
     }
 
     public function ReportTax()
     {
-        return $this->hasMany(ReportTax::class,'id_capex');
+        return $this->hasMany(ReportTax::class, 'id_capex');
     }
 
     public function approvalReports()
