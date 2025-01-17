@@ -266,7 +266,7 @@
                                                                 </li>
                                                                 <li class="mb-2">
                                                                     <div>
-                                                                        <strong>No Asset:</strong> <span class="text-muted">${row.no_asset}</span>
+                                                                        <strong>No Asset:</strong> <span class="text-muted">  <textarea>${row.no_asset}</textarea></span>
                                                                     </div>
                                                                 </li>
                                                             </ul>

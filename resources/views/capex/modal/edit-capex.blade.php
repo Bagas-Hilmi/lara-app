@@ -83,14 +83,11 @@
                                     Select Status
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownEdit">
-                                    <li><a class="dropdown-item" href="#" data-value="Canceled">Canceled</a>
-                                    </li>
+                                    <li><a class="dropdown-item" href="#" data-value="Canceled">Canceled</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="Close">Close</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="On Progress">On
-                                            Progress</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="On Progress">OnProgress</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="To Opex">To Opex</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="Waiting Approval">Waiting
-                                            Approval</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Waiting Approval">WaitingApproval</a></li>
                                 </ul>
                                 <input type="hidden" id="status_capex_edit" name="status_capex"
                                     style="text-align: center;" required>
@@ -162,16 +159,58 @@
                                 style="text-align: center;" required>
                         </div>
 
-                        <div class="col-md-3" id="noassetContainer">
-                            <label for="capdate_edit" class="form-label font-weight-bold">No Asset</label>
-                            <input type="text" class="form-control" id="noasset_edit" name="noasset"
-                                style="text-align: center;" required>
-                        </div>
                         <div class="col-md-3" id="fileUploadContainer" style="display: none;">
                             <label class="form-label font-weight-bold">Upload PDF</label>
                             <input type="file" class="form-control" name="file_pdf" accept="application/pdf"
                                 required>
                             <label class="form-label">Allowed file : PDF</label>
+                        </div>
+
+                        <div class="col-md-12" id="noassetContainer">
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                <!-- Dropdown Class Name -->
+                                    <label for="class_name" class="form-label font-weight-bold">Pilih Class Name</label>
+                                    <select class="form-control" id="class_name" style="width: 100%;">
+                                        <option value="" disabled selected>Pilih Class Name</option>
+                                        <option value="10100">Z10100 - Land Rights</option>
+                                        <option value="10200">Z10200 - Land Improvements</option>
+                                        <option value="10300">Z10300 - Building - Office</option>
+                                        <option value="10301">Z10301 - Building - Mess</option>
+                                        <option value="10302">Z10302 - Building - Tank Farm</option>
+                                        <option value="10303">Z10303 - Building - Plant</option>
+                                        <option value="10400">Z10400 - Equipment - F.Acid</option>
+                                        <option value="10401">Z10401 - Equipment - F.Alcohol</option>
+                                        <option value="10402">Z10402 - Equipment - Utility</option>
+                                        <option value="10403">Z10403 - Equipment - Lab</option>
+                                        <option value="10404">Z10404 - Equipment - Office</option>
+                                        <option value="10405">Z10405 - Equipment - Others</option>
+                                        <option value="10406">Z10406 - Equipment - MPR</option>
+                                        <option value="10407">Z10407 - Equipment - UFA</option>
+                                        <option value="10500">Z10500 - Car & MC (100%)</option>
+                                        <option value="10501">Z10501 - Car & MC (50%)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Rentang Angka -->
+                            
+                                <div class="col-md-3">
+                                    <label for="start_number" class="form-label font-weight-bold">Nomor Awal</label>
+                                    <input type="number" class="form-control" id="start_number">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="end_number" class="form-label font-weight-bold">Nomor Akhir</label>
+                                    <input type="number" class="form-control" id="end_number">
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-primary mt-3" id="generateAssets">Generate</button>
+                                </div>
+                            </div>
+                        
+                            <div class="mt-4">
+                                <label for="generated_assets" class="form-label font-weight-bold">Generated No Asset</label>
+                                <textarea class="form-control" id="generated_assets"></textarea>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -407,8 +446,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const categoryDropdownItems = document.querySelectorAll(
-            '#statusDropdownEdit + .dropdown-menu .dropdown-item');
+        const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
         const fileUploadContainer = document.getElementById('fileUploadContainer');
         const capdateContainer = document.getElementById('capdateContainer');
         const capdocContainer = document.getElementById('capdocContainer');
@@ -520,4 +558,43 @@
         // Inisialisasi awal - check status saat halaman dimuat
         toggleContainers(statusCapexInput.value);
     });
+
+    $('#generateAssets').on('click', function () {
+        const className = $('#class_name').val().replace(/^Z/, ''); // Hilangkan huruf "Z" di awal
+        const startNumber = parseInt($('#start_number').val());
+        const endNumber = parseInt($('#end_number').val());
+        const suffix = '-0'; // Suffix tetap di-hardcode di sini
+        const result = [];
+
+        if (!className) {
+            alert('Pilih Class Name terlebih dahulu!');
+            return;
+        }
+        if (isNaN(startNumber) || isNaN(endNumber) || startNumber > endNumber) {
+            alert('Masukkan rentang nomor yang valid!');
+            return;
+        }
+
+        // Generate daftar nomor aset
+        for (let i = startNumber; i <= endNumber; i++) {
+            // Tambahkan angka 0 di depan sehingga panjangnya 7 digit
+            const paddedNumber = i.toString().padStart(7, '0');
+            result.push(`${className}${paddedNumber}${suffix}`);
+        }
+
+        // Gabungkan hasil dengan koma
+        $('#generated_assets').val(result.join(', '));
+    });
+
+
+    $(document).ready(function() {
+        $('#class_name').select2({
+            placeholder: "Pilih Class Name",
+            allowClear: true,
+            width: '100%',
+            dropdownCssClass: 'select2-dropdown'
+        });
+    });
+
+
 </script>
