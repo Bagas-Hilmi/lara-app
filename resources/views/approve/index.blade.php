@@ -50,6 +50,7 @@
             @include('approve.modal.upload-pdf')
             @include('approve.modal.approve-pdf')
             @include('approve.modal.approval-progress')
+            @include('approve.modal.check-approve')
 
 
             @push('css')

@@ -58,7 +58,6 @@ class Approve extends Model
         'approved_at_engineer',
         'amount_budget',
         'budget_type',
-        'days_late',
         'reason',
     ];
 
@@ -85,7 +84,6 @@ class Approve extends Model
                 't_master_capex.total_budget',
                 't_master_capex.amount_budget',
                 't_master_capex.budget_type',
-                't_master_capex.days_late',
 
                 't_approval_report.file_pdf',
                 't_approval_report.wbs_type',
@@ -115,6 +113,8 @@ class Approve extends Model
                 't_approval_report.approved_at_user', 
                 't_approval_report.approved_by_engineer', 
                 't_approval_report.approved_at_engineer',
+                DB::raw('DATEDIFF(t_approval_report.date, t_master_capex.expected_completed) as time_delay'), // Perhitungan time_delay
+
             );
 
         // Jika pengguna bukan admin, tambahkan filter berdasarkan requester
@@ -132,6 +132,7 @@ class Approve extends Model
 
 
         $masterData = $query->get(); // Eksekusi query untuk mengambil data
+        
 
         // Perulangan untuk sinkronisasi data ke tabel t_approval_report
         foreach ($masterData as $data) {
@@ -157,7 +158,7 @@ class Approve extends Model
                         'total_budget' => $data->total_budget,
                         'amount_budget' => $data->amount_budget,
                         'budget_type' => $data->budget_type,
-                        'days_late' => $data->days_late,
+                        'time_delay' => $data->time_delay,
                     ]);
             } else {
                 // Jika data belum ada, lakukan insert
@@ -175,7 +176,8 @@ class Approve extends Model
                     'total_budget' => $data->total_budget,
                     'amount_budget' => $data->amount_budget,
                     'budget_type' => $data->budget_type,
-                    'days_late' => $data->days_late,
+                    'time_delay' => $data->time_delay,
+
 
                 ]);
             }

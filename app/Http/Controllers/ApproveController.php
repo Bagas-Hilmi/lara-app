@@ -147,30 +147,6 @@ class ApproveController extends Controller
             $request->validate([
                 'id_capex' => 'required|exists:t_approval_report,id_capex',
                 'file_pdf' => 'required|file|mimes:pdf|max:2048',
-                'date' => 'required',
-                'wbs_type' => 'required|in:WBS-P,WBS-A',
-                'engineering' => 'required|in:0,1',
-                'maintenance' => 'required|in:0,1',
-                'outstanding_inventory' => 'required|in:0,1',
-                'material' => 'required|in:0,1',
-                'jasa' => 'required|in:0,1',
-                'etc' => 'required|in:0,1',
-                'warehouse' => 'required|in:0,1',
-                'user' => 'required|in:0,1',
-                'berita_acara' => 'required|in:0,1',
-                'remark' => 'required',
-            ], [
-                'wbs_type.required' => 'WBS Type harus dipilih',
-                'wbs_type.in' => 'WBS Type harus WBS-P atau WBS-A',
-                'engineering.in' => 'Nilai Engineering harus berupa checkbox',
-                'maintenance.in' => 'Nilai Maintenance harus berupa checkbox',
-                'outstanding_inventory.in' => 'Nilai Outstanding Inventory harus berupa checkbox',
-                'material.in' => 'Nilai Material harus berupa checkbox',
-                'jasa.in' => 'Nilai Jasa harus berupa checkbox',
-                'etc.in' => 'Nilai Etc harus berupa checkbox',
-                'warehouse.in' => 'Nilai Warehouse harus berupa checkbox',
-                'user.in' => 'Nilai User harus berupa checkbox',
-                'berita_acara.in' => 'Nilai Berita Acara harus berupa checkbox',
             ]);
 
             $idCapex = $request->input('id_capex');
@@ -256,11 +232,11 @@ class ApproveController extends Controller
                 if ($userRole === 'admin') {
                     if ($userId == 3) {
                         $updateData['approved_by_admin_1'] = auth::user()->name;
-                        $updateData['approved_at_admin_1'] = now();
+                        $updateData['approved_at_admin_1'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                         $updateData['status_approve_1'] = $statusApprove;
                     } else if ($userId == 4) {
                         $updateData['approved_by_admin_2'] = auth::user()->name;
-                        $updateData['approved_at_admin_2'] = now();
+                        $updateData['approved_at_admin_2'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                         $updateData['status_approve_4'] = $statusApprove;
                     }
 
@@ -273,7 +249,7 @@ class ApproveController extends Controller
                     }
                 } else if ($userRole === 'user') {
                     $updateData['approved_by_user'] = auth::user()->name;
-                    $updateData['approved_at_user'] = now();
+                    $updateData['approved_at_user'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                     $updateData['status_approve_2'] = $statusApprove;
 
                     if ($statusApprove == 2) {
@@ -282,7 +258,7 @@ class ApproveController extends Controller
                     }
                 } else if ($userRole === 'engineering') {
                     $updateData['approved_by_engineer'] = auth::user()->name;
-                    $updateData['approved_at_engineer'] = now();
+                    $updateData['approved_at_engineer'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                     $updateData['status_approve_3'] = $statusApprove;
                 }
 
@@ -310,7 +286,7 @@ class ApproveController extends Controller
 
                     $this->sendEmailToNextApprover($data, $userRole, $statusApprove);
                 } else if ($statusApprove == 2) {  // Jika status reject
-                    
+
                 }
 
                 // Update database
@@ -326,6 +302,72 @@ class ApproveController extends Controller
                     'error' => 'Failed to process document: ' . $e->getMessage()
                 ], 500);
             }
+        } else if ($flag === 'check-form') {
+            // Validasi input
+            $request->validate([
+                'id_capex' => 'required|exists:t_approval_report,id_capex',
+                'date' => 'required',
+                'wbs_type' => 'required|in:WBS-P,WBS-A',
+                'engineering' => 'required|in:0,1',
+                'maintenance' => 'required|in:0,1',
+                'outstanding_inventory' => 'required|in:0,1',
+                'material' => 'required|in:0,1',
+                'jasa' => 'required|in:0,1',
+                'etc' => 'required|in:0,1',
+                'warehouse' => 'required|in:0,1',
+                'user' => 'required|in:0,1',
+                'berita_acara' => 'required|in:0,1',
+                'remark' => 'required',
+            ], [
+                'wbs_type.required' => 'WBS Type harus dipilih',
+                'wbs_type.in' => 'WBS Type harus WBS-P atau WBS-A',
+                'engineering.in' => 'Nilai Engineering harus berupa checkbox',
+                'maintenance.in' => 'Nilai Maintenance harus berupa checkbox',
+                'outstanding_inventory.in' => 'Nilai Outstanding Inventory harus berupa checkbox',
+                'material.in' => 'Nilai Material harus berupa checkbox',
+                'jasa.in' => 'Nilai Jasa harus berupa checkbox',
+                'etc.in' => 'Nilai Etc harus berupa checkbox',
+                'warehouse.in' => 'Nilai Warehouse harus berupa checkbox',
+                'user.in' => 'Nilai User harus berupa checkbox',
+                'berita_acara.in' => 'Nilai Berita Acara harus berupa checkbox',
+            ]);
+
+            $idCapex = $request->input('id_capex');
+
+            // Cari data pada t_approval_report
+            $approve = DB::table('t_approval_report')->where('id_capex', $idCapex)->first();
+
+            if (!$approve) {
+                return response()->json(['error' => 'Data capex tidak ditemukan di approval report'], 404);
+            }
+
+            // Update database tanpa file PDF
+            $updateData = [
+                'upload_by' => Auth::user()->name,
+                'upload_date' => now(),
+                'updated_at' => now(),
+                'date' => $request->input('date'),
+                'wbs_type' => $request->input('wbs_type'),
+                'engineering_production' => $request->boolean('engineering'),
+                'maintenance' => $request->boolean('maintenance'),
+                'outstanding_inventory' => $request->boolean('outstanding_inventory'),
+                'material' => $request->boolean('material'),
+                'jasa' => $request->boolean('jasa'),
+                'etc' => $request->boolean('etc'),
+                'warehouse_received' => $request->boolean('warehouse'),
+                'user_received' => $request->boolean('user'),
+                'berita_acara' => $request->boolean('berita_acara'),
+                'remark' => $request->input('remark'),
+            ];
+
+            // Update database
+            DB::table('t_approval_report')
+                ->where('id_capex', $idCapex)
+                ->update($updateData);
+
+            return response()->json([
+                'success' => 'Data berhasil diTambahkan'
+            ]);
         }
     }
 
@@ -369,35 +411,35 @@ class ApproveController extends Controller
 
         if ($userId == 3 && $userRole === 'admin') {
             $data['approved_by_admin_1'] = $userName;
-            $data['approved_at_admin_1'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+            $data['approved_at_admin_1'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
         } else {
             $data['approved_by_admin_1'] = $existingApproval->approved_by_admin_1 ?? '';
-            $data['approved_at_admin_1'] = $existingApproval->approved_at_admin_1 ? Carbon::parse($existingApproval->approved_at_admin_1)->format('Y.m.d H:i:s') : '';
+            $data['approved_at_admin_1'] = $existingApproval->approved_at_admin_1 ? Carbon::parse($existingApproval->approved_at_admin_1)->format('Y-m-d H:i:s') : '';
         }
 
         // Set data admin 2
         if ($userId == 4 && $userRole === 'admin') {
             $data['approved_by_admin_2'] = $userName;
-            $data['approved_at_admin_2'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+            $data['approved_at_admin_2'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
         } else {
             $data['approved_by_admin_2'] = $existingApproval->approved_by_admin_2 ?? '';
-            $data['approved_at_admin_2'] = $existingApproval->approved_at_admin_2 ? Carbon::parse($existingApproval->approved_at_admin_2)->format('Y.m.d H:i:s') : '';
+            $data['approved_at_admin_2'] = $existingApproval->approved_at_admin_2 ? Carbon::parse($existingApproval->approved_at_admin_2)->format('Y-m-d H:i:s') : '';
         }
 
         if ($userRole === 'user') {
             $data['approved_by_user'] = $userName;
-            $data['approved_at_user'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+            $data['approved_at_user'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
         } else {
             $data['approved_by_user'] = $existingApproval->approved_by_user ?? '';
-            $data['approved_at_user'] = $existingApproval->approved_at_user ? Carbon::parse($existingApproval->approved_at_user)->format('Y.m.d H:i:s') : '';
+            $data['approved_at_user'] = $existingApproval->approved_at_user ? Carbon::parse($existingApproval->approved_at_user)->format('Y-m-d H:i:s') : '';
         }
 
         if ($userRole === 'engineering') {
             $data['approved_by_engineer'] = $userName;
-            $data['approved_at_engineer'] = now()->setTimezone('Asia/Jakarta')->format('Y.m.d H:i:s');
+            $data['approved_at_engineer'] = now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
         } else {
             $data['approved_by_engineer'] = $existingApproval->approved_by_engineer ?? '';
-            $data['approved_at_engineer'] = $existingApproval->approved_at_engineer ? Carbon::parse($existingApproval->approved_at_engineer)->format('Y.m.d H:i:s') : '';
+            $data['approved_at_engineer'] = $existingApproval->approved_at_engineer ? Carbon::parse($existingApproval->approved_at_engineer)->format('Y-m-d H:i:s') : '';
         }
 
         // Render view ke HTML
@@ -428,7 +470,7 @@ class ApproveController extends Controller
         }
 
         // Tentukan nama file
-        $fileName = $type . '_' . Carbon::now('Asia/Jakarta')->format('Y.m.d') . '_' . $data['requester'] . '.pdf';
+        $fileName = $type . '_' . Carbon::now('Asia/Jakarta')->format('d M Y') . '_' . $data['requester'] . '.pdf';
         $filePath = $signedSubPath . $fileName;
 
         // Cek apakah file sudah ada
@@ -495,6 +537,15 @@ class ApproveController extends Controller
 
             return response()->file($path);
         } else if ($flag === 'show-progress') {
+        } else if ($flag === 'checkWBS'){
+            $data = DB::table('t_approval_report')->where('id_capex', $id)->first();
+
+            // Periksa apakah wbs_type ada nilainya
+            $hasWbsType = !empty($data->wbs_type);
+
+            return response()->json([
+                'hasWbsType' => $hasWbsType,
+            ]);
         }
 
         // Kembalikan response jika flag tidak sesuai

@@ -648,8 +648,7 @@
     }
 
     .custom-modal {
-        max-width: 45%; /* Atur lebar modal */
-        width: auto;    /* Sesuaikan otomatis */
+        max-width: 50%; /* Atur lebar modal */
     }
 
     .select2-container .select2-selection--single {
