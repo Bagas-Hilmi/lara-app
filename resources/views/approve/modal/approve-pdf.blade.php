@@ -220,8 +220,8 @@
 
             function updateButtonDisplay(hasWbsType) {
                 const $saveButton = $('#saveSignature');
-                
-                // Cek role dan canSign terlebih dahulu
+
+                // Cek kondisi role dan canSign terlebih dahulu
                 if (userRole === 'admin' && userId == id_admin_2 && !canSign) {
                     $saveButton
                         .text('Menunggu Persetujuan Admin 1')
@@ -242,22 +242,20 @@
                     return;
                 }
 
-                // Logika berdasarkan status
-                switch(currentStatus) {
-                    case 0:
+                // Tangani logika berdasarkan currentStatus
+                switch (currentStatus) {
+                    case 0: // Status menunggu persetujuan user
                         $saveButton
                             .text('Menunggu Persetujuan Anda')
                             .removeClass('btn-success btn-danger')
                             .addClass('bg-gradient-warning')
-                            .prop('disabled', !hasWbsType) // Enable only if WBS exists
+                            .prop('disabled', !hasWbsType) // Tombol aktif jika WBS ada
                             .show();
                         break;
 
-                    case 1:
+                    case 1: // Status telah disetujui
                         if (userRole === 'admin') {
-                            if (userId == id_admin_1) {
-                                $saveButton.hide();
-                            } else if (userId == id_admin_2) {
+                            if (userId == id_admin_1 || userId == id_admin_2) {
                                 $saveButton.hide();
                             }
                         } else {
@@ -265,42 +263,49 @@
                         }
                         break;
 
-                    case 2:
+                    case 2: // Status ditolak
                         $saveButton.hide();
-                        if (userRole === 'admin') {
-                            if (userId == id_admin_1) {
-                                $('#admin1_Signature').text('Rejected By ' + apv_admin1 + ' at ' + apv_at_admin1);
-                                $('#admin1_Status').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
-                            } else if (userId == id_admin_2) {
-                                $('#admin2_Signature').text('Ditolak');
-                                $('#admin2_Status').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
-                            }
-                        } else if (userRole === 'user') {
-                            $('#userSignature').text('Ditolak');
-                            $('#userStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
-                        } else if (userRole === 'engineering') {
-                            $('#engineerSignature').text('Ditolak');
-                            $('#engineerStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
-                        }
+                        handleRejectionStatus();
                         break;
                 }
             }
+
+            function handleRejectionStatus() {
+                // Perbarui tampilan status untuk setiap peran berdasarkan penolakan
+                if (userRole === 'admin') {
+                    if (userId == id_admin_1) {
+                        $('#admin1_Signature').text('Rejected By ' + apv_admin1 + ' at ' + apv_at_admin1);
+                        $('#admin1_Status').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
+                    } else if (userId == id_admin_2) {
+                        $('#admin2_Signature').text('Ditolak');
+                        $('#admin2_Status').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
+                    }
+                } else if (userRole === 'user') {
+                    $('#userSignature').text('Ditolak');
+                    $('#userStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
+                } else if (userRole === 'engineering') {
+                    $('#engineerSignature').text('Ditolak');
+                    $('#engineerStatus').text('Ditolak').removeClass('bg-secondary').addClass('bg-danger');
+                }
+            }
+
+            // Inisialisasi tombol dengan status default
             $('#saveSignature').prop('disabled', true);
 
-            // Cek WBS
+            // Periksa WBS melalui AJAX
             $.ajax({
                 url: `/approve/${idCapex}?flag=checkWBS`,
                 method: 'GET',
                 success: function(response) {
-                    // Update tampilan tombol dengan status WBS
+                    // Perbarui tampilan tombol berdasarkan hasil cek WBS
                     updateButtonDisplay(response.hasWbsType);
                 },
                 error: function() {
                     console.error('Terjadi kesalahan saat memeriksa WBS Type.');
-                    // Jika error, update tampilan dengan hasWbsType false
+                    // Jika terjadi error, update tampilan dengan asumsi WBS tidak ada
                     updateButtonDisplay(false);
                 }
-            });
+        });
 
         });
 
