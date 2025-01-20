@@ -15,7 +15,7 @@
 
                     <div class="container-fluid">
                         <div class="dropdown mb-3">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="periodDropdown"
+                            <button class="btn bg-gradient-secondary dropdown-toggle" type="button" id="periodDropdown"
                                 data-bs-toggle="dropdown" aria-expanded="false" required>
                                 Pilih Period
                             </button>
@@ -52,6 +52,14 @@
 </div>
 
 <script>
+$(document).ready(function () {
+    $('#addDocFormModal').on('show.bs.modal', function () {
+        $(this).find('form')[0].reset(); // Mereset form di dalam modal
+        $(this).find('input, select, textarea').removeClass('is-invalid'); // Menghapus validasi error sebelumnya
+        $('#periodDropdown').text('Pilih Period'); // Reset dropdown teks
+    });
+    
+
     document.getElementById('addDocForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Mencegah pengiriman form default
 
@@ -124,6 +132,7 @@
             }
         });
     });
+});
 </script>
 
 <script>
@@ -244,4 +253,10 @@
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);
         /* Menambah efek shadow saat fokus */
     }
+
+    #periodList {
+        max-height: 175px; /* Tentukan tinggi maksimum dropdown */
+        overflow-y: auto;  /* Tambahkan scrollbar jika konten melebihi max-height */
+    }
+
 </style>

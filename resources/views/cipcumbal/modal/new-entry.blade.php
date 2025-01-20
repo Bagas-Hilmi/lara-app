@@ -62,96 +62,98 @@
 
 
 <script>
-    document.getElementById('saveEntry').addEventListener('click', function() {
-        const form = document.getElementById('entryForm');
+    $(document).ready(function () {
+        // Reset form setiap kali modal ditutup
+        $('#new-form').on('hidden.bs.modal', function () {
+            $('#entryForm')[0].reset(); // Reset semua input
+            $('#entryForm').find('input').removeClass('is-invalid'); // Hapus class is-invalid
+        });
+        document.getElementById('saveEntry').addEventListener('click', function() {
+            const form = document.getElementById('entryForm');
 
-        // Fungsi untuk membersihkan format angka
-        function cleanNumber(value) {
-            // Hapus semua koma dan convert ke number
-            return value.replace(/,/g, '');
-        }
+            // Fungsi untuk membersihkan format angka
+            function cleanNumber(value) {
+                // Hapus semua koma dan convert ke number
+                return value.replace(/,/g, '');
+            }
 
-        if (form.checkValidity()) {
-            const formData = new FormData(form);
-            formData.append('mode', 'ADD');
+            if (form.checkValidity()) {
+                const formData = new FormData(form);
+                formData.append('mode', 'ADD');
 
-            // Bersihkan format number sebelum mengirim
-            const numberFields = ['bal_usd', 'bal_rp', 'cumbal_usd', 'cumbal_rp'];
-            numberFields.forEach(field => {
-                const input = document.getElementsByName(field)[0];
-                const cleanedValue = cleanNumber(input.value);
-                formData.set(field, cleanedValue);
-            });
+                // Bersihkan format number sebelum mengirim
+                const numberFields = ['bal_usd', 'bal_rp', 'cumbal_usd', 'cumbal_rp'];
+                numberFields.forEach(field => {
+                    const input = document.getElementsByName(field)[0];
+                    const cleanedValue = cleanNumber(input.value);
+                    formData.set(field, cleanedValue);
+                });
 
-            Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Data ini akan disimpan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, simpan!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: form.action,
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                Swal.fire({
-                                    title: "Sukses!",
-                                    text: "Entry berhasil di upload!",
-                                    icon: "success",
-                                    showConfirmButton: false,
-                                    timer: 1000
-                                });
-                                $('#cipCumBalTable').DataTable().ajax.reload();
-                                $('#new-form').modal('hide');
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data ini akan disimpan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, simpan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: form.action,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            },
+                            success: function(data) {
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: "Sukses!",
+                                        text: "Entry berhasil di upload!",
+                                        icon: "success",
+                                        showConfirmButton: false,
+                                        timer: 1000
+                                    });
+                                    $('#cipCumBalTable').DataTable().ajax.reload();
+                                    $('#new-form').modal('hide');
 
-                                // Reset form setelah sukses
-                                form.reset();
-                            } else {
+                                    // Reset form setelah sukses
+                                    form.reset();
+                                } else {
+                                    Swal.fire(
+                                        'Gagal!',
+                                        data.message || 'An error occurred while saving.',
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function(xhr, status, error) {
                                 Swal.fire(
                                     'Gagal!',
-                                    data.message || 'An error occurred while saving.',
+                                    'An error occurred: ' + error,
                                     'error'
                                 );
+                                console.error('Error:', error);
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire(
-                                'Gagal!',
-                                'An error occurred: ' + error,
-                                'error'
-                            );
-                            console.error('Error:', error);
-                        }
-                    });
-                }
-            });
-        } else {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Silakan lengkapi semua input yang diperlukan.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-        $('#new-form').on('hidden.bs.modal', function () {
-            // Kosongkan semua input field
-            $('#entryForm')[0].reset();
-            // Hapus class is-invalid jika ada
-            $('#entryForm').find('input').removeClass('is-invalid');
-        });
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Silakan lengkapi semua input yang diperlukan.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
 
+           
+        });
         $(document).on('keydown', function(e) {
             if ($('.swal2-container').length > 0 && e.key === 'Enter') {
                 e.preventDefault();

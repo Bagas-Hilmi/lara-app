@@ -278,6 +278,11 @@
                 $('#category').val(value); // Atur nilai input tersembunyi
             });
         });
+
+        $('#new-form').on('show.bs.modal', function () {
+            $(this).find('form')[0].reset(); // Mereset form di dalam modal
+        });
+
     });
 </script>
 
