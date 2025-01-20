@@ -17,11 +17,17 @@
                                 <h3 class="text-white text-capitalize ps-3">Report Tax</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="mb-2">
+                                <div class="d-flex mb-2" style="gap: 10px;">
                                     <select id="statusSelect" class="form-control" style="width: 15%;">
                                         <option value="" selected>Pilih Status</option>
                                         @foreach ($status as $stat)
                                             <option value="{{ $stat }}">{{ $stat }}</option>
+                                        @endforeach
+                                    </select>
+                                    <select id="yearSelect" class="form-control" style="width: 15%;">
+                                        <option value="" selected>Pilih Tahun</option>
+                                        @foreach ($years as $year)
+                                            <option value="{{ $year }}">{{ $year }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -88,10 +94,13 @@
                                 data: function(d) {
                                 // Menambahkan flag ke data
                                 d.flag = 'tax';
-                                                               
                                 var statusValue = $('#statusSelect').val();
                                 if (statusValue) {
                                     d.status_capex = statusValue;  
+                                }
+                                var yearValue = $('#yearSelect').val();
+                                if (yearValue){
+                                    d.year = yearValue;
                                 }
                             }},
                             columns: [
@@ -120,7 +129,7 @@
                                     createdCell: function(td, cellData, rowData, rowIndex, colIndex) {
                                             $(td).css('text-align', 'left'); 
                                     }}, 
-                                  
+                                
                                     {data: 'qty', name: 'qty'},
                                     {data: 'uom', name: 'uom'},
                                     {data: 'amount_rp', name: 'amount_rp',
@@ -173,7 +182,15 @@
                                         return moment(data).format('DD-MM-YYYY'); 
                                     }},
                                     {data: 'cap_doc', name:'cap_doc'},
-                                    {data: 'no_asset', name:'no_asset'},
+                                    { 
+                                        data: 'no_asset', 
+                                        name: 'no_asset',
+                                        className: 'dataTables-column', 
+                                        render: function(data) {
+                                            return data ? `<span title="${data}">${data}</span>` : ''; 
+                                        }
+                                    }
+
                             ],
                             drawCallback: function(settings) {
                                 var api = this.api();
@@ -272,7 +289,41 @@
 
                             statusSelect.on('select2:unselect', function (e) {
                                 table.ajax.url('{{ route('report.index') }}').load();
-                        })
+                            })
+
+                        var yearSelect = $('#yearSelect');
+                            if (yearSelect.length) {
+                                yearSelect.select2({
+                                    placeholder: 'Cari Tahun',
+                                    allowClear: true,
+                                    dropdownAutoWidth: true,
+                                    closeOnSelect: true,
+                                    dropdownCssClass: 'select2-results-limited-year',
+                                    templateResult: function(data) {
+                                        if (!data.element) {
+                                            return data.text;
+                                        }
+                                        return $('<div class="select2-result-item">' + data.text + '</div>');
+                                    }
+                                });
+                            }
+
+                            yearSelect.on('select2:select', function (e) {
+                                const selectedOption = $(this).find(':selected');
+                                const yearValue = selectedOption.val();
+
+                                console.log('Tahun dipilih:', yearValue);
+    
+                                if (yearValue) {
+                                    table.ajax.url('{{ route('report.index') }}?year=' + yearValue).load();
+                                } else {
+                                    table.ajax.url('{{ route('report.index') }}').load();
+                                }
+                            });
+
+                            yearSelect.on('select2:unselect', function (e) {
+                                table.ajax.url('{{ route('report.index') }}').load();
+                            });
                     });
                 </script>
             @endpush
@@ -436,5 +487,13 @@
     .select2-container .select2-selection__clear {
         position: absolute;
         right: 15px;
-    } 
+    }
+    
+    .dataTables-column {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px; /* Sesuaikan ukuran kolom */
+    }
+
 </style>

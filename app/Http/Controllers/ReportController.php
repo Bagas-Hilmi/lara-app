@@ -98,20 +98,29 @@ class ReportController extends Controller
             return view('report.reportSummary.index', compact('categories', 'status', 'budgets', 'years'));
         } else if ($flag === 'tax') {
             $status = ReportTax::getStatus();
- 
+            $years = ReportTax::getAvailableYears();
+
             if ($request->ajax()) {
 
-                $data = ReportTax::getData();
+                $query = ReportTax::getData();  // Sekarang ini mengembalikan query builder
 
                 if ($request->has('status_capex') && $request->status_capex != '') {
-                    $data = $data->where('status_capex', $request->status_capex);
+                    $query->where('status_capex', $request->status_capex);
                 }
+
+                if (request()->has('year') && request()->year != '') {
+                    $year = request()->year;
+                    $query->whereRaw("RIGHT(t_master_capex.capex_number, 4) = ?", [$year]);
+                }
+
+                $data = $query->get();  // Eksekusi query setelah semua kondisi ditambahkan
+
 
                 return datatables::of($data)
                     ->addIndexColumn()
                     ->make(true);
             }
-            return view('report.reportTax.Index', compact('status'));
+            return view('report.reportTax.Index', compact('status', 'years'));
         }
 
 

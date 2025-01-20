@@ -42,7 +42,7 @@ class ReportTax extends Model
             DB::beginTransaction();
 
             // Mengambil data dari join tabel
-            $masterData = DB::table('t_master_capex')
+            $query = DB::table('t_master_capex')
                 ->leftJoin('t_report_tax', 't_master_capex.id_capex', '=', 't_report_tax.id_capex')
                 ->leftJoin('t_report_cip', 't_master_capex.id_capex', '=', 't_report_cip.id_capex')
                 ->select(
@@ -66,8 +66,9 @@ class ReportTax extends Model
                     't_report_cip.settle_doc',
                     't_report_cip.fa_doc'
                 )
-                ->where('t_master_capex.status', 1)
-                ->get();
+                ->where('t_master_capex.status', 1);
+                return $query;
+
 
             // Proses simpan ke tabel t_report_tax menggunakan updateOrInsert
             foreach ($masterData as $data) {
@@ -116,5 +117,20 @@ class ReportTax extends Model
             ->toArray();
 
         return $status;
+    }
+
+    public static function getAvailableYears() 
+    {
+        return DB::table('t_report_tax')
+            ->where('status', 1)
+            ->get()
+            ->map(function($item) {
+                preg_match('/\d{4}$/', $item->capex_number, $matches);
+                return $matches[0] ?? null;
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
     }
 }
