@@ -70,7 +70,7 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="statusDropdown">
                                     <li><a class="dropdown-item" href="#" data-value="Canceled">Canceled</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="Close">Closed</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="Close">Close</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="On Progress">On Progress</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="To Opex">To Opex</a></li>
                                 </ul>

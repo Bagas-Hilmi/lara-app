@@ -154,7 +154,7 @@
                                 style="text-align: center;" required>
                         </div>
                         <div class="col-md-3" id="capdocContainer">
-                            <label for="capdate_edit" class="form-label font-weight-bold">Capitalized Doc</label>
+                            <label for="capdoc_edit" class="form-label font-weight-bold">Capitalized Doc</label>
                             <input type="text" class="form-control" id="capdoc_edit" name="capdoc"
                                 style="text-align: center;" required>
                         </div>
@@ -170,8 +170,8 @@
                             <div class="row mt-3">
                                 <div class="col-md-3">
                                 <!-- Dropdown Class Name -->
-                                    <label for="class_name" class="form-label font-weight-bold">Pilih Class Name</label>
-                                    <select class="form-control" id="class_name" style="width: 100%;">
+                                    <label for="noasset_edit" class="form-label font-weight-bold">Pilih Class Name</label>
+                                    <select class="form-control" id="noasset_edit" style="width: 100%;">
                                         <option value="" disabled selected>Pilih Class Name</option>
                                         <option value="10100">Z10100 - Land Rights</option>
                                         <option value="10200">Z10200 - Land Improvements</option>
@@ -445,119 +445,6 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const categoryDropdownItems = document.querySelectorAll('#statusDropdownEdit + .dropdown-menu .dropdown-item');
-        const fileUploadContainer = document.getElementById('fileUploadContainer');
-        const capdateContainer = document.getElementById('capdateContainer');
-        const capdocContainer = document.getElementById('capdocContainer');
-        const noassetContainer = document.getElementById('noassetContainer');
-        const fileUploadInput = fileUploadContainer.querySelector('input[type="file"]');
-        const saveEditButton = document.getElementById('save-edit-capex');
-        const statusCapexInput = document.getElementById('status_capex_edit');
-        const statusDropdownButton = document.getElementById('statusDropdownEdit');
-        // Fungsi untuk toggle semua container
-        function toggleContainers(status) {
-            if (status === 'Close') {
-                // Tampilkan semua container
-                fileUploadContainer.style.display = 'block';
-                capdateContainer.style.display = 'block';
-                capdocContainer.style.display = 'block';
-                noassetContainer.style.display = 'block';
-
-                // Set required attributes
-                fileUploadInput.setAttribute('required', 'required');
-                document.getElementById('capdate_edit').setAttribute('required', 'required');
-                document.getElementById('capdoc_edit').setAttribute('required', 'required');
-                document.getElementById('noasset_edit').setAttribute('required', 'required');
-            } else {
-                // Sembunyikan semua container
-                fileUploadContainer.style.display = 'none';
-                capdateContainer.style.display = 'none';
-                capdocContainer.style.display = 'none';
-                noassetContainer.style.display = 'none';
-
-                // Hapus required attributes
-                fileUploadInput.removeAttribute('required');
-                document.getElementById('capdate_edit').removeAttribute('required');
-                document.getElementById('capdoc_edit').removeAttribute('required');
-                document.getElementById('noasset_edit').removeAttribute('required');
-
-                // Reset nilai
-                fileUploadInput.value = '';
-                document.getElementById('capdate_edit').value = '';
-                document.getElementById('capdoc_edit').value = '';
-                document.getElementById('noasset_edit').value = '';
-            }
-        }
-        // Fungsi validasi semua input required
-        function validateInputs() {
-            if (statusCapexInput.value === 'Close') {
-                const capdate = document.getElementById('capdate_edit').value;
-                const capdoc = document.getElementById('capdoc_edit').value;
-                const noasset = document.getElementById('noasset_edit').value;
-
-                if (!capdate || !capdoc || !noasset) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Harap isi Capitalized Date, Capitalized Doc, dan No Asset untuk status Close',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    return false;
-                }
-                if (!validatePDFInput(fileUploadInput)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        // Fungsi validasi input file PDF
-        function validatePDFInput(fileInput) {
-            const allowedTypes = ['application/pdf'];
-            const file = fileInput.files[0];
-            if (!file) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Harap unggah file PDF untuk status Close',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-                return false;
-            }
-            if (!allowedTypes.includes(file.type)) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Hanya file PDF yang diperbolehkan',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-                return false;
-            }
-            return true;
-        }
-        // Event listener untuk dropdown status
-        categoryDropdownItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const selectedValue = this.getAttribute('data-value');
-                statusCapexInput.value = selectedValue;
-                statusDropdownButton.textContent = selectedValue;
-                toggleContainers(selectedValue);
-            });
-        });
-        // Event listener untuk perubahan langsung pada select status
-        statusCapexInput.addEventListener('change', function() {
-            toggleContainers(this.value);
-        });
-        // Event listener untuk tombol save
-        saveEditButton.addEventListener('click', function(event) {
-            if (!validateInputs()) {
-                event.preventDefault();
-                return false;
-            }
-        });
-        // Inisialisasi awal - check status saat halaman dimuat
-        toggleContainers(statusCapexInput.value);
-    });
 
     $('#generateAssets').on('click', function () {
         const className = $('#class_name').val().replace(/^Z/, ''); // Hilangkan huruf "Z" di awal
@@ -586,7 +473,6 @@
         $('#generated_assets').val(result.join(', '));
     });
 
-
     $(document).ready(function() {
         $('#class_name').select2({
             placeholder: "Pilih Class Name",
@@ -597,4 +483,105 @@
     });
 
 
+</script>
+
+<script>
+    $(document).ready(function() {
+        const $editModal = $('#edit-form');
+        const $fileUploadContainer = $('#fileUploadContainer');
+        const $capdateContainer = $('#capdateContainer');
+        const $capdocContainer = $('#capdocContainer');
+        const $noassetContainer = $('#noassetContainer');
+        const $fileUploadInput = $fileUploadContainer.find('input[type="file"]');
+        const $statusCapexInput = $('#status_capex_edit');
+        const $statusDropdownButton = $('#statusDropdownEdit');
+        
+        function resetForm() {
+            // Reset status dropdown
+            const currentStatus = $statusCapexInput.val() || '';
+            $statusDropdownButton.text(currentStatus || 'Select Status');
+            
+            // Reset containers
+            toggleContainers(currentStatus);
+            
+            // Reset all inputs
+            $editModal.find('input').each(function() {
+                const $input = $(this);
+                if ($input.attr('type') === 'text' || 
+                    $input.attr('type') === 'date' || 
+                    $input.attr('type') === 'number' || 
+                    $input.attr('type') === 'file') {
+                    $input.val('');
+                }
+            });
+            
+            // Reset textarea
+            $('#generated_assets').val('');
+            
+            // Reset select2 if exists
+            if ($('#class_name').length) {
+                $('#class_name').val(null).trigger('change');
+            }
+        }
+
+        function toggleContainers(status) {
+            const $containers = [$fileUploadContainer, $capdateContainer, $capdocContainer, $noassetContainer];
+            const $inputs = [
+                $fileUploadInput,
+                $('#capdate_edit'),
+                $('#capdoc_edit'),
+                $('#noasset_edit')
+            ];
+            
+            if (status === 'Close') {
+                $containers.forEach($container => $container.show());
+                $inputs.forEach($input => $input.prop('required', true));
+            } else {
+                $containers.forEach($container => $container.hide());
+                $inputs.forEach($input => $input.prop('required', false));
+            }
+        }
+
+        // Handle modal events
+        $editModal
+            .on('hide.bs.modal', function() {
+                console.log('Modal hiding');
+                resetForm();
+            })
+            .on('hidden.bs.modal', function() {
+                console.log('Modal hidden');
+                resetForm();
+            });
+
+        // Handle dropdown item clicks
+        $('#statusDropdownEdit + .dropdown-menu .dropdown-item').on('click', function() {
+            const selectedValue = $(this).data('value');
+            $statusCapexInput.val(selectedValue);
+            $statusDropdownButton.text(selectedValue);
+            toggleContainers(selectedValue);
+        });
+
+        // Handle status input changes
+        $statusCapexInput.on('change', function() {
+            toggleContainers($(this).val());
+        });
+
+        // Handle save button
+        $('#save-edit-capex').on('click', function(event) {
+            if (!validateInputs()) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        // Set initial state
+        toggleContainers($statusCapexInput.val());
+
+        // Additional cleanup when modal is initialized
+        $editModal.on('show.bs.modal', function() {
+            console.log('Modal showing');
+            const currentStatus = $statusCapexInput.val();
+            toggleContainers(currentStatus);
+        });
+    });
 </script>
