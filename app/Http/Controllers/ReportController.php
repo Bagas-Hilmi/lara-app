@@ -110,7 +110,7 @@ class ReportController extends Controller
 
                 if (request()->has('year') && request()->year != '') {
                     $year = request()->year;
-                    $query->whereRaw("RIGHT(t_master_capex.capex_number, 4) = ?", [$year]);
+                    $query->whereRaw("RIGHT(t_master_capex.wbs_number, 4) = ?", [$year]);
                 }
 
                 $data = $query->get();  // Eksekusi query setelah semua kondisi ditambahkan

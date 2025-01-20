@@ -125,7 +125,7 @@ class ReportTax extends Model
             ->where('status', 1)
             ->get()
             ->map(function($item) {
-                preg_match('/\d{4}$/', $item->capex_number, $matches);
+                preg_match('/\d{4}$/', $item->wbs_number, $matches);
                 return $matches[0] ?? null;
             })
             ->filter()
