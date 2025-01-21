@@ -243,6 +243,9 @@
                                                     case 'Waiting Approval':
                                                         badgeClass = 'bg-gradient-warning';
                                                         break;
+                                                    case 'Approval Completed':
+                                                        badgeClass = 'bg-gradient-primary';
+                                                    break;
                                                     default:
                                                         return data;
                                                 }

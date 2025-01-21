@@ -85,9 +85,8 @@
                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownEdit">
                                     <li><a class="dropdown-item" href="#" data-value="Canceled">Canceled</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="Close">Close</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="On Progress">OnProgress</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="On Progress">On Progress</a></li>
                                     <li><a class="dropdown-item" href="#" data-value="To Opex">To Opex</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="Waiting Approval">WaitingApproval</a></li>
                                 </ul>
                                 <input type="hidden" id="status_capex_edit" name="status_capex"
                                     style="text-align: center;" required>

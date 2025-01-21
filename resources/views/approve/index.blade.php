@@ -107,36 +107,29 @@
                                             return data; // Untuk nilai lain tampilkan apa adanya
                                         }
                                         return data;
-                                    }},
+                            }},
                             {data: 'status_capex', name: 'status_capex', className: 'text-center',
                                         render: function(data, type, row) {
                                             if (type === 'display') {
                                                 let badgeClass = '';
                                                 switch(data) {
-                                                    case 'Canceled':
-                                                        badgeClass = 'bg-danger';
-                                                        break;
-                                                    case 'Close':
-                                                        badgeClass = 'bg-secondary';
-                                                        break;
                                                     case 'On Progress':
                                                         badgeClass = 'bg-gradient-success';
-                                                        break;
-                                                    case 'To Opex':
-                                                        badgeClass = 'bg-info';
                                                         break;
                                                     case 'Waiting Approval':
                                                         badgeClass = 'bg-gradient-secondary';
                                                         break;
+                                                    case 'Approval Completed':
+                                                        badgeClass = 'bg-gradient-primary';
+                                                        break;
                                                     default:
                                                         return data;
                                                 }
-
                                                 return `<span class="badge ${badgeClass}">${data}</span>`;
                                             }
                                             return data;
                                         }
-                                    },
+                            },
                             {data: 'upload_date', name:'upload_date' },  
                         ],   
                     });

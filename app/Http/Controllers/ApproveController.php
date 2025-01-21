@@ -183,6 +183,13 @@ class ApproveController extends Controller
                         'updated_at' => now(),
                     ]);
 
+                DB::table('t_master_capex')
+                    ->where('id_capex', $idCapex)
+                    ->update([
+                        'status_capex' => 'Waiting Approval',
+                    ]);
+
+
                 return response()->json([
                     'success' => 'File PDF berhasil diunggah',
                     'file_path' => 'uploads/approvalFiles/' . $PDFfileName

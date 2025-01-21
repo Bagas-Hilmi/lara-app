@@ -68,7 +68,7 @@ class Approve extends Model
         // Mulai query untuk mengambil data dari t_master_capex
         $query = DB::table('t_master_capex')
             ->leftJoin('t_approval_report', 't_master_capex.id_capex', '=', 't_approval_report.id_capex') // Menyambungkan tabel
-            ->whereIn('t_master_capex.status_capex', ['Waiting Approval'])
+            ->whereIn('t_master_capex.status_capex', ['Waiting Approval', 'On Progress'])
             ->where('t_master_capex.status', 1) 
             ->select(
                 't_master_capex.id_capex',
@@ -136,6 +136,18 @@ class Approve extends Model
 
         // Perulangan untuk sinkronisasi data ke tabel t_approval_report
         foreach ($masterData as $data) {
+
+            $statusesToCheck = $data->wbs_capex === "Project"
+            ? [$data->status_approve_1, $data->status_approve_2, $data->status_approve_3, $data->status_approve_4]
+            : [$data->status_approve_1, $data->status_approve_2, $data->status_approve_4];
+
+            if (collect($statusesToCheck)->every(fn($status) => $status == 1)) {
+                DB::table('t_master_capex')
+                    ->where('id_capex', $data->id_capex)
+                    ->update(['status_capex' => 'Approval Completed']);
+                $data->status_capex = 'Approval Completed'; // Perbarui status di objek hasil
+            }            
+
             // Cek apakah data sudah ada di t_approval_report
             $existingRecord = DB::table('t_approval_report')
                 ->where('id_capex', $data->id_capex)
