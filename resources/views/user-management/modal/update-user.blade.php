@@ -14,28 +14,28 @@
 
                     <div class="mb-3">
                         <label for="name" class="form-label"><strong>Name:</strong></label>
-                        <input type="text" name="name" placeholder="Name" class="form-control">
+                        <input type="text" name="name" placeholder="Name" class="form-control" required style="border-radius: 10px;">
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label"><strong>Email:</strong></label>
-                        <input type="email" name="email" placeholder="Email" class="form-control">
+                        <input type="email" name="email" placeholder="Email" class="form-control" required style="border-radius: 10px;">
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label"><strong>Password:</strong></label>
-                        <input type="password" name="password" placeholder="Password" class="form-control">
+                        <input type="password" name="password" placeholder="Password" class="form-control" required style="border-radius: 10px;">
                     </div>
 
                     <div class="mb-3">
                         <label for="confirm-password" class="form-label"><strong>Confirm Password:</strong></label>
                         <input type="password" name="confirm-password" placeholder="Confirm Password"
-                            class="form-control">
+                            class="form-control" required style="border-radius: 10px;">
                     </div>
 
                     <div class="mb-3">
                         <label for="role" class="form-label"><strong>Role:</strong></label>
-                        <select name="role" class="form-control">
+                        <select name="role" id="role" class="form-control" style="width: 35%;" required>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->id }}">{{ $role->name }}</option>
                             @endforeach

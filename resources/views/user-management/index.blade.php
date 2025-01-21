@@ -49,6 +49,7 @@
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
             <script src="assets/js/moment.min.js"></script>
             <script src="{{ asset('/js/tooltip.js') }}"></script>
+            <script src="{{ asset('assets/js/select2.min.js') }}"></script>
 
             <script>
                 $(document).ready(function() {
@@ -212,6 +213,7 @@
         border: 1px solid #ccc; /* Customize the border */
         box-shadow: none; /* Remove shadow */
         border-radius: 4px; /* Tambahkan sudut melengkung */
+        padding-left: 12px;
     }
     .form-control:focus {
         border-color: #42bd37; /* Warna border saat fokus */
