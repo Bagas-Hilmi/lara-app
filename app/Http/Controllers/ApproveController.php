@@ -169,36 +169,22 @@ class ApproveController extends Controller
                 if ($fileExists) {
                     return response()->json(['error' => 'Nama file sudah digunakan. Harap gunakan nama file yang berbeda.'], 400);
                 }
+
                 // Simpan file original
                 $PDFfile->storeAs('uploads/approvalFiles', $PDFfileName, 'public');
 
                 // Update database
-                $updateData = [
-                    'file_pdf' => $PDFfileName,
-                    'upload_by' => Auth::user()->name,
-                    'upload_date' => now(),
-                    'updated_at' => now(),
-                    'date' => $request->input('date'),
-                    'wbs_type' => $request->input('wbs_type'),
-                    'engineering_production' => $request->boolean('engineering'),
-                    'maintenance' => $request->boolean('maintenance'),
-                    'outstanding_inventory' => $request->boolean('outstanding_inventory'),
-                    'material' => $request->boolean('material'),
-                    'jasa' => $request->boolean('jasa'),
-                    'etc' => $request->boolean('etc'),
-                    'warehouse_received' => $request->boolean('warehouse'),
-                    'user_received' => $request->boolean('user'),
-                    'berita_acara' => $request->boolean('berita_acara'),
-                    'remark' => $request->input('remark'),
-                ];
-
-                // Update database
                 DB::table('t_approval_report')
                     ->where('id_capex', $idCapex)
-                    ->update($updateData);
+                    ->update([
+                        'file_pdf' => $PDFfileName,
+                        'upload_by' => Auth::user()->name,
+                        'upload_date' => now(),
+                        'updated_at' => now(),
+                    ]);
 
                 return response()->json([
-                    'success' => 'File PDF berhasil diunggah dan ditandatangani',
+                    'success' => 'File PDF berhasil diunggah',
                     'file_path' => 'uploads/approvalFiles/' . $PDFfileName
                 ]);
             }
@@ -537,7 +523,7 @@ class ApproveController extends Controller
 
             return response()->file($path);
         } else if ($flag === 'show-progress') {
-        } else if ($flag === 'checkWBS'){
+        } else if ($flag === 'checkWBS') {
             $data = DB::table('t_approval_report')->where('id_capex', $id)->first();
 
             // Periksa apakah wbs_type ada nilainya

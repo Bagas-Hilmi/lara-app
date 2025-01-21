@@ -20,7 +20,7 @@
                                 <label class="form-label" for="bast">Upload PDF</label>
                                 <input type="file" class="form-control" id="bast" name="file_pdf"
                                     accept="application/pdf" required>
-                                    <label>Allowed file : PDF</label>
+                                <label>Allowed file : PDF</label>
                             </div>
                         </div>
                     </div>
@@ -37,25 +37,31 @@
 
 
 <script>
+    $(document).on('click', '[data-bs-target="#uploadPDF"]', function() {
+        // Ambil nilai data-id dari tombol yang diklik
+        const idCapex = $(this).data('id');
+
+        // Set nilai idCapex ke input hidden di modal
+        $('#hidden-id-capex').val(idCapex);
+    });
+
     $('#uploadFormPDF').on('submit', function(e) {
         e.preventDefault();
-        
+
         let formData = new FormData(this);
 
         formData.append('flag', 'upload-pdf');
 
-        // Menampilkan SweetAlert2 dengan tombol Ya dan Tidak
         Swal.fire({
             title: 'Konfirmasi Upload',
             text: 'Apakah Anda yakin ingin mengupload file PDF ini?',
             icon: 'question',
-            showCancelButton: true, // Menampilkan tombol 'Tidak'
+            showCancelButton: true,
             confirmButtonText: 'Ya',
             cancelButtonText: 'Tidak',
-            reverseButtons: true // Membalikkan urutan tombol
+            reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Jika tombol 'Ya' diklik, lanjutkan dengan upload
                 $.ajax({
                     url: "{{ route('approve.store') }}",
                     type: "POST",
@@ -86,12 +92,12 @@
                     error: function(xhr) {
                         let errorMessage = '';
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
-                            // Gabungkan semua pesan error
                             errorMessage = Object.values(xhr.responseJSON.errors)
                                 .flat()
                                 .join('\n');
                         } else {
-                            errorMessage = xhr.responseJSON.error || 'File PDF gagal diunggah';
+                            errorMessage = xhr.responseJSON.error ||
+                                'File PDF gagal diunggah';
                         }
                         Swal.fire({
                             icon: 'error',
@@ -101,7 +107,6 @@
                     }
                 });
             } else {
-                // Jika tombol 'Tidak' diklik, tampilkan pesan pembatalan
                 Swal.fire({
                     icon: 'info',
                     title: 'Upload Dibatalkan',
@@ -111,20 +116,3 @@
         });
     });
 </script>
-
-<style>
-    .form-check {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .form-check-input {
-        order: 1;
-        /* Memastikan checkbox muncul di sebelah kanan */
-    }
-
-    .form-check-label {
-        order: 0;
-        /* Memastikan label muncul di sebelah kiri */
-    }
-</style>
