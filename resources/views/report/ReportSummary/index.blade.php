@@ -95,6 +95,7 @@
                                                 <th class="text-center">Rev Completion Date</th>
                                                 <th class="text-center">Days Remaining</th>
                                                 <th class="text-center">Days Late</th>
+                                                <th class="text-center">Interest</th>
                                                 <th class="text-center">WBS Number</th>
                                                 <th class="text-center">CIP Number</th>
                                             </tr>
@@ -115,6 +116,7 @@
                                                 <th style="text-align: right;" id="recost-rp-footer"></th>
                                                 <th style="text-align: right;" id="recost-usd-footer"></th>
                                                 <th style="text-align: right;" id="po-release-footer"></th>
+                                                <th></th>
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
@@ -376,6 +378,12 @@
                                             return data;
                                     }},
                                     {data: 'days_late', name: 'days_late', className: 'text-right',
+                                    render: function(data) {
+                                            if (data === null || data === undefined) {
+                                                return '-';}
+                                            return data;
+                                    }},
+                                    {data: 'interest', name: 'interest', className: 'text-right',
                                     render: function(data) {
                                             if (data === null || data === undefined) {
                                                 return '-';}

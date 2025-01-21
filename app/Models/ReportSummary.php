@@ -43,6 +43,7 @@ class ReportSummary extends Model
         try {
             // Mulai transaksi database untuk memastikan konsistensi data
             DB::beginTransaction();
+            $INTEREST_RATE = 0.045;
 
             // Ambil data master capex dengan join ke tabel lain
             $query = DB::table('t_master_capex')
@@ -72,10 +73,12 @@ class ReportSummary extends Model
                     't_master_capex.cip_number',
                     't_master_capex.status',
                     't_report_summary.realized',
+                    't_report_summary.interest',
                     DB::raw('SUM(t_report_cip.amount_rp) as recost_rp'),
                     DB::raw('COALESCE(SUM(t_report_cip.amount_us), 0) as recost_usd'),
                     DB::raw('COALESCE(t_master_capex.total_budget, 0) as total_budget'),
-                    DB::raw('ROUND((COALESCE(SUM(t_report_cip.amount_us), 0) / COALESCE(t_master_capex.total_budget, 0)) * 100, 2) as realized_percentage')
+                    DB::raw('ROUND((COALESCE(SUM(t_report_cip.amount_us), 0) / COALESCE(t_master_capex.total_budget, 0)) * 100, 2) as realized_percentage'),
+
                     )
                 ->where('t_master_capex.status', 1)
                 ->groupBy(
@@ -101,7 +104,9 @@ class ReportSummary extends Model
                     't_master_capex.wbs_number',
                     't_master_capex.cip_number',
                     't_master_capex.status',
-                    't_report_summary.realized'
+                    't_report_summary.realized',
+                    't_report_summary.interest',
+
                 )
                 ->distinct();
                 if ($request) {
@@ -134,6 +139,11 @@ class ReportSummary extends Model
                     )
                     ->where('id_capex', $data->id_capex)
                     ->first();
+
+                    $interest = 0;
+                if (!empty($data->days_late)) {
+                    $interest = round($cipData->total_usd * ($data->days_late / 360) * $INTEREST_RATE);
+                }
     
                 // Hitung realized percentage
                 $realizedPercentage = 0;
@@ -164,6 +174,7 @@ class ReportSummary extends Model
                     'expected_completed' => $data->expected_completed,
                     'days_remaining' => $data->days_remaining,
                     'days_late' => $data->days_late,
+                    'interest' => $interest,
                     'revise_completion_date' => $data->revise_completion_date,
                     'wbs_number' => $data->wbs_number,
                     'cip_number' => $data->cip_number,
