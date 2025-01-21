@@ -26,6 +26,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">Action</th>
+                                                <th class="text-center">id</th>
                                                 <th class="text-center">Name</th>
                                                 <th class="text-center">Email</th>
                                                 <th class="text-center">Role</th>
@@ -64,7 +65,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
-                        order: [[3, 'desc']],
+                        order: [[1, 'desc']],
                         ajax: {
                             url: "{{ route('user-management.index') }}",
                             type: 'GET',
@@ -74,6 +75,11 @@
                                 name: 'action',
                                 orderable: false,
                                 searchable: false,
+                                className: 'text-center'
+                            },
+                            {
+                                data: 'id',
+                                name: 'id',
                                 className: 'text-center'
                             },
                             {

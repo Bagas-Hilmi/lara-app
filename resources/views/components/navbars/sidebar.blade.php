@@ -8,7 +8,7 @@
             <i class="fas fa-bars p-3 cursor-pointer" id="iconSidenav"
                 style="color: black; opacity: 1; font-size: 20px; position: absolute; top: 0; right: 0;"></i>
 
-            <a class="navbar-brand" href="{{ route('dashboard') }}">
+            <a class="navbar-brand" href="{{ route('capex.index') }}">
                 <img src="{{ asset('assets') }}/img/log1.png" class="logo" alt="Logo"
                     style="max-height:90px; width: auto;">
             </a>
@@ -76,6 +76,7 @@
                     </a>
                 </li>
                 @endif
+                @if(auth()->user()->hasRole(['admin', 'user', 'engineering']))
                 <li class="nav-item">
                     <a class="nav-link text-white {{ $activePage == 'Approve' ? ' active bg-gradient-success' : '' }} "
                         href="{{ route('approve.index') }}">
@@ -85,7 +86,7 @@
                         <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Progress Report</span>
                     </a>
                 </li>
-        
+                @endif
             
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8 custom-text-color">Report Pages</h6>
@@ -102,7 +103,7 @@
                 <ul class="collapse list-unstyled {{ in_array($activePage, ['reportCip', 'reportCategory', 'reportSummary', 'reportTax']) ? 'show' : '' }}" id="submenu1">
                     <li class="nav-item">
 
-
+                        @if(auth()->user()->hasRole(['admin', 'user']))
                         <a class="nav-link text-white {{ $activePage == 'reportCip' ? 'active bg-gradient-success' : '' }}"
                             href="{{ route('report.index', ['flag' => 'cip']) }}" style="padding-left: 40px;">
                             <div class="custom-icon-color me-1">
@@ -110,7 +111,8 @@
                             </div>
                             <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report CIP</span>
                         </a>
-                        @if(auth()->user()->hasRole('admin'))
+                        @endif
+                        @if(auth()->user()->hasRole(['admin', 'accounting', 'tax']))
                             <a class="nav-link text-white {{ $activePage == 'reportCategory' ? 'active bg-gradient-success' : '' }}"
                                 href="{{ route('report.index', ['flag' => 'category']) }}" style="padding-left: 40px;">
                                 <div class="custom-icon-color me-1">
@@ -125,6 +127,8 @@
                                 </div>
                                 <span class="nav-link-text ms-1 font-weight-bold custom-text-color">Report Summary</span>
                             </a>
+                        @endif
+                        @if(auth()->user()->hasRole(['admin', 'tax']))
                             <a class="nav-link text-white {{ $activePage == 'reportTax' ? 'active bg-gradient-success' : '' }}"
                                 href="{{ route('report.index', ['flag' => 'tax']) }}" style="padding-left: 40px;">
                                 <div class="custom-icon-color text-center me-1">

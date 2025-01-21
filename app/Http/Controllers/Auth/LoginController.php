@@ -18,7 +18,7 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/capex';
 
     public function __construct()
     {
@@ -53,6 +53,10 @@ class LoginController extends Controller
 
         if (Auth::user()->hasRole(['user', 'engineering'])) {
             return redirect('/approve');
+        }
+
+        if (Auth::user()->hasRole(['tax', 'accounting'])) {
+            return redirect('/report?flag=category');
         }
         
     }
