@@ -10,9 +10,9 @@
 
     <p>
         Mohon bantuan approvalnya untuk lampiran 
-            1.form closing
-            2.form detail
-            3.form acceptance
+            1.Form Closing CAPEX
+            2.Form Detail CAPEX
+            3.Form Project Acceptance Checklist
         <strong>{{ $capexData['capex_number'] }}</strong>
         {{ $capexData['project_desc'] }}
     </p>
