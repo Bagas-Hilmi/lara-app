@@ -299,7 +299,6 @@ class ApproveController extends Controller
             // Validasi input
             $request->validate([
                 'id_capex' => 'required|exists:t_approval_report,id_capex',
-                'date' => 'required',
                 'wbs_type' => 'required|in:WBS-P,WBS-A',
                 'engineering' => 'required|in:0,1',
                 'maintenance' => 'required|in:0,1',
@@ -310,7 +309,7 @@ class ApproveController extends Controller
                 'warehouse' => 'required|in:0,1',
                 'user' => 'required|in:0,1',
                 'berita_acara' => 'required|in:0,1',
-                'remark' => 'required',
+                'remark' => 'nullable',
             ], [
                 'wbs_type.required' => 'WBS Type harus dipilih',
                 'wbs_type.in' => 'WBS Type harus WBS-P atau WBS-A',
@@ -337,9 +336,6 @@ class ApproveController extends Controller
             // Update database tanpa file PDF
             $updateData = [
                 'upload_by' => Auth::user()->name,
-                'upload_date' => now(),
-                'updated_at' => now(),
-                'date' => $request->input('date'),
                 'wbs_type' => $request->input('wbs_type'),
                 'engineering_production' => $request->boolean('engineering'),
                 'maintenance' => $request->boolean('maintenance'),
@@ -449,7 +445,9 @@ class ApproveController extends Controller
 
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
+        
+        $orientation = $type === 'detail' ? 'landscape' : 'portrait'; // Jika form-detail, gunakan landscape
+        $dompdf->setPaper('A4', $orientation);
         $dompdf->render();
 
         // Gunakan path yang sudah ada

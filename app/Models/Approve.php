@@ -28,7 +28,6 @@ class Approve extends Model
         'wbs_number',
         'startup',
         'expected_completed',
-        'date',
         'wbs_type',
         'remark',
         'engineering_production',
@@ -68,7 +67,7 @@ class Approve extends Model
         // Mulai query untuk mengambil data dari t_master_capex
         $query = DB::table('t_master_capex')
             ->leftJoin('t_approval_report', 't_master_capex.id_capex', '=', 't_approval_report.id_capex') // Menyambungkan tabel
-            ->whereIn('t_master_capex.status_capex', ['Waiting Approval', 'On Progress'])
+            ->whereIn('t_master_capex.status_capex', ['Waiting Approval', 'On Progress', 'To Be Close', 'Close'])
             ->where('t_master_capex.status', 1) 
             ->select(
                 't_master_capex.id_capex',
@@ -87,7 +86,6 @@ class Approve extends Model
 
                 't_approval_report.file_pdf',
                 't_approval_report.wbs_type',
-                't_approval_report.date',
                 't_approval_report.engineering_production',
                 't_approval_report.maintenance',
                 't_approval_report.outstanding_inventory',
@@ -113,7 +111,7 @@ class Approve extends Model
                 't_approval_report.approved_at_user', 
                 't_approval_report.approved_by_engineer', 
                 't_approval_report.approved_at_engineer',
-                DB::raw('DATEDIFF(t_approval_report.date, t_master_capex.expected_completed) as time_delay'), // Perhitungan time_delay
+                DB::raw('DATEDIFF(t_approval_report.upload_date, t_master_capex.expected_completed) as time_delay'), // Perhitungan time_delay
 
             );
 
@@ -144,8 +142,8 @@ class Approve extends Model
             if (collect($statusesToCheck)->every(fn($status) => $status == 1)) {
                 DB::table('t_master_capex')
                     ->where('id_capex', $data->id_capex)
-                    ->update(['status_capex' => 'Approval Completed']);
-                $data->status_capex = 'Approval Completed'; // Perbarui status di objek hasil
+                    ->update(['status_capex' => 'To Be Close']);
+                $data->status_capex = 'To Be Close'; // Perbarui status di objek hasil
             }            
 
             // Cek apakah data sudah ada di t_approval_report

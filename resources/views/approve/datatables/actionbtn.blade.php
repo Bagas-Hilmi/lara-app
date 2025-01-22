@@ -32,7 +32,8 @@
             data-apv_user="{{ $row->approved_by_user}}"
             data-apv_at_user="{{ $row->approved_at_user}}"
             data-apv_engineer="{{ $row->approved_by_engineer}}"
-            data-apv_at_engineer="{{ $row->approved_at_engineer}}">
+            data-apv_at_engineer="{{ $row->approved_at_engineer}}"
+            data-upload-date="{{ $row->upload_date}}">
             <i class="fa fa-signature" style="font-size: 1.2rem;"></i>
         </a>
     @endif

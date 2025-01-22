@@ -77,7 +77,7 @@
                         responsive: true,
                         processing: true,
                         serverSide: true,
-                        order: [[6 , 'desc']],
+                        order: [[1 , 'desc']],
                         ajax: {
                             url: "{{ route('approve.index') }}",
                             type:'GET'
@@ -102,7 +102,7 @@
                                             if (data === 'Project') {
                                                 return '<span class="badge bg-gradient-info">Project</span>';
                                             } else if (data === 'Non Project') {
-                                                return '<span class="badge bg-gradient-warning">Non Project</span>';
+                                                return '<span class="badge bg-gradient-primary">Non Project</span>';
                                             }
                                             return data; // Untuk nilai lain tampilkan apa adanya
                                         }
@@ -117,10 +117,13 @@
                                                         badgeClass = 'bg-gradient-success';
                                                         break;
                                                     case 'Waiting Approval':
-                                                        badgeClass = 'bg-gradient-secondary';
+                                                        badgeClass = 'bg-gradient-warning';
                                                         break;
-                                                    case 'Approval Completed':
-                                                        badgeClass = 'bg-gradient-primary';
+                                                    case 'To Be Close':
+                                                        badgeClass = 'bg-gradient-warning';
+                                                        break;
+                                                    case 'Close':
+                                                        badgeClass = 'bg-gradient-secondary';
                                                         break;
                                                     default:
                                                         return data;

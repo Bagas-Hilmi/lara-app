@@ -28,15 +28,13 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label for="date" class="form-label font-weight-bold">Date
-                                Upload</label>
-                            <input type="date" style="text-align: center;" class="form-control" id="date"
-                                name="date" required>
+                            <label for="date" class="form-label font-weight-bold">Date Upload</label>
+                            <div id="date" class="form-control" style="text-align: center;"></div>
                         </div>
                         <div class="row mb-3">
                             <label for="remark" class="form-label font-weight-bold">Remark</label>
-                            <input type="text" style="text-align: center;" class="form-control" id="date"
-                                name="remark" placeholder="Jika kosong isi -">
+                            <input type="text" style="text-align: center;" class="form-control" id="remark"
+                                name="remark" placeholder="Remark">
                         </div>
 
                         <!-- BERITA ACARA PENYELESAIAN CAPEX -->
@@ -133,15 +131,21 @@
         $('#signatureModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             currentIdCapex = button.data('id');
+            var uploadDate = button.data('upload-date'); // Mengambil data upload_date
             $('#signature-id-capex').val(currentIdCapex);
             
             // Set id_capex ke tombol form-check
-            $('#openCheckForm').attr('data-id-capex', currentIdCapex);
+            $('#openCheckForm')
+                .attr('data-id-capex', currentIdCapex)
+                .attr('data-upload-date', uploadDate);
         });
 
         $('#openCheckForm').on('click', function() {
             let idCapex = $(this).attr('data-id-capex');
+            let uploadDate = $(this).attr('data-upload-date');
+
             $('#hidden-id-capex').val(idCapex);
+            $('#date').text(uploadDate); // Menampilkan tanggal di <div>
         });
 
         // Handle klik item dropdown
@@ -168,7 +172,6 @@
 
             formData.append('flag', 'check-form');
             formData.append('wbs_type', selectedWBS);
-            formData.append('date', $('#date').val());
             formData.append('id_capex', currentIdCapex);
             // Mengubah nilai checkbox menjadi string "true" atau "false"
             const checkboxes = {

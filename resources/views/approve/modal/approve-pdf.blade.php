@@ -72,9 +72,13 @@
                             
                             @if(auth()->user()->hasRole(['admin']) && auth()->id() == 3)
                             <div class="col-md-4">
-                                    <button type="button" class="btn btn-primary" style="background-color: #27ad58; color: white;" data-bs-toggle="modal" .
-                                    data-bs-target="#form-check" id="openCheckForm">Form Check</button>
-                                </div>
+                                    <button type="button" class="btn btn-primary" style="background-color: #27ad58; color: white;" 
+                                    data-bs-toggle="modal" .
+                                    data-bs-target="#form-check"
+                                    id="openCheckForm">
+                                    Form Check
+                                </button>
+                            </div>
                             @endif
                         </div>
 

@@ -118,7 +118,7 @@
                     <tr>
                         <td>Actual Completed</td>
                         <td>:</td>
-                        <td colspan="2">{{ $date }}</td>
+                        <td colspan="2">{{$upload_date }}</td>
                     </tr>
                     <tr>
                         <td>Remark</td>

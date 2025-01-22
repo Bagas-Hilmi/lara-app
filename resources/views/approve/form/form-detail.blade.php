@@ -106,7 +106,7 @@
                     <td>{{ $capex_number ?? '' }}</td>
                     <td>{{ \Carbon\Carbon::parse($startup)->format('d M Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($expected_completed)->format('d M Y') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($date)->format('d M Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($upload_date)->format('d M Y') }}</td>
                     <td>{{ number_format($total_budget ?? 0, 0, ',', '.') }}</td>
                     <td>{{ number_format($recost_usd, 2, ',', '.') }}</td>
                     <td>{{ $time_delay ?? '' }}</td>
