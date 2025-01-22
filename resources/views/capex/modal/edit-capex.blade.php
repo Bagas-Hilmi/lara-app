@@ -346,7 +346,7 @@
                 formData.append('file_pdf', fileInput.get(0).files[0]);
                 formData.append('capdate', $('#capdate_edit').val());
                 formData.append('capdoc', $('#capdoc_edit').val());
-                formData.append('noasset', $('#noasset_edit').val());
+                formData.append('noasset', $('#generated_assets').val());
             }
 
             // Tampilkan konfirmasi
@@ -446,34 +446,49 @@
 <script>
 
     $('#generateAssets').on('click', function () {
-        const className = $('#class_name').val().replace(/^Z/, ''); // Hilangkan huruf "Z" di awal
+        const className = $('#noasset_edit').val();
         const startNumber = parseInt($('#start_number').val());
         const endNumber = parseInt($('#end_number').val());
-        const suffix = '-0'; // Suffix tetap di-hardcode di sini
+        const suffix = '-0';
         const result = [];
 
+        // Validasi class name
         if (!className) {
-            alert('Pilih Class Name terlebih dahulu!');
-            return;
-        }
-        if (isNaN(startNumber) || isNaN(endNumber) || startNumber > endNumber) {
-            alert('Masukkan rentang nomor yang valid!');
+            alert('Silakan pilih Class Name terlebih dahulu!');
             return;
         }
 
-        // Generate daftar nomor aset
-        for (let i = startNumber; i <= endNumber; i++) {
-            // Tambahkan angka 0 di depan sehingga panjangnya 7 digit
-            const paddedNumber = i.toString().padStart(7, '0');
+        // Validasi input nomor
+        if (isNaN(startNumber)) {
+            alert('Masukkan nomor awal yang valid!');
+            return;
+        }
+
+        // Cek apakah menggunakan range atau single number
+        if (isNaN(endNumber)) {
+            // Generate single number
+            const paddedNumber = startNumber.toString().padStart(7, '0');
             result.push(`${className}${paddedNumber}${suffix}`);
+        } else {
+            // Validasi range
+            if (startNumber > endNumber) {
+                alert('Nomor awal tidak boleh lebih besar dari nomor akhir!');
+                return;
+            }
+            
+            // Generate range of numbers
+            for (let i = startNumber; i <= endNumber; i++) {
+                const paddedNumber = i.toString().padStart(7, '0');
+                result.push(`${className}${paddedNumber}${suffix}`);
+            }
         }
 
-        // Gabungkan hasil dengan koma
+        // Tampilkan hasil di textarea
         $('#generated_assets').val(result.join(', '));
     });
 
     $(document).ready(function() {
-        $('#class_name').select2({
+        $('#noasset_edit').select2({
             placeholder: "Pilih Class Name",
             allowClear: true,
             width: '100%',
