@@ -12,7 +12,7 @@
                     <input type="hidden" name="flag" value="signature">
 
                     <div class="container-fluid">
-                        <!-- Tanda Tangan Admin -->
+                        <!-- Persetujuan Admin -->
                         <div class="row mb-3">
                             <div class="col-12">
                                 <h6>Persetujuan Admin</h6>
@@ -24,7 +24,8 @@
                                 </div>
                             </div>
                         </div>
-
+                    
+                        <!-- Persetujuan Manager OC -->
                         <div class="row mb-3">
                             <div class="col-12">
                                 <h6>Persetujuan Manager OC</h6>
@@ -36,8 +37,8 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tanda Tangan User -->
+                    
+                        <!-- Persetujuan User -->
                         <div class="row mb-3">
                             <div class="col-12">
                                 <h6>Persetujuan User</h6>
@@ -49,8 +50,8 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tanda Tangan Engineer -->
+                    
+                        <!-- Persetujuan Engineer -->
                         <div class="row mb-3">
                             <div class="col-12" id="engineerBox">
                                 <h6 id="engineerName">Persetujuan Engineer</h6>
@@ -62,40 +63,50 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Input Tanda Tangan Pengguna Saat Ini -->
+                    
+                        <!-- Tanda Tangan Pengguna -->
                         <div class="row mb-3">
-
                             <div class="col-md-8">
-                                <button type="submit" class="btn bg-gradient-warning" id="saveSignature">Menunggu Persetujuan</button>
+                                <button type="submit" class="btn bg-gradient-warning" id="saveSignature">
+                                    Menunggu Persetujuan
+                                </button>
                             </div>
-                            
+                        </div>
+                    
+                        <!-- Tombol Aksi -->
+                        <div class="row mb-3">
                             @if(auth()->user()->hasRole(['admin']) && auth()->id() == 3)
                             <div class="col-md-4">
-                                    <button type="button" class="btn btn-primary" style="background-color: #27ad58; color: white;" 
-                                    data-bs-toggle="modal" .
-                                    data-bs-target="#form-check"
+                                <button type="button" class="btn btn-primary" 
+                                    style="background-color: #27ad58; color: white;" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#form-check" 
                                     id="openCheckForm">
                                     Form Check
                                 </button>
                             </div>
                             @endif
+                    
+                            <div class="col-md-12">
+                                <a id="viewUploadButton" href="#" class="btn bg-gradient-primary" target="_blank">
+                                    <i class="fa fa-file-pdf"></i> Lihat PDF Upload
+                                </a>
+                                <a id="viewDetailButton" href="#" class="btn bg-gradient-info" target="_blank">
+                                    <i class="fa fa-file-pdf"></i> PDF Form Detail
+                                </a>
+                                <a id="viewClosingButton" href="#" class="btn bg-gradient-warning" target="_blank">
+                                    <i class="fa fa-file-pdf"></i> PDF Form Closing
+                                </a>
+                                <a id="viewAcceptButton" href="#" class="btn bg-gradient-secondary" target="_blank">
+                                    <i class="fa fa-file-pdf"></i> PDF Form Acceptance
+                                </a>
+                                <a id="viewSapButton" href="#" class="btn bg-gradient-primary" target="_blank">
+                                    <i class="fa fa-file-pdf"></i> SAP Attachment
+                                </a>
+                            </div>
                         </div>
-
-                        <a id="viewUploadButton" href="#" class="btn bg-gradient-primary" target="_blank">
-                            <i class="fa fa-file-pdf"></i> Lihat PDF Upload
-                        </a>
-                        <a id="viewDetailButton" href="#" class="btn bg-gradient-info" target="_blank">
-                            <i class="fa fa-file-pdf"></i> PDF Form Detail
-                        </a>
-                        <a id="viewClosingButton" href="#" class="btn bg-gradient-warning" target="_blank">
-                            <i class="fa fa-file-pdf"></i> PDF Form Closing
-                        </a>
-                        <a id="viewAcceptButton" href="#" class="btn bg-gradient-secondary" target="_blank">
-                            <i class="fa fa-file-pdf"></i> PDF Form Acceptance
-                        </a>
                     </div>
-
+                    
                     <div class="modal-footer">
                         <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Batal</button>
                     </div>
@@ -449,6 +460,7 @@
             var signatureClosingFile = button.data('signature-closing-file');
             var signatureAcceptance = button.data('signature-acceptance-file');
             var showPdf = button.data('show-pdf');
+            var showSap = button.data('show-sap');
 
             var timestamp = new Date().getTime();
 
@@ -490,6 +502,16 @@
                 $('#viewAcceptButton').attr('href', viewPdfUrl).show();
             } else {
                 $('#viewAcceptButton').hide();
+            }
+
+            if (showSap) {
+                var viewPdfUrl = "{{ route('approve.show', ':id') }}"
+                    .replace(':id', idCapex) +
+                    "?flag=show-sap-file&t=" + timestamp;
+
+                $('#viewSapButton').attr('href', viewPdfUrl).show();
+            } else {
+                $('#viewSapButton').hide();
             }
         });
 

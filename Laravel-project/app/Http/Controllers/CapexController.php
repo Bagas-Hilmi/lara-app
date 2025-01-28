@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CapexEngineer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use App\Models\ReportTax;
 use App\Models\Approve;
+use App\Imports\AssetImport;
+use App\Models\ListAsset;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CapexController extends Controller
 {
@@ -147,10 +149,9 @@ class CapexController extends Controller
                 'expected_completed' => 'required|string',
                 'wbs_number' => 'required|string',
                 'cip_number' => 'required|string',
-                'file_pdf' => 'required_if:status_capex,Close,flag,update|file|mimes:pdf',
+                'file_asset' => 'required_if:status_capex,Close,flag,update|file|mimes:xlsx,xls',
                 'capdate' => 'required_if:status_capex,Close,flag,update|string',
                 'capdoc' => 'required_if:status_capex,Close,flag,update|string|max:255',
-                'noasset' => 'required_if:status_capex,Close,flag,update|string|max:255',
             ]);
 
             if ($validated['status_capex'] === 'Close') {
@@ -197,18 +198,20 @@ class CapexController extends Controller
                 $capex->category = $validated['category'];
 
                 // Handle file upload for Close status
-                if ($validated['status_capex'] === 'Close' && $request->hasFile('file_pdf')) {
-                    $file = $request->file('file_pdf');
+                if ($validated['status_capex'] === 'Close' && $request->hasFile('file_asset')) {
+                    $file = $request->file('file_asset');
                     $originalFileName = $file->getClientOriginalName();
                     $filePath = $file->storeAs('public/uploads/sapFiles', $originalFileName);
-                    $capex->file_pdf = str_replace('public/', '', $filePath);
+                    $capex->file_asset = str_replace('public/', '', $filePath);
+
+                    Excel::import(new AssetImport($capex->id_capex), $file);
+
                 }
 
                 // Update or create ReportTax record
-                if (!empty($validated['capdate']) || !empty($validated['capdoc']) || !empty($validated['noasset'])) {
+                if (!empty($validated['capdate']) || !empty($validated['capdoc']) ) {
                     $capex->cap_date = $validated['capdate'] ?? null;
                     $capex->cap_doc = $validated['capdoc'] ?? null;
-                    $capex->no_asset = $validated['noasset'] ?? null;
                 }
 
                 // Simpan Capex dan CapexStatus
@@ -654,7 +657,7 @@ class CapexController extends Controller
         } else if ($flag === 'view-pdf') {
             $capex = Capex::findOrFail($id);
 
-            $filename = $capex->file_pdf;
+            $filename = $capex->file_asset;
             $path = storage_path('app/public/uploads/sapFiles/' . $filename);
 
             // Jika file tidak ditemukan, kembalikan 404

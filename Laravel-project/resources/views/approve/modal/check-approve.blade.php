@@ -111,6 +111,12 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-3">
+                            <label class="form-label font-weight-bold" for="bast">Lampiran SAP</label>
+                            <input type="file" class="form-control" id="fileSAP" name="file_sap" accept="application/pdf" required>
+                            <label>Allowed file : PDF</label>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -128,6 +134,7 @@
         let selectedWBS = 'Select';
         let currentIdCapex;
 
+        //manggil dari id button 1 lagi karna ini modal didalam modal
         $('#signatureModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             currentIdCapex = button.data('id');
@@ -234,6 +241,9 @@
                 }
             });
         });
+        $('#form-check').on('show.bs.modal', function () {
+            $(this).find('form')[0].reset(); // Mereset form di dalam modal
+        });
     });
 
     document.getElementById('selectWBS_P').addEventListener('click', function() {
@@ -245,6 +255,7 @@
         document.getElementById('wbsA_Section').style.display = 'block'; // Tampilkan WBS-A
         document.getElementById('wbsP_Section').style.display = 'none'; // Sembunyikan WBS-P
     });
+
 </script>
 
 <style>

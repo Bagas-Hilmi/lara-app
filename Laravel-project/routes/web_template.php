@@ -28,8 +28,6 @@ Route::get('reset-password/{token}', function ($token) {
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     // Dashboard and Profile
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('profile', [ProfileController::class, 'create'])->name('profile');
     Route::post('user-profile', [ProfileController::class, 'update']);
 });
 

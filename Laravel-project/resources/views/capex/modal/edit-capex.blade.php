@@ -158,58 +158,11 @@
                                 style="text-align: center;" required>
                         </div>
 
-                        <div class="col-md-3" id="fileUploadContainer" style="display: none;">
-                            <label class="form-label font-weight-bold">Upload PDF</label>
-                            <input type="file" class="form-control" name="file_pdf" accept="application/pdf"
+                        <div class="col-md-3" id="fileUploadContainer">
+                            <label class="form-label font-weight-bold">Upload List No Asset</label>
+                            <input type="file" class="form-control" name="file_asset"accept=".xlsx,.xls,.csv"
                                 required>
-                            <label class="form-label">Allowed file : PDF</label>
-                        </div>
-
-                        <div class="col-md-12" id="noassetContainer">
-                            <div class="row mt-3">
-                                <div class="col-md-3">
-                                <!-- Dropdown Class Name -->
-                                    <label for="noasset_edit" class="form-label font-weight-bold">Pilih Class Name</label>
-                                    <select class="form-control" id="noasset_edit" style="width: 100%;">
-                                        <option value="" disabled selected>Pilih Class Name</option>
-                                        <option value="10100">Z10100 - Land Rights</option>
-                                        <option value="10200">Z10200 - Land Improvements</option>
-                                        <option value="10300">Z10300 - Building - Office</option>
-                                        <option value="10301">Z10301 - Building - Mess</option>
-                                        <option value="10302">Z10302 - Building - Tank Farm</option>
-                                        <option value="10303">Z10303 - Building - Plant</option>
-                                        <option value="10400">Z10400 - Equipment - F.Acid</option>
-                                        <option value="10401">Z10401 - Equipment - F.Alcohol</option>
-                                        <option value="10402">Z10402 - Equipment - Utility</option>
-                                        <option value="10403">Z10403 - Equipment - Lab</option>
-                                        <option value="10404">Z10404 - Equipment - Office</option>
-                                        <option value="10405">Z10405 - Equipment - Others</option>
-                                        <option value="10406">Z10406 - Equipment - MPR</option>
-                                        <option value="10407">Z10407 - Equipment - UFA</option>
-                                        <option value="10500">Z10500 - Car & MC (100%)</option>
-                                        <option value="10501">Z10501 - Car & MC (50%)</option>
-                                    </select>
-                                </div>
-
-                                <!-- Rentang Angka -->
-                            
-                                <div class="col-md-3">
-                                    <label for="start_number" class="form-label font-weight-bold">Nomor Awal</label>
-                                    <input type="number" class="form-control" id="start_number">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="end_number" class="form-label font-weight-bold">Nomor Akhir</label>
-                                    <input type="number" class="form-control" id="end_number">
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="button" class="btn btn-primary mt-3" id="generateAssets">Generate</button>
-                                </div>
-                            </div>
-                        
-                            <div class="mt-4">
-                                <label for="generated_assets" class="form-label font-weight-bold">Generated No Asset</label>
-                                <textarea class="form-control" id="generated_assets"></textarea>
-                            </div>
+                            <label class="form-label">Allowed file : xlsx, xls, csv</label>
                         </div>
                     </div>
                 </form>
@@ -244,7 +197,6 @@
             var category = $(this).data('category');
             var capdate = $(this).data('capdate'); // Ambil capdate
             var capdoc = $(this).data('capdoc'); // Ambil capdoc
-            var noasset = $(this).data('noasset'); // Ambil noasset
 
             // Isi data ke dalam modal
             $('#project_desc_edit').val(project_desc);
@@ -266,8 +218,6 @@
             $('#category_edit').val(category);
             $('#capdate_edit').val($(this).data('capdate'));
             $('#capdoc_edit').val($(this).data('capdoc'));
-            $('#noasset_edit').val($(this).data('noasset'));
-
 
             $('#id_capex_edit').val(id_capex); // Pastikan Anda memiliki input tersembunyi di modal Anda
 
@@ -294,13 +244,13 @@
 
             // Cek jika status Close
             if (status_capex === 'Close') {
-                var fileInput = $('input[name="file_pdf"]');
+                var fileInput = $('input[name="file_asset"]');
 
                 // Validasi file
                 if (fileInput.get(0).files.length === 0) {
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Harap unggah file PDF untuk status Close',
+                        text: 'Harap unggah file EXECL untuk status Close',
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
@@ -308,12 +258,12 @@
                 }
                 // Validasi tipe file
                 var file = fileInput.get(0).files[0];
-                var allowedTypes = ['application/pdf'];
+                var allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
 
                 if (!allowedTypes.includes(file.type)) {
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Hanya file PDF',
+                        text: 'Hanya file Excel yang diperbolehkan',
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
@@ -343,10 +293,9 @@
 
             // Tambahkan file jika ada
             if (status_capex === 'Close') {
-                formData.append('file_pdf', fileInput.get(0).files[0]);
+                formData.append('file_asset', fileInput.get(0).files[0]);
                 formData.append('capdate', $('#capdate_edit').val());
                 formData.append('capdoc', $('#capdoc_edit').val());
-                formData.append('noasset', $('#generated_assets').val());
             }
 
             // Tampilkan konfirmasi
@@ -444,68 +393,11 @@
 </script>
 
 <script>
-
-    $('#generateAssets').on('click', function () {
-        const className = $('#noasset_edit').val();
-        const startNumber = parseInt($('#start_number').val());
-        const endNumber = parseInt($('#end_number').val());
-        const suffix = '-0';
-        const result = [];
-
-        // Validasi class name
-        if (!className) {
-            alert('Silakan pilih Class Name terlebih dahulu!');
-            return;
-        }
-
-        // Validasi input nomor
-        if (isNaN(startNumber)) {
-            alert('Masukkan nomor awal yang valid!');
-            return;
-        }
-
-        // Cek apakah menggunakan range atau single number
-        if (isNaN(endNumber)) {
-            // Generate single number
-            const paddedNumber = startNumber.toString().padStart(7, '0');
-            result.push(`${className}${paddedNumber}${suffix}`);
-        } else {
-            // Validasi range
-            if (startNumber > endNumber) {
-                alert('Nomor awal tidak boleh lebih besar dari nomor akhir!');
-                return;
-            }
-            
-            // Generate range of numbers
-            for (let i = startNumber; i <= endNumber; i++) {
-                const paddedNumber = i.toString().padStart(7, '0');
-                result.push(`${className}${paddedNumber}${suffix}`);
-            }
-        }
-
-        // Tampilkan hasil di textarea
-        $('#generated_assets').val(result.join(', '));
-    });
-
-    $(document).ready(function() {
-        $('#noasset_edit').select2({
-            placeholder: "Pilih Class Name",
-            allowClear: true,
-            width: '100%',
-            dropdownCssClass: 'select2-dropdown'
-        });
-    });
-
-
-</script>
-
-<script>
     $(document).ready(function() {
         const $editModal = $('#edit-form');
         const $fileUploadContainer = $('#fileUploadContainer');
         const $capdateContainer = $('#capdateContainer');
         const $capdocContainer = $('#capdocContainer');
-        const $noassetContainer = $('#noassetContainer');
         const $fileUploadInput = $fileUploadContainer.find('input[type="file"]');
         const $statusCapexInput = $('#status_capex_edit');
         const $statusDropdownButton = $('#statusDropdownEdit');
@@ -523,28 +415,19 @@
                 const $input = $(this);
                 if ($input.attr('type') === 'text' || 
                     $input.attr('type') === 'date' || 
-                    $input.attr('type') === 'number' || 
                     $input.attr('type') === 'file') {
                     $input.val('');
                 }
             });
             
-            // Reset textarea
-            $('#generated_assets').val('');
-            
-            // Reset select2 if exists
-            if ($('#class_name').length) {
-                $('#class_name').val(null).trigger('change');
-            }
         }
 
         function toggleContainers(status) {
-            const $containers = [$fileUploadContainer, $capdateContainer, $capdocContainer, $noassetContainer];
+            const $containers = [$fileUploadContainer, $capdateContainer, $capdocContainer];
             const $inputs = [
                 $fileUploadInput,
                 $('#capdate_edit'),
                 $('#capdoc_edit'),
-                $('#noasset_edit')
             ];
             
             if (status === 'Close') {
@@ -579,6 +462,24 @@
         $statusCapexInput.on('change', function() {
             toggleContainers($(this).val());
         });
+
+        function validateInputs() {
+            // Perform validation checks here
+            // For example:
+            if ($('#project_desc_edit').val().trim() === '') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Project description is required',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+
+            // Add more validation checks as needed
+
+            return true;
+        }
 
         // Handle save button
         $('#save-edit-capex').on('click', function(event) {

@@ -70,7 +70,7 @@ class Approve extends Model
             ->whereIn('t_master_capex.status_capex', ['Waiting Approval', 'On Progress', 'To Be Close', 'Close'])
             ->where('t_master_capex.status', 1) 
             ->select(
-                't_master_capex.id_capex',
+                't_master_capex.id_capex as id_capex',  // Tambahkan alias yang jelas
                 't_master_capex.status_capex',
                 't_master_capex.requester',
                 't_master_capex.project_desc',
@@ -85,6 +85,7 @@ class Approve extends Model
                 't_master_capex.budget_type',
 
                 't_approval_report.file_pdf',
+                't_approval_report.file_sap',
                 't_approval_report.wbs_type',
                 't_approval_report.engineering_production',
                 't_approval_report.maintenance',
@@ -194,6 +195,18 @@ class Approve extends Model
         }
 
         return $masterData; // Kembalikan hasil query
+    }
+
+    public static function getStatusCapex()
+    {
+        $status = DB::table('t_master_capex')
+        ->select('status_capex')
+        ->where('status', 1)
+        ->distinct()
+        ->pluck('status_capex')
+        ->toArray();
+
+        return $status;
     }
 
     public function capex()

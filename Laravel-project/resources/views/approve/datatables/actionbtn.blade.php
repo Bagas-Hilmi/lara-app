@@ -16,6 +16,7 @@
             data-signature-closing-file="{{ $row->signature_closing_file }}"
             data-signature-acceptance-file="{{ $row->signature_acceptance }}"
             data-show-pdf="{{ $row->file_pdf }}"
+            data-show-sap="{{ $row->file_sap }}"
             data-flag="show-form-detail"
             data-flag="show-form-closing"
             data-flag="show-form-acceptance"

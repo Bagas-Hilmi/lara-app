@@ -16,14 +16,21 @@
                                 <h3 class="text-white text-capitalize ps-3">Approval Report</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="d-flex mb-2">
+                                <div class="d-flex mb-2" style="gap: 10px;">
                                     @if(auth()->user()->hasRole('admin'))
                                         <button class="btn btn-primary" style="background-color: #2c2626" data-bs-toggle="modal" data-bs-target="#progressAPV"> 
                                             Approval Progress
                                         </button>    
-                                    @endif    
-                                        
+                                    @endif 
+                                    
+                                    {{-- <select id="statusSelect" class="form-control" style="width: 20%;">
+                                        <option value="" selected>Pilih Status</option>
+                                        @foreach ($status as $stat)
+                                            <option value="{{ $stat }}">{{ $stat }}</option>
+                                        @endforeach
+                                    </select> --}}
                                 </div>
+                            </div>
 
                                 <div class="table-responsive p-0">
                                     <table id="approve-table" class="table table-striped rounded-table p-0 mx-auto" style="width: 100%;">
@@ -61,6 +68,7 @@
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
             <script src="assets/js/plugins/sweetalert.min.js"></script>
             <script src="{{ asset('assets/datatables/dataTables.min.js') }}"></script>
+            <script src="{{ asset('assets/js/select2.min.js') }}"></script>
 
         
             <script>
@@ -80,8 +88,13 @@
                         order: [[1 , 'desc']],
                         ajax: {
                             url: "{{ route('approve.index') }}",
-                            type:'GET'
-                        },
+                            type:'GET',
+                            data: function(d) {
+                                var statusValue = $('#statusSelect').val();
+                                if (statusValue) {
+                                    d.status_capex = statusValue;  
+                                }
+                        }},
                         columns: [
                             {data: 'action', name: 'action', orderable: false, searchable: false,  className: 'text-center'},
                             {data: 'id_capex', name:'id_capex' },  
@@ -136,6 +149,27 @@
                             {data: 'upload_date', name:'upload_date' },  
                         ],   
                     });
+                    var statusSelect = $('#statusSelect');
+                    if (statusSelect.length) {
+                        statusSelect.select2({
+                            placeholder: 'Cari Status',
+                            allowClear: true,
+                        });
+                    }
+                    statusSelect.on('select2:select', function(e) {
+                        const statusValue = $(this).val();
+                        if (statusValue) {
+                            table.ajax.url('{{ route('report.index') }}?status=' + statusValue);
+                        } else {
+                            table.ajax.url('{{ route('report.index') }}');
+                        }
+                            table.ajax.reload();
+                    });
+
+                    statusSelect.on('select2:clear', function (e) {
+                        table.ajax.url('{{ route('report.index') }}').load(); // Reload semua data
+                    });
+
                 });
             </script>
             @endpush     
@@ -259,6 +293,40 @@
         /* Warna border saat fokus */
         box-shadow: 0 0 5px rgba(66, 189, 55, 0.5);
         /* Menambah efek shadow saat fokus */
+    }
+
+    .select2-container .select2-selection--single {
+        height: 45px; /* Menyesuaikan tinggi agar lebih proporsional */
+        padding-inline: 10px; /* Padding kiri dan kanan otomatis menyesuaikan dengan teks */
+        font-size: 11pt; /* Ukuran font lebih besar untuk keterbacaan */
+        border-radius: 8px; /* Membuat sudut lebih halus */
+        border: 1px solid #ccc; /* Border abu-abu muda untuk kesan elegan */
+        background-color: #ffffff; /* Latar belakang putih agar bersih */
+        color: #000000; /* Warna teks abu-abu gelap untuk kontras yang baik */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan halus di sekitar dropdown */
+        transition: all 0.3s ease; /* Menambahkan transisi halus saat berinteraksi */
+        display: flex; /* Menjadikan container flex */
+        align-items: center; /* Menyelaraskan teks di tengah secara vertikal */
+        justify-content: space-between; /* Memastikan tombol x berada di sisi kanan */
+    }
+
+    /* Efek fokus pada select2 */
+    .select2-container .select2-selection--single:focus {
+        border-color: #3cff00; /* Mengubah border menjadi biru saat fokus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Menambahkan bayangan biru saat fokus */
+        outline: none; /* Menghilangkan outline default */
+    }
+        .select2-container .select2-selection__clear {
+        position: absolute;
+        right: 10px; /* Menempatkan tombol "x" di sisi kanan */
+    } 
+    
+    /* Tambahkan scroll vertikal ke dropdown Select2 */
+    .custom-scroll-dropdown .select2-results__options {
+        max-height: 150px; /* Tinggi maksimal dropdown */
+        overflow-y: auto; /* Scroll vertikal aktif */
+        border: 1px solid #ccc; /* Opsional: tambahkan border untuk dropdown */
+        background-color: #ffffff; /* Opsional: latar belakang dropdown */
     }
 </style>
 

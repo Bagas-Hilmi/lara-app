@@ -29,12 +29,15 @@ class ApproveController extends Controller
      */
     public function index(Request $request)
     {
+
+        $status = Approve::getStatusCapex();
+
         if ($request->ajax()) {
             // Progress modal data
             if ($request->type === 'progress') {
                 $query = DB::table('t_approval_report')
                     ->select([
-                        'id_capex',
+                        't_approval_report.id_capex as id_capex',  // tambahkan alias
                         'project_desc',
                         'wbs_capex',
                         'upload_by',
@@ -87,7 +90,7 @@ class ApproveController extends Controller
             }
         }
 
-        return view('approve.index');
+        return view('approve.index', compact('status'));
     }
 
 
@@ -299,6 +302,7 @@ class ApproveController extends Controller
             // Validasi input
             $request->validate([
                 'id_capex' => 'required|exists:t_approval_report,id_capex',
+                'file_sap' => 'required|file|mimes:pdf|max:2048',
                 'wbs_type' => 'required|in:WBS-P,WBS-A',
                 'engineering' => 'required|in:0,1',
                 'maintenance' => 'required|in:0,1',
@@ -333,7 +337,19 @@ class ApproveController extends Controller
                 return response()->json(['error' => 'Data capex tidak ditemukan di approval report'], 404);
             }
 
-            // Update database tanpa file PDF
+            $PDFfile = $request->file('file_sap');
+                $PDFfileName = $PDFfile->getClientOriginalName();
+
+                // Cek apakah nama file sudah ada di database
+                $fileExists = DB::table('t_approval_report')->where('file_sap', $PDFfileName)->exists();
+
+                if ($fileExists) {
+                    return response()->json(['error' => 'Nama file sudah digunakan. Harap gunakan nama file yang berbeda.'], 400);
+                }
+
+                // Simpan file original
+                $PDFfile->storeAs('uploads/LampiranSAP', $PDFfileName, 'public');
+
             $updateData = [
                 'upload_by' => Auth::user()->name,
                 'wbs_type' => $request->input('wbs_type'),
@@ -347,6 +363,7 @@ class ApproveController extends Controller
                 'user_received' => $request->boolean('user'),
                 'berita_acara' => $request->boolean('berita_acara'),
                 'remark' => $request->input('remark'),
+                'file_sap' => $PDFfileName,
             ];
 
             // Update database
@@ -527,7 +544,6 @@ class ApproveController extends Controller
             }
 
             return response()->file($path);
-        } else if ($flag === 'show-progress') {
         } else if ($flag === 'checkWBS') {
             $data = DB::table('t_approval_report')->where('id_capex', $id)->first();
 
@@ -537,6 +553,17 @@ class ApproveController extends Controller
             return response()->json([
                 'hasWbsType' => $hasWbsType,
             ]);
+        } else if ($flag === 'show-sap-file'){
+            $approve = Approve::where('id_capex', $id)->firstOrFail();
+
+            $filename = $approve->file_sap;
+            $path = storage_path('app/public/uploads/LampiranSAP/' . $filename);
+
+            if (!file_exists($path)) {
+                abort(404, 'File not found.');
+            }
+
+            return response()->file($path); 
         }
 
         // Kembalikan response jika flag tidak sesuai
